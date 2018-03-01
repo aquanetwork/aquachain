@@ -22,13 +22,13 @@ import (
 	"math/big"
 
 	"github.com/aquanetwork/aquachain/accounts"
+	"github.com/aquanetwork/aquachain/aqua/downloader"
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
-	"github.com/aquanetwork/aquachain/aqua/downloader"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/event"
 	"github.com/aquanetwork/aquachain/params"
 	"github.com/aquanetwork/aquachain/rpc"
@@ -113,6 +113,26 @@ func GetAPIs(apiBackend Backend) []rpc.API {
 			Version:   "1.0",
 			Service:   NewPrivateAccountAPI(apiBackend, nonceLock),
 			Public:    false,
+		}, { // eth alias
+			Namespace: "eth",
+			Version:   "1.0",
+			Service:   NewPublicAquaChainAPI(apiBackend),
+			Public:    true,
+		}, {
+			Namespace: "eth",
+			Version:   "1.0",
+			Service:   NewPublicBlockChainAPI(apiBackend),
+			Public:    true,
+		}, {
+			Namespace: "eth",
+			Version:   "1.0",
+			Service:   NewPublicTransactionPoolAPI(apiBackend, nonceLock),
+			Public:    true,
+		}, {
+			Namespace: "eth",
+			Version:   "1.0",
+			Service:   NewPublicAccountAPI(apiBackend.AccountManager()),
+			Public:    true,
 		},
 	}
 }

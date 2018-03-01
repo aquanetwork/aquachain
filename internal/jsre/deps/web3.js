@@ -2509,6 +2509,7 @@ module.exports={
 var RequestManager = require('./web3/requestmanager');
 var Iban = require('./web3/iban');
 var Aqua = require('./web3/methods/aqua');
+var Eth = Aqua; // eth alias
 var DB = require('./web3/methods/db');
 var Shh = require('./web3/methods/shh');
 var Net = require('./web3/methods/net');
@@ -2531,6 +2532,7 @@ function Web3 (provider) {
     this._requestManager = new RequestManager(provider);
     this.currentProvider = provider;
     this.aqua = new Aqua(this);
+    this.eth = this.aqua // eth alias
     this.db = new DB(this);
     this.shh = new Shh(this);
     this.net = new Net(this);
@@ -6092,6 +6094,7 @@ var shh = function () {
 
 module.exports = {
     aqua: aqua,
+    eth: aqua, // eth alias
     shh: shh
 };
 
