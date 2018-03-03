@@ -17,13 +17,13 @@
 package miner
 
 import (
-	"bytes"
 	"fmt"
 	"math/big"
 	"sync"
 	"sync/atomic"
 	"time"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/consensus/misc"
@@ -31,7 +31,6 @@ import (
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/event"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/params"
@@ -106,7 +105,7 @@ type worker struct {
 	agents map[Agent]struct{}
 	recv   chan *Result
 
-	aqua     Backend
+	aqua    Backend
 	chain   *core.BlockChain
 	proc    core.Validator
 	chainDb aquadb.Database
@@ -131,7 +130,7 @@ func newWorker(config *params.ChainConfig, engine consensus.Engine, coinbase com
 	worker := &worker{
 		config:         config,
 		engine:         engine,
-		aqua:            aqua,
+		aqua:           aqua,
 		mux:            mux,
 		txCh:           make(chan core.TxPreEvent, txChanSize),
 		chainHeadCh:    make(chan core.ChainHeadEvent, chainHeadChanSize),
@@ -424,19 +423,19 @@ func (self *worker) commitNewWork() {
 		log.Error("Failed to prepare header for mining", "err", err)
 		return
 	}
-	// If we are care about TheDAO hard-fork check whether to override the extra-data or not
-	if daoBlock := self.config.DAOForkBlock; daoBlock != nil {
-		// Check whether the block is among the fork extra-override range
-		limit := new(big.Int).Add(daoBlock, params.DAOForkExtraRange)
-		if header.Number.Cmp(daoBlock) >= 0 && header.Number.Cmp(limit) < 0 {
-			// Depending whether we support or oppose the fork, override differently
-			if self.config.DAOForkSupport {
-				header.Extra = common.CopyBytes(params.DAOForkBlockExtra)
-			} else if bytes.Equal(header.Extra, params.DAOForkBlockExtra) {
-				header.Extra = []byte{} // If miner opposes, don't let it use the reserved extra-data
-			}
-		}
-	}
+	// // If we are care about TheDAO hard-fork check whether to override the extra-data or not
+	// if daoBlock := self.config.DAOForkBlock; daoBlock != nil {
+	// 	// Check whether the block is among the fork extra-override range
+	// 	limit := new(big.Int).Add(daoBlock, params.DAOForkExtraRange)
+	// 	if header.Number.Cmp(daoBlock) >= 0 && header.Number.Cmp(limit) < 0 {
+	// 		// Depending whether we support or oppose the fork, override differently
+	// 		if self.config.DAOForkSupport {
+	// 			header.Extra = common.CopyBytes(params.DAOForkBlockExtra)
+	// 		} else if bytes.Equal(header.Extra, params.DAOForkBlockExtra) {
+	// 			header.Extra = []byte{} // If miner opposes, don't let it use the reserved extra-data
+	// 		}
+	// 	}
+	// }
 	// Could potentially happen if starting to mine in an odd state.
 	err := self.makeCurrent(parent, header)
 	if err != nil {

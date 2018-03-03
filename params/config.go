@@ -33,55 +33,37 @@ var (
 	MainnetChainConfig = &ChainConfig{
 		ChainId:        big.NewInt(1),
 		HomesteadBlock: big.NewInt(0),
-		DAOForkBlock:   big.NewInt(0),
-		DAOForkSupport: false,
-		//EIP150Block:    big.NewInt(0),
-		//EIP150Hash:          common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
-		//EIP155Block:         big.NewInt(0),
-		//EIP158Block:         big.NewInt(0),
-		//ByzantiumBlock:      big.NewInt(0),
-		//ConstantinopleBlock: nil,
+		EIP150Block:    big.NewInt(0),
+		// EIP150Hash:          common.HexToHash("0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d"),
 		Aquahash: new(AquahashConfig),
-		// ChainId:             big.NewInt(1),
-		// HomesteadBlock:      big.NewInt(1150000),
-		// DAOForkBlock:        big.NewInt(1920000),
-		// DAOForkSupport:      true,
-		// EIP150Block:         big.NewInt(2463000),
-		// EIP150Hash:          common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
-		// EIP155Block:         big.NewInt(2675000),
-		// EIP158Block:         big.NewInt(2675000),
-		// ByzantiumBlock:      big.NewInt(4370000),
-		// ConstantinopleBlock: nil,
-		// Aquahash:              new(AquahashConfig),
 	}
 
 	// TestnetChainConfig contains the chain parameters to run a node on the Ropsten test network.
 	TestnetChainConfig = &ChainConfig{
-		ChainId:             big.NewInt(3),
-		HomesteadBlock:      big.NewInt(0),
-		DAOForkBlock:        nil,
-		DAOForkSupport:      true,
-		EIP150Block:         big.NewInt(0),
-		EIP150Hash:          common.HexToHash("0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d"),
-		EIP155Block:         big.NewInt(10),
-		EIP158Block:         big.NewInt(10),
-		ByzantiumBlock:      big.NewInt(1700000),
-		ConstantinopleBlock: nil,
-		Aquahash:            new(AquahashConfig),
+		ChainId:        big.NewInt(3),
+		HomesteadBlock: big.NewInt(0),
+		EIP150Block:    big.NewInt(0),
+		// EIP150Block:         big.NewInt(0),
+		// EIP150Hash:          common.HexToHash("0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d"),
+		// EIP155Block:         big.NewInt(10),
+		// EIP158Block:         big.NewInt(10),
+		// ByzantiumBlock:      big.NewInt(1700000),
+		// ConstantinopleBlock: nil,
+		Aquahash: new(AquahashConfig),
 	}
 
 	// RinkebyChainConfig contains the chain parameters to run a node on the Rinkeby test network.
 	RinkebyChainConfig = &ChainConfig{
-		ChainId:             big.NewInt(4),
-		HomesteadBlock:      big.NewInt(1),
-		DAOForkBlock:        nil,
-		DAOForkSupport:      true,
-		EIP150Block:         big.NewInt(2),
-		EIP150Hash:          common.HexToHash("0x9b095b36c15eaf13044373aef8ee0bd3a382a5abb92e402afa44b8249c3a90e9"),
-		EIP155Block:         big.NewInt(3),
-		EIP158Block:         big.NewInt(3),
-		ByzantiumBlock:      big.NewInt(1035301),
-		ConstantinopleBlock: nil,
+		ChainId:        big.NewInt(4),
+		HomesteadBlock: big.NewInt(1),
+		DAOForkBlock:   nil,
+		DAOForkSupport: true,
+		EIP150Block:    big.NewInt(2),
+		EIP150Hash:     common.HexToHash("0x9b095b36c15eaf13044373aef8ee0bd3a382a5abb92e402afa44b8249c3a90e9"),
+		// EIP155Block:         big.NewInt(3),
+		// EIP158Block:         big.NewInt(3),
+		// ByzantiumBlock:      big.NewInt(1035301),
+		// ConstantinopleBlock: nil,
 		Clique: &CliqueConfig{
 			Period: 15,
 			Epoch:  30000,
@@ -164,18 +146,22 @@ func (c *ChainConfig) String() string {
 	default:
 		engine = "unknown"
 	}
-	return fmt.Sprintf("{ChainID: %v Homestead: %v DAO: %v DAOSupport: %v EIP150: %v EIP155: %v EIP158: %v Byzantium: %v Constantinople: %v Engine: %v}",
+	return fmt.Sprintf("{ChainID: %v Engine: %v}",
 		c.ChainId,
-		c.HomesteadBlock,
-		c.DAOForkBlock,
-		c.DAOForkSupport,
-		c.EIP150Block,
-		c.EIP155Block,
-		c.EIP158Block,
-		c.ByzantiumBlock,
-		c.ConstantinopleBlock,
 		engine,
 	)
+	// return fmt.Sprintf("{ChainID: %v Homestead: %v DAO: %v DAOSupport: %v EIP150: %v EIP155: %v EIP158: %v Byzantium: %v Constantinople: %v Engine: %v}",
+	// 	c.ChainId,
+	// 	c.HomesteadBlock,
+	// 	c.DAOForkBlock,
+	// 	c.DAOForkSupport,
+	// 	c.EIP150Block,
+	// 	c.EIP155Block,
+	// 	c.EIP158Block,
+	// 	c.ByzantiumBlock,
+	// 	c.ConstantinopleBlock,
+	// 	engine,
+	// )
 }
 
 // IsHomestead returns whether num is either equal to the homestead block or greater.
@@ -244,33 +230,33 @@ func (c *ChainConfig) CheckCompatible(newcfg *ChainConfig, height uint64) *Confi
 }
 
 func (c *ChainConfig) checkCompatible(newcfg *ChainConfig, head *big.Int) *ConfigCompatError {
-	// if isForkIncompatible(c.HomesteadBlock, newcfg.HomesteadBlock, head) {
-	// 	return newCompatError("Homestead fork block", c.HomesteadBlock, newcfg.HomesteadBlock)
-	// }
-	// if isForkIncompatible(c.DAOForkBlock, newcfg.DAOForkBlock, head) {
-	// 	return newCompatError("DAO fork block", c.DAOForkBlock, newcfg.DAOForkBlock)
-	// }
-	// if c.IsDAOFork(head) && c.DAOForkSupport != newcfg.DAOForkSupport {
-	// 	return newCompatError("DAO fork support flag", c.DAOForkBlock, newcfg.DAOForkBlock)
-	// }
-	// if isForkIncompatible(c.EIP150Block, newcfg.EIP150Block, head) {
-	// 	return newCompatError("EIP150 fork block", c.EIP150Block, newcfg.EIP150Block)
-	// }
-	// if isForkIncompatible(c.EIP155Block, newcfg.EIP155Block, head) {
-	// 	return newCompatError("EIP155 fork block", c.EIP155Block, newcfg.EIP155Block)
-	// }
-	// if isForkIncompatible(c.EIP158Block, newcfg.EIP158Block, head) {
-	// 	return newCompatError("EIP158 fork block", c.EIP158Block, newcfg.EIP158Block)
-	// }
-	// if c.IsEIP158(head) && !configNumEqual(c.ChainId, newcfg.ChainId) {
-	// 	return newCompatError("EIP158 chain ID", c.EIP158Block, newcfg.EIP158Block)
-	// }
-	// if isForkIncompatible(c.ByzantiumBlock, newcfg.ByzantiumBlock, head) {
-	// 	return newCompatError("Byzantium fork block", c.ByzantiumBlock, newcfg.ByzantiumBlock)
-	// }
-	// if isForkIncompatible(c.ConstantinopleBlock, newcfg.ConstantinopleBlock, head) {
-	// 	return newCompatError("Constantinople fork block", c.ConstantinopleBlock, newcfg.ConstantinopleBlock)
-	// }
+	if isForkIncompatible(c.HomesteadBlock, newcfg.HomesteadBlock, head) {
+		return newCompatError("Homestead fork block", c.HomesteadBlock, newcfg.HomesteadBlock)
+	}
+	if isForkIncompatible(c.DAOForkBlock, newcfg.DAOForkBlock, head) {
+		return newCompatError("DAO fork block", c.DAOForkBlock, newcfg.DAOForkBlock)
+	}
+	if c.IsDAOFork(head) && c.DAOForkSupport != newcfg.DAOForkSupport {
+		return newCompatError("DAO fork support flag", c.DAOForkBlock, newcfg.DAOForkBlock)
+	}
+	if isForkIncompatible(c.EIP150Block, newcfg.EIP150Block, head) {
+		return newCompatError("EIP150 fork block", c.EIP150Block, newcfg.EIP150Block)
+	}
+	if isForkIncompatible(c.EIP155Block, newcfg.EIP155Block, head) {
+		return newCompatError("EIP155 fork block", c.EIP155Block, newcfg.EIP155Block)
+	}
+	if isForkIncompatible(c.EIP158Block, newcfg.EIP158Block, head) {
+		return newCompatError("EIP158 fork block", c.EIP158Block, newcfg.EIP158Block)
+	}
+	if c.IsEIP158(head) && !configNumEqual(c.ChainId, newcfg.ChainId) {
+		return newCompatError("EIP158 chain ID", c.EIP158Block, newcfg.EIP158Block)
+	}
+	if isForkIncompatible(c.ByzantiumBlock, newcfg.ByzantiumBlock, head) {
+		return newCompatError("Byzantium fork block", c.ByzantiumBlock, newcfg.ByzantiumBlock)
+	}
+	if isForkIncompatible(c.ConstantinopleBlock, newcfg.ConstantinopleBlock, head) {
+		return newCompatError("Constantinople fork block", c.ConstantinopleBlock, newcfg.ConstantinopleBlock)
+	}
 	return nil
 }
 

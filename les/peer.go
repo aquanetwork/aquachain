@@ -26,9 +26,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/les/flowcontrol"
 	"github.com/aquanetwork/aquachain/light"
 	"github.com/aquanetwork/aquachain/p2p"
@@ -41,7 +41,7 @@ var (
 	errNotRegistered     = errors.New("peer is not registered")
 )
 
-const maxResponseErrors = 50 // number of invalid responses tolerated (makes the protocol less brittle but still avoids spam)
+const maxResponseErrors = 30 // from 50 // number of invalid responses tolerated (makes the protocol less brittle but still avoids spam)
 
 const (
 	announceTypeNone = iota
