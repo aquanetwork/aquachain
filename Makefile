@@ -24,6 +24,9 @@ swarm:
 all:
 	build/env.sh go run build/ci.go install
 
+release: aquad-windows-amd64 aquad-darwin-amd64 aquad-linux-amd64
+
+
 android:
 	build/env.sh go run build/ci.go aar --local
 	@echo "Done building."
