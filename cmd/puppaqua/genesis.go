@@ -1,18 +1,18 @@
-// Copyright 2017 The go-aquachain Authors
-// This file is part of go-aquachain.
+// Copyright 2017 The aquachain Authors
+// This file is part of aquachain.
 //
-// go-aquachain is free software: you can redistribute it and/or modify
+// aquachain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// go-aquachain is distributed in the hope that it will be useful,
+// aquachain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with go-aquachain. If not, see <http://www.gnu.org/licenses/>.
+// along with aquachain. If not, see <http://www.gnu.org/licenses/>.
 
 package main
 
@@ -85,10 +85,10 @@ type cppAquaChainGenesisSpecLinearPricing struct {
 	Word uint64 `json:"word"`
 }
 
-// newCppAquaChainGenesisSpec converts a go-aquachain genesis block into a Parity specific
+// newCppAquaChainGenesisSpec converts a aquachain genesis block into a Parity specific
 // chain specification format.
 func newCppAquaChainGenesisSpec(network string, genesis *core.Genesis) (*cppAquaChainGenesisSpec, error) {
-	// Only aquahash is currently supported between go-aquachain and cpp-aquachain
+	// Only aquahash is currently supported between aquachain and cpp-aquachain
 	if genesis.Config.Aquahash == nil {
 		return nil, errors.New("unsupported consensus engine")
 	}
@@ -256,10 +256,10 @@ type parityChainSpecAltBnPairingPricing struct {
 	Pair uint64 `json:"pair"`
 }
 
-// newParityChainSpec converts a go-aquachain genesis block into a Parity specific
+// newParityChainSpec converts a aquachain genesis block into a Parity specific
 // chain specification format.
 func newParityChainSpec(network string, genesis *core.Genesis, bootnodes []string) (*parityChainSpec, error) {
-	// Only aquahash is currently supported between go-aquachain and Parity
+	// Only aquahash is currently supported between aquachain and Parity
 	if genesis.Config.Aquahash == nil {
 		return nil, errors.New("unsupported consensus engine")
 	}
@@ -355,10 +355,10 @@ type pyAquaChainGenesisSpec struct {
 	ParentHash common.Hash       `json:"parentHash"`
 }
 
-// newPyAquaChainGenesisSpec converts a go-aquachain genesis block into a Parity specific
+// newPyAquaChainGenesisSpec converts a aquachain genesis block into a Parity specific
 // chain specification format.
 func newPyAquaChainGenesisSpec(network string, genesis *core.Genesis) (*pyAquaChainGenesisSpec, error) {
-	// Only aquahash is currently supported between go-aquachain and pyaquachain
+	// Only aquahash is currently supported between aquachain and pyaquachain
 	if genesis.Config.Aquahash == nil {
 		return nil, errors.New("unsupported consensus engine")
 	}
