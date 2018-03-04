@@ -2,19 +2,19 @@
 # with Go source code. If you know what GOPATH is then you probably
 # don't need to bother with make.
 
-.PHONY: aquad android ios aquad-cross swarm evm all test clean
-.PHONY: aquad-linux aquad-linux-386 aquad-linux-amd64 aquad-linux-mips64 aquad-linux-mips64le
-.PHONY: aquad-linux-arm aquad-linux-arm-5 aquad-linux-arm-6 aquad-linux-arm-7 aquad-linux-arm64
-.PHONY: aquad-darwin aquad-darwin-386 aquad-darwin-amd64
-.PHONY: aquad-windows aquad-windows-386 aquad-windows-amd64
+.PHONY: aquachain android ios aquachain-cross swarm evm all test clean
+.PHONY: aquachain-linux aquachain-linux-386 aquachain-linux-amd64 aquachain-linux-mips64 aquachain-linux-mips64le
+.PHONY: aquachain-linux-arm aquachain-linux-arm-5 aquachain-linux-arm-6 aquachain-linux-arm-7 aquachain-linux-arm64
+.PHONY: aquachain-darwin aquachain-darwin-386 aquachain-darwin-amd64
+.PHONY: aquachain-windows aquachain-windows-386 aquachain-windows-amd64
 
 GOBIN = $(shell pwd)/build/bin
 GO ?= latest
 
-aquad:
-	build/env.sh go run build/ci.go install ./cmd/aquad
+aquachain:
+	build/env.sh go run build/ci.go install ./cmd/aquachain
 	@echo "Done building."
-	@echo "Run \"$(GOBIN)/aquad\" to launch aquad."
+	@echo "Run \"$(GOBIN)/aquachain\" to launch aquachain."
 
 swarm:
 	build/env.sh go run build/ci.go install ./cmd/swarm
@@ -24,13 +24,13 @@ swarm:
 all:
 	build/env.sh go run build/ci.go install
 
-release: aquad-windows-amd64 aquad-darwin-amd64 aquad-linux-amd64
+release: aquachain-windows-amd64 aquachain-darwin-amd64 aquachain-linux-amd64
 
 
 android:
 	build/env.sh go run build/ci.go aar --local
 	@echo "Done building."
-	@echo "Import \"$(GOBIN)/aquad.aar\" to use the library."
+	@echo "Import \"$(GOBIN)/aquachain.aar\" to use the library."
 
 ios:
 	build/env.sh go run build/ci.go xcode --local
@@ -58,92 +58,92 @@ devtools:
 
 # Cross Compilation Targets (xgo)
 
-aquad-cross: aquad-linux aquad-darwin aquad-windows aquad-android aquad-ios
+aquachain-cross: aquachain-linux aquachain-darwin aquachain-windows aquachain-android aquachain-ios
 	@echo "Full cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-*
+	@ls -ld $(GOBIN)/aquachain-*
 
-aquad-linux: aquad-linux-386 aquad-linux-amd64 aquad-linux-arm aquad-linux-mips64 aquad-linux-mips64le
+aquachain-linux: aquachain-linux-386 aquachain-linux-amd64 aquachain-linux-arm aquachain-linux-mips64 aquachain-linux-mips64le
 	@echo "Linux cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-*
+	@ls -ld $(GOBIN)/aquachain-linux-*
 
-aquad-linux-386:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/386 -v ./cmd/aquad
+aquachain-linux-386:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/386 -v ./cmd/aquachain
 	@echo "Linux 386 cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-* | grep 386
+	@ls -ld $(GOBIN)/aquachain-linux-* | grep 386
 
-aquad-linux-amd64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/amd64 -v ./cmd/aquad
+aquachain-linux-amd64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/amd64 -v ./cmd/aquachain
 	@echo "Linux amd64 cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-* | grep amd64
+	@ls -ld $(GOBIN)/aquachain-linux-* | grep amd64
 
-aquad-linux-arm: aquad-linux-arm-5 aquad-linux-arm-6 aquad-linux-arm-7 aquad-linux-arm64
+aquachain-linux-arm: aquachain-linux-arm-5 aquachain-linux-arm-6 aquachain-linux-arm-7 aquachain-linux-arm64
 	@echo "Linux ARM cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-* | grep arm
+	@ls -ld $(GOBIN)/aquachain-linux-* | grep arm
 
-aquad-linux-arm-5:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-5 -v ./cmd/aquad
+aquachain-linux-arm-5:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-5 -v ./cmd/aquachain
 	@echo "Linux ARMv5 cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-* | grep arm-5
+	@ls -ld $(GOBIN)/aquachain-linux-* | grep arm-5
 
-aquad-linux-arm-6:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-6 -v ./cmd/aquad
+aquachain-linux-arm-6:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-6 -v ./cmd/aquachain
 	@echo "Linux ARMv6 cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-* | grep arm-6
+	@ls -ld $(GOBIN)/aquachain-linux-* | grep arm-6
 
-aquad-linux-arm-7:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-7 -v ./cmd/aquad
+aquachain-linux-arm-7:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm-7 -v ./cmd/aquachain
 	@echo "Linux ARMv7 cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-* | grep arm-7
+	@ls -ld $(GOBIN)/aquachain-linux-* | grep arm-7
 
-aquad-linux-arm64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm64 -v ./cmd/aquad
+aquachain-linux-arm64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/arm64 -v ./cmd/aquachain
 	@echo "Linux ARM64 cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-* | grep arm64
+	@ls -ld $(GOBIN)/aquachain-linux-* | grep arm64
 
-aquad-linux-mips:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips --ldflags '-extldflags "-static"' -v ./cmd/aquad
+aquachain-linux-mips:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips --ldflags '-extldflags "-static"' -v ./cmd/aquachain
 	@echo "Linux MIPS cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-* | grep mips
+	@ls -ld $(GOBIN)/aquachain-linux-* | grep mips
 
-aquad-linux-mipsle:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mipsle --ldflags '-extldflags "-static"' -v ./cmd/aquad
+aquachain-linux-mipsle:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mipsle --ldflags '-extldflags "-static"' -v ./cmd/aquachain
 	@echo "Linux MIPSle cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-* | grep mipsle
+	@ls -ld $(GOBIN)/aquachain-linux-* | grep mipsle
 
-aquad-linux-mips64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64 --ldflags '-extldflags "-static"' -v ./cmd/aquad
+aquachain-linux-mips64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64 --ldflags '-extldflags "-static"' -v ./cmd/aquachain
 	@echo "Linux MIPS64 cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-* | grep mips64
+	@ls -ld $(GOBIN)/aquachain-linux-* | grep mips64
 
-aquad-linux-mips64le:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64le --ldflags '-extldflags "-static"' -v ./cmd/aquad
+aquachain-linux-mips64le:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=linux/mips64le --ldflags '-extldflags "-static"' -v ./cmd/aquachain
 	@echo "Linux MIPS64le cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-linux-* | grep mips64le
+	@ls -ld $(GOBIN)/aquachain-linux-* | grep mips64le
 
-aquad-darwin: aquad-darwin-386 aquad-darwin-amd64
+aquachain-darwin: aquachain-darwin-386 aquachain-darwin-amd64
 	@echo "Darwin cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-darwin-*
+	@ls -ld $(GOBIN)/aquachain-darwin-*
 
-aquad-darwin-386:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/386 -v ./cmd/aquad
+aquachain-darwin-386:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/386 -v ./cmd/aquachain
 	@echo "Darwin 386 cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-darwin-* | grep 386
+	@ls -ld $(GOBIN)/aquachain-darwin-* | grep 386
 
-aquad-darwin-amd64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/amd64 -v ./cmd/aquad
+aquachain-darwin-amd64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=darwin/amd64 -v ./cmd/aquachain
 	@echo "Darwin amd64 cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-darwin-* | grep amd64
+	@ls -ld $(GOBIN)/aquachain-darwin-* | grep amd64
 
-aquad-windows: aquad-windows-386 aquad-windows-amd64
+aquachain-windows: aquachain-windows-386 aquachain-windows-amd64
 	@echo "Windows cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-windows-*
+	@ls -ld $(GOBIN)/aquachain-windows-*
 
-aquad-windows-386:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/386 -v ./cmd/aquad
+aquachain-windows-386:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/386 -v ./cmd/aquachain
 	@echo "Windows 386 cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-windows-* | grep 386
+	@ls -ld $(GOBIN)/aquachain-windows-* | grep 386
 
-aquad-windows-amd64:
-	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/amd64 -v ./cmd/aquad
+aquachain-windows-amd64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/amd64 -v ./cmd/aquachain
 	@echo "Windows amd64 cross compilation done:"
-	@ls -ld $(GOBIN)/aquad-windows-* | grep amd64
+	@ls -ld $(GOBIN)/aquachain-windows-* | grep amd64
