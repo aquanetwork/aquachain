@@ -21,7 +21,7 @@ aquachain account new
 2)After creating a password for the wallet, start the AquaChain console by running the following:
 
 ```
-> aquachain console
+aquachain console
 ```
 
 3)While in the console, there are many commands you can run. Before mining, it is recommended to check how many peers you are connected to. In order to do this, type admin.peers.length after connecting to the console. Any number greater than 0 shows you have access to the network. To begin mining type the following in the console:
