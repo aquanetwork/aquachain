@@ -27,11 +27,10 @@ import (
 
 	"github.com/aquanetwork/aquachain/accounts"
 	"github.com/aquanetwork/aquachain/accounts/keystore"
-	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/console"
 	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/aquaclient"
+	"github.com/aquanetwork/aquachain/cmd/utils"
+	"github.com/aquanetwork/aquachain/console"
 	"github.com/aquanetwork/aquachain/internal/debug"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/metrics"
@@ -40,14 +39,12 @@ import (
 )
 
 const (
-	clientIdentifier = "aquad" // Client identifier to advertise over the network
+	clientIdentifier = "aquachain" // Client identifier to advertise over the network
 )
 
 var (
 	// Git SHA1 commit hash of the release (set via linker flags)
 	gitCommit = ""
-	// AquaChain address of the AquaChain release oracle.
-	relOracle = common.HexToAddress("0xfa7b9770ca4cb04296cac84f37736d4041251cdf")
 	// The app that holds all commands and flags.
 	app = utils.NewApp(gitCommit, "the aquachain command line interface")
 	// flags that configure the node
@@ -150,7 +147,7 @@ func init() {
 	// Initialize the CLI app and start AquaChain
 	app.Action = aquad
 	app.HideVersion = true // we have a command to print the version
-	app.Copyright = "Copyright 2013-2017 The aquachain Authors"
+	app.Copyright = "Copyright 2018 The Aquachain Authors"
 	app.Commands = []cli.Command{
 		// See chaincmd.go:
 		initCommand,
