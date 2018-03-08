@@ -30,7 +30,6 @@ import (
 	"github.com/aquanetwork/aquachain/common/hexutil"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
 	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/params"
 )
 
 // DefaultConfig contains default settings for use on the AquaChain main net.
@@ -48,7 +47,7 @@ var DefaultConfig = Config{
 	DatabaseCache: 768,
 	TrieCache:     256,
 	TrieTimeout:   5 * time.Minute,
-	GasPrice:      big.NewInt(18 * params.Shannon),
+	GasPrice:      big.NewInt(100000000), // 0.1 gwei
 
 	TxPool: core.DefaultTxPoolConfig,
 	GPO: gasprice.Config{
