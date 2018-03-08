@@ -429,7 +429,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			}
 			// If we're seemingly on the same chain, disable the drop timer
 			if verifyHF {
-				p.Log().Debug("Peer seems to be HF Compatible")
+				p.Log().Debug("Peer seems to be HF1 Compatible, for now...")
 				p.forkDrop.Stop()
 				p.forkDrop = nil
 				return nil
@@ -438,14 +438,14 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 		// Filter out any explicitly requested headers, deliver the rest to the downloader
 		filter := len(headers) == 1
 		if filter {
-			// If it's a potential DAO fork check, validate against the rules
+			// If it's a potential fork check, validate against the rules
 			if p.forkDrop != nil && pm.chainconfig.HF[0].Cmp(headers[0].Number) == 0 {
 				// Disable the fork drop timer
 				p.forkDrop.Stop()
 				p.forkDrop = nil
 
 				// Validate the header and either drop the peer or continue
-				if err := misc.VerifyDAOHeaderExtraData(pm.chainconfig, headers[0]); err != nil {
+				if err := misc.VerifyHFHeaderExtraData(pm.chainconfig, headers[0]); err != nil {
 					p.Log().Debug("Verified to be on HF Incompatible, dropping")
 					return err
 				}
