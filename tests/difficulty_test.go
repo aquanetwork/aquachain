@@ -75,7 +75,11 @@ func TestDifficulty(t *testing.T) {
 
 	dt.walk(t, difficultyTestDir, func(t *testing.T, name string, test *DifficultyTest) {
 		cfg := dt.findConfig(name)
-		if test.ParentDifficulty.Cmp(params.MinimumDifficulty) < 0 {
+		mindiff := params.MinimumDifficultyGenesis
+		if cfg.IsHF(1, big.NewInt(int64(test.CurrentBlockNumber))) {
+			mindiff = params.MinimumDifficultyHF1
+		}
+		if test.ParentDifficulty.Cmp(mindiff) < 0 {
 			t.Skip("difficulty below minimum")
 			return
 		}

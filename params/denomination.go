@@ -28,7 +28,7 @@ const (
 	Shannon  = 1e9
 	Szabo    = 1e12
 	Finney   = 1e15
-	Aquaer    = 1e18
+	Aquaer   = 1e18
 	Einstein = 1e21
 	Douglas  = 1e42
 )

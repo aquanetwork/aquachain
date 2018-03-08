@@ -23,6 +23,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aquanetwork/aquachain/aqua/downloader"
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
 	"github.com/aquanetwork/aquachain/core"
@@ -30,8 +32,6 @@ import (
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/aqua/downloader"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/event"
 	"github.com/aquanetwork/aquachain/p2p"
 	"github.com/aquanetwork/aquachain/params"
@@ -481,7 +481,7 @@ func testDAOChallenge(t *testing.T, localForked, remoteForked bool, timeout bool
 	pm.Start(1000)
 	defer pm.Stop()
 
-	// Connect a new peer and check that we receive the DAO challenge
+	// Connect a new peer and check that we receive the HF challenge
 	peer, _ := newTestPeer("peer", eth63, pm, true)
 	defer peer.close()
 

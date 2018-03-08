@@ -34,7 +34,10 @@ var (
 		ChainId:        big.NewInt(1),
 		HomesteadBlock: big.NewInt(0),
 		EIP150Block:    big.NewInt(0),
-		// EIP150Hash:          common.HexToHash("0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d"),
+		HF: map[int]*big.Int{
+			0: big.NewInt(3000),
+			1: big.NewInt(3600), // increase min difficulty to the next multiple of 2048
+		},
 		Aquahash: new(AquahashConfig),
 	}
 
@@ -43,12 +46,9 @@ var (
 		ChainId:        big.NewInt(3),
 		HomesteadBlock: big.NewInt(0),
 		EIP150Block:    big.NewInt(0),
-		// EIP150Block:         big.NewInt(0),
-		// EIP150Hash:          common.HexToHash("0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d"),
-		// EIP155Block:         big.NewInt(10),
-		// EIP158Block:         big.NewInt(10),
-		// ByzantiumBlock:      big.NewInt(1700000),
-		// ConstantinopleBlock: nil,
+		HF: map[int]*big.Int{
+			1: big.NewInt(5), // increase min difficulty to the next multiple of 2048
+		},
 		Aquahash: new(AquahashConfig),
 	}
 
@@ -75,16 +75,16 @@ var (
 	//
 	// This configuration is intentionally not using keyed fields to force anyone
 	// adding flags to the config to also have to set these fields.
-	AllAquahashProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil}
+	AllAquahashProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil}
 
 	// AllCliqueProtocolChanges contains every protocol change (EIPs) introduced
 	// and accepted by the AquaChain core developers into the Clique consensus.
 	//
 	// This configuration is intentionally not using keyed fields to force anyone
 	// adding flags to the config to also have to set these fields.
-	AllCliqueProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, &CliqueConfig{Period: 0, Epoch: 30000}}
+	AllCliqueProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, &CliqueConfig{Period: 0, Epoch: 30000}}
 
-	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil}
+	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil}
 	TestRules       = TestChainConfig.Rules(new(big.Int))
 )
 
@@ -98,6 +98,10 @@ type ChainConfig struct {
 
 	HomesteadBlock *big.Int `json:"homesteadBlock,omitempty"` // Homestead switch block (nil = no fork, 0 = already homestead)
 
+	// HF Scheduled Maintainance Hardforks
+	HF map[int]*big.Int `json:"hfmap,omitempty"` // map of HF block numbers
+
+	// et junk to remove
 	DAOForkBlock   *big.Int `json:"daoForkBlock,omitempty"`   // TheDAO hard-fork switch block (nil = no fork)
 	DAOForkSupport bool     `json:"daoForkSupport,omitempty"` // Whether the nodes supports or opposes the DAO hard-fork
 
@@ -146,9 +150,12 @@ func (c *ChainConfig) String() string {
 	default:
 		engine = "unknown"
 	}
-	return fmt.Sprintf("{ChainID: %v Engine: %v}",
+
+	hfmap := fmt.Sprint(c.HF)
+	return fmt.Sprintf("{ChainID: %v, Engine: %v, HF-Ready: %s}",
 		c.ChainId,
 		engine,
+		hfmap,
 	)
 	// return fmt.Sprintf("{ChainID: %v Homestead: %v DAO: %v DAOSupport: %v EIP150: %v EIP155: %v EIP158: %v Byzantium: %v Constantinople: %v Engine: %v}",
 	// 	c.ChainId,
@@ -162,6 +169,33 @@ func (c *ChainConfig) String() string {
 	// 	c.ConstantinopleBlock,
 	// 	engine,
 	// )
+}
+
+// IsHF returns whether num is either equal to the hf block or greater.
+func (c *ChainConfig) IsHF(hf int, num *big.Int) bool {
+	if c.HF[hf] == nil {
+		return false
+	}
+	return isForked(c.HF[hf], num)
+}
+
+// NextHF returns the next scheduled hard fork block number
+func (c *ChainConfig) NextHF(cur *big.Int) *big.Int {
+	if cur != nil {
+		for _, height := range c.HF {
+			if cur.Cmp(height) < 0 {
+				return height
+			}
+		}
+		return nil
+	}
+
+	// return latest hf
+	hflen := len(c.HF)
+	if c.HF == nil || hflen == 0 {
+		return nil
+	}
+	return c.HF[-1+hflen]
 }
 
 // IsHomestead returns whether num is either equal to the homestead block or greater.
@@ -194,7 +228,7 @@ func (c *ChainConfig) IsConstantinople(num *big.Int) bool {
 	return isForked(c.ConstantinopleBlock, num)
 }
 
-// GasTable returns the gas table corresponding to the current phase (homestead or homestead reprice).
+// GasTable returns the gas table corresponding to the current phase.
 //
 // The returned GasTable's fields shouldn't, under any circumstances, be changed.
 func (c *ChainConfig) GasTable(num *big.Int) GasTable {
@@ -202,10 +236,8 @@ func (c *ChainConfig) GasTable(num *big.Int) GasTable {
 		return GasTableHomestead
 	}
 	switch {
-	case c.IsEIP158(num):
-		return GasTableEIP158
-	case c.IsEIP150(num):
-		return GasTableEIP150
+	case c.IsHF(1, num):
+		return GasTableHF1
 	default:
 		return GasTableHomestead
 	}

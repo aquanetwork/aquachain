@@ -20,13 +20,13 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/consensus/misc"
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/params"
 )
 
@@ -181,8 +181,8 @@ func GenerateChain(config *params.ChainConfig, parent *types.Block, engine conse
 				}
 			}
 		}
-		if config.DAOForkSupport && config.DAOForkBlock != nil && config.DAOForkBlock.Cmp(b.header.Number) == 0 {
-			misc.ApplyDAOHardFork(statedb)
+		if nexthf := config.NextHF(big.NewInt(0).Add(b.header.Number, big.NewInt(-1))); nexthf != nil && nexthf.Cmp(b.header.Number) == 0 {
+			misc.ApplyHardFork(statedb)
 		}
 		// Execute any user modifications to the block and finalize it
 		if gen != nil {

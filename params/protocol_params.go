@@ -80,8 +80,9 @@ const (
 )
 
 var (
-	DifficultyBoundDivisor = big.NewInt(2048)    // The bound divisor of the difficulty, used in the update calculations.
-	GenesisDifficulty      = big.NewInt(99999999) // Difficulty of the Genesis block.
-	MinimumDifficulty      = big.NewInt(99999999) // The minimum that the difficulty may ever be.
-	DurationLimit          = big.NewInt(600)       // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	DifficultyBoundDivisor   = big.NewInt(2048)      // The bound divisor of the difficulty, used in the update calculations.
+	GenesisDifficulty        = big.NewInt(99999999)  // Difficulty of the Genesis block.
+	MinimumDifficultyGenesis = big.NewInt(99999999)  // The minimum that the difficulty may ever be
+	MinimumDifficultyHF1     = big.NewInt(100001792) // The minimum that the difficulty may ever be (changed to a nice multiple of 2048).
+	DurationLimit            = big.NewInt(600)       // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
 )
