@@ -98,7 +98,7 @@ type ChainConfig struct {
 
 	HomesteadBlock *big.Int `json:"homesteadBlock,omitempty"` // Homestead switch block (nil = no fork, 0 = already homestead)
 
-	// HF Scheduled Maintainance Hardforks
+	// HF Scheduled Maintenance Hardforks
 	HF map[int]*big.Int `json:"hfmap,omitempty"` // map of HF block numbers
 
 	// et junk to remove
