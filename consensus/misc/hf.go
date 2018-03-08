@@ -14,32 +14,25 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
 
-package params
+package misc
 
 import (
-	"fmt"
+	"math/big"
+
+	"github.com/aquanetwork/aquachain/core/state"
+	"github.com/aquanetwork/aquachain/core/types"
+	"github.com/aquanetwork/aquachain/params"
 )
 
-const (
-	VersionMajor = 1     // Major version component of the current release
-	VersionMinor = 1     // Minor version component of the current release
-	VersionPatch = 0     // Patch version component of the current release
-	VersionMeta  = "hf1" // Version metadata to append to the version string
-)
-
-// Version holds the textual version string.
-var Version = func() string {
-	v := fmt.Sprintf("%d.%d.%d", VersionMajor, VersionMinor, VersionPatch)
-	if VersionMeta != "" {
-		v += "-" + VersionMeta
+func VerifyHFHeaderExtraData(config *params.ChainConfig, header *types.Header) error {
+	// Short circuit validation if the node doesn't have any upcoming hf
+	if config.NextHF(big.NewInt(0).Add(big.NewInt(-1), header.Number)) == nil {
+		return nil
 	}
-	return v
-}()
+	return nil
+}
 
-func VersionWithCommit(gitCommit string) string {
-	vsn := Version
-	if len(gitCommit) >= 8 {
-		vsn += "-" + gitCommit[:8]
-	}
-	return vsn
+// ApplyHardFork modifies the state database according to the specific hf
+func ApplyHardFork(statedb *state.StateDB) {
+	// do nothing
 }

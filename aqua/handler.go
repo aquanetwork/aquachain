@@ -26,14 +26,14 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/aquanetwork/aquachain/aqua/downloader"
+	"github.com/aquanetwork/aquachain/aqua/fetcher"
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/consensus/misc"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/aqua/downloader"
-	"github.com/aquanetwork/aquachain/aqua/fetcher"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/event"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/p2p"
@@ -284,16 +284,15 @@ func (pm *ProtocolManager) handle(p *peer) error {
 	// after this will be sent via broadcasts.
 	pm.syncTransactions(p)
 
-	// If we're DAO hard-fork aware, validate any remote peer with regard to the hard-fork
-	if daoBlock := pm.chainconfig.DAOForkBlock; daoBlock != nil {
+	if nextHFBlock := pm.chainconfig.NextHF(head.Number); nextHFBlock != nil {
 		// Request the peer's DAO fork header for extra-data validation
-		if err := p.RequestHeadersByNumber(daoBlock.Uint64(), 1, 0, false); err != nil {
+		if err := p.RequestHeadersByNumber(nextHFBlock.Uint64(), 1, 0, false); err != nil {
 			return err
 		}
 		// Start a timer to disconnect if the peer doesn't reply in time
 		p.forkDrop = time.AfterFunc(daoChallengeTimeout, func() {
-			p.Log().Debug("Timed out DAO fork-check, dropping")
-			pm.removePeer(p.id)
+			p.Log().Debug("Timed out fork-check")
+			//pm.removePeer(p.id)
 		})
 		// Make sure it's cleaned up if the peer dies off
 		defer func() {
@@ -419,18 +418,18 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 		// If no headers were received, but we're expending a DAO fork check, maybe it's that
 		if len(headers) == 0 && p.forkDrop != nil {
 			// Possibly an empty reply to the fork header checks, sanity check TDs
-			verifyDAO := true
+			verifyHF := true
 
 			// If we already have a DAO header, we can check the peer's TD against it. If
 			// the peer's ahead of this, it too must have a reply to the DAO check
-			if daoHeader := pm.blockchain.GetHeaderByNumber(pm.chainconfig.DAOForkBlock.Uint64()); daoHeader != nil {
-				if _, td := p.Head(); td.Cmp(pm.blockchain.GetTd(daoHeader.Hash(), daoHeader.Number.Uint64())) >= 0 {
-					verifyDAO = false
+			if hfHeader := pm.blockchain.GetHeaderByNumber(pm.chainconfig.HF[0].Uint64()); hfHeader != nil {
+				if _, td := p.Head(); td.Cmp(pm.blockchain.GetTd(hfHeader.Hash(), hfHeader.Number.Uint64())) >= 0 {
+					verifyHF = false
 				}
 			}
 			// If we're seemingly on the same chain, disable the drop timer
-			if verifyDAO {
-				p.Log().Debug("Seems to be on the same side of the DAO fork")
+			if verifyHF {
+				p.Log().Debug("Peer seems to be HF1 Compatible, for now...")
 				p.forkDrop.Stop()
 				p.forkDrop = nil
 				return nil
@@ -439,18 +438,18 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 		// Filter out any explicitly requested headers, deliver the rest to the downloader
 		filter := len(headers) == 1
 		if filter {
-			// If it's a potential DAO fork check, validate against the rules
-			if p.forkDrop != nil && pm.chainconfig.DAOForkBlock.Cmp(headers[0].Number) == 0 {
+			// If it's a potential fork check, validate against the rules
+			if p.forkDrop != nil && pm.chainconfig.HF[0].Cmp(headers[0].Number) == 0 {
 				// Disable the fork drop timer
 				p.forkDrop.Stop()
 				p.forkDrop = nil
 
 				// Validate the header and either drop the peer or continue
-				if err := misc.VerifyDAOHeaderExtraData(pm.chainconfig, headers[0]); err != nil {
-					p.Log().Debug("Verified to be on the other side of the DAO fork, dropping")
+				if err := misc.VerifyHFHeaderExtraData(pm.chainconfig, headers[0]); err != nil {
+					p.Log().Debug("Verified to be on HF Incompatible, dropping")
 					return err
 				}
-				p.Log().Debug("Verified to be on the same side of the DAO fork")
+				p.Log().Debug("Verified to be HF Compatible")
 				return nil
 			}
 			// Irrelevant of the fork checks, send the header to the fetcher just in case

@@ -26,9 +26,9 @@ import (
 	"time"
 
 	aquachain "github.com/aquanetwork/aquachain"
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/event"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/metrics"
@@ -69,7 +69,7 @@ var (
 var (
 	errBusy                    = errors.New("busy")
 	errUnknownPeer             = errors.New("peer is unknown or unhealthy")
-	errBadPeer                 = errors.New("action from bad peer ignored")
+	errBadPeer                 = errors.New("action from evil peer ignored")
 	errStallingPeer            = errors.New("peer is stalling")
 	errNoPeers                 = errors.New("no peers to keep download active")
 	errTimeout                 = errors.New("timeout")

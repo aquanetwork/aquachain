@@ -22,10 +22,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aquanetwork/aquachain/aqua/downloader"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/aqua/downloader"
 	"github.com/aquanetwork/aquachain/p2p"
 	"github.com/aquanetwork/aquachain/rlp"
 )

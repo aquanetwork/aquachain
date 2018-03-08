@@ -1,9 +1,27 @@
 # Aquachain
 
+[![Build Status](https://travis-ci.org/aquanetwork/aquachain.svg?branch=master)](https://travis-ci.org/aquanetwork/aquachain)
+
 ## General Purpose Smart Contract Distributed Super Computer
 
 Only one AQUA reward every block. Avg block time is 197 seconds as of right now*. At block 42mil block rewards become zero (gas only)
 
+
+## GET AQUACHAIN
+
+To begin, you must have aquachain command installed.
+
+To build with go, use `go get -v github.com/aquanetwork/aquachain/cmd/aquachain`
+
+To download binary release, see [Releases](https://github.com/aquanetwork/aquachain/releases/latest)
+
+Apple/Linux Install: (Apple users, replace linux-amd64 with darwin-amd64)
+
+	sudo chmod +x aquachain-linux-amd64 			# make executable
+	sudo mv aquachain-linux-amd64 /usr/local/bin/aquachain 	# install
+	aquachain account new					# create new private/public key pair
+	aquachain --mine console				# start mining, open console
+	
 ## MINE AQUACHAIN
 
 ONE TWO THREE

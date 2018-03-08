@@ -444,8 +444,8 @@ func (self *worker) commitNewWork() {
 	}
 	// Create the current work task and check any fork transitions needed
 	work := self.current
-	if self.config.DAOForkSupport && self.config.DAOForkBlock != nil && self.config.DAOForkBlock.Cmp(header.Number) == 0 {
-		misc.ApplyDAOHardFork(work.state)
+	if nexthf := self.config.NextHF(big.NewInt(0).Add(header.Number, big.NewInt(-1))); nexthf != nil && nexthf.Cmp(header.Number) == 0 {
+		misc.ApplyHardFork(work.state)
 	}
 	pending, err := self.aqua.TxPool().Pending()
 	if err != nil {
@@ -469,10 +469,17 @@ func (self *worker) commitNewWork() {
 			log.Trace(fmt.Sprint(uncle))
 
 			badUncles = append(badUncles, hash)
-		} else {
-			log.Debug("Committing new uncle to block", "hash", hash)
-			uncles = append(uncles, uncle.Header())
 		}
+		if uncle.Transactions().Len() == 0 {
+			log.Trace("Empty uncle found and will be removed", "hash", hash)
+			log.Trace(fmt.Sprint(uncle))
+
+			badUncles = append(badUncles, hash)
+		}
+
+		log.Debug("Committing new uncle to block", "hash", hash)
+		uncles = append(uncles, uncle.Header())
+
 	}
 	for _, hash := range badUncles {
 		delete(self.possibleUncles, hash)

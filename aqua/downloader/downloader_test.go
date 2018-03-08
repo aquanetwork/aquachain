@@ -25,12 +25,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/event"
 	"github.com/aquanetwork/aquachain/params"
 	"github.com/aquanetwork/aquachain/trie"
@@ -52,7 +52,7 @@ func init() {
 type downloadTester struct {
 	downloader *Downloader
 
-	genesis *types.Block   // Genesis blocks used by the tester and peers
+	genesis *types.Block    // Genesis blocks used by the tester and peers
 	stateDb aquadb.Database // Database used by the tester for syncing from peers
 	peerDb  aquadb.Database // Database of the peers containing all data
 
