@@ -273,7 +273,14 @@ func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, str
 // console's available modules.
 func (c *Console) Welcome() {
 	// Print some generic AquaChain metadata
-	fmt.Fprintf(c.printer, "Welcome to the AquaChain JavaScript console!\n\n")
+	fmt.Fprintf(c.printer, "\nWelcome to the AquaChain JavaScript console!\n")
+	fmt.Fprintf(c.printer, `                              _           _
+  __ _  __ _ _   _  __ _  ___| |__   __ _(_)_ __
+ / _ '|/ _' | | | |/ _' |/ __| '_ \ / _' | | '_ \
+| (_| | (_| | |_| | (_| | (__| | | | (_| | | | | |
+ \__,_|\__, |\__,_|\__,_|\___|_| |_|\__,_|_|_| |_|
+          |_|`+"\nUpdate Often! https://github.com/aquanetwork/aquachain\n\n")
+
 	c.jsre.Run(`
 		console.log("instance: " + web3.version.node);
 		console.log("coinbase: " + aqua.coinbase);
@@ -284,6 +291,9 @@ func (c *Console) Welcome() {
 	if apis, err := c.client.SupportedModules(); err == nil {
 		modules := make([]string, 0, len(apis))
 		for api, version := range apis {
+			if api == "eth" {
+				continue
+			}
 			modules = append(modules, fmt.Sprintf("%s:%s", api, version))
 		}
 		sort.Strings(modules)
