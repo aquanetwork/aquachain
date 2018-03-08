@@ -176,7 +176,7 @@ const (
 	SYS_SWAPON                 = 167
 	SYS_SWAPOFF                = 168
 	SYS_REBOOT                 = 169
-	SYS_SAQUAOSTNAME            = 170
+	SYS_SAQUAOSTNAME           = 170
 	SYS_SETDOMAINNAME          = 171
 	SYS_IOPL                   = 172
 	SYS_IOPERM                 = 173

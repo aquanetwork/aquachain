@@ -30,12 +30,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/mclock"
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/event"
 	"github.com/aquanetwork/aquachain/les"
 	"github.com/aquanetwork/aquachain/log"
@@ -69,10 +69,10 @@ type blockChain interface {
 // Service implements an AquaChain netstats reporting daemon that pushes local
 // chain statistics up to a monitoring server.
 type Service struct {
-	server *p2p.Server        // Peer-to-peer server to retrieve networking infos
-	aqua    *aqua.AquaChain      // Full AquaChain service if monitoring a full node
+	server *p2p.Server         // Peer-to-peer server to retrieve networking infos
+	aqua   *aqua.AquaChain     // Full AquaChain service if monitoring a full node
 	les    *les.LightAquaChain // Light AquaChain service if monitoring a light node
-	engine consensus.Engine   // Consensus engine to retrieve variadic block fields
+	engine consensus.Engine    // Consensus engine to retrieve variadic block fields
 
 	node string // Name of the node to display on the monitoring page
 	pass string // Password to authorize access to the monitoring page
@@ -98,7 +98,7 @@ func New(url string, ethServ *aqua.AquaChain, lesServ *les.LightAquaChain) (*Ser
 		engine = lesServ.Engine()
 	}
 	return &Service{
-		aqua:    ethServ,
+		aqua:   ethServ,
 		les:    lesServ,
 		engine: engine,
 		node:   parts[1],

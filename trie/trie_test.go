@@ -29,11 +29,11 @@ import (
 	"testing"
 	"testing/quick"
 
-	"github.com/davecgh/go-spew/spew"
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/rlp"
+	"github.com/davecgh/go-spew/spew"
 )
 
 func init() {

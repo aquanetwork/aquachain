@@ -93,19 +93,19 @@ func deployWallet(client *sshClient, network string, bootnodes []string, config 
 		"NodePort":  config.nodePort,
 		"RPCPort":   config.rpcPort,
 		"Bootnodes": strings.Join(bootnodes, ","),
-		"Aquastats":  config.aquastats,
+		"Aquastats": config.aquastats,
 		"Host":      client.address,
 	})
 	files[filepath.Join(workdir, "Dockerfile")] = dockerfile.Bytes()
 
 	composefile := new(bytes.Buffer)
 	template.Must(template.New("").Parse(walletComposefile)).Execute(composefile, map[string]interface{}{
-		"Datadir":  config.datadir,
-		"Network":  network,
-		"NodePort": config.nodePort,
-		"RPCPort":  config.rpcPort,
-		"VHost":    config.webHost,
-		"WebPort":  config.webPort,
+		"Datadir":   config.datadir,
+		"Network":   network,
+		"NodePort":  config.nodePort,
+		"RPCPort":   config.rpcPort,
+		"VHost":     config.webHost,
+		"WebPort":   config.webPort,
 		"Aquastats": config.aquastats[:strings.Index(config.aquastats, ":")],
 	})
 	files[filepath.Join(workdir, "docker-compose.yaml")] = composefile.Bytes()
@@ -128,14 +128,14 @@ func deployWallet(client *sshClient, network string, bootnodes []string, config 
 // walletInfos is returned from a web wallet status check to allow reporting
 // various configuration parameters.
 type walletInfos struct {
-	genesis  []byte
-	network  int64
-	datadir  string
+	genesis   []byte
+	network   int64
+	datadir   string
 	aquastats string
-	nodePort int
-	rpcPort  int
-	webHost  string
-	webPort  int
+	nodePort  int
+	rpcPort   int
+	webHost   string
+	webPort   int
 }
 
 // Report converts the typed struct into a plain string->string map, containing
@@ -143,7 +143,7 @@ type walletInfos struct {
 func (info *walletInfos) Report() map[string]string {
 	report := map[string]string{
 		"Data directory":         info.datadir,
-		"Aquastats username":      info.aquastats,
+		"Aquastats username":     info.aquastats,
 		"Node listener port ":    strconv.Itoa(info.nodePort),
 		"RPC listener port ":     strconv.Itoa(info.rpcPort),
 		"Website address ":       info.webHost,
@@ -189,11 +189,11 @@ func checkWallet(client *sshClient, network string) (*walletInfos, error) {
 	}
 	// Assemble and return the useful infos
 	stats := &walletInfos{
-		datadir:  infos.volumes["/root/.aquachain"],
-		nodePort: nodePort,
-		rpcPort:  rpcPort,
-		webHost:  host,
-		webPort:  webPort,
+		datadir:   infos.volumes["/root/.aquachain"],
+		nodePort:  nodePort,
+		rpcPort:   rpcPort,
+		webHost:   host,
+		webPort:   webPort,
 		aquastats: infos.envvars["STATS"],
 	}
 	return stats, nil

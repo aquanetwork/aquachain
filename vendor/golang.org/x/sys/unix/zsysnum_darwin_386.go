@@ -105,7 +105,7 @@ const (
 	SYS_UTIMES                         = 138
 	SYS_FUTIMES                        = 139
 	SYS_ADJTIME                        = 140
-	SYS_AQUADOSTUUID                    = 142
+	SYS_AQUADOSTUUID                   = 142
 	SYS_SETSID                         = 147
 	SYS_GETPGID                        = 151
 	SYS_SETPRIVEXEC                    = 152

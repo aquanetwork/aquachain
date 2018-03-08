@@ -5,12 +5,12 @@ package aqua
 import (
 	"math/big"
 
+	"github.com/aquanetwork/aquachain/aqua/downloader"
+	"github.com/aquanetwork/aquachain/aqua/gasprice"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/hexutil"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
 	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/aqua/downloader"
-	"github.com/aquanetwork/aquachain/aqua/gasprice"
 )
 
 var _ = (*configMarshaling)(nil)
@@ -25,11 +25,11 @@ func (c Config) MarshalTOML() (interface{}, error) {
 		SkipBcVersionCheck      bool `toml:"-"`
 		DatabaseHandles         int  `toml:"-"`
 		DatabaseCache           int
-		Aquabase               common.Address `toml:",omitempty"`
+		Aquabase                common.Address `toml:",omitempty"`
 		MinerThreads            int            `toml:",omitempty"`
 		ExtraData               hexutil.Bytes  `toml:",omitempty"`
 		GasPrice                *big.Int
-		Aquahash                  aquahash.Config
+		Aquahash                aquahash.Config
 		TxPool                  core.TxPoolConfig
 		GPO                     gasprice.Config
 		EnablePreimageRecording bool
@@ -66,11 +66,11 @@ func (c *Config) UnmarshalTOML(unmarshal func(interface{}) error) error {
 		SkipBcVersionCheck      *bool `toml:"-"`
 		DatabaseHandles         *int  `toml:"-"`
 		DatabaseCache           *int
-		Aquabase               *common.Address `toml:",omitempty"`
+		Aquabase                *common.Address `toml:",omitempty"`
 		MinerThreads            *int            `toml:",omitempty"`
 		ExtraData               *hexutil.Bytes  `toml:",omitempty"`
 		GasPrice                *big.Int
-		Aquahash                  *aquahash.Config
+		Aquahash                *aquahash.Config
 		TxPool                  *core.TxPoolConfig
 		GPO                     *gasprice.Config
 		EnablePreimageRecording *bool

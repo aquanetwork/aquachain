@@ -121,7 +121,7 @@ func (api *PublicDownloaderAPI) Syncing(ctx context.Context) (*rpc.Subscription,
 
 // SyncingResult provides information about the current synchronisation status for this node.
 type SyncingResult struct {
-	Syncing bool                  `json:"syncing"`
+	Syncing bool                   `json:"syncing"`
 	Status  aquachain.SyncProgress `json:"status"`
 }
 

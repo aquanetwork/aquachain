@@ -282,7 +282,7 @@ const (
 	DLT_EN3MB                         = 0x2
 	DLT_ENC                           = 0x6d
 	DLT_ERF                           = 0xc5
-	DLT_ERF_AQUA                       = 0xaf
+	DLT_ERF_AQUA                      = 0xaf
 	DLT_ERF_POS                       = 0xb0
 	DLT_FC_2                          = 0xe0
 	DLT_FC_2_WITH_FRAME_DELIMS        = 0xe1
@@ -323,7 +323,7 @@ const (
 	DLT_JUNIPER_ATM_CEMIC             = 0xee
 	DLT_JUNIPER_CHDLC                 = 0xb5
 	DLT_JUNIPER_ES                    = 0x84
-	DLT_JUNIPER_AQUAER                 = 0xb2
+	DLT_JUNIPER_AQUAER                = 0xb2
 	DLT_JUNIPER_FIBRECHANNEL          = 0xea
 	DLT_JUNIPER_FRELAY                = 0xb4
 	DLT_JUNIPER_GGSN                  = 0x85
@@ -373,7 +373,7 @@ const (
 	DLT_PPI                           = 0xc0
 	DLT_PPP                           = 0x9
 	DLT_PPP_BSDOS                     = 0x10
-	DLT_PPP_AQUAER                     = 0x33
+	DLT_PPP_AQUAER                    = 0x33
 	DLT_PPP_PPPD                      = 0xa6
 	DLT_PPP_SERIAL                    = 0x32
 	DLT_PPP_WITH_DIR                  = 0xcc
@@ -566,7 +566,7 @@ const (
 	IFT_DS3                           = 0x1e
 	IFT_ENC                           = 0xf4
 	IFT_EON                           = 0x19
-	IFT_AQUAER                         = 0x6
+	IFT_AQUAER                        = 0x6
 	IFT_FAITH                         = 0x38
 	IFT_FDDI                          = 0xf
 	IFT_FRELAY                        = 0x20
@@ -621,7 +621,7 @@ const (
 	IFT_X25                           = 0x5
 	IFT_X25DDN                        = 0x4
 	IFT_X25PLE                        = 0x28
-	IFT_XAQUAER                        = 0x1a
+	IFT_XAQUAER                       = 0x1a
 	IGNBRK                            = 0x1
 	IGNCR                             = 0x80
 	IGNPAR                            = 0x4
@@ -669,7 +669,7 @@ const (
 	IPPROTO_ENCAP                     = 0x62
 	IPPROTO_EON                       = 0x50
 	IPPROTO_ESP                       = 0x32
-	IPPROTO_AQUAERIP                   = 0x61
+	IPPROTO_AQUAERIP                  = 0x61
 	IPPROTO_FRAGMENT                  = 0x2c
 	IPPROTO_GGP                       = 0x3
 	IPPROTO_GMTP                      = 0x64

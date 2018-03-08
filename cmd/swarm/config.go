@@ -70,7 +70,7 @@ const (
 	SWARM_ENV_ENS_ADDR        = "SWARM_ENS_ADDR"
 	SWARM_ENV_CORS            = "SWARM_CORS"
 	SWARM_ENV_BOOTNODES       = "SWARM_BOOTNODES"
-	AQUAD_ENV_DATADIR          = "AQUAD_DATADIR"
+	AQUAD_ENV_DATADIR         = "AQUAD_DATADIR"
 )
 
 // These settings ensure that TOML keys use the same names as Go struct fields.

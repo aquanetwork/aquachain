@@ -167,7 +167,7 @@ const (
 	SYS_GETGROUPS              = 158
 	SYS_SETGROUPS              = 159
 	SYS_UNAME                  = 160
-	SYS_SAQUAOSTNAME            = 161
+	SYS_SAQUAOSTNAME           = 161
 	SYS_SETDOMAINNAME          = 162
 	SYS_GETRLIMIT              = 163
 	SYS_SETRLIMIT              = 164

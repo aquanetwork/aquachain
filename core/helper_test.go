@@ -20,8 +20,8 @@ import (
 	"container/list"
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/aquadb"
+	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/event"
 )
 

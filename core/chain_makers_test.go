@@ -20,11 +20,11 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/params"
 )
 

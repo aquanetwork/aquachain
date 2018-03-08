@@ -19,12 +19,12 @@ package aqua
 import (
 	"time"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/bitutil"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/bloombits"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/params"
 )
 
@@ -93,7 +93,7 @@ const (
 type BloomIndexer struct {
 	size uint64 // section size to generate bloombits for
 
-	db  aquadb.Database       // database instance to write index data and metadata into
+	db  aquadb.Database      // database instance to write index data and metadata into
 	gen *bloombits.Generator // generator to rotate the bloom bits crating the bloom index
 
 	section uint64      // Section is the section number being processed currently

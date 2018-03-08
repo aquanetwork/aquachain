@@ -24,11 +24,11 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/aqua/downloader"
 	"github.com/aquanetwork/aquachain/aquaclient"
 	"github.com/aquanetwork/aquachain/aquastats"
+	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/les"
 	"github.com/aquanetwork/aquachain/node"
 	"github.com/aquanetwork/aquachain/p2p"
@@ -77,8 +77,8 @@ type NodeConfig struct {
 // defaultNodeConfig contains the default node configuration values to use if all
 // or some fields are missing from the user's specified list.
 var defaultNodeConfig = &NodeConfig{
-	BootstrapNodes:        FoundationBootnodes(),
-	MaxPeers:              25,
+	BootstrapNodes:         FoundationBootnodes(),
+	MaxPeers:               25,
 	AquaChainEnabled:       true,
 	AquaChainNetworkID:     1,
 	AquaChainDatabaseCache: 16,

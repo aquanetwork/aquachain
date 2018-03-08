@@ -21,6 +21,9 @@ import (
 	"math/big"
 
 	"github.com/aquanetwork/aquachain/accounts"
+	"github.com/aquanetwork/aquachain/aqua/downloader"
+	"github.com/aquanetwork/aquachain/aqua/gasprice"
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/math"
 	"github.com/aquanetwork/aquachain/core"
@@ -28,9 +31,6 @@ import (
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
-	"github.com/aquanetwork/aquachain/aqua/downloader"
-	"github.com/aquanetwork/aquachain/aqua/gasprice"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/event"
 	"github.com/aquanetwork/aquachain/light"
 	"github.com/aquanetwork/aquachain/params"
@@ -39,7 +39,7 @@ import (
 
 type LesApiBackend struct {
 	aqua *LightAquaChain
-	gpo *gasprice.Oracle
+	gpo  *gasprice.Oracle
 }
 
 func (b *LesApiBackend) ChainConfig() *params.ChainConfig {

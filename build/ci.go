@@ -378,7 +378,7 @@ func doArchive(cmdline []string) {
 	var (
 		env      = build.Env()
 		base     = archiveBasename(*arch, env)
-		aquad     = "aquad-" + base + ext
+		aquad    = "aquad-" + base + ext
 		alltools = "aquad-alltools-" + base + ext
 	)
 	maybeSkipArchive(env)
@@ -681,9 +681,9 @@ func doWindowsInstaller(cmdline []string) {
 	// Render NSIS scripts: Installer NSIS contains two installer sections,
 	// first section contains the aquad binary, second section holds the dev tools.
 	templateData := map[string]interface{}{
-		"License":  "COPYING",
-		"AquaChain":     gethTool,
-		"DevTools": devTools,
+		"License":   "COPYING",
+		"AquaChain": gethTool,
+		"DevTools":  devTools,
 	}
 	build.Render("build/nsis.aquad.nsi", filepath.Join(*workdir, "aquad.nsi"), 0644, nil)
 	build.Render("build/nsis.install.nsh", filepath.Join(*workdir, "install.nsh"), 0644, templateData)

@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"github.com/aquanetwork/aquachain/accounts"
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/hexutil"
 	"github.com/aquanetwork/aquachain/consensus"
@@ -34,7 +35,6 @@ import (
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/crypto/sha3"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/params"
 	"github.com/aquanetwork/aquachain/rlp"
@@ -196,7 +196,7 @@ func ecrecover(header *types.Header, sigcache *lru.ARCCache) (common.Address, er
 // AquaChain testnet following the Ropsten attacks.
 type Clique struct {
 	config *params.CliqueConfig // Consensus engine configuration parameters
-	db     aquadb.Database       // Database to store and retrieve snapshot checkpoints
+	db     aquadb.Database      // Database to store and retrieve snapshot checkpoints
 
 	recents    *lru.ARCCache // Snapshots for recent block to speed up reorgs
 	signatures *lru.ARCCache // Signatures of recent blocks to speed up mining

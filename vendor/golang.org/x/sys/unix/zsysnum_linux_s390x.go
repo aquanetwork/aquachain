@@ -55,7 +55,7 @@ const (
 	SYS_SIGACTION              = 67
 	SYS_SIGSUSPEND             = 72
 	SYS_SIGPENDING             = 73
-	SYS_SAQUAOSTNAME            = 74
+	SYS_SAQUAOSTNAME           = 74
 	SYS_SETRLIMIT              = 75
 	SYS_GETRUSAGE              = 77
 	SYS_GETTIMEOFDAY           = 78

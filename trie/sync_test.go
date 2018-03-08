@@ -20,8 +20,8 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/aquadb"
+	"github.com/aquanetwork/aquachain/common"
 )
 
 // makeTestTrie create a sample test trie to test node-wise reconstruction.

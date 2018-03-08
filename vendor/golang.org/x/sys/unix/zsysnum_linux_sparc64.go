@@ -81,7 +81,7 @@ const (
 	SYS_SETITIMER              = 83
 	SYS_SWAPON                 = 85
 	SYS_GETITIMER              = 86
-	SYS_SAQUAOSTNAME            = 88
+	SYS_SAQUAOSTNAME           = 88
 	SYS_DUP2                   = 90
 	SYS_FCNTL                  = 92
 	SYS_SELECT                 = 93

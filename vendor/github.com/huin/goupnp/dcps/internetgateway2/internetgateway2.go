@@ -35,7 +35,7 @@ const (
 	URN_WANCableLinkConfig_1       = "urn:schemas-upnp-org:service:WANCableLinkConfig:1"
 	URN_WANCommonInterfaceConfig_1 = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"
 	URN_WANDSLLinkConfig_1         = "urn:schemas-upnp-org:service:WANDSLLinkConfig:1"
-	URN_WANAquaernetLinkConfig_1    = "urn:schemas-upnp-org:service:WANAquaernetLinkConfig:1"
+	URN_WANAquaernetLinkConfig_1   = "urn:schemas-upnp-org:service:WANAquaernetLinkConfig:1"
 	URN_WANIPConnection_1          = "urn:schemas-upnp-org:service:WANIPConnection:1"
 	URN_WANIPConnection_2          = "urn:schemas-upnp-org:service:WANIPConnection:2"
 	URN_WANIPv6FirewallControl_1   = "urn:schemas-upnp-org:service:WANIPv6FirewallControl:1"

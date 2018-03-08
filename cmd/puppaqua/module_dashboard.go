@@ -580,13 +580,13 @@ func deployDashboard(client *sshClient, network string, conf *config, config *da
 
 	composefile := new(bytes.Buffer)
 	template.Must(template.New("").Parse(dashboardComposefile)).Execute(composefile, map[string]interface{}{
-		"Network":      network,
-		"Port":         config.port,
-		"VHost":        config.host,
+		"Network":       network,
+		"Port":          config.port,
+		"VHost":         config.host,
 		"AquastatsPage": config.aquastats,
-		"ExplorerPage": config.explorer,
-		"WalletPage":   config.wallet,
-		"FaucetPage":   config.faucet,
+		"ExplorerPage":  config.explorer,
+		"WalletPage":    config.wallet,
+		"FaucetPage":    config.faucet,
 	})
 	files[filepath.Join(workdir, "docker-compose.yaml")] = composefile.Bytes()
 
@@ -611,15 +611,15 @@ func deployDashboard(client *sshClient, network string, conf *config, config *da
 		"Network":          network,
 		"NetworkID":        conf.Genesis.Config.ChainId,
 		"NetworkTitle":     strings.Title(network),
-		"AquastatsPage":     config.aquastats,
+		"AquastatsPage":    config.aquastats,
 		"ExplorerPage":     config.explorer,
 		"WalletPage":       config.wallet,
 		"FaucetPage":       config.faucet,
-		"AquaChainGenesis":      network + ".json",
+		"AquaChainGenesis": network + ".json",
 		"Bootnodes":        conf.bootnodes,
 		"BootnodesFlat":    strings.Join(conf.bootnodes, ","),
-		"Aquastats":         statsLogin,
-		"Aquahash":           conf.Genesis.Config.Aquahash != nil,
+		"Aquastats":        statsLogin,
+		"Aquahash":         conf.Genesis.Config.Aquahash != nil,
 		"CppGenesis":       network + "-cpp.json",
 		"CppBootnodes":     strings.Join(bootCpp, " "),
 		"HarmonyGenesis":   network + "-harmony.json",
@@ -691,9 +691,9 @@ type dashboardInfos struct {
 	trusted bool
 
 	aquastats string
-	explorer string
-	wallet   string
-	faucet   string
+	explorer  string
+	wallet    string
+	faucet    string
 }
 
 // Report converts the typed struct into a plain string->string map, containing
@@ -702,7 +702,7 @@ func (info *dashboardInfos) Report() map[string]string {
 	return map[string]string{
 		"Website address":       info.host,
 		"Website listener port": strconv.Itoa(info.port),
-		"Aquastats service":      info.aquastats,
+		"Aquastats service":     info.aquastats,
 		"Explorer service":      info.explorer,
 		"Wallet service":        info.wallet,
 		"Faucet service":        info.faucet,
@@ -741,11 +741,11 @@ func checkDashboard(client *sshClient, network string) (*dashboardInfos, error) 
 	}
 	// Container available, assemble and return the useful infos
 	return &dashboardInfos{
-		host:     host,
-		port:     port,
+		host:      host,
+		port:      port,
 		aquastats: infos.envvars["AQUASTATS_PAGE"],
-		explorer: infos.envvars["EXPLORER_PAGE"],
-		wallet:   infos.envvars["WALLET_PAGE"],
-		faucet:   infos.envvars["FAUCET_PAGE"],
+		explorer:  infos.envvars["EXPLORER_PAGE"],
+		wallet:    infos.envvars["WALLET_PAGE"],
+		faucet:    infos.envvars["FAUCET_PAGE"],
 	}, nil
 }

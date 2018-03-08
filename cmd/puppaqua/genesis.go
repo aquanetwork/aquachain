@@ -68,15 +68,15 @@ type cppAquaChainGenesisSpec struct {
 // cppAquaChainGenesisSpecAccount is the prefunded genesis account and/or precompiled
 // contract definition.
 type cppAquaChainGenesisSpecAccount struct {
-	Balance     *hexutil.Big                   `json:"balance"`
-	Nonce       uint64                         `json:"nonce,omitempty"`
+	Balance     *hexutil.Big                    `json:"balance"`
+	Nonce       uint64                          `json:"nonce,omitempty"`
 	Precompiled *cppAquaChainGenesisSpecBuiltin `json:"precompiled,omitempty"`
 }
 
 // cppAquaChainGenesisSpecBuiltin is the precompiled contract definition.
 type cppAquaChainGenesisSpecBuiltin struct {
-	Name          string                               `json:"name,omitempty"`
-	StartingBlock hexutil.Uint64                       `json:"startingBlock,omitempty"`
+	Name          string                                `json:"name,omitempty"`
+	StartingBlock hexutil.Uint64                        `json:"startingBlock,omitempty"`
 	Linear        *cppAquaChainGenesisSpecLinearPricing `json:"linear,omitempty"`
 }
 

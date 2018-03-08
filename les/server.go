@@ -23,11 +23,11 @@ import (
 	"math"
 	"sync"
 
+	"github.com/aquanetwork/aquachain/aqua"
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/aqua"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/les/flowcontrol"
 	"github.com/aquanetwork/aquachain/light"
 	"github.com/aquanetwork/aquachain/log"

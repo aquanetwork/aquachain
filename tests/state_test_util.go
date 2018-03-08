@@ -23,6 +23,7 @@ import (
 	"math/big"
 	"strings"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/hexutil"
 	"github.com/aquanetwork/aquachain/common/math"
@@ -32,7 +33,6 @@ import (
 	"github.com/aquanetwork/aquachain/core/vm"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/crypto/sha3"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/params"
 	"github.com/aquanetwork/aquachain/rlp"
 )

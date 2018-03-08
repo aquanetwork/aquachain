@@ -27,9 +27,9 @@ import (
 
 	cli "gopkg.in/urfave/cli.v1"
 
+	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/dashboard"
-	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/node"
 	"github.com/aquanetwork/aquachain/params"
 	whisper "github.com/aquanetwork/aquachain/whisper/whisperv5"
@@ -75,10 +75,10 @@ type ethstatsConfig struct {
 }
 
 type gethConfig struct {
-	Aqua       aqua.Config
+	Aqua      aqua.Config
 	Shh       whisper.Config
 	Node      node.Config
-	Aquastats  ethstatsConfig
+	Aquastats ethstatsConfig
 	Dashboard dashboard.Config
 }
 
@@ -110,7 +110,7 @@ func defaultNodeConfig() node.Config {
 func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
 	// Load defaults.
 	cfg := gethConfig{
-		Aqua:       aqua.DefaultConfig,
+		Aqua:      aqua.DefaultConfig,
 		Shh:       whisper.DefaultConfig,
 		Node:      defaultNodeConfig(),
 		Dashboard: dashboard.DefaultConfig,

@@ -332,7 +332,7 @@ func (api *PublicDebugAPI) DumpBlock(blockNr rpc.BlockNumber) (state.Dump, error
 // the private debugging endpoint.
 type PrivateDebugAPI struct {
 	config *params.ChainConfig
-	aqua    *AquaChain
+	aqua   *AquaChain
 }
 
 // NewPrivateDebugAPI creates a new API definition for the full node-related

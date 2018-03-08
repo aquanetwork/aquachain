@@ -22,10 +22,10 @@ import (
 	"context"
 	"math/big"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/aquadb"
 )
 
 // NoOdr is the default context passed to an ODR capable function when the ODR

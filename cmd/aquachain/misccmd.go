@@ -23,9 +23,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
-	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/params"
 	"gopkg.in/urfave/cli.v1"
 )
