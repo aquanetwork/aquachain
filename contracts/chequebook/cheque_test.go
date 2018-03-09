@@ -24,12 +24,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind/backends"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/contracts/chequebook/contract"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/aquanetwork/aquachain/accounts/abi/bind"
+	"github.com/aquanetwork/aquachain/accounts/abi/bind/backends"
+	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/contracts/chequebook/contract"
+	"github.com/aquanetwork/aquachain/core"
+	"github.com/aquanetwork/aquachain/crypto"
 )
 
 var (
