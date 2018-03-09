@@ -11,8 +11,8 @@ Vcs-Browser: https://github.com/aquanetwork/aquachain
 Package: {{.Name}}
 Architecture: any
 Depends: ${misc:Depends}, {{.ExeList}}
-Description: Meta-package to install aquad and other tools
- Meta-package to install aquad and other tools
+Description: Meta-package to install aquachain and other tools
+ Meta-package to install aquachain and other tools
 
 {{range .Executables}}
 Package: {{$.ExeName .}}

@@ -22,7 +22,7 @@ Section "Uninstall"
   SimpleFC::AdvRemoveRule "AquaChain UDP discovery (UDP:21303)"
 
   # Remove IPC endpoint (https://github.com/aquanetwork/EIPs/issues/147)
-  ${un.EnvVarUpdate} $0 "AquaChain_SOCKET" "R" "HKLM" "\\.\pipe\aquad.ipc"
+  ${un.EnvVarUpdate} $0 "AquaChain_SOCKET" "R" "HKLM" "\\.\pipe\aquachain.ipc"
 
   # Remove install directory from PATH
   Push "$INSTDIR"
