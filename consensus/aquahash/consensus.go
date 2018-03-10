@@ -37,7 +37,7 @@ import (
 // Aquahash proof-of-work protocol constants.
 var (
 	FrontierBlockReward    *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block
-	ByzantiumBlockReward   *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block upward from Byzantium
+	ZeroBlockReward        *big.Int = big.NewInt(0)     // Block reward in wei for successfully mining a block once supply limit is reached
 	maxUncles                       = 2                 // Maximum number of uncles allowed in a single block
 	allowedFutureBlockTime          = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
 )
@@ -279,7 +279,7 @@ func (aquahash *Aquahash) verifyHeader(chain consensus.ChainReader, header, pare
 	if err := misc.VerifyHFHeaderExtraData(chain.Config(), header); err != nil {
 		return err
 	}
-	if err := misc.VerifyForkHashes(chain.Config(), header, uncle); err != nil {
+	if err := misc.VerifyFork(chain.Config(), header, uncle); err != nil {
 		return err
 	}
 	return nil
@@ -580,8 +580,8 @@ var (
 func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header *types.Header, uncles []*types.Header) {
 	// Select the correct block reward based on chain progression
 	blockReward := FrontierBlockReward
-	if config.IsByzantium(header.Number) {
-		blockReward = ByzantiumBlockReward
+	if config.IsProbablyFortyTwoMillionCoins(header.Number) {
+		blockReward = ZeroBlockReward
 	}
 	// Accumulate the rewards for the miner and any included uncles
 	reward := new(big.Int).Set(blockReward)

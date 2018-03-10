@@ -317,7 +317,7 @@ func (c *Clique) verifyHeader(chain consensus.ChainReader, header *types.Header,
 		}
 	}
 	// If all checks passed, validate any special fields for hard forks
-	if err := misc.VerifyForkHashes(chain.Config(), header, false); err != nil {
+	if err := misc.VerifyFork(chain.Config(), header, false); err != nil {
 		return err
 	}
 	// All basic checks passed, verify cascading fields
