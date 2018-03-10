@@ -83,7 +83,6 @@ func (s *SimAdapter) NewNode(config *NodeConfig) (Node, error) {
 			Dialer:          s,
 			EnableMsgEvents: true,
 		},
-		NoUSB:  true,
 		Logger: log.New("node.id", id.String()),
 	})
 	if err != nil {

@@ -40,13 +40,15 @@ var (
 	passwordRegexp = regexp.MustCompile(`personal.[nus]`)
 	onlyWhitespace = regexp.MustCompile(`^\s*$`)
 	exit           = regexp.MustCompile(`^\s*exit\s*;*\s*$`)
+	help           = regexp.MustCompile(`^\s*help\s*;*\s*$`)
+	commonCommands = []string{}
 )
 
 // HistoryFile is the file within the data directory to store input scrollback.
 const HistoryFile = "history"
 
 // DefaultPrompt is the default prompt line prefix to use for user input querying.
-const DefaultPrompt = "> "
+const DefaultPrompt = "AQUA> "
 
 // Config is the collection of configurations to fine tune the behavior of the
 // JavaScript console.
@@ -245,7 +247,7 @@ func (c *Console) consoleOutput(call otto.FunctionCall) otto.Value {
 // AutoCompleteInput is a pre-assembled word completer to be used by the user
 // input prompter to provide hints to the user about the methods available.
 func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, string) {
-	// No completions can be provided for empty inputs
+	// Common completions can be provided as help for empty inputs?
 	if len(line) == 0 || pos == 0 {
 		return "", nil, ""
 	}
@@ -272,26 +274,31 @@ func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, str
 // Welcome show summary of current AquaChain instance and some metadata about the
 // console's available modules.
 func (c *Console) Welcome() {
-	// Print some generic AquaChain metadata
-	fmt.Fprintf(c.printer, "\nWelcome to the AquaChain JavaScript console!\n")
+	// Print some generic metadata
+	fmt.Fprintf(c.printer, "\n\n\nWelcome to the AquaChain JavaScript console!\n")
 	fmt.Fprintf(c.printer, `                              _           _
   __ _  __ _ _   _  __ _  ___| |__   __ _(_)_ __
  / _ '|/ _' | | | |/ _' |/ __| '_ \ / _' | | '_ \
 | (_| | (_| | |_| | (_| | (__| | | | (_| | | | | |
  \__,_|\__, |\__,_|\__,_|\___|_| |_|\__,_|_|_| |_|
-          |_|`+"\nUpdate Often! https://github.com/aquanetwork/aquachain\n\n")
+          |_|`+"\nUpdate Often! https://github.com/aquanetwork/aquachain\n\n"+
+		"Press TAB to autocomplete common modules\n"+
+		"[1..2..3..mine!]\nCheck Peers: admin.peers\n"+
+		"New Wallet: personal.newAccount()\n"+
+		"Start Mining: miner.Start()\n\n\n",
+	)
 
 	c.jsre.Run(`
-		console.log("instance: " + web3.version.node);
-		console.log("coinbase: " + aqua.coinbase);
-		console.log("at block: " + aqua.blockNumber + " (" + new Date(1000 * aqua.getBlock(aqua.blockNumber).timestamp) + ")");
-		console.log(" datadir: " + admin.datadir);
+		console.log("your-node: " + web3.version.node);
+		console.log(" coinbase: " + aqua.coinbase);
+		console.log(" at block: " + aqua.blockNumber + " (" + new Date(1000 * aqua.getBlock(aqua.blockNumber).timestamp) + ")");
+		console.log("  datadir: " + admin.datadir);
 	`)
 	// List all the supported modules for the user to call
 	if apis, err := c.client.SupportedModules(); err == nil {
 		modules := make([]string, 0, len(apis))
 		for api, version := range apis {
-			if api == "eth" {
+			if api == "eth" { // ignore printing, still available for now
 				continue
 			}
 			modules = append(modules, fmt.Sprintf("%s:%s", api, version))
@@ -299,6 +306,7 @@ func (c *Console) Welcome() {
 		sort.Strings(modules)
 		fmt.Fprintln(c.printer, " modules:", strings.Join(modules, " "))
 	}
+
 	fmt.Fprintln(c.printer)
 }
 
@@ -360,6 +368,26 @@ func (c *Console) Interactive() {
 			if !ok || (indents <= 0 && exit.MatchString(line)) {
 				return
 			}
+
+			if help.MatchString(line) {
+				fmt.Println("wot")
+				c.printer.Write([]byte(`
+    Explorer: http://explorer.aquanetwork.co
+    Github: http://github.com/aquanetwork/aquachain
+    Chat: https://t.me/AquaCrypto
+
+    Common commands:
+	New address:   personal.newAccount()
+	Start mining:  miner.start()
+	Get balance:   aqua.getBalance(aqua.coinbase)
+	List accounts: aqua.accounts	
+
+    Press TAB to autocomplete commands
+`+
+"\n"))
+				continue
+			}
+
 			if onlyWhitespace.MatchString(line) {
 				continue
 			}

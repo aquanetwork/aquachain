@@ -82,8 +82,8 @@ type Config struct {
 	// scrypt KDF at the expense of security.
 	UseLightweightKDF bool `toml:",omitempty"`
 
-	// NoUSB disables hardware wallet monitoring and connectivity.
-	NoUSB bool `toml:",omitempty"`
+	// UseUSB enables hardware wallet monitoring and connectivity.
+	UseUSB bool `toml:",omitempty"`
 
 	// IPCPath is the requested location to place the IPC endpoint. If the path is
 	// a simple file name, it is placed inside the data directory (or on the root
@@ -228,7 +228,7 @@ func DefaultWSEndpoint() string {
 func (c *Config) NodeName() string {
 	name := c.name()
 	// Backwards compatibility: previous versions used title-cased "AquaChain", keep that.
-	if name == "aquad" || name == "aquad-testnet" {
+	if name == "aquad" || name == "aquad-testnet" || name == "aquachain" {
 		name = "AquaChain"
 	}
 	if c.UserIdent != "" {
@@ -419,7 +419,7 @@ func makeAccountManager(conf *Config) (*accounts.Manager, string, error) {
 	backends := []accounts.Backend{
 		keystore.NewKeyStore(keydir, scryptN, scryptP),
 	}
-	if !conf.NoUSB {
+	if conf.UseUSB {
 		// Start a USB hub for Ledger hardware wallets
 		if ledgerhub, err := usbwallet.NewLedgerHub(); err != nil {
 			log.Warn(fmt.Sprintf("Failed to start Ledger hub, disabling: %v", err))
