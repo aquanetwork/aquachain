@@ -109,7 +109,7 @@ func newCppAquaChainGenesisSpec(network string, genesis *core.Genesis) (*cppAqua
 	spec.Params.MaximumExtraDataSize = (hexutil.Uint64)(params.MaximumExtraDataSize)
 	spec.Params.MinGasLimit = (hexutil.Uint64)(params.MinGasLimit)
 	spec.Params.MaxGasLimit = (hexutil.Uint64)(math.MaxUint64)
-	spec.Params.MinimumDifficulty = (*hexutil.Big)(params.MinimumDifficulty)
+	spec.Params.MinimumDifficulty = (*hexutil.Big)(params.MinimumDifficultyGenesis)
 	spec.Params.DifficultyBoundDivisor = (*hexutil.Big)(params.DifficultyBoundDivisor)
 	spec.Params.GasLimitBoundDivisor = (hexutil.Uint64)(params.GasLimitBoundDivisor)
 	spec.Params.DurationLimit = (*hexutil.Big)(params.DurationLimit)
@@ -268,7 +268,7 @@ func newParityChainSpec(network string, genesis *core.Genesis, bootnodes []strin
 		Name:  network,
 		Nodes: bootnodes,
 	}
-	spec.Engine.Aquahash.Params.MinimumDifficulty = (*hexutil.Big)(params.MinimumDifficulty)
+	spec.Engine.Aquahash.Params.MinimumDifficulty = (*hexutil.Big)(params.MinimumDifficultyGenesis)
 	spec.Engine.Aquahash.Params.DifficultyBoundDivisor = (*hexutil.Big)(params.DifficultyBoundDivisor)
 	spec.Engine.Aquahash.Params.GasLimitBoundDivisor = (hexutil.Uint64)(params.GasLimitBoundDivisor)
 	spec.Engine.Aquahash.Params.DurationLimit = (*hexutil.Big)(params.DurationLimit)
@@ -278,7 +278,7 @@ func newParityChainSpec(network string, genesis *core.Genesis, bootnodes []strin
 	spec.Engine.Aquahash.Params.EIP160Transition = genesis.Config.EIP155Block.Uint64()
 	spec.Engine.Aquahash.Params.EIP161abcTransition = genesis.Config.EIP158Block.Uint64()
 	spec.Engine.Aquahash.Params.EIP161dTransition = genesis.Config.EIP158Block.Uint64()
-	spec.Engine.Aquahash.Params.EIP649Reward = (*hexutil.Big)(aquahash.ByzantiumBlockReward)
+	spec.Engine.Aquahash.Params.EIP649Reward = (*hexutil.Big)(aquahash.FrontierBlockReward)
 	spec.Engine.Aquahash.Params.EIP100bTransition = genesis.Config.ByzantiumBlock.Uint64()
 	spec.Engine.Aquahash.Params.EIP649Transition = genesis.Config.ByzantiumBlock.Uint64()
 

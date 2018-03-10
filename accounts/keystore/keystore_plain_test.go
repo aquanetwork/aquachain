@@ -99,7 +99,7 @@ func TestKeyStorePassphraseDecryptionFail(t *testing.T) {
 		t.Fatalf("wrong error for invalid passphrase\ngot %q\nwant %q", err, ErrDecrypt)
 	}
 }
-
+/*
 func TestImportPreSaleKey(t *testing.T) {
 	dir, ks := tmpKeyStoreIface(t, true)
 	defer os.RemoveAll(dir)
@@ -120,7 +120,7 @@ func TestImportPreSaleKey(t *testing.T) {
 		t.Errorf("imported account file not in keystore directory: %q", account.URL)
 	}
 }
-
+*/
 // Test and utils for the key store tests in the AquaChain JSON tests;
 // testdataKeyStoreTests/basic_tests.json
 type KeyStoreTestV3 struct {
