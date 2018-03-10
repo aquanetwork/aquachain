@@ -18,6 +18,7 @@ package aquahash
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/big"
 	"os"
 	"path/filepath"
@@ -70,7 +71,7 @@ func TestCalcDifficulty(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	config := &params.ChainConfig{HomesteadBlock: big.NewInt(1150000)}
+	config := &params.ChainConfig{HomesteadBlock: big.NewInt(1)}
 
 	for name, test := range tests {
 		number := new(big.Int).Sub(test.CurrentBlocknumber, big.NewInt(1))
@@ -82,5 +83,50 @@ func TestCalcDifficulty(t *testing.T) {
 		if diff.Cmp(test.CurrentDifficulty) != 0 {
 			t.Error(name, "failed. Expected", test.CurrentDifficulty, "and calculated", diff)
 		}
+	}
+}
+
+func TestCalcDifficultyHF2(t *testing.T) {
+	config := &params.ChainConfig{
+		ChainId:        big.NewInt(1),
+		HomesteadBlock: big.NewInt(0),
+		EIP150Block:    big.NewInt(0),
+		HF: map[int]*big.Int{
+			0: big.NewInt(0),
+			1: big.NewInt(1), // increase min difficulty to the next multiple of 2048
+			2: big.NewInt(2), // increase min difficulty to the next multiple of 2048
+		},
+		Aquahash:    new(params.AquahashConfig),
+		SupplyLimit: big.NewInt(42000000),
+	}
+
+	// 	ParentTimestamp    uint64
+	// 	ParentDifficulty   *big.Int
+	// 	CurrentTimestamp   uint64
+	// 	CurrentBlocknumber *big.Int
+	// 	CurrentDifficulty  *big.Int
+	m := []diffTest{
+		diffTest{000000001, big.NewInt(99999999), 200, big.NewInt(0), big.NewInt(99999999)},   // frontier
+		diffTest{000000001, big.NewInt(100001792), 200, big.NewInt(1), big.NewInt(100001792)}, // hf1
+		diffTest{000000001, big.NewInt(100001792), 200, big.NewInt(2), big.NewInt(100050621)}, // hf 2
+		diffTest{000000001, big.NewInt(100050621), 100, big.NewInt(3), big.NewInt(100099473)}, // 100 second block
+		diffTest{000000001, big.NewInt(100050621), 300, big.NewInt(4), big.NewInt(100050621)}, // 300 second block
+		diffTest{000000001, big.NewInt(100001792), 50, big.NewInt(5), big.NewInt(100050621)},
+		diffTest{000000001, big.NewInt(100001792), 400, big.NewInt(6), big.NewInt(100001792)},
+		diffTest{000000001, big.NewInt(100001792), 200, big.NewInt(7), big.NewInt(100050621)},
+	}
+
+	for name, test := range m {
+		number := new(big.Int).Sub(test.CurrentBlocknumber, big.NewInt(1))
+		diff := CalcDifficulty(config, test.CurrentTimestamp, &types.Header{
+			Number:     number,
+			Time:       new(big.Int).SetUint64(test.ParentTimestamp),
+			Difficulty: test.ParentDifficulty,
+		})
+		if diff.Cmp(test.CurrentDifficulty) != 0 {
+			t.Error(name+1, "failed. Expected", test.CurrentDifficulty, "and calculated", diff)
+		}
+		//t.Logf("%v %v %v", test.CurrentTimestamp, test.CurrentDifficulty, diff)
+		fmt.Printf("%v %v %v %v\n", name, test.CurrentTimestamp, test.CurrentDifficulty, diff)
 	}
 }

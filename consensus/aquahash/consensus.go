@@ -298,6 +298,8 @@ func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint6
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
+	case config.IsHF(2, next):
+		return calcDifficultyHF2(time, parent)
 	case config.IsHF(1, next):
 		return calcDifficultyHF1(time, parent)
 	case config.IsHomestead(next):
@@ -463,6 +465,33 @@ func calcDifficultyHF1(time uint64, parent *types.Header) *big.Int {
 		y.Exp(big2, y, nil)
 		x.Add(x, y)
 	}
+	return x
+}
+
+// calcDifficultyHF2 increased to 4 minute blocks
+func calcDifficultyHF2(time uint64, parent *types.Header) *big.Int {
+	bigTime := new(big.Int).SetUint64(time)
+	bigParentTime := new(big.Int).Set(parent.Time)
+	// holds intermediate values to make the algo easier to read & audit
+	x := new(big.Int)
+	y := new(big.Int)
+
+	// 1 - (block_timestamp - parent_timestamp) // 120
+	x.Sub(bigTime, bigParentTime)
+	x.Div(x, params.DurationLimit)
+	x.Sub(big1, x)
+
+	// max(1 - (block_timestamp - parent_timestamp) // 120, -99)
+	if x.Cmp(bigMinus99) < 0 {
+		x.Set(bigMinus99)
+	}
+	// (parent_diff + parent_diff // 2048 * max(1 - (block_timestamp - parent_timestamp) // 120, -99))
+	y.Div(parent.Difficulty, params.DifficultyBoundDivisor)
+	x.Mul(y, x)
+	x.Add(parent.Difficulty, x)
+
+	// minimum difficulty can ever be (before exponential factor)
+	x = math.BigMax(x, params.MinimumDifficultyTesting)
 	return x
 }
 
