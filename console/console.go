@@ -284,8 +284,9 @@ func (c *Console) Welcome() {
           |_|`+"\nUpdate Often! https://github.com/aquanetwork/aquachain\n\n"+
 		"Press TAB to autocomplete common modules\n"+
 		"[1..2..3..mine!]\nCheck Peers: admin.peers\n"+
-		"New Wallet: personal.newAccount()\n"+
-		"Start Mining: miner.Start()\n\n\n",
+		"New Wallet:     personal.newAccount()\n"+
+		"List Accounts:  aqua.accounts\n"+
+		"Start Mining:   miner.start()\n\n\n",
 	)
 
 	c.jsre.Run(`
