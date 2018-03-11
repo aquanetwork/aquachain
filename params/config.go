@@ -101,8 +101,8 @@ var (
 		EIP150Block:    big.NewInt(0),
 		HF: map[int]*big.Int{
 			0: big.NewInt(0),
-			1: big.NewInt(1), // increase min difficulty to the next multiple of 2048
-			2: big.NewInt(2), // HF2 diff algo
+			//1: big.NewInt(1), // increase min difficulty to the next multiple of 2048
+			//2: big.NewInt(2), // HF2 diff algo
 		},
 		Aquahash:    new(AquahashConfig),
 		SupplyLimit: big.NewInt(40),

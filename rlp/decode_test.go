@@ -531,7 +531,7 @@ var decodeTests = []decodeTest{
 	{input: "817F", ptr: new(*uint), error: "rlp: non-canonical size information for uint"},
 	{input: "8180", ptr: new(*uint), value: uintp(0x80)},
 	{input: "C109", ptr: new(*[]uint), value: &[]uint{9}},
-	{input: "C58402130303", ptr: new(*[][]byte), value: &[][]byte{{3, 3, 3, 3}}},
+	{input: "C58402130303", ptr: new(*[][]byte), value: &[][]byte{{0x2, 0x13, 3, 3}}},
 
 	// check that input position is advanced also for empty values.
 	{input: "C3808005", ptr: new([]*uint), value: []*uint{uintp(0), uintp(0), uintp(5)}},

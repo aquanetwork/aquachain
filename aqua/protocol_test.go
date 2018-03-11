@@ -97,19 +97,24 @@ func TestRecvTransactions62(t *testing.T) { testRecvTransactions(t, 62) }
 func TestRecvTransactions63(t *testing.T) { testRecvTransactions(t, 63) }
 
 func testRecvTransactions(t *testing.T, protocol int) {
+	t.Log("creating chan")
 	txAdded := make(chan []*types.Transaction)
+	t.Log("creating protocol mgr")
 	pm, _ := newTestProtocolManagerMust(t, downloader.FullSync, 0, nil, txAdded)
 	pm.acceptTxs = 1 // mark synced to accept transactions
+	t.Log("creating test peer")
 	p, _ := newTestPeer("peer", protocol, pm, true)
 	defer pm.Stop()
 	defer p.close()
-
+	t.Log("creating new tx")
 	tx := newTestTransaction(testAccount, 0, 0)
+	t.Logf("Sending tx: %x", tx.Hash())
 	if err := p2p.Send(p.app, TxMsg, []interface{}{tx}); err != nil {
 		t.Fatalf("send error: %v", err)
 	}
 	select {
 	case added := <-txAdded:
+		t.Logf("REC TX: %x", tx.Hash())
 		if len(added) != 1 {
 			t.Errorf("wrong number of added transactions: got %d, want 1", len(added))
 		} else if added[0].Hash() != tx.Hash() {
@@ -125,7 +130,8 @@ func TestSendTransactions62(t *testing.T) { testSendTransactions(t, 62) }
 func TestSendTransactions63(t *testing.T) { testSendTransactions(t, 63) }
 
 func testSendTransactions(t *testing.T, protocol int) {
-	pm, _ := newTestProtocolManagerMust(t, downloader.FullSync, 0, nil, nil)
+	
+pm, _ := newTestProtocolManagerMust(t, downloader.FullSync, 0, nil, nil)
 	defer pm.Stop()
 
 	// Fill the pool with big transactions.
