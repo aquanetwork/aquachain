@@ -19,6 +19,7 @@ package params
 import (
 	"fmt"
 	"math/big"
+	"strings"
 
 	"github.com/aquanetwork/aquachain/common"
 )
@@ -27,6 +28,16 @@ var (
 	MainnetGenesisHash = common.HexToHash("0x2461b9b2e5b57ed037fe99f470511c6dbef8e0ed976b3f3197ae689f5b100a9b") // Mainnet genesis hash to enforce below configs on
 	TestnetGenesisHash = common.HexToHash("0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d") // Testnet genesis hash to enforce below configs on
 )
+
+type ForkMap map[int]*big.Int
+
+func (f ForkMap) String() (s string) {
+	println("gotem")
+	for i := 0; i < len(f); i++ {
+		s = fmt.Sprintf("%s %v:%v", s, i, f[i].Int64())
+	}
+	return "hfyo: " + strings.TrimSpace(s)
+}
 
 var (
 	// MainnetChainConfig is the chain parameters to run a node on the main network.
@@ -37,7 +48,7 @@ var (
 		HF: map[int]*big.Int{
 			0: big.NewInt(3000),
 			1: big.NewInt(3600), // increase min difficulty to the next multiple of 2048
-			2: big.NewInt(5400), // HF2 diff algo
+			2: big.NewInt(7200), // HF2 diff algo
 		},
 		Aquahash:    new(AquahashConfig),
 		SupplyLimit: big.NewInt(42000000),
