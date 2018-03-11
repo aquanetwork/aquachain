@@ -72,10 +72,10 @@ var (
 	allToolsArchiveFiles = []string{
 		"COPYING",
 		executablePath("abigen"),
-		executablePath("bootnode"),
+		executablePath("aquabootnode"),
 		executablePath("evm"),
 		executablePath("aquachain"),
-		executablePath("puppeth"),
+		executablePath("puppaqua"),
 		executablePath("rlpdump"),
 		executablePath("swarm"),
 		executablePath("wnode"),
@@ -88,7 +88,7 @@ var (
 			Description: "Source code generator to convert AquaChain contract definitions into easy to use, compile-time type-safe Go packages.",
 		},
 		{
-			Name:        "bootnode",
+			Name:        "aquabootnode",
 			Description: "AquaChain bootnode.",
 		},
 		{
@@ -100,7 +100,7 @@ var (
 			Description: "AquaChain CLI client.",
 		},
 		{
-			Name:        "puppeth",
+			Name:        "puppaqua",
 			Description: "AquaChain private network manager.",
 		},
 		{
