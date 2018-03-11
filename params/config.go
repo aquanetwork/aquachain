@@ -37,7 +37,7 @@ var (
 		HF: map[int]*big.Int{
 			0: big.NewInt(3000),
 			1: big.NewInt(3600), // increase min difficulty to the next multiple of 2048
-			2: big.NewInt(4600), // HF2 diff algo
+			2: big.NewInt(5400), // HF2 diff algo
 		},
 		Aquahash:    new(AquahashConfig),
 		SupplyLimit: big.NewInt(42000000),
@@ -50,11 +50,11 @@ var (
 		EIP150Block:    big.NewInt(0),
 		HF: map[int]*big.Int{
 			0: big.NewInt(0),
-			1: big.NewInt(0), // increase min difficulty to the next multiple of 2048
-			2: big.NewInt(0), // HF2 diff algo
+			1: big.NewInt(1), // increase min difficulty to the next multiple of 2048
+			2: big.NewInt(2), // HF2 diff algo
 		},
 		Aquahash:    new(AquahashConfig),
-		SupplyLimit: big.NewInt(4200),
+		SupplyLimit: big.NewInt(40),
 	}
 
 	// RinkebyChainConfig contains the chain parameters to run a node on the Rinkeby test network.
@@ -84,8 +84,19 @@ var (
 	// adding flags to the config to also have to set these fields.
 	AllCliqueProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, &CliqueConfig{Period: 0, Epoch: 30000}, big.NewInt(42000000)}
 
-	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil, big.NewInt(42000000)}
-	TestRules       = TestChainConfig.Rules(new(big.Int))
+	TestChainConfig = &ChainConfig{
+		ChainId:        big.NewInt(3),
+		HomesteadBlock: big.NewInt(0),
+		EIP150Block:    big.NewInt(0),
+		HF: map[int]*big.Int{
+			0: big.NewInt(0),
+			1: big.NewInt(1), // increase min difficulty to the next multiple of 2048
+			2: big.NewInt(2), // HF2 diff algo
+		},
+		Aquahash:    new(AquahashConfig),
+		SupplyLimit: big.NewInt(40),
+	}
+	TestRules = TestChainConfig.Rules(new(big.Int))
 )
 
 // ChainConfig is the core config which determines the blockchain settings.
