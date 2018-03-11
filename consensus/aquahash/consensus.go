@@ -37,7 +37,7 @@ import (
 // Aquahash proof-of-work protocol constants.
 var (
 	FrontierBlockReward    *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block
-	ByzantiumBlockReward   *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block upward from Byzantium
+	ZeroBlockReward        *big.Int = big.NewInt(0)     // Block reward in wei for successfully mining a block once supply limit is reached
 	maxUncles                       = 2                 // Maximum number of uncles allowed in a single block
 	allowedFutureBlockTime          = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
 )
@@ -279,7 +279,7 @@ func (aquahash *Aquahash) verifyHeader(chain consensus.ChainReader, header, pare
 	if err := misc.VerifyHFHeaderExtraData(chain.Config(), header); err != nil {
 		return err
 	}
-	if err := misc.VerifyForkHashes(chain.Config(), header, uncle); err != nil {
+	if err := misc.VerifyFork(chain.Config(), header, uncle); err != nil {
 		return err
 	}
 	return nil
@@ -298,10 +298,10 @@ func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint6
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
+	case config.IsHF(2, next): // choose HF2 before HF1 if both are activated
+		return calcDifficultyHF2(time, parent)
 	case config.IsHF(1, next):
 		return calcDifficultyHF1(time, parent)
-	case config.IsHomestead(next):
-		return calcDifficultyHomestead(time, parent)
 	default:
 		return calcDifficultyHomestead(time, parent)
 	}
@@ -466,6 +466,29 @@ func calcDifficultyHF1(time uint64, parent *types.Header) *big.Int {
 	return x
 }
 
+// calcDifficultyHF2
+func calcDifficultyHF2(time uint64, parent *types.Header) *big.Int {
+	diff := new(big.Int)
+	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
+	bigTime := new(big.Int)
+	bigParentTime := new(big.Int)
+
+	bigTime.SetUint64(time)
+	bigParentTime.Set(parent.Time)
+
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+		diff.Add(parent.Difficulty, adjust)
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
+
+	if diff.Cmp(params.MinimumDifficultyHF1) < 0 {
+		diff.Set(params.MinimumDifficultyHF1)
+	}
+
+	return diff
+}
+
 // calcDifficultyFrontier is the difficulty adjustment algorithm. It returns the
 // difficulty that a new block should have when created at time given the parent
 // block's time and difficulty. The calculation uses the Frontier rules.
@@ -580,8 +603,8 @@ var (
 func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header *types.Header, uncles []*types.Header) {
 	// Select the correct block reward based on chain progression
 	blockReward := FrontierBlockReward
-	if config.IsByzantium(header.Number) {
-		blockReward = ByzantiumBlockReward
+	if config.IsProbablyFortyTwoMillionCoins(header.Number) {
+		blockReward = ZeroBlockReward
 	}
 	// Accumulate the rewards for the miner and any included uncles
 	reward := new(big.Int).Set(blockReward)

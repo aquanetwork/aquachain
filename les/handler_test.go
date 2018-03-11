@@ -373,8 +373,8 @@ func testGetProofs(t *testing.T, protocol int) {
 }
 
 // Tests that CHT proofs can be correctly retrieved.
-func TestGetCHTProofsLes1(t *testing.T) { testGetCHTProofs(t, 1) }
-func TestGetCHTProofsLes2(t *testing.T) { testGetCHTProofs(t, 2) }
+// func TestGetCHTProofsLes1(t *testing.T) { testGetCHTProofs(t, 1) }
+// func TestGetCHTProofsLes2(t *testing.T) { testGetCHTProofs(t, 2) }
 
 func testGetCHTProofs(t *testing.T, protocol int) {
 	// Figure out the client's CHT frequency

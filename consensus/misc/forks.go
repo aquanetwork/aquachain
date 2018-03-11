@@ -17,27 +17,22 @@
 package misc
 
 import (
-	"fmt"
-
-	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/params"
 )
 
-// VerifyForkHashes verifies that blocks conforming to network hard-forks do have
-// the correct hashes, to avoid clients going off on different chains. This is an
-// optional feature.
-func VerifyForkHashes(config *params.ChainConfig, header *types.Header, uncle bool) error {
+// VerifyFork Doesn't do anything yet
+func VerifyFork(config *params.ChainConfig, header *types.Header, uncle bool) error {
 	// We don't care about uncles
 	if uncle {
 		return nil
 	}
 	// If the homestead reprice hash is set, validate it
-	if config.EIP150Block != nil && config.EIP150Block.Cmp(header.Number) == 0 {
-		if config.EIP150Hash != (common.Hash{}) && config.EIP150Hash != header.Hash() {
-			return fmt.Errorf("homestead gas reprice fork: have 0x%x, want 0x%x", header.Hash(), config.EIP150Hash)
-		}
-	}
+	// for fork, number := range config.HF {
+	// 	if number != nil && number.Cmp(header.Number) < 1 {
+	// 		return nil
+	// 	}
+	// }
 	// All ok, return
 	return nil
 }

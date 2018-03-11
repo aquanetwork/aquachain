@@ -1,4 +1,4 @@
-Name "aquad ${MAJORVERSION}.${MINORVERSION}.${BUILDVERSION}" # VERSION variables set through command line arguments
+Name "aquachain ${MAJORVERSION}.${MINORVERSION}.${BUILDVERSION}" # VERSION variables set through command line arguments
 InstallDir "$InstDir"
 OutFile "${OUTPUTFILE}" # set through command line arguments
 
@@ -12,15 +12,15 @@ PageEx license
   LicenseData {{.License}}
 PageExEnd
 
-# Install aquad binary
+# Install aquachain binary
 Section "AquaChain" AQUAD_IDX
   SetOutPath $INSTDIR
   file {{.AquaChain}}
 
   # Create start menu launcher
   createDirectory "$SMPROGRAMS\${APPNAME}"
-  createShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\aquad.exe" "--fast" "--cache=512"
-  createShortCut "$SMPROGRAMS\${APPNAME}\Attach.lnk" "$INSTDIR\aquad.exe" "attach" "" ""
+  createShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\aquachain.exe" "--fast" "--cache=512"
+  createShortCut "$SMPROGRAMS\${APPNAME}\Attach.lnk" "$INSTDIR\aquachain.exe" "attach" "" ""
   createShortCut "$SMPROGRAMS\${APPNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "" ""
 
   # Firewall - remove rules (if exists)
@@ -29,13 +29,13 @@ Section "AquaChain" AQUAD_IDX
   SimpleFC::AdvRemoveRule "AquaChain UDP discovery (UDP:21303)"
 
   # Firewall - add rules
-  SimpleFC::AdvAddRule "AquaChain incoming peers (TCP:21303)" ""  6 1 1 2147483647 1 "$INSTDIR\aquad.exe" "" "" "AquaChain" 21303 "" "" ""
-  SimpleFC::AdvAddRule "AquaChain outgoing peers (TCP:21303)" ""  6 2 1 2147483647 1 "$INSTDIR\aquad.exe" "" "" "AquaChain" "" 21303 "" ""
-  SimpleFC::AdvAddRule "AquaChain UDP discovery (UDP:21303)" "" 17 2 1 2147483647 1 "$INSTDIR\aquad.exe" "" "" "AquaChain" "" 21303 "" ""
+  SimpleFC::AdvAddRule "AquaChain incoming peers (TCP:21303)" ""  6 1 1 2147483647 1 "$INSTDIR\aquachain.exe" "" "" "AquaChain" 21303 "" "" ""
+  SimpleFC::AdvAddRule "AquaChain outgoing peers (TCP:21303)" ""  6 2 1 2147483647 1 "$INSTDIR\aquachain.exe" "" "" "AquaChain" "" 21303 "" ""
+  SimpleFC::AdvAddRule "AquaChain UDP discovery (UDP:21303)" "" 17 2 1 2147483647 1 "$INSTDIR\aquachain.exe" "" "" "AquaChain" "" 21303 "" ""
 
   # Set default IPC endpoint (https://github.com/aquanetwork/EIPs/issues/147)
-  ${EnvVarUpdate} $0 "AquaChain_SOCKET" "R" "HKLM" "\\.\pipe\aquad.ipc"
-  ${EnvVarUpdate} $0 "AquaChain_SOCKET" "A" "HKLM" "\\.\pipe\aquad.ipc"
+  ${EnvVarUpdate} $0 "AquaChain_SOCKET" "R" "HKLM" "\\.\pipe\aquachain.ipc"
+  ${EnvVarUpdate} $0 "AquaChain_SOCKET" "A" "HKLM" "\\.\pipe\aquachain.ipc"
 
   # Add instdir to PATH
   Push "$INSTDIR"

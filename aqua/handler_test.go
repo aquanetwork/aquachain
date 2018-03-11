@@ -451,12 +451,12 @@ func testGetReceipt(t *testing.T, protocol int) {
 // Tests that post aqua protocol handshake, DAO fork-enabled clients also execute
 // a DAO "challenge" verifying each others' DAO fork headers to ensure they're on
 // compatible chains.
-func TestDAOChallengeNoVsNo(t *testing.T)       { testDAOChallenge(t, false, false, false) }
-func TestDAOChallengeNoVsPro(t *testing.T)      { testDAOChallenge(t, false, true, false) }
-func TestDAOChallengeProVsNo(t *testing.T)      { testDAOChallenge(t, true, false, false) }
-func TestDAOChallengeProVsPro(t *testing.T)     { testDAOChallenge(t, true, true, false) }
-func TestDAOChallengeNoVsTimeout(t *testing.T)  { testDAOChallenge(t, false, false, true) }
-func TestDAOChallengeProVsTimeout(t *testing.T) { testDAOChallenge(t, true, true, true) }
+// func TestDAOChallengeNoVsNo(t *testing.T)       { testDAOChallenge(t, false, false, false) }
+// func TestDAOChallengeNoVsPro(t *testing.T)      { testDAOChallenge(t, false, true, false) }
+// func TestDAOChallengeProVsNo(t *testing.T)      { testDAOChallenge(t, true, false, false) }
+// func TestDAOChallengeProVsPro(t *testing.T)     { testDAOChallenge(t, true, true, false) }
+// func TestDAOChallengeNoVsTimeout(t *testing.T)  { testDAOChallenge(t, false, false, true) }
+// func TestDAOChallengeProVsTimeout(t *testing.T) { testDAOChallenge(t, true, true, true) }
 
 func testDAOChallenge(t *testing.T, localForked, remoteForked bool, timeout bool) {
 	// Reduce the DAO handshake challenge timeout
