@@ -117,6 +117,7 @@ func New(ctx *node.ServiceContext, config *Config) (*AquaChain, error) {
 	if _, ok := genesisErr.(*params.ConfigCompatError); genesisErr != nil && !ok {
 		return nil, genesisErr
 	}
+	chainConfig.HF = params.MainnetChainConfig.HF // use latest HF map
 	log.Info("Initialised chain configuration", "config", chainConfig)
 
 	aqua := &AquaChain{
