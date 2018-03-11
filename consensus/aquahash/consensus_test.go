@@ -108,30 +108,30 @@ func TestCalcDifficultyHF2(t *testing.T) {
 		//
 		//
 		//
-		diffTest{000000001, big.NewInt(99999999), 80, big.NewInt(0), big.NewInt(99999999)},       // 1: frontier diff bug (not increasing)
-		diffTest{000000001, big.NewInt(100001792), 80, big.NewInt(1), big.NewInt(100001792)},     // 2: hf1 diff bug (not increasing)
-		diffTest{000000001, big.NewInt(100001792), 80, big.NewInt(2), big.NewInt(100050621)},     // 3: hf 2 (diff bug fixed)
-		diffTest{000000001, big.NewInt(100050621), 100, big.NewInt(3), big.NewInt(100099473)},    // 4: 100 second block, should increase.
-		diffTest{000000001, big.NewInt(100050621), 23, big.NewInt(4), big.NewInt(100099473)},     // 5: 23 second block, should increase
-		diffTest{000000001, big.NewInt(100050621), 50, big.NewInt(5), big.NewInt(100099473)},     // 6: 50 second block, should increase
-		diffTest{000000001, big.NewInt(100050621), 400, big.NewInt(6), big.NewInt(100001792)},    // 7: 400 second block, should decrease
-		diffTest{000000001, big.NewInt(100050621), 200, big.NewInt(7), big.NewInt(100099473)},    // 8: 200 second block // should increase
-		diffTest{000000001, big.NewInt(100050621), 235, big.NewInt(8), big.NewInt(100099473)},    // 9: 235 second block // should be increase
-		diffTest{000000001, big.NewInt(100050621), 236, big.NewInt(8), big.NewInt(100099473)},    // 10: 236 second block // should be increase
-		diffTest{000000001, big.NewInt(100050621), 237, big.NewInt(9), big.NewInt(100099473)},    // 237 second block // should be increase
-		diffTest{000000001, big.NewInt(100050621), 238, big.NewInt(9), big.NewInt(100099473)},    // 238 second block // should be increase
-		diffTest{000000001, big.NewInt(100050621), 245, big.NewInt(10), big.NewInt(100001792)},   // 245 second block// should decrease
-		diffTest{000000001, big.NewInt(100050621), 255, big.NewInt(10), big.NewInt(100001792)},   // 255 second block// should decrease
-		diffTest{000000001, big.NewInt(100050621), 320, big.NewInt(10), big.NewInt(100001792)},   // 255 second block//should decrease
-		diffTest{000000001, big.NewInt(1000506210), 340, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
-		diffTest{000000001, big.NewInt(1000506210), 345, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
-		diffTest{000000001, big.NewInt(1000506210), 350, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
-		diffTest{000000001, big.NewInt(1000506210), 370, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
-		diffTest{000000001, big.NewInt(1000506210), 380, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
-		diffTest{000000001, big.NewInt(1000506210), 390, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
-		diffTest{000000001, big.NewInt(1000506210), 395, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
-		diffTest{000000001, big.NewInt(1000506210), 399, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
-		diffTest{000000001, big.NewInt(1000506210), 500, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
+		{000000001, big.NewInt(99999999), 80, big.NewInt(0), big.NewInt(99999999)},       // 1: frontier diff bug (not increasing)
+		{000000001, big.NewInt(100001792), 80, big.NewInt(1), big.NewInt(100001792)},     // 2: hf1 diff bug (not increasing)
+		{000000001, big.NewInt(100001792), 80, big.NewInt(2), big.NewInt(100050621)},     // 3: hf 2 (diff bug fixed)
+		{000000001, big.NewInt(100050621), 100, big.NewInt(3), big.NewInt(100099473)},    // 4: 100 second block, should increase.
+		{000000001, big.NewInt(100050621), 23, big.NewInt(4), big.NewInt(100099473)},     // 5: 23 second block, should increase
+		{000000001, big.NewInt(100050621), 50, big.NewInt(5), big.NewInt(100099473)},     // 6: 50 second block, should increase
+		{000000001, big.NewInt(100050621), 400, big.NewInt(6), big.NewInt(100001792)},    // 7: 400 second block, should decrease
+		{000000001, big.NewInt(100050621), 200, big.NewInt(7), big.NewInt(100099473)},    // 8: 200 second block // should increase
+		{000000001, big.NewInt(100050621), 235, big.NewInt(8), big.NewInt(100099473)},    // 9: 235 second block // should be increase
+		{000000001, big.NewInt(100050621), 236, big.NewInt(8), big.NewInt(100099473)},    // 10: 236 second block // should be increase
+		{000000001, big.NewInt(100050621), 237, big.NewInt(9), big.NewInt(100099473)},    // 237 second block // should be increase
+		{000000001, big.NewInt(100050621), 238, big.NewInt(9), big.NewInt(100099473)},    // 238 second block // should be increase
+		{000000001, big.NewInt(100050621), 245, big.NewInt(10), big.NewInt(100001792)},   // 245 second block// should decrease
+		{000000001, big.NewInt(100050621), 255, big.NewInt(10), big.NewInt(100001792)},   // 255 second block// should decrease
+		{000000001, big.NewInt(100050621), 320, big.NewInt(10), big.NewInt(100001792)},   // 255 second block//should decrease
+		{000000001, big.NewInt(1000506210), 340, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
+		{000000001, big.NewInt(1000506210), 345, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
+		{000000001, big.NewInt(1000506210), 350, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
+		{000000001, big.NewInt(1000506210), 370, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
+		{000000001, big.NewInt(1000506210), 380, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
+		{000000001, big.NewInt(1000506210), 390, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
+		{000000001, big.NewInt(1000506210), 395, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
+		{000000001, big.NewInt(1000506210), 399, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
+		{000000001, big.NewInt(1000506210), 500, big.NewInt(10), big.NewInt(1000017682)}, // 255 second block// should decrease
 	}
 	now := uint64(1520741293)
 	for name, test := range m {

@@ -384,8 +384,8 @@ func (c *Console) Interactive() {
 	List accounts: aqua.accounts	
 
     Press TAB to autocomplete commands
-`+
-"\n"))
+` +
+					"\n"))
 				continue
 			}
 

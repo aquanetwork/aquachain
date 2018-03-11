@@ -376,10 +376,10 @@ func doArchive(cmdline []string) {
 	}
 
 	var (
-		env      = build.Env()
-		base     = archiveBasename(*arch, env)
-		aquachain    = "aquachain-" + base + ext
-		alltools = "aquachain-alltools-" + base + ext
+		env       = build.Env()
+		base      = archiveBasename(*arch, env)
+		aquachain = "aquachain-" + base + ext
+		alltools  = "aquachain-alltools-" + base + ext
 	)
 	maybeSkipArchive(env)
 	if err := build.WriteArchive(aquachain, gethArchiveFiles); err != nil {

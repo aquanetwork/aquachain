@@ -99,6 +99,7 @@ func TestKeyStorePassphraseDecryptionFail(t *testing.T) {
 		t.Fatalf("wrong error for invalid passphrase\ngot %q\nwant %q", err, ErrDecrypt)
 	}
 }
+
 /*
 func TestImportPreSaleKey(t *testing.T) {
 	dir, ks := tmpKeyStoreIface(t, true)
