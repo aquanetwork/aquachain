@@ -1,7 +1,5 @@
 # Aquachain
 
-[![Build Status](https://travis-ci.org/aquanetwork/aquachain.svg?branch=master)](https://travis-ci.org/aquanetwork/aquachain)
-
 ## General Purpose Smart Contract Distributed Super Computer
 
 Mining Reward: Only one AQUA reward every block.
@@ -150,4 +148,6 @@ c78193ba66af30ac8ab3ff5592473fad14f98cb2eb63b9c803e0147b8ff7052a  ./all/aqua-exp
 ```
 
 Contributions welcome. Check out @AquaCrypto on telegram for ways to help.
+
+[![Build Status](https://travis-ci.org/aquanetwork/aquachain.svg?branch=master)](https://travis-ci.org/aquanetwork/aquachain)
 
