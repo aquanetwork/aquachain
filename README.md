@@ -10,14 +10,16 @@ Block time: 4 minutes
 
 Supply Cap: At block 42mil block rewards become zero (gas only)
 
-
 ## GET AQUACHAIN
+
+
+### Install
 
 To begin, you must have aquachain command installed.
 
 To build with go, use `go get -v github.com/aquanetwork/aquachain/cmd/aquachain`
 
-To download binary release, see [Releases](https://github.com/aquanetwork/aquachain/releases/latest)
+To download binary release, see [Releases](https://github.com/aquanetwork/aquachain/releases/)
 
 Apple/Linux Install: (Apple users, replace linux-amd64 with darwin-amd64)
 
@@ -25,6 +27,32 @@ Apple/Linux Install: (Apple users, replace linux-amd64 with darwin-amd64)
 	sudo mv aquachain-linux-amd64 /usr/local/bin/aquachain 	# install
 	aquachain account new					# create new private/public key pair
 	aquachain --mine console				# start mining, open console
+
+Windows:
+	unzip where you want. 
+	right click the exe and make a shortcut.
+	right click the shortcut and add the word `console`
+	Should look like `c:\path\to\aquachain.exe" console`
+
+### Update
+
+the aquachain command is a portable program that can be moved anywhere.
+
+delete the .exe and replace with new version. the exe is safe to delete.
+
+your wallet and blockchain exist in a hidden folder, dont delete that folder!
+
+the best way to stay up to date is build your self, using [golang](https://golang.org/doc/install)
+
+### Wallet/Blockchain is stored in `datadir`
+
+If you need to back up your wallet, or use the json file in MEW, the location is:
+
+Linux, Mac: `~/.aquachain/`
+
+Windows: type `%appdata%\AquaChain` in the windows explorer
+
+
 	
 ## MINE AQUACHAIN
 
@@ -60,10 +88,10 @@ To specify the number of CPUs to use while mining, add a number in between the p
 
 ### Use JSON-RPC for local copy of block explorer, or MEW.
 
-Example command line for mining and using a LOCALLY stored copy of MEW AND the block explorer(found at http://explorer.aquanetwork.co):
+If you want to use the json-rpc, you must use a command line such as this:
 
 ```
-aquachain --mine --rpc --rpccorsdomain='*' --rpcvhosts='*' --rpcapi 'eth,aqua,web3' console
+aquachain --rpc --rpccorsdomain='*' --rpcvhosts='*' --rpcapi 'eth,aqua,web3' console
 ```
 
 This will listen on port 8543, so make sure to use 'http://localhost' and '8543' when setting up MEW custom node.
@@ -71,7 +99,8 @@ This will listen on port 8543, so make sure to use 'http://localhost' and '8543'
 ## Resources
 
 Explorer - http://explorer.aquanetwork.co/
-Downloads - http://explorer.aquanetwork.co/dl/
+Download Latest: https://github.com/aquanetwork/aquachain/releases
+More Downloads - http://explorer.aquanetwork.co/dl/
 Github - http://github.com/aquachain
 Github - http://github.com/aquanetwork/aquachain
 News, Chat: https://t.me/AquaCrypto
