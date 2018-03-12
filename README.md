@@ -4,7 +4,11 @@
 
 ## General Purpose Smart Contract Distributed Super Computer
 
-Only one AQUA reward every block. Avg block time is 197 seconds as of right now*. At block 42mil block rewards become zero (gas only)
+Mining Reward: Only one AQUA reward every block.
+
+Block time: 4 minutes
+
+Supply Cap: At block 42mil block rewards become zero (gas only)
 
 
 ## GET AQUACHAIN
