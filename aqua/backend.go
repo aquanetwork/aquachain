@@ -118,7 +118,7 @@ func New(ctx *node.ServiceContext, config *Config) (*AquaChain, error) {
 	}
 	if config.NetworkId == 1 {
 		chainConfig.HF = params.MainnetChainConfig.HF // use latest HF map
-		log.Info(fmt.Sprintf("Loading HF%v", len(chainConfig.HF)-1))
+		log.Info(fmt.Sprintf("Loading %s", params.VersionMeta))
 	}
 	log.Info("Initialised chain configuration", "config", chainConfig)
 
