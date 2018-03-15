@@ -21,7 +21,6 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
-	"runtime"
 	"sync"
 	"sync/atomic"
 
@@ -117,7 +116,10 @@ func New(ctx *node.ServiceContext, config *Config) (*AquaChain, error) {
 	if _, ok := genesisErr.(*params.ConfigCompatError); genesisErr != nil && !ok {
 		return nil, genesisErr
 	}
-	chainConfig.HF = params.MainnetChainConfig.HF // use latest HF map
+	if config.NetworkId == 1 {
+		chainConfig.HF = params.MainnetChainConfig.HF // use latest HF map
+		log.Info(fmt.Sprintf("Loading HF%v", len(chainConfig.HF)-1))
+	}
 	log.Info("Initialised chain configuration", "config", chainConfig)
 
 	aqua := &AquaChain{
@@ -187,9 +189,7 @@ func makeExtraData(extra []byte) []byte {
 		// create default extradata
 		extra, _ = rlp.EncodeToBytes([]interface{}{
 			uint(params.VersionMajor<<16 | params.VersionMinor<<8 | params.VersionPatch),
-			"aquad",
-			runtime.Version(),
-			runtime.GOOS,
+			"aquachain-" + params.VersionMeta,
 		})
 	}
 	if uint64(len(extra)) > params.MaximumExtraDataSize {
