@@ -283,11 +283,13 @@ func (pm *ProtocolManager) handle(p *peer) error {
 	// Propagate existing transactions. new transactions appearing
 	// after this will be sent via broadcasts.
 	pm.syncTransactions(p)
+
+	// send NextHF
 	if p.version >= aqua64 {
 		nexthf := pm.chainconfig.NextHF(pm.blockchain.CurrentHeader().Number)
-		p.Log().Info("Sending NextF " + nexthf.String() + " to " + p.Name())
+		p.Log().Info("Sending NextHF " + nexthf.String() + " to " + p.Name())
 		if err := p.SendNextHF(nexthf); err != nil {
-			p.Log().Error("Sending next HF failed", "err", err)
+			p.Log().Info("Sending next HF failed", "err", err)
 		}
 	}
 	// main loop. handle incoming messages.

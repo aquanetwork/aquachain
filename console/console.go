@@ -41,7 +41,7 @@ var (
 	onlyWhitespace = regexp.MustCompile(`^\s*$`)
 	exit           = regexp.MustCompile(`^\s*exit\s*;*\s*$`)
 	help           = regexp.MustCompile(`^\s*help\s*;*\s*$`)
-	commonCommands = []string{}
+	commonCommands = []string{"help", "aqua", "personal", "miner", "web3"}
 )
 
 // HistoryFile is the file within the data directory to store input scrollback.
@@ -249,7 +249,7 @@ func (c *Console) consoleOutput(call otto.FunctionCall) otto.Value {
 func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, string) {
 	// Common completions can be provided as help for empty inputs?
 	if len(line) == 0 || pos == 0 {
-		return "", nil, ""
+		return "", commonCommands, ""
 	}
 	// Chunck data to relevant part for autocompletion
 	// E.g. in case of nested lines aqua.getBalance(aqua.coinb<tab><tab>
@@ -283,7 +283,8 @@ func (c *Console) Welcome() {
  \__,_|\__, |\__,_|\__,_|\___|_| |_|\__,_|_|_| |_|
           |_|`+"\nUpdate Often! https://github.com/aquanetwork/aquachain\n\n"+
 		"Press TAB to autocomplete common modules\n"+
-		"[1..2..3..mine!]\nCheck Peers: admin.peers\n"+
+		"[1..2..3..mine!]\n"+
+		"Check Peers:    admin.peers\n"+
 		"New Wallet:     personal.newAccount()\n"+
 		"List Accounts:  aqua.accounts\n"+
 		"Start Mining:   miner.start()\n\n\n",
@@ -380,8 +381,8 @@ func (c *Console) Interactive() {
     Common commands:
 	New address:   personal.newAccount()
 	Start mining:  miner.start()
-	Get balance:   aqua.getBalance(aqua.coinbase)
-	List accounts: aqua.accounts	
+	Get balance:   aqua.Balance(aqua.coinbase)
+	List accounts: aqua.accounts
 
     Press TAB to autocomplete commands
 ` +

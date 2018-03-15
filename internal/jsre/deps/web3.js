@@ -1906,6 +1906,7 @@ var unitMap = {
     'milliether':    '1000000000000000',
     'milli':         '1000000000000000',
     'ether':        '1000000000000000000',
+    'aqua':        '1000000000000000000',
     'kether':       '1000000000000000000000',
     'grand':        '1000000000000000000000',
     'mether':       '1000000000000000000000000',
@@ -5433,6 +5434,20 @@ var methods = function () {
         params: 0
     });
 
+    var nextHF = new Method({
+        name: 'nextHF',
+        call: 'aqua_nextHF',
+        params: 0
+    });
+
+    var balance = new Method({
+        name: 'balance',
+        call: 'aqua_balance',
+        params: 2,
+        inputFormatter: [formatters.inputAddressFormatter, formatters.inputDefaultBlockNumberFormatter],
+        outputFormatter: formatters.outputBigNumberFormatter
+    });
+
     return [
         getBalance,
         getStorageAt,
@@ -5456,7 +5471,9 @@ var methods = function () {
         compileLLL,
         compileSerpent,
         submitWork,
-        getWork
+        getWork,
+        nextHF,
+        balance
     ];
 };
 
@@ -5484,6 +5501,11 @@ var properties = function () {
         new Property({
             name: 'gasPrice',
             getter: 'aqua_gasPrice',
+            outputFormatter: formatters.outputBigNumberFormatter
+        }),
+        new Property({
+            name: 'nextHF',
+            getter: 'aqua_nextHF',
             outputFormatter: formatters.outputBigNumberFormatter
         }),
         new Property({
