@@ -49,6 +49,7 @@ func TestNextHF(t *testing.T) {
 		{input: big.NewInt(30), expected: nil},
 		{input: big.NewInt(35), expected: nil},
 		{input: big.NewInt(350), expected: nil},
+		{input: nil, expected: big.NewInt(30)},
 	}
 
 	for i, test := range tests {

@@ -46,9 +46,9 @@ var (
 		EIP150Block:    big.NewInt(0),
 		HF: ForkMap{
 			0: big.NewInt(3000),
-			1: big.NewInt(3600), // increase min difficulty to the next multiple of 2048
-			2: big.NewInt(7200), // HF2 diff algo
-			3: big.NewInt(8737), // Aqua Protocol
+			1: big.NewInt(3600),  // increase min difficulty to the next multiple of 2048
+			2: big.NewInt(7200),  // HF2 diff algo
+			3: big.NewInt(14400), // Reserved
 		},
 		Aquahash:    new(AquahashConfig),
 		SupplyLimit: big.NewInt(42000000),
@@ -205,24 +205,23 @@ func (c *ChainConfig) IsHF(hf int, num *big.Int) bool {
 // NextHF returns the next scheduled hard fork block number
 func (c *ChainConfig) NextHF(cur *big.Int) *big.Int {
 	var next *big.Int
-	if cur != nil {
-		for i := len(c.HF) - 1; i >= 0; i-- {
-
-			if cur.Cmp(c.HF[i]) < 0 {
-				if next == nil {
-					next = new(big.Int).Set(c.HF[i])
-				}
-				if c.HF[i].Cmp(next) < 0 {
-					next.Set(c.HF[i])
-				}
+	if cur == nil { // NextHF(nil) returns final hf
+		if len(c.HF) < 1 {
+			return nil
+		}
+		return c.HF[len(c.HF)-1]
+	}
+	for i := len(c.HF) - 1; i >= 0; i-- {
+		if cur.Cmp(c.HF[i]) < 0 {
+			if next == nil {
+				next = new(big.Int).Set(c.HF[i])
+			}
+			if c.HF[i].Cmp(next) < 0 {
+				next.Set(c.HF[i])
 			}
 		}
-		return next
 	}
-	if len(c.HF) < 1 {
-		return nil
-	}
-	return c.HF[len(c.HF)-1]
+	return next
 }
 
 // IsHomestead returns whether num is either equal to the homestead block or greater.
