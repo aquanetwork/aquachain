@@ -283,24 +283,12 @@ func (pm *ProtocolManager) handle(p *peer) error {
 	// Propagate existing transactions. new transactions appearing
 	// after this will be sent via broadcasts.
 	pm.syncTransactions(p)
-
-	if nextHFBlock := pm.chainconfig.NextHF(head.Number); nextHFBlock != nil {
-		// Request the peer's DAO fork header for extra-data validation
-		if err := p.RequestHeadersByNumber(nextHFBlock.Uint64(), 1, 0, false); err != nil {
-			return err
+	if p.version >= aqua64 {
+		nexthf := pm.chainconfig.NextHF(pm.blockchain.CurrentHeader().Number)
+		p.Log().Info("Sending NextF " + nexthf.String() + " to " + p.Name())
+		if err := p.SendNextHF(nexthf); err != nil {
+			p.Log().Error("Sending next HF failed", "err", err)
 		}
-		// Start a timer to disconnect if the peer doesn't reply in time
-		p.forkDrop = time.AfterFunc(daoChallengeTimeout, func() {
-			p.Log().Debug("Timed out fork-check")
-			//pm.removePeer(p.id)
-		})
-		// Make sure it's cleaned up if the peer dies off
-		defer func() {
-			if p.forkDrop != nil {
-				p.forkDrop.Stop()
-				p.forkDrop = nil
-			}
-		}()
 	}
 	// main loop. handle incoming messages.
 	for {
@@ -670,7 +658,29 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			p.MarkTransaction(tx.Hash())
 		}
 		pm.txpool.AddRemotes(txs)
+	case p.version >= aqua64 && msg.Code == NextHFMsg:
 
+		var latesthf = new(big.Int)
+		if err := msg.Decode(latesthf); err != nil {
+			panic(err)
+			return errResp(ErrDecode, "msg %v: %v", msg, err)
+		}
+		log.Info(fmt.Sprintf("Got NextHF %s from %s", latesthf, p.String()))
+		if latesthf == nil || latesthf.Cmp(new(big.Int)) == 0 {
+			return nil
+		}
+		nextf := pm.chainconfig.NextHF(pm.blockchain.CurrentHeader().Number)
+		if nextf == nil {
+			fmt.Println(latesthf, "found new HF")
+			return nil
+		}
+		if cmp := latesthf.Cmp(nextf); cmp < 0 {
+			fmt.Printf("\n\n"+
+				"######################\n"+
+				"Discovered New HF. Please consider upgrading.\nPreviously known HF: %s\nNew discovered HF: %s\n"+
+				"######################\n", nextf, latesthf)
+
+		}
 	default:
 		return errResp(ErrInvalidMsgCode, "%v", msg.Code)
 	}

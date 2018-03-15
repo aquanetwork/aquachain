@@ -32,11 +32,10 @@ var (
 type ForkMap map[int]*big.Int
 
 func (f ForkMap) String() (s string) {
-	println("gotem")
 	for i := 0; i < len(f); i++ {
 		s = fmt.Sprintf("%s %v:%v", s, i, f[i].Int64())
 	}
-	return "hfyo: " + strings.TrimSpace(s)
+	return "HF-Ready: " + strings.TrimSpace(s)
 }
 
 var (
@@ -45,10 +44,11 @@ var (
 		ChainId:        big.NewInt(1),
 		HomesteadBlock: big.NewInt(0),
 		EIP150Block:    big.NewInt(0),
-		HF: map[int]*big.Int{
+		HF: ForkMap{
 			0: big.NewInt(3000),
 			1: big.NewInt(3600), // increase min difficulty to the next multiple of 2048
 			2: big.NewInt(7200), // HF2 diff algo
+			3: big.NewInt(8737), // Aqua Protocol
 		},
 		Aquahash:    new(AquahashConfig),
 		SupplyLimit: big.NewInt(42000000),
@@ -101,8 +101,11 @@ var (
 		EIP150Block:    big.NewInt(0),
 		HF: map[int]*big.Int{
 			0: big.NewInt(0),
-			//1: big.NewInt(1), // increase min difficulty to the next multiple of 2048
-			//2: big.NewInt(2), // HF2 diff algo
+			1: big.NewInt(1), // increase min difficulty to the next multiple of 2048
+			2: big.NewInt(2), // HF2 diff algo
+			3: big.NewInt(3),
+			4: big.NewInt(4),
+			5: big.NewInt(5),
 		},
 		Aquahash:    new(AquahashConfig),
 		SupplyLimit: big.NewInt(40),
@@ -121,7 +124,7 @@ type ChainConfig struct {
 	HomesteadBlock *big.Int `json:"homesteadBlock,omitempty"` // Homestead switch block (nil = no fork, 0 = already homestead)
 
 	// HF Scheduled Maintenance Hardforks
-	HF map[int]*big.Int `json:"hfmap,omitempty"` // map of HF block numbers
+	HF ForkMap `json:"hfmap,omitempty"` // map of HF block numbers
 
 	// et junk to remove
 	DAOForkBlock   *big.Int `json:"daoForkBlock,omitempty"`   // TheDAO hard-fork switch block (nil = no fork)
@@ -171,8 +174,8 @@ func (c *ChainConfig) String() string {
 		engine = "unknown"
 	}
 
-	hfmap := fmt.Sprint(c.HF)
-	return fmt.Sprintf("{ChainID: %v, Engine: %v, HF-Ready: %s}",
+	hfmap := c.HF.String()
+	return fmt.Sprintf("{ChainID: %v, Engine: %v, %s}",
 		c.ChainId,
 		engine,
 		hfmap,
@@ -201,21 +204,25 @@ func (c *ChainConfig) IsHF(hf int, num *big.Int) bool {
 
 // NextHF returns the next scheduled hard fork block number
 func (c *ChainConfig) NextHF(cur *big.Int) *big.Int {
+	var next *big.Int
 	if cur != nil {
-		for _, height := range c.HF {
-			if cur.Cmp(height) < 0 {
-				return height
+		for i := len(c.HF) - 1; i >= 0; i-- {
+
+			if cur.Cmp(c.HF[i]) < 0 {
+				if next == nil {
+					next = new(big.Int).Set(c.HF[i])
+				}
+				if c.HF[i].Cmp(next) < 0 {
+					next.Set(c.HF[i])
+				}
 			}
 		}
+		return next
+	}
+	if len(c.HF) < 1 {
 		return nil
 	}
-
-	// return latest hf
-	hflen := len(c.HF)
-	if c.HF == nil || hflen == 0 {
-		return nil
-	}
-	return c.HF[-1+hflen]
+	return c.HF[len(c.HF)-1]
 }
 
 // IsHomestead returns whether num is either equal to the homestead block or greater.

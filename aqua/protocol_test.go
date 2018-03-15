@@ -73,7 +73,7 @@ func testStatusMsgErrors(t *testing.T, protocol int) {
 	}
 
 	for i, test := range tests {
-		p, errc := newTestPeer("peer", protocol, pm, false)
+		p, errc := newTestPeer(t, "peer", protocol, pm, false)
 		// The send call might hang until reset because
 		// the protocol might not read the payload.
 		go p2p.Send(p.app, test.code, test.data)
@@ -97,18 +97,18 @@ func TestRecvTransactions62(t *testing.T) { testRecvTransactions(t, 62) }
 func TestRecvTransactions63(t *testing.T) { testRecvTransactions(t, 63) }
 
 func testRecvTransactions(t *testing.T, protocol int) {
-	t.Log("creating chan")
+	//t.Log("creating chan")
 	txAdded := make(chan []*types.Transaction)
-	t.Log("creating protocol mgr")
+	//t.Log("creating protocol mgr")
 	pm, _ := newTestProtocolManagerMust(t, downloader.FullSync, 0, nil, txAdded)
 	pm.acceptTxs = 1 // mark synced to accept transactions
-	t.Log("creating test peer")
-	p, _ := newTestPeer("peer", protocol, pm, true)
+	//t.Log("creating test peer")
+	p, _ := newTestPeer(t, "peer", protocol, pm, true)
 	defer pm.Stop()
 	defer p.close()
-	t.Log("creating new tx")
+	//t.Log("creating new tx")
 	tx := newTestTransaction(testAccount, 0, 0)
-	t.Logf("Sending tx: %x", tx.Hash())
+	//t.Logf("Sending tx: %x", tx.Hash())
 	if err := p2p.Send(p.app, TxMsg, []interface{}{tx}); err != nil {
 		t.Fatalf("send error: %v", err)
 	}
@@ -130,8 +130,8 @@ func TestSendTransactions62(t *testing.T) { testSendTransactions(t, 62) }
 func TestSendTransactions63(t *testing.T) { testSendTransactions(t, 63) }
 
 func testSendTransactions(t *testing.T, protocol int) {
-	
-pm, _ := newTestProtocolManagerMust(t, downloader.FullSync, 0, nil, nil)
+
+	pm, _ := newTestProtocolManagerMust(t, downloader.FullSync, 0, nil, nil)
 	defer pm.Stop()
 
 	// Fill the pool with big transactions.
@@ -177,7 +177,7 @@ pm, _ := newTestProtocolManagerMust(t, downloader.FullSync, 0, nil, nil)
 		}
 	}
 	for i := 0; i < 3; i++ {
-		p, _ := newTestPeer(fmt.Sprintf("peer #%d", i), protocol, pm, true)
+		p, _ := newTestPeer(t, fmt.Sprintf("peer #%d", i), protocol, pm, true)
 		wg.Add(1)
 		go checktxs(p)
 	}

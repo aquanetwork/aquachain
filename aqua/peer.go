@@ -48,6 +48,7 @@ type PeerInfo struct {
 	Version    int      `json:"version"`    // AquaChain protocol version negotiated
 	Difficulty *big.Int `json:"difficulty"` // Total difficulty of the peer's blockchain
 	Head       string   `json:"head"`       // SHA3 hash of the peer's best owned block
+	NextHF     *big.Int `json:"nexthf"`     // Block number of the next scheduled HF
 }
 
 type peer struct {
@@ -65,6 +66,8 @@ type peer struct {
 
 	knownTxs    *set.Set // Set of transaction hashes known to be known by this peer
 	knownBlocks *set.Set // Set of block hashes known to be known by this peer
+
+	nexthf *big.Int // Block number of the next known scheduled hf
 }
 
 func newPeer(version int, p *p2p.Peer, rw p2p.MsgReadWriter) *peer {
@@ -88,7 +91,16 @@ func (p *peer) Info() *PeerInfo {
 		Version:    p.version,
 		Difficulty: td,
 		Head:       hash.Hex(),
+		NextHF:     p.NextHF(),
 	}
+}
+
+// NextHF returnss a copy of the block number of the next HF (or nil if none scheduled)
+func (p *peer) NextHF() (nexthf *big.Int) {
+	if p.nexthf == nil {
+		return nil
+	}
+	return new(big.Int).Set(p.nexthf)
 }
 
 // Head retrieves a copy of the current head hash and total difficulty of the
@@ -157,6 +169,11 @@ func (p *peer) SendNewBlockHashes(hashes []common.Hash, numbers []uint64) error 
 func (p *peer) SendNewBlock(block *types.Block, td *big.Int) error {
 	p.knownBlocks.Add(block.Hash())
 	return p2p.Send(p.rw, NewBlockMsg, []interface{}{block, td})
+}
+
+// SendNextHF sends number of next hf or nil
+func (p *peer) SendNextHF(nexthf *big.Int) error {
+	return p2p.Send(p.rw, NextHFMsg, nexthf)
 }
 
 // SendBlockHeaders sends a batch of block headers to the remote peer.
@@ -259,6 +276,7 @@ func (p *peer) Handshake(network uint64, td *big.Int, head common.Hash, genesis 
 			return p2p.DiscReadTimeout
 		}
 	}
+
 	p.td, p.head = status.TD, status.CurrentBlock
 	return nil
 }
@@ -293,7 +311,7 @@ func (p *peer) readStatus(network uint64, status *statusData, genesis common.Has
 // String implements fmt.Stringer.
 func (p *peer) String() string {
 	return fmt.Sprintf("Peer %s [%s]", p.id,
-		fmt.Sprintf("aqua/%2d", p.version),
+		fmt.Sprintf("aquachain/%2d", p.version),
 	)
 }
 

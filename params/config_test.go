@@ -17,11 +17,60 @@
 package params
 
 import (
+	"fmt"
 	"math/big"
 	"reflect"
 	"testing"
 )
 
+func TestNextHF(t *testing.T) {
+	config := &ChainConfig{
+		// simple hf map with forks at block 0, 21 and 30
+		HF: ForkMap{
+			0: big.NewInt(0),
+			1: big.NewInt(21),
+			2: big.NewInt(30),
+		},
+	}
+
+	type test struct {
+		input, expected *big.Int
+	}
+
+	tests := []test{
+		{input: big.NewInt(10), expected: big.NewInt(21)},
+		{input: big.NewInt(7), expected: big.NewInt(21)},
+		{input: big.NewInt(11), expected: big.NewInt(21)},
+		{input: big.NewInt(0), expected: big.NewInt(21)},
+		{input: big.NewInt(21), expected: big.NewInt(30)},
+		{input: big.NewInt(22), expected: big.NewInt(30)},
+		{input: big.NewInt(23), expected: big.NewInt(30)},
+		{input: big.NewInt(29), expected: big.NewInt(30)},
+		{input: big.NewInt(30), expected: nil},
+		{input: big.NewInt(35), expected: nil},
+		{input: big.NewInt(350), expected: nil},
+	}
+
+	for i, test := range tests {
+		output := config.NextHF(test.input)
+		if test.expected == nil {
+			if output == nil {
+				continue
+			} else {
+				t.Errorf("Expected nil, got: %s", output)
+				continue
+			}
+		}
+		if output == nil && test.expected != nil {
+			t.Errorf("Test %v failed.\nExpected: %s, Got nil", i, test.expected)
+			continue
+		}
+		if output.Cmp(test.expected) != 0 {
+			fmt.Printf("input %s errored\nGot: %s\nWanted:   %s\n", test.input, output, test.expected)
+			t.Fail()
+		}
+	}
+}
 func TestCheckCompatible(t *testing.T) {
 	type test struct {
 		stored, new *ChainConfig
