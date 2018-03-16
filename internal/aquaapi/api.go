@@ -517,7 +517,7 @@ func (s *PublicBlockChainAPI) Balance(ctx context.Context, address common.Addres
 		return nil, err
 	}
 	b := state.GetBalance(address)
-	return new(big.Float).Quo(new(big.Float).SetInt(b), big.NewFloat(params.Aqua)), nil
+	return new(big.Float).Quo(new(big.Float).SetInt(b), big.NewFloat(params.Aqua)), state.Error()
 }
 
 // GetBlockByNumber returns the requested block. When blockNr is -1 the chain head is returned. When fullTx is true all

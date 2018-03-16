@@ -287,7 +287,7 @@ func (pm *ProtocolManager) handle(p *peer) error {
 	// send NextHF
 	if p.version >= aqua64 {
 		nexthf := pm.chainconfig.NextHF(pm.blockchain.CurrentHeader().Number)
-		p.Log().Info("Sending NextHF " + nexthf.String() + " to " + p.Name())
+		p.Log().Debug("Sending NextHF " + nexthf.String() + " to " + p.Name())
 		if err := p.SendNextHF(nexthf); err != nil {
 			p.Log().Info("Sending next HF failed", "err", err)
 		}
@@ -667,13 +667,17 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			panic(err)
 			return errResp(ErrDecode, "msg %v: %v", msg, err)
 		}
-		log.Info(fmt.Sprintf("Got NextHF %s from %s", latesthf, p.String()))
+		log.Debug(fmt.Sprintf("Got NextHF %s from %s", latesthf, p.String()))
 		if latesthf == nil || latesthf.Cmp(new(big.Int)) == 0 {
 			return nil
 		}
 		nextf := pm.chainconfig.NextHF(pm.blockchain.CurrentHeader().Number)
 		if nextf == nil {
-			fmt.Println(latesthf, "found new HF")
+			fmt.Printf("\n\n"+
+				"######################\n"+
+				"Discovered New HF. Please consider upgrading.\nPreviously known HF: none\nNew discovered HF: %s\n"+
+				"######################\n", latesthf)
+
 			return nil
 		}
 		if cmp := latesthf.Cmp(nextf); cmp < 0 {
