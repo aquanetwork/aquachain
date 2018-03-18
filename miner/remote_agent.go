@@ -126,7 +126,8 @@ func (a *RemoteAgent) GetWork() ([3]string, error) {
 		res[2] = common.BytesToHash(n.Bytes()).Hex()
 
 		a.work[block.HashNoNonce()] = a.currentWork
-		return res, nil
+		ser := [3]string{res[2], res[1], res[0]}
+		return ser, nil
 	}
 	return res, errors.New("No work available yet, don't panic.")
 }
@@ -137,7 +138,6 @@ func (a *RemoteAgent) GetWork() ([3]string, error) {
 func (a *RemoteAgent) SubmitWork(nonce types.BlockNonce, mixDigest, hash common.Hash) bool {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-
 	// Make sure the work submitted is present
 	work := a.work[hash]
 	if work == nil {

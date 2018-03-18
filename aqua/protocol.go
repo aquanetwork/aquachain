@@ -33,16 +33,17 @@ const (
 	eth62  = 62
 	eth63  = 63
 	aqua64 = 64
+	aqua65 = 65
 )
 
 // Official short name of the protocol used during capability negotiation.
 var ProtocolName = "aqua"
 
 // Supported versions of the aqua protocol (first is primary).
-var ProtocolVersions = []uint{aqua64, eth63, eth62}
+var ProtocolVersions = []uint{aqua65}
 
 // Number of implemented message corresponding to different protocol versions.
-var ProtocolLengths = []uint64{18, 17, 8}
+var ProtocolLengths = []uint64{18}
 
 const ProtocolMaxMsgSize = 10 * 1024 * 1024 // Maximum cap on the size of a protocol message
 

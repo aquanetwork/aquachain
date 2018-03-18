@@ -44,11 +44,12 @@ var (
 		ChainId:        big.NewInt(1),
 		HomesteadBlock: big.NewInt(0),
 		EIP150Block:    big.NewInt(0),
+		//EIP150Hash:     MainnetGenesisHash,
 		HF: ForkMap{
 			0: big.NewInt(3000),
 			1: big.NewInt(3600),  // increase min difficulty to the next multiple of 2048
 			2: big.NewInt(7200),  // HF2 diff algo
-			3: big.NewInt(14400), // Reserved
+			3: big.NewInt(13029), // HF3 min diff, announce gpu
 		},
 		Aquahash:    new(AquahashConfig),
 		SupplyLimit: big.NewInt(42000000),
@@ -267,8 +268,12 @@ func (c *ChainConfig) GasTable(num *big.Int) GasTable {
 		return GasTableHomestead
 	}
 	switch {
+	case c.IsEIP158(num):
+		return GasTableEIP158
 	case c.IsHF(1, num):
 		return GasTableHF1
+	case c.IsEIP150(num):
+		return GasTableEIP150
 	default:
 		return GasTableHomestead
 	}

@@ -27,7 +27,6 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/math"
 	"github.com/aquanetwork/aquachain/consensus"
-	"github.com/aquanetwork/aquachain/consensus/misc"
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/params"
@@ -275,13 +274,13 @@ func (aquahash *Aquahash) verifyHeader(chain consensus.ChainReader, header, pare
 			return err
 		}
 	}
-	// If all checks passed, validate any special fields for hard forks
-	if err := misc.VerifyHFHeaderExtraData(chain.Config(), header); err != nil {
-		return err
-	}
-	if err := misc.VerifyFork(chain.Config(), header, uncle); err != nil {
-		return err
-	}
+	// // If all checks passed, validate any special fields for hard forks
+	// if err := misc.VerifyHFHeaderExtraData(chain.Config(), header); err != nil {
+	// 	return err
+	// }
+	// if err := misc.VerifyFork(chain.Config(), header, uncle); err != nil {
+	// 	return err
+	// }
 	return nil
 }
 
@@ -298,6 +297,8 @@ func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint6
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
+	case config.IsHF(3, next): // choose HF3 before HF2 if both are activated
+		return calcDifficultyHF3(time, parent)
 	case config.IsHF(2, next): // choose HF2 before HF1 if both are activated
 		return calcDifficultyHF2(time, parent)
 	case config.IsHF(1, next):
@@ -484,6 +485,30 @@ func calcDifficultyHF2(time uint64, parent *types.Header) *big.Int {
 
 	if diff.Cmp(params.MinimumDifficultyHF1) < 0 {
 		diff.Set(params.MinimumDifficultyHF1)
+	}
+
+	return diff
+}
+
+// calcDifficultyHF3
+func calcDifficultyHF3(time uint64, parent *types.Header) *big.Int {
+	diff := new(big.Int)
+	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
+	adjust2 := new(big.Int).Add(adjust, adjust)
+	bigTime := new(big.Int)
+	bigParentTime := new(big.Int)
+
+	bigTime.SetUint64(time)
+	bigParentTime.Set(parent.Time)
+
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+		diff.Add(parent.Difficulty, adjust2)
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
+
+	if diff.Cmp(params.MinimumDifficultyHF3) < 0 {
+		diff.Set(params.MinimumDifficultyHF3)
 	}
 
 	return diff

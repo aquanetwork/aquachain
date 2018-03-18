@@ -104,7 +104,7 @@ func (api *PublicMinerAPI) GetWork() ([3]string, error) {
 	if err != nil {
 		return work, fmt.Errorf("mining not ready: %v", err)
 	}
-	return work, nil
+	return [3]string{work[2], work[1], work[0]}, nil
 }
 
 // SubmitHashrate can be used for remote miners to submit their hash rate. This enables the node to report the combined
