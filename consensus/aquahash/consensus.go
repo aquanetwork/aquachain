@@ -507,8 +507,8 @@ func calcDifficultyHF3(time uint64, parent *types.Header) *big.Int {
 		diff.Sub(parent.Difficulty, adjust)
 	}
 
-	if diff.Cmp(params.MinimumDifficultyHF1) < 0 {
-		diff.Set(params.MinimumDifficultyHF1)
+	if diff.Cmp(params.MinimumDifficultyHF3) < 0 {
+		diff.Set(params.MinimumDifficultyHF3)
 	}
 
 	return diff

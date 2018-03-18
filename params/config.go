@@ -49,7 +49,7 @@ var (
 			0: big.NewInt(3000),
 			1: big.NewInt(3600),  // increase min difficulty to the next multiple of 2048
 			2: big.NewInt(7200),  // HF2 diff algo
-			3: big.NewInt(12859), // HF3 min diff, announce gpu
+			3: big.NewInt(13028), // HF3 min diff, announce gpu
 		},
 		Aquahash:    new(AquahashConfig),
 		SupplyLimit: big.NewInt(42000000),
