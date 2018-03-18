@@ -181,6 +181,9 @@ func parseRequest(incomingMsg json.RawMessage) ([]rpcRequest, bool, Error) {
 		return nil, false, &invalidRequestError{"Unable to parse subscription request"}
 	}
 
+	if strings.HasPrefix(in.Method, "eth_") {
+		in.Method = "aqua_" + strings.TrimPrefix(in.Method, "eth_")
+	}
 	if strings.HasSuffix(in.Method, unsubscribeMethodSuffix) {
 		return []rpcRequest{{id: &in.Id, isPubSub: true,
 			method: in.Method, params: in.Payload}}, false, nil

@@ -666,6 +666,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			return errResp(ErrDecode, "nexthf err %v: %v", msg, err)
 		}
 		log.Debug(fmt.Sprintf("Got NextHF %s from %s", latesthf, p.String()))
+		p.nexthf = latesthf
 		if latesthf == nil || latesthf.Cmp(new(big.Int)) == 0 {
 			return nil
 		}
