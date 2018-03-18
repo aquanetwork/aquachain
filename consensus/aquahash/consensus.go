@@ -27,7 +27,6 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/math"
 	"github.com/aquanetwork/aquachain/consensus"
-	"github.com/aquanetwork/aquachain/consensus/misc"
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/params"
@@ -275,13 +274,13 @@ func (aquahash *Aquahash) verifyHeader(chain consensus.ChainReader, header, pare
 			return err
 		}
 	}
-	// If all checks passed, validate any special fields for hard forks
-	if err := misc.VerifyHFHeaderExtraData(chain.Config(), header); err != nil {
-		return err
-	}
-	if err := misc.VerifyFork(chain.Config(), header, uncle); err != nil {
-		return err
-	}
+	// // If all checks passed, validate any special fields for hard forks
+	// if err := misc.VerifyHFHeaderExtraData(chain.Config(), header); err != nil {
+	// 	return err
+	// }
+	// if err := misc.VerifyFork(chain.Config(), header, uncle); err != nil {
+	// 	return err
+	// }
 	return nil
 }
 

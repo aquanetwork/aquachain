@@ -661,11 +661,9 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 		}
 		pm.txpool.AddRemotes(txs)
 	case p.version >= aqua64 && msg.Code == NextHFMsg:
-
 		var latesthf = new(big.Int)
 		if err := msg.Decode(latesthf); err != nil {
-			panic(err)
-			return errResp(ErrDecode, "msg %v: %v", msg, err)
+			return errResp(ErrDecode, "nexthf err %v: %v", msg, err)
 		}
 		log.Debug(fmt.Sprintf("Got NextHF %s from %s", latesthf, p.String()))
 		if latesthf == nil || latesthf.Cmp(new(big.Int)) == 0 {
@@ -677,7 +675,6 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 				"######################\n"+
 				"Discovered New HF. Please consider upgrading.\nPreviously known HF: none\nNew discovered HF: %s\n"+
 				"######################\n", latesthf)
-
 			return nil
 		}
 		if cmp := latesthf.Cmp(nextf); cmp < 0 {
@@ -685,7 +682,6 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 				"######################\n"+
 				"Discovered New HF. Please consider upgrading.\nPreviously known HF: %s\nNew discovered HF: %s\n"+
 				"######################\n", nextf, latesthf)
-
 		}
 	default:
 		return errResp(ErrInvalidMsgCode, "%v", msg.Code)
