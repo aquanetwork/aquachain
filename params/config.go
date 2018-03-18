@@ -101,8 +101,8 @@ var (
 		EIP150Block:    big.NewInt(0),
 		HF: map[int]*big.Int{
 			0: big.NewInt(0),
-			1: big.NewInt(1), // increase min difficulty to the next multiple of 2048
-			2: big.NewInt(2), // HF2 diff algo
+			1: big.NewInt(0), // increase min difficulty to the next multiple of 2048
+			2: big.NewInt(0), // HF2 diff algo
 			3: big.NewInt(3),
 			4: big.NewInt(4),
 			5: big.NewInt(5),

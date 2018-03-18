@@ -187,10 +187,14 @@ func New(ctx *node.ServiceContext, config *Config) (*AquaChain, error) {
 func makeExtraData(extra []byte) []byte {
 	if len(extra) == 0 {
 		// create default extradata
-		extra, _ = rlp.EncodeToBytes([]interface{}{
+		var err error
+		extra, err = rlp.EncodeToBytes([]interface{}{
 			uint(params.VersionMajor<<16 | params.VersionMinor<<8 | params.VersionPatch),
-			"aquachain-" + params.VersionMeta,
+			"aquachain",
 		})
+		if err != nil {
+			log.Warn("Cant set extra:", err)
+		}
 	}
 	if uint64(len(extra)) > params.MaximumExtraDataSize {
 		log.Warn("Miner extra data exceed limit", "extra", hexutil.Bytes(extra), "limit", params.MaximumExtraDataSize)
