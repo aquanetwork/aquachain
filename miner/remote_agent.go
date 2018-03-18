@@ -138,9 +138,6 @@ func (a *RemoteAgent) GetWork() ([3]string, error) {
 func (a *RemoteAgent) SubmitWork(nonce types.BlockNonce, mixDigest, hash common.Hash) bool {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	if true {
-		return false
-	}
 	// Make sure the work submitted is present
 	work := a.work[hash]
 	if work == nil {
