@@ -45,14 +45,24 @@ Type `help` at the `AQUA>` prompt for common commands.
 ## Resources
 
 Wiki - https://github.com/aquanetwork/aquachain/wiki
+
 Explorer - http://explorer.aquanetwork.co/
+
 Downloads - http://explorer.aquanetwork.co/dl/
+
 Github - http://github.com/aquachain
+
 Github - http://github.com/aquanetwork/aquachain
+
 News, Chat: https://t.me/AquaCrypto
-Godoc - http://godoc.org/github.com/aquanetwork/aquachain
+
+Godoc - https://godoc.org/github.com/aquanetwork/aquachain#pkg-subdirectories
+
 Report bugs - https://github.com/aquanetwork/aquachain/issues
+
 Discord: https://discordapp.com/invite/J7jBhZf
+
+## Contributing
 
 Contributions welcome. Check out @AquaCrypto on telegram for ways to help.
 
