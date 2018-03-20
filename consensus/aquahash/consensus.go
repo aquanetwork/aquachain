@@ -298,6 +298,10 @@ func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint6
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
+	case config.IsHF(3, next):
+		return calcDifficultyHF3(time, parent)
+	case config.IsHF(2, next):
+		return calcDifficultyHF2(time, parent)
 	case config.IsHF(1, next):
 		return calcDifficultyHF1(time, parent)
 	case config.IsHomestead(next):
@@ -464,6 +468,52 @@ func calcDifficultyHF1(time uint64, parent *types.Header) *big.Int {
 		x.Add(x, y)
 	}
 	return x
+}
+
+// calcDifficultyHF2
+func calcDifficultyHF2(time uint64, parent *types.Header) *big.Int {
+	diff := new(big.Int)
+	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
+	bigTime := new(big.Int)
+	bigParentTime := new(big.Int)
+
+	bigTime.SetUint64(time)
+	bigParentTime.Set(parent.Time)
+
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+		diff.Add(parent.Difficulty, adjust)
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
+
+	if diff.Cmp(params.MinimumDifficultyHF1) < 0 {
+		diff.Set(params.MinimumDifficultyHF1)
+	}
+
+	return diff
+}
+
+// calcDifficultyHF3
+func calcDifficultyHF3(time uint64, parent *types.Header) *big.Int {
+	diff := new(big.Int)
+	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
+	bigTime := new(big.Int)
+	bigParentTime := new(big.Int)
+
+	bigTime.SetUint64(time)
+	bigParentTime.Set(parent.Time)
+
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+		diff.Add(parent.Difficulty, adjust)
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
+
+	if diff.Cmp(params.MinimumDifficultyHF3) < 0 {
+		diff.Set(params.MinimumDifficultyHF3)
+	}
+
+	return diff
 }
 
 // calcDifficultyFrontier is the difficulty adjustment algorithm. It returns the
