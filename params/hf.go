@@ -17,10 +17,21 @@
 package params
 
 import (
+	"fmt"
 	"math/big"
+	"strings"
 
 	"github.com/aquanetwork/aquachain/common"
 )
+
+type ForkMap map[int]*big.Int
+
+func (f ForkMap) String() (s string) {
+	for i := 0; i < len(f); i++ {
+		s = fmt.Sprintf("%s %v:%v", s, i, f[i].Int64())
+	}
+	return "HF-Ready: " + strings.TrimSpace(s)
+}
 
 // DAOForkBlockExtra is the block header extra-data field to set for the DAO fork
 // point and a number of consecutive blocks to allow fast/light syncers to correctly

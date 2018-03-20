@@ -28,7 +28,7 @@ var (
 	TestnetGenesisHash = common.HexToHash("0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d") // Testnet genesis hash to enforce below configs on
 )
 var (
-	AquachainHF = map[int]*big.Int{
+	AquachainHF = ForkMap{
 		0: big.NewInt(3000),
 		1: big.NewInt(3600),  // increase min difficulty to the next multiple of 2048
 		2: big.NewInt(7200),  // increase min difficulty to the next multiple of 2048
@@ -153,23 +153,23 @@ func (c *ChainConfig) String() string {
 	default:
 		engine = "unknown"
 	}
-	// return fmt.Sprintf("{ChainID: %v, Engine: %v, HF-Ready: %s}",
-	// 	c.ChainId,
-	// 	engine,
-	// 	hfmap,
-	// )
-	return fmt.Sprintf("{ChainID: %v Homestead: %v DAO: %v DAOSupport: %v EIP150: %v EIP155: %v EIP158: %v Byzantium: %v Constantinople: %v Engine: %v}",
+	return fmt.Sprintf("{ChainID: %v, Engine: %v, HF-Ready: %s}",
 		c.ChainId,
-		c.HomesteadBlock,
-		c.DAOForkBlock,
-		c.DAOForkSupport,
-		c.EIP150Block,
-		c.EIP155Block,
-		c.EIP158Block,
-		c.ByzantiumBlock,
-		c.ConstantinopleBlock,
 		engine,
+		AquachainHF,
 	)
+	// return fmt.Sprintf("{ChainID: %v Homestead: %v DAO: %v DAOSupport: %v EIP150: %v EIP155: %v EIP158: %v Byzantium: %v Constantinople: %v Engine: %v}",
+	// 	c.ChainId,
+	// 	c.HomesteadBlock,
+	// 	c.DAOForkBlock,
+	// 	c.DAOForkSupport,
+	// 	c.EIP150Block,
+	// 	c.EIP155Block,
+	// 	c.EIP158Block,
+	// 	c.ByzantiumBlock,
+	// 	c.ConstantinopleBlock,
+	// 	engine,
+	// )
 }
 
 // IsHF returns whether num is either equal to the hf block or greater.
