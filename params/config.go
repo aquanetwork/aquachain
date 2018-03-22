@@ -33,8 +33,7 @@ var (
 		0: big.NewInt(3000),  //  hf0 had no changes
 		1: big.NewInt(3600),  // increase min difficulty to the next multiple of 2048
 		2: big.NewInt(7200),  // use simple difficulty algo (240 seconds)
-		//3: big.NewInt(13028), // increase min difficulty for anticipation of gpu mining
-		3: big.NewInt(12000), // increase min difficulty for anticipation of gpu mining
+		3: big.NewInt(13026), // increase min difficulty for anticipation of gpu mining
 	}
 )
 var (
