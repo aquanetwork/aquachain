@@ -40,6 +40,7 @@ var (
 	passwordRegexp = regexp.MustCompile(`personal.[nus]`)
 	onlyWhitespace = regexp.MustCompile(`^\s*$`)
 	exit           = regexp.MustCompile(`^\s*exit\s*;*\s*$`)
+	help           = regexp.MustCompile(`^\s*help\s*;*\s*$`)
 )
 
 // HistoryFile is the file within the data directory to store input scrollback.
@@ -47,6 +48,21 @@ const HistoryFile = "history"
 
 // DefaultPrompt is the default prompt line prefix to use for user input querying.
 const DefaultPrompt = "AQUA> "
+
+const helpText = `
+Web links:
+   Explorer: http://explorer.aquanetwork.co
+	 Wiki: http://github.com/aquanetwork/aquachain/wiki/Basics
+	 Chat: https://t.me/AquaCrypto
+	 Common commands:
+ New address:   personal.newAccount()
+ Start CPU mining:  miner.start()
+ Get balance:   aqua.balance(aqua.coinbase)
+ List accounts: aqua.accounts
+	 Press TAB to autocomplete commands
+
+
+`
 
 // Config is the collection of configurations to fine tune the behavior of the
 // JavaScript console.
@@ -247,7 +263,7 @@ func (c *Console) consoleOutput(call otto.FunctionCall) otto.Value {
 func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, string) {
 	// No completions can be provided for empty inputs
 	if len(line) == 0 || pos == 0 {
-		return "", nil, ""
+		return "", c.jsre.CompleteKeywords(""), ""
 	}
 	// Chunck data to relevant part for autocompletion
 	// E.g. in case of nested lines aqua.getBalance(aqua.coinb<tab><tab>
@@ -361,6 +377,10 @@ func (c *Console) Interactive() {
 				return
 			}
 			if onlyWhitespace.MatchString(line) {
+				continue
+			}
+			if !ok || (indents <= 0 && help.MatchString(line)) {
+				fmt.Fprintln(c.printer, helpText)
 				continue
 			}
 			// Append the line to the input and check for multi-line interpretation
