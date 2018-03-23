@@ -68,15 +68,15 @@ type cppAquaChainGenesisSpec struct {
 // cppAquaChainGenesisSpecAccount is the prefunded genesis account and/or precompiled
 // contract definition.
 type cppAquaChainGenesisSpecAccount struct {
-	Balance     *hexutil.Big                   `json:"balance"`
-	Nonce       uint64                         `json:"nonce,omitempty"`
+	Balance     *hexutil.Big                    `json:"balance"`
+	Nonce       uint64                          `json:"nonce,omitempty"`
 	Precompiled *cppAquaChainGenesisSpecBuiltin `json:"precompiled,omitempty"`
 }
 
 // cppAquaChainGenesisSpecBuiltin is the precompiled contract definition.
 type cppAquaChainGenesisSpecBuiltin struct {
-	Name          string                               `json:"name,omitempty"`
-	StartingBlock hexutil.Uint64                       `json:"startingBlock,omitempty"`
+	Name          string                                `json:"name,omitempty"`
+	StartingBlock hexutil.Uint64                        `json:"startingBlock,omitempty"`
 	Linear        *cppAquaChainGenesisSpecLinearPricing `json:"linear,omitempty"`
 }
 
@@ -113,7 +113,7 @@ func newCppAquaChainGenesisSpec(network string, genesis *core.Genesis) (*cppAqua
 	spec.Params.DifficultyBoundDivisor = (*hexutil.Big)(params.DifficultyBoundDivisor)
 	spec.Params.GasLimitBoundDivisor = (hexutil.Uint64)(params.GasLimitBoundDivisor)
 	spec.Params.DurationLimit = (*hexutil.Big)(params.DurationLimit)
-	spec.Params.BlockReward = (*hexutil.Big)(aquahash.FrontierBlockReward)
+	spec.Params.BlockReward = (*hexutil.Big)(aquahash.BlockReward)
 
 	spec.Genesis.Nonce = (hexutil.Bytes)(make([]byte, 8))
 	binary.LittleEndian.PutUint64(spec.Genesis.Nonce[:], genesis.Nonce)
@@ -272,7 +272,7 @@ func newParityChainSpec(network string, genesis *core.Genesis, bootnodes []strin
 	spec.Engine.Aquahash.Params.DifficultyBoundDivisor = (*hexutil.Big)(params.DifficultyBoundDivisor)
 	spec.Engine.Aquahash.Params.GasLimitBoundDivisor = (hexutil.Uint64)(params.GasLimitBoundDivisor)
 	spec.Engine.Aquahash.Params.DurationLimit = (*hexutil.Big)(params.DurationLimit)
-	spec.Engine.Aquahash.Params.BlockReward = (*hexutil.Big)(aquahash.FrontierBlockReward)
+	spec.Engine.Aquahash.Params.BlockReward = (*hexutil.Big)(aquahash.BlockReward)
 	spec.Engine.Aquahash.Params.HomesteadTransition = genesis.Config.HomesteadBlock.Uint64()
 	spec.Engine.Aquahash.Params.EIP150Transition = genesis.Config.EIP150Block.Uint64()
 	spec.Engine.Aquahash.Params.EIP160Transition = genesis.Config.EIP155Block.Uint64()

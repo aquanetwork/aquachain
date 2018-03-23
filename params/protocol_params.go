@@ -86,4 +86,5 @@ var (
 	MinimumDifficultyHF1     = big.NewInt(100001792)       // The minimum that the difficulty may ever be (changed to a nice multiple of 2048).
 	MinimumDifficultyHF3     = big.NewInt(3095918580 * 10) // The minimum that the difficulty may ever be (changed to a nice multiple of 2048).
 	DurationLimit            = big.NewInt(240)             // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	MaxMoney                 = big.NewInt(42000000)        // At block 42mil rewards will be fees-only
 )
