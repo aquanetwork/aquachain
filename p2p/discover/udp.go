@@ -496,6 +496,7 @@ func encodePacket(priv *ecdsa.PrivateKey, ptype byte, req interface{}) (packet, 
 	b := new(bytes.Buffer)
 	b.Write(headSpace)
 	b.WriteByte(ptype)
+	b.WriteString("aqua")
 	if err := rlp.Encode(b, req); err != nil {
 		log.Error("Can't encode discv4 packet", "err", err)
 		return nil, nil, err
@@ -582,7 +583,7 @@ func decodePacket(buf []byte) (packet, NodeID, []byte, error) {
 	default:
 		return nil, fromID, hash, fmt.Errorf("unknown type: %d", ptype)
 	}
-	s := rlp.NewStream(bytes.NewReader(sigdata[1:]), 0)
+	s := rlp.NewStream(bytes.NewReader(sigdata[1+len("aqua"):]), 0)
 	err = s.Decode(req)
 	return req, fromID, hash, err
 }
