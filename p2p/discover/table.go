@@ -55,14 +55,14 @@ const (
 	tableIPLimit, tableSubnet   = 10, 24
 
 	maxBondingPingPongs = 16 // Limit on the number of concurrent ping/pong interactions
-	maxFindnodeFailures = 5  // Nodes exceeding this limit are dropped
+	maxFindnodeFailures = 3  // Nodes exceeding this limit are dropped
 
-	refreshInterval    = 30 * time.Minute
+	refreshInterval    = 10 * time.Minute
 	revalidateInterval = 10 * time.Second
 	copyNodesInterval  = 30 * time.Second
 	seedMinTableTime   = 5 * time.Minute
 	seedCount          = 30
-	seedMaxAge         = 5 * 24 * time.Hour
+	seedMaxAge         = 24 * time.Hour
 )
 
 type Table struct {
@@ -455,6 +455,10 @@ func (tab *Table) loadSeedNodes(bond bool) {
 	}
 	for i := range seeds {
 		seed := seeds[i]
+		if 13000 <= seed.UDP && seed.UDP <= 13999 {
+			log.Debug("Skipping bad seed node in database", "id", seed.ID, "addr", seed.addr(), "port", seed.UDP)
+			continue
+		}
 		age := log.Lazy{Fn: func() interface{} { return time.Since(tab.db.bondTime(seed.ID)) }}
 		log.Debug("Found seed node in database", "id", seed.ID, "addr", seed.addr(), "age", age)
 		tab.add(seed)

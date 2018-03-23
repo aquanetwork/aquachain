@@ -36,6 +36,7 @@ const Version = 4
 
 // Errors
 var (
+	errNotAqua          = errors.New("not aqua")
 	errPacketTooSmall   = errors.New("too small")
 	errBadHash          = errors.New("bad hash")
 	errExpired          = errors.New("expired")
@@ -59,6 +60,7 @@ const (
 
 // RPC packet types
 const (
+	//pingPacket = iota + 134 // zero is 'reserved'
 	pingPacket = iota + 1 // zero is 'reserved'
 	pongPacket
 	findnodePacket
@@ -129,6 +131,9 @@ func makeEndpoint(addr *net.UDPAddr, tcpPort uint16) rpcEndpoint {
 func (t *udp) nodeFromRPC(sender *net.UDPAddr, rn rpcNode) (*Node, error) {
 	if rn.UDP <= 1024 {
 		return nil, errors.New("low port")
+	}
+	if 30000 <= rn.UDP && rn.UDP <= 39999 {
+		return nil, errors.New("not aqua")
 	}
 	if err := netutil.CheckRelayIP(sender.IP, rn.IP); err != nil {
 		return nil, err
@@ -273,6 +278,9 @@ func (t *udp) close() {
 
 // ping sends a ping message to the given node and waits for a reply.
 func (t *udp) ping(toid NodeID, toaddr *net.UDPAddr) error {
+	if 30300 < toaddr.Port && toaddr.Port < 30309 {
+		return fmt.Errorf("maybe not aqua")
+	}
 	req := &ping{
 		Version:    Version,
 		From:       t.ourEndpoint,
