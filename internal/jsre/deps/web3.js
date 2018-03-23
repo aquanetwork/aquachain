@@ -5276,6 +5276,13 @@ var methods = function () {
         inputFormatter: [formatters.inputAddressFormatter, formatters.inputDefaultBlockNumberFormatter],
         outputFormatter: formatters.outputBigNumberFormatter
     });
+    var balance = new Method({
+        name: 'balance',
+        call: 'aqua_balance',
+        params: 2,
+        inputFormatter: [formatters.inputAddressFormatter, formatters.inputDefaultBlockNumberFormatter],
+        outputFormatter: formatters.outputBigNumberFormatter
+    });
 
     var getStorageAt = new Method({
         name: 'getStorageAt',
@@ -5435,6 +5442,7 @@ var methods = function () {
 
     return [
         getBalance,
+        balance,
         getStorageAt,
         getCode,
         getBlock,

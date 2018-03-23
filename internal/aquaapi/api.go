@@ -502,6 +502,18 @@ func (s *PublicBlockChainAPI) GetBalance(ctx context.Context, address common.Add
 	return b, state.Error()
 }
 
+// Balance returns the amount of aqua for the given address in the state of the
+// given block number. The rpc.LatestBlockNumber and rpc.PendingBlockNumber meta
+// block numbers are also allowed.
+func (s *PublicBlockChainAPI) Balance(ctx context.Context, address common.Address, blockNr rpc.BlockNumber) (*big.Float, error) {
+	state, _, err := s.b.StateAndHeaderByNumber(ctx, blockNr)
+	if state == nil || err != nil {
+		return nil, err
+	}
+	b := state.GetBalance(address)
+	return new(big.Float).Quo(new(big.Float).SetInt(b), big.NewFloat(params.Aqua)), nil
+}
+
 // GetBlockByNumber returns the requested block. When blockNr is -1 the chain head is returned. When fullTx is true all
 // transactions in the block are returned in full detail, otherwise only the transaction hash is returned.
 func (s *PublicBlockChainAPI) GetBlockByNumber(ctx context.Context, blockNr rpc.BlockNumber, fullTx bool) (map[string]interface{}, error) {
