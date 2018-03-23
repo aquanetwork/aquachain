@@ -8,7 +8,7 @@ Block reward: Ⱥ1.00
 
 Max supply: 42 million
 
-Deploy and interact with smart contracts
+Deploy and interact with slow smart contracts
 
 ## GET AQUACHAIN
 
@@ -22,9 +22,9 @@ The `aquachain` command is a portable program that doesn't really need an 'insta
 
 Apple/Linux Install: (Apple users, replace linux-amd64 with darwin-amd64)
 
-	sudo mv aquachain /usr/local/bin/aquachain 	# install
-	aquachain account new					# create new private/public key pair
-	aquachain console				      # open console
+	sudo mv aquachain /usr/local/bin/aquachain  # install
+	aquachain account new			    # create new private/public key pair
+	aquachain console			    # open console
 
 Create an account: This will create a wallet address where the mining rewards are stored. By default the last address created is where the mining rewards are sent. Type the following:
 
@@ -54,7 +54,9 @@ Github - http://github.com/aquachain
 
 Github - http://github.com/aquanetwork/aquachain
 
-News, Chat: https://t.me/AquaCrypto
+Telegram Chat: https://t.me/AquaCrypto
+
+Telegram News: https://t.me/Aquachain
 
 Godoc - https://godoc.org/github.com/aquanetwork/aquachain#pkg-subdirectories
 
