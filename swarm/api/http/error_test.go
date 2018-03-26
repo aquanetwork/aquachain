@@ -18,11 +18,12 @@ package http_test
 
 import (
 	"encoding/json"
-	"golang.org/x/net/html"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
+
+	"golang.org/x/net/html"
 
 	"github.com/aquanetwork/aquachain/swarm/testutil"
 )

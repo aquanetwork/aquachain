@@ -1,6 +1,6 @@
 ## Go AquaChain Dashboard
 
-The dashboard is a data visualizer integrated into aquad, intended to collect and visualize useful information of an AquaChain node. It consists of two parts:
+The dashboard is a data visualizer integrated into aquachain, intended to collect and visualize useful information of an AquaChain node. It consists of two parts:
 
 * The client visualizes the collected data.
 * The server collects the data, and updates the clients.
@@ -16,11 +16,11 @@ $ (cd dashboard/assets && npm install)
 $ (cd dashboard/assets && ./node_modules/.bin/flow-typed install)
 ```
 
-Normally the dashboard assets are bundled into AquaChain via `go-bindata` to avoid external dependencies. Rebuilding AquaChain after each UI modification however is not feasible from a developer perspective. Instead, we can run `webpack` in watch mode to automatically rebundle the UI, and ask `aquad` to use external assets to not rely on compiled resources:
+Normally the dashboard assets are bundled into AquaChain via `go-bindata` to avoid external dependencies. Rebuilding AquaChain after each UI modification however is not feasible from a developer perspective. Instead, we can run `webpack` in watch mode to automatically rebundle the UI, and ask `aquachain` to use external assets to not rely on compiled resources:
 
 ```
 $ (cd dashboard/assets && ./node_modules/.bin/webpack --watch)
-$ aquad --dashboard --dashboard.assets=dashboard/assets --vmodule=dashboard=5
+$ aquachain --dashboard --dashboard.assets=dashboard/assets --vmodule=dashboard=5
 ```
 
 To bundle up the final UI into AquaChain, run `go generate`:

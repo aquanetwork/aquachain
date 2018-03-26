@@ -26,7 +26,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/docker/pkg/reexec"
 	"github.com/aquanetwork/aquachain/accounts"
 	"github.com/aquanetwork/aquachain/accounts/keystore"
 	"github.com/aquanetwork/aquachain/internal/cmdtest"
@@ -34,6 +33,7 @@ import (
 	"github.com/aquanetwork/aquachain/p2p"
 	"github.com/aquanetwork/aquachain/rpc"
 	"github.com/aquanetwork/aquachain/swarm"
+	"github.com/docker/docker/pkg/reexec"
 )
 
 func init() {

@@ -28,11 +28,11 @@ import (
 	"unicode"
 
 	"github.com/aquanetwork/aquachain/accounts/abi/bind"
+	"github.com/aquanetwork/aquachain/aquaclient"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/contracts/chequebook"
 	"github.com/aquanetwork/aquachain/contracts/ens"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/aquaclient"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/metrics"
 	"github.com/aquanetwork/aquachain/node"

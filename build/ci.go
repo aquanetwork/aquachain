@@ -62,19 +62,19 @@ import (
 )
 
 var (
-	// Files that end up in the aquad*.zip archive.
+	// Files that end up in the aquachain*.zip archive.
 	gethArchiveFiles = []string{
 		"COPYING",
-		executablePath("aquad"),
+		executablePath("aquachain"),
 	}
 
-	// Files that end up in the aquad-alltools*.zip archive.
+	// Files that end up in the aquachain-alltools*.zip archive.
 	allToolsArchiveFiles = []string{
 		"COPYING",
 		executablePath("abigen"),
 		executablePath("bootnode"),
 		executablePath("evm"),
-		executablePath("aquad"),
+		executablePath("aquachain"),
 		executablePath("puppeth"),
 		executablePath("rlpdump"),
 		executablePath("swarm"),
@@ -96,7 +96,7 @@ var (
 			Description: "Developer utility version of the EVM (AquaChain Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode.",
 		},
 		{
-			Name:        "aquad",
+			Name:        "aquachain",
 			Description: "AquaChain CLI client.",
 		},
 		{
@@ -376,19 +376,19 @@ func doArchive(cmdline []string) {
 	}
 
 	var (
-		env      = build.Env()
-		base     = archiveBasename(*arch, env)
-		aquad     = "aquad-" + base + ext
-		alltools = "aquad-alltools-" + base + ext
+		env       = build.Env()
+		base      = archiveBasename(*arch, env)
+		aquachain = "aquachain-" + base + ext
+		alltools  = "aquachain-alltools-" + base + ext
 	)
 	maybeSkipArchive(env)
-	if err := build.WriteArchive(aquad, gethArchiveFiles); err != nil {
+	if err := build.WriteArchive(aquachain, gethArchiveFiles); err != nil {
 		log.Fatal(err)
 	}
 	if err := build.WriteArchive(alltools, allToolsArchiveFiles); err != nil {
 		log.Fatal(err)
 	}
-	for _, archive := range []string{aquad, alltools} {
+	for _, archive := range []string{aquachain, alltools} {
 		if err := archiveUpload(archive, *upload, *signer); err != nil {
 			log.Fatal(err)
 		}
@@ -515,7 +515,7 @@ func makeWorkdir(wdflag string) string {
 	if wdflag != "" {
 		err = os.MkdirAll(wdflag, 0744)
 	} else {
-		wdflag, err = ioutil.TempDir("", "aquad-build-")
+		wdflag, err = ioutil.TempDir("", "aquachain-build-")
 	}
 	if err != nil {
 		log.Fatal(err)
@@ -671,7 +671,7 @@ func doWindowsInstaller(cmdline []string) {
 			continue
 		}
 		allTools = append(allTools, filepath.Base(file))
-		if filepath.Base(file) == "aquad.exe" {
+		if filepath.Base(file) == "aquachain.exe" {
 			gethTool = file
 		} else {
 			devTools = append(devTools, file)
@@ -679,13 +679,13 @@ func doWindowsInstaller(cmdline []string) {
 	}
 
 	// Render NSIS scripts: Installer NSIS contains two installer sections,
-	// first section contains the aquad binary, second section holds the dev tools.
+	// first section contains the aquachain binary, second section holds the dev tools.
 	templateData := map[string]interface{}{
-		"License":  "COPYING",
-		"AquaChain":     gethTool,
-		"DevTools": devTools,
+		"License":   "COPYING",
+		"AquaChain": gethTool,
+		"DevTools":  devTools,
 	}
-	build.Render("build/nsis.aquad.nsi", filepath.Join(*workdir, "aquad.nsi"), 0644, nil)
+	build.Render("build/nsis.aquachain.nsi", filepath.Join(*workdir, "aquachain.nsi"), 0644, nil)
 	build.Render("build/nsis.install.nsh", filepath.Join(*workdir, "install.nsh"), 0644, templateData)
 	build.Render("build/nsis.uninstall.nsh", filepath.Join(*workdir, "uninstall.nsh"), 0644, allTools)
 	build.Render("build/nsis.pathupdate.nsh", filepath.Join(*workdir, "PathUpdate.nsh"), 0644, nil)
@@ -700,14 +700,14 @@ func doWindowsInstaller(cmdline []string) {
 	if env.Commit != "" {
 		version[2] += "-" + env.Commit[:8]
 	}
-	installer, _ := filepath.Abs("aquad-" + archiveBasename(*arch, env) + ".exe")
+	installer, _ := filepath.Abs("aquachain-" + archiveBasename(*arch, env) + ".exe")
 	build.MustRunCommand("makensis.exe",
 		"/DOUTPUTFILE="+installer,
 		"/DMAJORVERSION="+version[0],
 		"/DMINORVERSION="+version[1],
 		"/DBUILDVERSION="+version[2],
 		"/DARCH="+*arch,
-		filepath.Join(*workdir, "aquad.nsi"),
+		filepath.Join(*workdir, "aquachain.nsi"),
 	)
 
 	// Sign and publish installer.
@@ -742,7 +742,7 @@ func doAndroidArchive(cmdline []string) {
 
 	if *local {
 		// If we're building locally, copy bundle to build dir and skip Maven
-		os.Rename("aquad.aar", filepath.Join(GOBIN, "aquad.aar"))
+		os.Rename("aquachain.aar", filepath.Join(GOBIN, "aquachain.aar"))
 		return
 	}
 	meta := newMavenMetadata(env)
@@ -752,8 +752,8 @@ func doAndroidArchive(cmdline []string) {
 	maybeSkipArchive(env)
 
 	// Sign and upload the archive to Azure
-	archive := "aquad-" + archiveBasename("android", env) + ".aar"
-	os.Rename("aquad.aar", archive)
+	archive := "aquachain-" + archiveBasename("android", env) + ".aar"
+	os.Rename("aquachain.aar", archive)
 
 	if err := archiveUpload(archive, *upload, *signer); err != nil {
 		log.Fatal(err)
@@ -837,7 +837,7 @@ func newMavenMetadata(env build.Environment) mavenMetadata {
 	}
 	return mavenMetadata{
 		Version:      version,
-		Package:      "aquad-" + version,
+		Package:      "aquachain-" + version,
 		Develop:      isUnstableBuild(env),
 		Contributors: contribs,
 	}
@@ -866,7 +866,7 @@ func doXCodeFramework(cmdline []string) {
 		build.MustRun(bind)
 		return
 	}
-	archive := "aquad-" + archiveBasename("ios", env)
+	archive := "aquachain-" + archiveBasename("ios", env)
 	if err := os.Mkdir(archive, os.ModePerm); err != nil {
 		log.Fatal(err)
 	}

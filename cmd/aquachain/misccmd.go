@@ -23,9 +23,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
-	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/params"
 	"gopkg.in/urfave/cli.v1"
 )
@@ -80,7 +80,7 @@ The output of this command is supposed to be machine-readable.
 func makecache(ctx *cli.Context) error {
 	args := ctx.Args()
 	if len(args) != 2 {
-		utils.Fatalf(`Usage: aquad makecache <block number> <outputdir>`)
+		utils.Fatalf(`Usage: aquachain makecache <block number> <outputdir>`)
 	}
 	block, err := strconv.ParseUint(args[0], 0, 64)
 	if err != nil {
@@ -95,7 +95,7 @@ func makecache(ctx *cli.Context) error {
 func makedag(ctx *cli.Context) error {
 	args := ctx.Args()
 	if len(args) != 2 {
-		utils.Fatalf(`Usage: aquad makedag <block number> <outputdir>`)
+		utils.Fatalf(`Usage: aquachain makedag <block number> <outputdir>`)
 	}
 	block, err := strconv.ParseUint(args[0], 0, 64)
 	if err != nil {
@@ -134,6 +134,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with aquad. If not, see <http://www.gnu.org/licenses/>.`)
+along with aquachain. If not, see <http://www.gnu.org/licenses/>.`)
 	return nil
 }

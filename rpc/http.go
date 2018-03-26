@@ -30,8 +30,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/rs/cors"
 	"strings"
+
+	"github.com/rs/cors"
 )
 
 const (

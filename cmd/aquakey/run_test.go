@@ -21,8 +21,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/docker/docker/pkg/reexec"
 	"github.com/aquanetwork/aquachain/internal/cmdtest"
+	"github.com/docker/docker/pkg/reexec"
 )
 
 type testAquakey struct {

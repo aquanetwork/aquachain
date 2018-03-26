@@ -427,8 +427,8 @@ const tmplSourceJava = `
 
 package {{.Package}};
 
-import org.aquachain.aquad.*;
-import org.aquachain.aquad.internal.*;
+import org.aquachain.aquachain.*;
+import org.aquachain.aquachain.internal.*;
 
 {{range $contract := .Contracts}}
 	public class {{.Type}} {

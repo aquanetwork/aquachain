@@ -84,7 +84,7 @@ var dashboardContent = `
 									{{if .FaucetPage}}<li id="faucet_menu"><a onclick="load('#faucet')"><i class="fa fa-bath"></i> Crypto Faucet</a></li>{{end}}
 									<li id="connect_menu"><a><i class="fa fa-plug"></i> Connect Yourself</a>
 										<ul id="connect_list" class="nav child_menu">
-											<li><a onclick="$('#connect_menu').removeClass('active'); $('#connect_list').toggle(); load('#aquad')">Go AquaChain: AquaChain</a></li>
+											<li><a onclick="$('#connect_menu').removeClass('active'); $('#connect_list').toggle(); load('#aquachain')">Go AquaChain: AquaChain</a></li>
 											<li><a onclick="$('#connect_menu').removeClass('active'); $('#connect_list').toggle(); load('#mist')">Go AquaChain: Wallet & Mist</a></li>
 											<li><a onclick="$('#connect_menu').removeClass('active'); $('#connect_list').toggle(); load('#mobile')">Go AquaChain: Android & iOS</a></li>{{if .Aquahash}}
 											<li><a onclick="$('#connect_menu').removeClass('active'); $('#connect_list').toggle(); load('#other')">Other AquaChain Clients</a></li>{{end}}
@@ -97,7 +97,7 @@ var dashboardContent = `
 					</div>
 				</div>
 				<div class="right_col" role="main" style="padding: 0 !important">
-					<div id="aquad" hidden style="padding: 16px;">
+					<div id="aquachain" hidden style="padding: 16px;">
 						<div class="page-title">
 							<div class="title_left">
 								<h3>Connect Yourself &ndash; Go AquaChain: AquaChain</h3>
@@ -116,11 +116,11 @@ var dashboardContent = `
 										<p>Initial processing required to execute all transactions may require non-negligible time and disk capacity required to store all past state may be non-insignificant. High end machines with SSD storage, modern CPUs and 8GB+ RAM are recommended.</p>
 										<br/>
 										<p>To run an archive node, download <a href="/{{.AquaChainGenesis}}"><code>{{.AquaChainGenesis}}</code></a> and start AquaChain with:
-											<pre>aquad --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
-											<pre>aquad --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=1024 --syncmode=full{{if .Aquastats}} --aquastats='{{.Aquastats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
+											<pre>aquachain --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
+											<pre>aquachain --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=1024 --syncmode=full{{if .Aquastats}} --aquastats='{{.Aquastats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
 										</p>
 										<br/>
-										<p>You can download AquaChain from <a href="https://aquad.aquachain.org/downloads/" target="about:blank">https://aquad.aquachain.org/downloads/</a>.</p>
+										<p>You can download AquaChain from <a href="https://aquachain.aquachain.org/downloads/" target="about:blank">https://aquachain.aquachain.org/downloads/</a>.</p>
 									</div>
 								</div>
 							</div>
@@ -135,11 +135,11 @@ var dashboardContent = `
 										<p>Initial processing required to synchronize is more bandwidth intensive, but is light on the CPU and has significantly reduced disk requirements. Mid range machines with HDD storage, decent CPUs and 4GB+ RAM should be enough.</p>
 										<br/>
 										<p>To run a full node, download <a href="/{{.AquaChainGenesis}}"><code>{{.AquaChainGenesis}}</code></a> and start AquaChain with:
-											<pre>aquad --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
-											<pre>aquad --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=512{{if .Aquastats}} --aquastats='{{.Aquastats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
+											<pre>aquachain --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
+											<pre>aquachain --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=512{{if .Aquastats}} --aquastats='{{.Aquastats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
 										</p>
 										<br/>
-										<p>You can download AquaChain from <a href="https://aquad.aquachain.org/downloads/" target="about:blank">https://aquad.aquachain.org/downloads/</a>.</p>
+										<p>You can download AquaChain from <a href="https://aquachain.aquachain.org/downloads/" target="about:blank">https://aquachain.aquachain.org/downloads/</a>.</p>
 									</div>
 								</div>
 							</div>
@@ -157,11 +157,11 @@ var dashboardContent = `
 										<p>Initial processing required to synchronize is light, as it only verifies the validity of the headers; similarly required disk capacity is small, tallying around 500 bytes per header. Low end machines with arbitrary storage, weak CPUs and 512MB+ RAM should cope well.</p>
 										<br/>
 										<p>To run a light node, download <a href="/{{.AquaChainGenesis}}"><code>{{.AquaChainGenesis}}</code></a> and start AquaChain with:
-											<pre>aquad --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
-											<pre>aquad --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --syncmode=light{{if .Aquastats}} --aquastats='{{.Aquastats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
+											<pre>aquachain --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
+											<pre>aquachain --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --syncmode=light{{if .Aquastats}} --aquastats='{{.Aquastats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
 										</p>
 										<br/>
-										<p>You can download AquaChain from <a href="https://aquad.aquachain.org/downloads/" target="about:blank">https://aquad.aquachain.org/downloads/</a>.</p>
+										<p>You can download AquaChain from <a href="https://aquachain.aquachain.org/downloads/" target="about:blank">https://aquachain.aquachain.org/downloads/</a>.</p>
 									</div>
 								</div>
 							</div>
@@ -176,11 +176,11 @@ var dashboardContent = `
 										<p>Initial processing required to synchronize is light, as it only verifies the validity of the headers; similarly required disk capacity is small, tallying around 500 bytes per header. Embedded machines with arbitrary storage, low power CPUs and 128MB+ RAM may work.</p>
 										<br/>
 										<p>To run an embedded node, download <a href="/{{.AquaChainGenesis}}"><code>{{.AquaChainGenesis}}</code></a> and start AquaChain with:
-											<pre>aquad --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
-											<pre>aquad --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=16 --aquahash.cachesinmem=1 --syncmode=light{{if .Aquastats}} --aquastats='{{.Aquastats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
+											<pre>aquachain --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
+											<pre>aquachain --networkid={{.NetworkID}} --datadir=$HOME/.{{.Network}} --cache=16 --aquahash.cachesinmem=1 --syncmode=light{{if .Aquastats}} --aquastats='{{.Aquastats}}'{{end}} --bootnodes={{.BootnodesFlat}}</pre>
 										</p>
 										<br/>
-										<p>You can download AquaChain from <a href="https://aquad.aquachain.org/downloads/" target="about:blank">https://aquad.aquachain.org/downloads/</a>.</p>
+										<p>You can download AquaChain from <a href="https://aquachain.aquachain.org/downloads/" target="about:blank">https://aquachain.aquachain.org/downloads/</a>.</p>
 									</div>
 								</div>
 							</div>
@@ -205,10 +205,10 @@ var dashboardContent = `
 										<p>Under the hood the wallet is backed by a aquachain full node, meaning that a mid range machine is assumed. Similarly, synchronization is based on <strong>fast-sync</strong>, which will download all blockchain data from the network and make it available to the wallet. Light nodes cannot currently fully back the wallet, but it's a target actively pursued.</p>
 										<br/>
 										<p>To connect with the AquaChain Wallet, you'll need to initialize your private network first via AquaChain as the wallet does not currently support calling AquaChain directly. To initialize your local chain, download <a href="/{{.AquaChainGenesis}}"><code>{{.AquaChainGenesis}}</code></a> and run:
-											<pre>aquad --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
+											<pre>aquachain --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
 										</p>
 										<p>With your local chain initialized, you can start the AquaChain Wallet:
-											<pre>aquachainwallet --rpc $HOME/.{{.Network}}/aquad.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Aquastats}} --node-aquastats='{{.Aquastats}}'{{end}} --node-bootnodes={{.BootnodesFlat}}</pre>
+											<pre>aquachainwallet --rpc $HOME/.{{.Network}}/aquachain.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Aquastats}} --node-aquastats='{{.Aquastats}}'{{end}} --node-bootnodes={{.BootnodesFlat}}</pre>
 										<p>
 										<br/>
 										<p>You can download the AquaChain Wallet from <a href="https://github.com/aquanetwork/mist/releases" target="about:blank">https://github.com/aquanetwork/mist/releases</a>.</p>
@@ -226,10 +226,10 @@ var dashboardContent = `
 										<p>Under the hood the browser is backed by a aquachain full node, meaning that a mid range machine is assumed. Similarly, synchronization is based on <strong>fast-sync</strong>, which will download all blockchain data from the network and make it available to the wallet. Light nodes cannot currently fully back the wallet, but it's a target actively pursued.</p>
 										<br/>
 										<p>To connect with the Mist browser, you'll need to initialize your private network first via AquaChain as Mist does not currently support calling AquaChain directly. To initialize your local chain, download <a href="/{{.AquaChainGenesis}}"><code>{{.AquaChainGenesis}}</code></a> and run:
-											<pre>aquad --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
+											<pre>aquachain --datadir=$HOME/.{{.Network}} init {{.AquaChainGenesis}}</pre>
 										</p>
 										<p>With your local chain initialized, you can start Mist:
-											<pre>mist --rpc $HOME/.{{.Network}}/aquad.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Aquastats}} --node-aquastats='{{.Aquastats}}'{{end}} --node-bootnodes={{.BootnodesFlat}}</pre>
+											<pre>mist --rpc $HOME/.{{.Network}}/aquachain.ipc --node-networkid={{.NetworkID}} --node-datadir=$HOME/.{{.Network}}{{if .Aquastats}} --node-aquastats='{{.Aquastats}}'{{end}} --node-bootnodes={{.BootnodesFlat}}</pre>
 										<p>
 										<br/>
 										<p>You can download the Mist browser from <a href="https://github.com/aquanetwork/mist/releases" target="about:blank">https://github.com/aquanetwork/mist/releases</a>.</p>
@@ -258,8 +258,8 @@ var dashboardContent = `
 										<br/>
 										<p>The stable Android archives are distributed via Maven Central, and the develop snapshots via the Sonatype repositories. Before proceeding, please ensure you have a recent version configured in your Android project. You can find details in <a href="https://github.com/aquanetwork/aquachain/wiki/Mobile:-Introduction#android-archive" target="about:blank">Mobile: Introduction &ndash; Android archive</a>.
 										<p>Before connecting to the AquaChain network, download the <a href="/{{.AquaChainGenesis}}"><code>{{.AquaChainGenesis}}</code></a> genesis json file and either store it in your Android project as a resource file you can access, or save it as a string in a variable. You're going to need to to initialize your client.</p>
-										<p>Inside your Java code you can now import the aquad archive and connect to AquaChain:
-											<pre>import org.aquachain.aquad.*;</pre>
+										<p>Inside your Java code you can now import the aquachain archive and connect to AquaChain:
+											<pre>import org.aquachain.aquachain.*;</pre>
 <pre>
 Enodes bootnodes = new Enodes();{{range .Bootnodes}}
 bootnodes.append(new Enode("{{.}}"));{{end}}
@@ -289,7 +289,7 @@ node.start();
 										<br/>
 										<p>Both stable and develop builds of the iOS framework are available via CocoaPods. Before proceeding, please ensure you have a recent version configured in your iOS project. You can find details in <a href="https://github.com/aquanetwork/aquachain/wiki/Mobile:-Introduction#ios-framework" target="about:blank">Mobile: Introduction &ndash; iOS framework</a>.
 										<p>Before connecting to the AquaChain network, download the <a href="/{{.AquaChainGenesis}}"><code>{{.AquaChainGenesis}}</code></a> genesis json file and either store it in your iOS project as a resource file you can access, or save it as a string in a variable. You're going to need to to initialize your client.</p>
-										<p>Inside your Swift code you can now import the aquad framework and connect to AquaChain (ObjC should be analogous):
+										<p>Inside your Swift code you can now import the aquachain framework and connect to AquaChain (ObjC should be analogous):
 											<pre>import AquaChain</pre>
 <pre>
 var error: NSError?
@@ -419,7 +419,7 @@ try! node?.start();
 										<p>Puppeth is a tool to aid you in creating a new AquaChain network down to the genesis block, bootnodes, signers, aquastats server, crypto faucet, wallet browsers, block explorer, dashboard and more; without the hassle that it would normally entail to manually configure all these services one by one.</p>
 										<p>Puppeth uses ssh to dial in to remote servers, and builds its network components out of docker containers using docker-compose. The user is guided through the process via a command line wizard that does the heavy lifting and topology configuration automatically behind the scenes.</p>
 										<br/>
-										<p>Puppeth is distributed as part of the <a href="https://aquad.aquachain.org/downloads/" target="about:blank">AquaChain &amp; Tools</a> bundles, but can also be installed separately via:<pre>go get github.com/aquanetwork/aquachain/cmd/puppeth</pre></p>
+										<p>Puppeth is distributed as part of the <a href="https://aquachain.aquachain.org/downloads/" target="about:blank">AquaChain &amp; Tools</a> bundles, but can also be installed separately via:<pre>go get github.com/aquanetwork/aquachain/cmd/puppeth</pre></p>
 										<br/>
 										<p><em>Copyright 2017. The aquachain Authors.</em></p>
 									</div>
@@ -445,7 +445,7 @@ try! node?.start();
 				window.location.hash = hash;
 
 				// Fade out all possible pages (yes, ugly, no, don't care)
-				$("#aquad").fadeOut(300)
+				$("#aquachain").fadeOut(300)
 				$("#mist").fadeOut(300)
 				$("#mobile").fadeOut(300)
 				$("#other").fadeOut(300)
@@ -580,13 +580,13 @@ func deployDashboard(client *sshClient, network string, conf *config, config *da
 
 	composefile := new(bytes.Buffer)
 	template.Must(template.New("").Parse(dashboardComposefile)).Execute(composefile, map[string]interface{}{
-		"Network":      network,
-		"Port":         config.port,
-		"VHost":        config.host,
+		"Network":       network,
+		"Port":          config.port,
+		"VHost":         config.host,
 		"AquastatsPage": config.aquastats,
-		"ExplorerPage": config.explorer,
-		"WalletPage":   config.wallet,
-		"FaucetPage":   config.faucet,
+		"ExplorerPage":  config.explorer,
+		"WalletPage":    config.wallet,
+		"FaucetPage":    config.faucet,
 	})
 	files[filepath.Join(workdir, "docker-compose.yaml")] = composefile.Bytes()
 
@@ -611,15 +611,15 @@ func deployDashboard(client *sshClient, network string, conf *config, config *da
 		"Network":          network,
 		"NetworkID":        conf.Genesis.Config.ChainId,
 		"NetworkTitle":     strings.Title(network),
-		"AquastatsPage":     config.aquastats,
+		"AquastatsPage":    config.aquastats,
 		"ExplorerPage":     config.explorer,
 		"WalletPage":       config.wallet,
 		"FaucetPage":       config.faucet,
-		"AquaChainGenesis":      network + ".json",
+		"AquaChainGenesis": network + ".json",
 		"Bootnodes":        conf.bootnodes,
 		"BootnodesFlat":    strings.Join(conf.bootnodes, ","),
-		"Aquastats":         statsLogin,
-		"Aquahash":           conf.Genesis.Config.Aquahash != nil,
+		"Aquastats":        statsLogin,
+		"Aquahash":         conf.Genesis.Config.Aquahash != nil,
 		"CppGenesis":       network + "-cpp.json",
 		"CppBootnodes":     strings.Join(bootCpp, " "),
 		"HarmonyGenesis":   network + "-harmony.json",
@@ -691,9 +691,9 @@ type dashboardInfos struct {
 	trusted bool
 
 	aquastats string
-	explorer string
-	wallet   string
-	faucet   string
+	explorer  string
+	wallet    string
+	faucet    string
 }
 
 // Report converts the typed struct into a plain string->string map, containing
@@ -702,7 +702,7 @@ func (info *dashboardInfos) Report() map[string]string {
 	return map[string]string{
 		"Website address":       info.host,
 		"Website listener port": strconv.Itoa(info.port),
-		"Aquastats service":      info.aquastats,
+		"Aquastats service":     info.aquastats,
 		"Explorer service":      info.explorer,
 		"Wallet service":        info.wallet,
 		"Faucet service":        info.faucet,
@@ -741,11 +741,11 @@ func checkDashboard(client *sshClient, network string) (*dashboardInfos, error) 
 	}
 	// Container available, assemble and return the useful infos
 	return &dashboardInfos{
-		host:     host,
-		port:     port,
+		host:      host,
+		port:      port,
 		aquastats: infos.envvars["AQUASTATS_PAGE"],
-		explorer: infos.envvars["EXPLORER_PAGE"],
-		wallet:   infos.envvars["WALLET_PAGE"],
-		faucet:   infos.envvars["FAUCET_PAGE"],
+		explorer:  infos.envvars["EXPLORER_PAGE"],
+		wallet:    infos.envvars["WALLET_PAGE"],
+		faucet:    infos.envvars["FAUCET_PAGE"],
 	}, nil
 }

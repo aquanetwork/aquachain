@@ -10,7 +10,7 @@ RUN cd /aquachain && make aquachain
 FROM alpine:latest
 
 RUN apk add --no-cache ca-certificates
-COPY --from=builder /aquachain/build/bin/aquad /usr/local/bin/
+COPY --from=builder /aquachain/build/bin/aquachain /usr/local/bin/
 
 EXPOSE 8545 8546 21303 21303/udp 30304/udp
 ENTRYPOINT ["aquachain"]

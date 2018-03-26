@@ -20,8 +20,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/aquadb"
+	"github.com/aquanetwork/aquachain/common"
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
 )
 

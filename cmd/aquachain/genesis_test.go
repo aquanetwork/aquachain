@@ -100,11 +100,11 @@ func TestCustomGenesis(t *testing.T) {
 		runAquaChain(t, "--datadir", datadir, "init", json).WaitExit()
 
 		// Query the custom genesis block
-		aquad := runAquaChain(t,
+		aquachain := runAquaChain(t,
 			"--datadir", datadir, "--maxpeers", "0", "--port", "0",
 			"--nodiscover", "--nat", "none", "--ipcdisable",
 			"--exec", tt.query, "console")
-		aquad.ExpectRegexp(tt.result)
-		aquad.ExpectExit()
+		aquachain.ExpectRegexp(tt.result)
+		aquachain.ExpectExit()
 	}
 }

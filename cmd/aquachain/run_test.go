@@ -22,12 +22,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/docker/docker/pkg/reexec"
 	"github.com/aquanetwork/aquachain/internal/cmdtest"
+	"github.com/docker/docker/pkg/reexec"
 )
 
 func tmpdir(t *testing.T) string {
-	dir, err := ioutil.TempDir("", "aquad-test")
+	dir, err := ioutil.TempDir("", "aquachain-test")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,13 +38,13 @@ type testgeth struct {
 	*cmdtest.TestCmd
 
 	// template variables for expect
-	Datadir   string
+	Datadir  string
 	Aquabase string
 }
 
 func init() {
-	// Run the app if we've been exec'd as "aquad-test" in runAquaChain.
-	reexec.Register("aquad-test", func() {
+	// Run the app if we've been exec'd as "aquachain-test" in runAquaChain.
+	reexec.Register("aquachain-test", func() {
 		if err := app.Run(os.Args); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
@@ -61,7 +61,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-// spawns aquad with the given command line args. If the args don't set --datadir, the
+// spawns aquachain with the given command line args. If the args don't set --datadir, the
 // child g gets a temporary data directory.
 func runAquaChain(t *testing.T, args ...string) *testgeth {
 	tt := &testgeth{}
@@ -90,9 +90,9 @@ func runAquaChain(t *testing.T, args ...string) *testgeth {
 		}()
 	}
 
-	// Boot "aquad". This actually runs the test binary but the TestMain
+	// Boot "aquachain". This actually runs the test binary but the TestMain
 	// function will prevent any tests from running.
-	tt.Run("aquad-test", args...)
+	tt.Run("aquachain-test", args...)
 
 	return tt
 }

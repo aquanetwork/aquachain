@@ -20,9 +20,9 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/rlp"
 )

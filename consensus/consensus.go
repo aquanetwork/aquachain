@@ -18,12 +18,13 @@
 package consensus
 
 import (
+	"math/big"
+
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/params"
 	"github.com/aquanetwork/aquachain/rpc"
-	"math/big"
 )
 
 // ChainReader defines a small collection of methods needed to access the local

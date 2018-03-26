@@ -43,13 +43,13 @@ import (
 
 	"github.com/aquanetwork/aquachain/accounts"
 	"github.com/aquanetwork/aquachain/accounts/keystore"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/aqua/downloader"
 	"github.com/aquanetwork/aquachain/aquaclient"
 	"github.com/aquanetwork/aquachain/aquastats"
+	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/core"
+	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/les"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/node"
@@ -196,7 +196,7 @@ type request struct {
 type faucet struct {
 	config *params.ChainConfig // Chain configurations for signing
 	stack  *node.Node          // AquaChain protocol stack
-	client *aquaclient.Client   // Client connection to the AquaChain chain
+	client *aquaclient.Client  // Client connection to the AquaChain chain
 	index  []byte              // Index page to serve up on the web
 
 	keystore *keystore.KeyStore // Keystore containing the single signer
@@ -215,7 +215,7 @@ type faucet struct {
 func newFaucet(genesis *core.Genesis, port int, enodes []*discv5.Node, network uint64, stats string, ks *keystore.KeyStore, index []byte) (*faucet, error) {
 	// Assemble the raw devp2p protocol stack
 	stack, err := node.New(&node.Config{
-		Name:    "aquad",
+		Name:    "aquachain",
 		Version: params.Version,
 		DataDir: filepath.Join(os.Getenv("HOME"), ".faucet"),
 		P2P: p2p.Config{

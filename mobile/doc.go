@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
 
-// Package aquad contains the simplified mobile APIs to aquachain.
+// Package aquachain contains the simplified mobile APIs to aquachain.
 //
 // The scope of this package is *not* to allow writing a custom AquaChain client
 // with pieces plucked from aquachain, rather to allow writing native dapps on
@@ -58,4 +58,4 @@
 // Note, a panic *cannot* cross over language boundaries, instead will result in
 // an undebuggable SEGFAULT in the process. For error handling only ever use error
 // returns, which may be the only or the second return.
-package aquad
+package aquachain

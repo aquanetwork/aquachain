@@ -23,9 +23,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/aquadb"
 )
 
 // Runs multiple tests with randomized parameters.

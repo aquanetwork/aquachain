@@ -140,7 +140,7 @@ func New(ctx *node.ServiceContext, config *Config) (*AquaChain, error) {
 	//if !config.SkipBcVersionCheck {
 	bcVersion := core.GetBlockChainVersion(chainDb)
 	if bcVersion != core.BlockChainVersion && bcVersion != 0 {
-		return nil, fmt.Errorf("Blockchain DB version mismatch (%d / %d). Run aquad upgradedb.\n", bcVersion, core.BlockChainVersion)
+		return nil, fmt.Errorf("Blockchain DB version mismatch (%d / %d). Run aquachain upgradedb.\n", bcVersion, core.BlockChainVersion)
 	}
 	core.WriteBlockChainVersion(chainDb, core.BlockChainVersion)
 	//}
@@ -186,7 +186,7 @@ func makeExtraData(extra []byte) []byte {
 		// create default extradata
 		extra, _ = rlp.EncodeToBytes([]interface{}{
 			uint(params.VersionMajor<<16 | params.VersionMinor<<8 | params.VersionPatch),
-			"aquad",
+			"aquachain",
 			runtime.Version(),
 			runtime.GOOS,
 		})

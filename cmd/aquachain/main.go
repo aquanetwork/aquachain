@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with aquachain. If not, see <http://www.gnu.org/licenses/>.
 
-// aquad is the official command-line client for AquaChain.
+// aquachain is the official command-line client for AquaChain.
 package main
 
 import (
@@ -145,7 +145,7 @@ var (
 
 func init() {
 	// Initialize the CLI app and start AquaChain
-	app.Action = aquad
+	app.Action = aquachain
 	app.HideVersion = true // we have a command to print the version
 	app.Copyright = "Copyright 2018 The Aquachain Authors"
 	app.Commands = []cli.Command{
@@ -208,10 +208,10 @@ func main() {
 	}
 }
 
-// aquad is the main entry point into the system if no special subcommand is ran.
+// aquachain is the main entry point into the system if no special subcommand is ran.
 // It creates a default node based on the command line arguments and runs it in
 // blocking mode, waiting for it to be shut down.
-func aquad(ctx *cli.Context) error {
+func aquachain(ctx *cli.Context) error {
 	node := makeFullNode(ctx)
 	startNode(ctx, node)
 	node.Wait()

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with aquachain. If not, see <http://www.gnu.org/licenses/>.
 
-// Contains the aquad command usage template and generator.
+// Contains the aquachain command usage template and generator.
 
 package main
 
@@ -90,7 +90,7 @@ var AppHelpFlagGroups = []flagGroup{
 		},
 	},
 	{
-		Name: "AQUAASH",
+		Name: "AQUAHASH",
 		Flags: []cli.Flag{
 			utils.AquahashCacheDirFlag,
 			utils.AquahashCachesInMemoryFlag,

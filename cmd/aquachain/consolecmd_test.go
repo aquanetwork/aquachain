@@ -40,22 +40,22 @@ const (
 func TestConsoleWelcome(t *testing.T) {
 	coinbase := "0x8605cdbbdb6d264aa742e77020dcbc58fcdce182"
 
-	// Start a aquad console, make sure it's cleaned up and terminate the console
-	aquad := runAquaChain(t,
+	// Start a aquachain console, make sure it's cleaned up and terminate the console
+	aquachain := runAquaChain(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
 		"--aquabase", coinbase, "--shh",
 		"console")
 
 	// Gather all the infos the welcome message needs to contain
-	aquad.SetTemplateFunc("goos", func() string { return runtime.GOOS })
-	aquad.SetTemplateFunc("goarch", func() string { return runtime.GOARCH })
-	aquad.SetTemplateFunc("gover", runtime.Version)
-	aquad.SetTemplateFunc("gethver", func() string { return params.Version })
-	aquad.SetTemplateFunc("niltime", func() string { return time.Unix(0, 0).Format(time.RFC1123) })
-	aquad.SetTemplateFunc("apis", func() string { return ipcAPIs })
+	aquachain.SetTemplateFunc("goos", func() string { return runtime.GOOS })
+	aquachain.SetTemplateFunc("goarch", func() string { return runtime.GOARCH })
+	aquachain.SetTemplateFunc("gover", runtime.Version)
+	aquachain.SetTemplateFunc("gethver", func() string { return params.Version })
+	aquachain.SetTemplateFunc("niltime", func() string { return time.Unix(0, 0).Format(time.RFC1123) })
+	aquachain.SetTemplateFunc("apis", func() string { return ipcAPIs })
 
 	// Verify the actual welcome message to the required template
-	aquad.Expect(`
+	aquachain.Expect(`
 Welcome to the AquaChain JavaScript console!
 
 instance: AquaChain/v{{gethver}}/{{goos}}-{{goarch}}/{{gover}}
@@ -66,7 +66,7 @@ at block: 0 ({{niltime}})
 
 > {{.InputLine "exit"}}
 `)
-	aquad.ExpectExit()
+	aquachain.ExpectExit()
 }
 
 // Tests that a console can be attached to a running node via various means.
@@ -75,56 +75,56 @@ func TestIPCAttachWelcome(t *testing.T) {
 	coinbase := "0x8605cdbbdb6d264aa742e77020dcbc58fcdce182"
 	var ipc string
 	if runtime.GOOS == "windows" {
-		ipc = `\\.\pipe\aquad` + strconv.Itoa(trulyRandInt(100000, 999999))
+		ipc = `\\.\pipe\aquachain` + strconv.Itoa(trulyRandInt(100000, 999999))
 	} else {
 		ws := tmpdir(t)
 		defer os.RemoveAll(ws)
-		ipc = filepath.Join(ws, "aquad.ipc")
+		ipc = filepath.Join(ws, "aquachain.ipc")
 	}
 	// Note: we need --shh because testAttachWelcome checks for default
 	// list of ipc modules and shh is included there.
-	aquad := runAquaChain(t,
+	aquachain := runAquaChain(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
 		"--aquabase", coinbase, "--shh", "--ipcpath", ipc)
 
 	time.Sleep(2 * time.Second) // Simple way to wait for the RPC endpoint to open
-	testAttachWelcome(t, aquad, "ipc:"+ipc, ipcAPIs)
+	testAttachWelcome(t, aquachain, "ipc:"+ipc, ipcAPIs)
 
-	aquad.Interrupt()
-	aquad.ExpectExit()
+	aquachain.Interrupt()
+	aquachain.ExpectExit()
 }
 
 func TestHTTPAttachWelcome(t *testing.T) {
 	coinbase := "0x8605cdbbdb6d264aa742e77020dcbc58fcdce182"
 	port := strconv.Itoa(trulyRandInt(1024, 65536)) // Yeah, sometimes this will fail, sorry :P
-	aquad := runAquaChain(t,
+	aquachain := runAquaChain(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
 		"--aquabase", coinbase, "--rpc", "--rpcport", port)
 
 	time.Sleep(2 * time.Second) // Simple way to wait for the RPC endpoint to open
-	testAttachWelcome(t, aquad, "http://localhost:"+port, httpAPIs)
+	testAttachWelcome(t, aquachain, "http://localhost:"+port, httpAPIs)
 
-	aquad.Interrupt()
-	aquad.ExpectExit()
+	aquachain.Interrupt()
+	aquachain.ExpectExit()
 }
 
 func TestWSAttachWelcome(t *testing.T) {
 	coinbase := "0x8605cdbbdb6d264aa742e77020dcbc58fcdce182"
 	port := strconv.Itoa(trulyRandInt(1024, 65536)) // Yeah, sometimes this will fail, sorry :P
 
-	aquad := runAquaChain(t,
+	aquachain := runAquaChain(t,
 		"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none",
 		"--aquabase", coinbase, "--ws", "--wsport", port)
 
 	time.Sleep(2 * time.Second) // Simple way to wait for the RPC endpoint to open
-	testAttachWelcome(t, aquad, "ws://localhost:"+port, httpAPIs)
+	testAttachWelcome(t, aquachain, "ws://localhost:"+port, httpAPIs)
 
-	aquad.Interrupt()
-	aquad.ExpectExit()
+	aquachain.Interrupt()
+	aquachain.ExpectExit()
 }
 
-func testAttachWelcome(t *testing.T, aquad *testgeth, endpoint, apis string) {
-	// Attach to a running aquad note and terminate immediately
+func testAttachWelcome(t *testing.T, aquachain *testgeth, endpoint, apis string) {
+	// Attach to a running aquachain note and terminate immediately
 	attach := runAquaChain(t, "attach", endpoint)
 	defer attach.ExpectExit()
 	attach.CloseStdin()
@@ -134,10 +134,10 @@ func testAttachWelcome(t *testing.T, aquad *testgeth, endpoint, apis string) {
 	attach.SetTemplateFunc("goarch", func() string { return runtime.GOARCH })
 	attach.SetTemplateFunc("gover", runtime.Version)
 	attach.SetTemplateFunc("gethver", func() string { return params.Version })
-	attach.SetTemplateFunc("aquabase", func() string { return aquad.Aquabase })
+	attach.SetTemplateFunc("aquabase", func() string { return aquachain.Aquabase })
 	attach.SetTemplateFunc("niltime", func() string { return time.Unix(0, 0).Format(time.RFC1123) })
 	attach.SetTemplateFunc("ipc", func() bool { return strings.HasPrefix(endpoint, "ipc") })
-	attach.SetTemplateFunc("datadir", func() string { return aquad.Datadir })
+	attach.SetTemplateFunc("datadir", func() string { return aquachain.Datadir })
 	attach.SetTemplateFunc("apis", func() string { return apis })
 
 	// Verify the actual welcome message to the required template

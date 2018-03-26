@@ -74,7 +74,7 @@ func (w *wizard) gatherStats(server string, pubkey []byte, client *sshClient) *s
 	// Gather some global stats to feed into the wizard
 	var (
 		genesis   string
-		aquastats  string
+		aquastats string
 		bootnodes []string
 	)
 	// Ensure a valid SSH connection to the remote server
@@ -284,5 +284,5 @@ type protips struct {
 	network   int64
 	bootFull  []string
 	bootLight []string
-	aquastats  string
+	aquastats string
 }

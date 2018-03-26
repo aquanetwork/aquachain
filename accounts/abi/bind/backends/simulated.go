@@ -26,6 +26,8 @@ import (
 
 	"github.com/aquanetwork/aquachain"
 	"github.com/aquanetwork/aquachain/accounts/abi/bind"
+	"github.com/aquanetwork/aquachain/aqua/filters"
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/math"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
@@ -34,8 +36,6 @@ import (
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
-	"github.com/aquanetwork/aquachain/aqua/filters"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/event"
 	"github.com/aquanetwork/aquachain/params"
 	"github.com/aquanetwork/aquachain/rpc"
@@ -50,7 +50,7 @@ var errGasEstimationFailed = errors.New("gas required exceeds allowance or alway
 // SimulatedBackend implements bind.ContractBackend, simulating a blockchain in
 // the background. Its main purpose is to allow easily testing contract bindings.
 type SimulatedBackend struct {
-	database   aquadb.Database   // In memory database to store our testing data
+	database   aquadb.Database  // In memory database to store our testing data
 	blockchain *core.BlockChain // AquaChain blockchain to handle the consensus
 
 	mu           sync.Mutex
@@ -419,7 +419,7 @@ type filterBackend struct {
 	bc *core.BlockChain
 }
 
-func (fb *filterBackend) ChainDb() aquadb.Database  { return fb.db }
+func (fb *filterBackend) ChainDb() aquadb.Database { return fb.db }
 func (fb *filterBackend) EventMux() *event.TypeMux { panic("not supported") }
 
 func (fb *filterBackend) HeaderByNumber(ctx context.Context, block rpc.BlockNumber) (*types.Header, error) {

@@ -20,9 +20,9 @@ import (
 	"bytes"
 	"encoding/json"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/params"
 	lru "github.com/hashicorp/golang-lru"
 )

@@ -16,7 +16,7 @@
 
 // Contains initialization code for the mbile library.
 
-package aquad
+package aquachain
 
 import (
 	"os"

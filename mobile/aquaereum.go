@@ -16,7 +16,7 @@
 
 // Contains all the wrappers from the aquachain root package.
 
-package aquad
+package aquachain
 
 import (
 	"errors"

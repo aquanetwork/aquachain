@@ -26,10 +26,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
 	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/internal/jsre"
 	"github.com/aquanetwork/aquachain/node"
 )
@@ -75,7 +75,7 @@ func (p *hookedPrompter) SetWordCompleter(completer WordCompleter) {}
 type tester struct {
 	workspace string
 	stack     *node.Node
-	aquachain  *aqua.AquaChain
+	aquachain *aqua.AquaChain
 	console   *Console
 	input     *hookedPrompter
 	output    *bytes.Buffer
@@ -96,7 +96,7 @@ func newTester(t *testing.T, confOverride func(*aqua.Config)) *tester {
 		t.Fatalf("failed to create node: %v", err)
 	}
 	ethConf := &aqua.Config{
-		Genesis:   core.DeveloperGenesisBlock(15, common.Address{}),
+		Genesis:  core.DeveloperGenesisBlock(15, common.Address{}),
 		Aquabase: common.HexToAddress(testAddress),
 		Aquahash: aquahash.Config{
 			PowMode: aquahash.ModeTest,
@@ -137,7 +137,7 @@ func newTester(t *testing.T, confOverride func(*aqua.Config)) *tester {
 	return &tester{
 		workspace: workspace,
 		stack:     stack,
-		aquachain:  aquachain,
+		aquachain: aquachain,
 		console:   console,
 		input:     prompter,
 		output:    printer,

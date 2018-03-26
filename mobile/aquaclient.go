@@ -16,13 +16,13 @@
 
 // Contains a wrapper for the AquaChain client.
 
-package aquad
+package aquachain
 
 import (
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/aquaclient"
+	"github.com/aquanetwork/aquachain/core/types"
 )
 
 // AquaChainClient provides access to the AquaChain APIs.

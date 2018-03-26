@@ -27,6 +27,7 @@ import (
 
 	goruntime "runtime"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/cmd/evm/internal/compiler"
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/common"
@@ -34,7 +35,6 @@ import (
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/vm"
 	"github.com/aquanetwork/aquachain/core/vm/runtime"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/params"
 	cli "gopkg.in/urfave/cli.v1"

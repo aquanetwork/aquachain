@@ -465,7 +465,7 @@ func TestValidateConfig(t *testing.T) {
 	}{
 		{
 			cfg: &api.Config{EnsAPIs: []string{
-				"/data/testnet/aquad.ipc",
+				"/data/testnet/aquachain.ipc",
 			}},
 		},
 		{
@@ -480,7 +480,7 @@ func TestValidateConfig(t *testing.T) {
 		},
 		{
 			cfg: &api.Config{EnsAPIs: []string{
-				"test:/data/testnet/aquad.ipc",
+				"test:/data/testnet/aquachain.ipc",
 			}},
 		},
 		{
@@ -490,7 +490,7 @@ func TestValidateConfig(t *testing.T) {
 		},
 		{
 			cfg: &api.Config{EnsAPIs: []string{
-				"314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/aquad.ipc",
+				"314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/aquachain.ipc",
 			}},
 		},
 		{
@@ -505,7 +505,7 @@ func TestValidateConfig(t *testing.T) {
 		},
 		{
 			cfg: &api.Config{EnsAPIs: []string{
-				"test:314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/aquad.ipc",
+				"test:314159265dD8dbb310642f98f50C066173C1259b@/data/testnet/aquachain.ipc",
 			}},
 		},
 		{
@@ -538,9 +538,9 @@ func TestValidateConfig(t *testing.T) {
 		},
 		{
 			cfg: &api.Config{EnsAPIs: []string{
-				"@/data/testnet/aquad.ipc",
+				"@/data/testnet/aquachain.ipc",
 			}},
-			err: "invalid format [tld:][contract-addr@]url for ENS API endpoint configuration \"@/data/testnet/aquad.ipc\": missing contract address",
+			err: "invalid format [tld:][contract-addr@]url for ENS API endpoint configuration \"@/data/testnet/aquachain.ipc\": missing contract address",
 		},
 	} {
 		err := validateConfig(c.cfg)

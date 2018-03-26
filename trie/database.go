@@ -20,8 +20,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/aquadb"
+	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/log"
 )
 

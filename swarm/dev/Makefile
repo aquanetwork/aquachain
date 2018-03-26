@@ -4,7 +4,7 @@ default: build
 
 build:
 	go build -o bin/swarm    github.com/aquanetwork/aquachain/cmd/swarm
-	go build -o bin/aquad     github.com/aquanetwork/aquachain/cmd/aquad
+	go build -o bin/aquachain     github.com/aquanetwork/aquachain/cmd/aquachain
 	go build -o bin/bootnode github.com/aquanetwork/aquachain/cmd/bootnode
 
 cluster: build

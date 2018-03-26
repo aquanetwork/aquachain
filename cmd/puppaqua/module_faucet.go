@@ -92,8 +92,8 @@ func deployFaucet(client *sshClient, network string, bootnodes []string, config 
 	template.Must(template.New("").Parse(faucetDockerfile)).Execute(dockerfile, map[string]interface{}{
 		"NetworkID":     config.node.network,
 		"Bootnodes":     strings.Join(bootnodes, ","),
-		"Aquastats":      config.node.aquastats,
-		"AquaPort":       config.node.port,
+		"Aquastats":     config.node.aquastats,
+		"AquaPort":      config.node.port,
 		"CaptchaToken":  config.captchaToken,
 		"CaptchaSecret": config.captchaSecret,
 		"FaucetName":    strings.Title(network),
@@ -110,8 +110,8 @@ func deployFaucet(client *sshClient, network string, bootnodes []string, config 
 		"Datadir":       config.node.datadir,
 		"VHost":         config.host,
 		"ApiPort":       config.port,
-		"AquaPort":       config.node.port,
-		"AquaName":       config.node.aquastats[:strings.Index(config.node.aquastats, ":")],
+		"AquaPort":      config.node.port,
+		"AquaName":      config.node.aquastats[:strings.Index(config.node.aquastats, ":")],
 		"CaptchaToken":  config.captchaToken,
 		"CaptchaSecret": config.captchaSecret,
 		"FaucetAmount":  config.amount,
@@ -158,12 +158,12 @@ func (info *faucetInfos) Report() map[string]string {
 	report := map[string]string{
 		"Website address":              info.host,
 		"Website listener port":        strconv.Itoa(info.port),
-		"AquaChain listener port":       strconv.Itoa(info.node.port),
+		"AquaChain listener port":      strconv.Itoa(info.node.port),
 		"Funding amount (base tier)":   fmt.Sprintf("%d Aquaers", info.amount),
 		"Funding cooldown (base tier)": fmt.Sprintf("%d mins", info.minutes),
 		"Funding tiers":                strconv.Itoa(info.tiers),
 		"Captha protection":            fmt.Sprintf("%v", info.captchaToken != ""),
-		"Aquastats username":            info.node.aquastats,
+		"Aquastats username":           info.node.aquastats,
 	}
 	if info.noauth {
 		report["Debug mode (no auth)"] = "enabled"
@@ -227,11 +227,11 @@ func checkFaucet(client *sshClient, network string) (*faucetInfos, error) {
 	// Container available, assemble and return the useful infos
 	return &faucetInfos{
 		node: &nodeInfos{
-			datadir:  infos.volumes["/root/.faucet"],
-			port:     infos.portmap[infos.envvars["AQUA_PORT"]+"/tcp"],
+			datadir:   infos.volumes["/root/.faucet"],
+			port:      infos.portmap[infos.envvars["AQUA_PORT"]+"/tcp"],
 			aquastats: infos.envvars["AQUA_NAME"],
-			keyJSON:  keyJSON,
-			keyPass:  keyPass,
+			keyJSON:   keyJSON,
+			keyPass:   keyPass,
 		},
 		host:          host,
 		port:          port,

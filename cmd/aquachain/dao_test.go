@@ -23,9 +23,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/params"
 )
 
@@ -116,11 +116,11 @@ func testDAOForkBlockNewChain(t *testing.T, test int, genesis string, expectBloc
 	} else {
 		// Force chain initialization
 		args := []string{"--port", "0", "--maxpeers", "0", "--nodiscover", "--nat", "none", "--ipcdisable", "--datadir", datadir}
-		aquad := runAquaChain(t, append(args, []string{"--exec", "2+2", "console"}...)...)
-		aquad.WaitExit()
+		aquachain := runAquaChain(t, append(args, []string{"--exec", "2+2", "console"}...)...)
+		aquachain.WaitExit()
 	}
 	// Retrieve the DAO config flag from the database
-	path := filepath.Join(datadir, "aquad", "chaindata")
+	path := filepath.Join(datadir, "aquachain", "chaindata")
 	db, err := aquadb.NewLDBDatabase(path, 0, 0)
 	if err != nil {
 		t.Fatalf("test %d: failed to open test database: %v", test, err)

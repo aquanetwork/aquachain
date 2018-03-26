@@ -45,10 +45,10 @@ func importPreSaleKey(keyStore keyStore, keyJSON []byte, password string) (accou
 
 func decryptPreSaleKey(fileContent []byte, password string) (key *Key, err error) {
 	preSaleKeyStruct := struct {
-		EncSeed string
+		EncSeed  string
 		AquaAddr string
-		Email   string
-		BtcAddr string
+		Email    string
+		BtcAddr  string
 	}{}
 	err = json.Unmarshal(fileContent, &preSaleKeyStruct)
 	if err != nil {

@@ -121,11 +121,11 @@ func deployExplorer(client *sshClient, network string, chainspec []byte, config 
 
 	composefile := new(bytes.Buffer)
 	template.Must(template.New("").Parse(explorerComposefile)).Execute(composefile, map[string]interface{}{
-		"Datadir":  config.datadir,
-		"Network":  network,
-		"NodePort": config.nodePort,
-		"VHost":    config.webHost,
-		"WebPort":  config.webPort,
+		"Datadir":   config.datadir,
+		"Network":   network,
+		"NodePort":  config.nodePort,
+		"VHost":     config.webHost,
+		"WebPort":   config.webPort,
 		"Aquastats": config.aquastats[:strings.Index(config.aquastats, ":")],
 	})
 	files[filepath.Join(workdir, "docker-compose.yaml")] = composefile.Bytes()
@@ -148,11 +148,11 @@ func deployExplorer(client *sshClient, network string, chainspec []byte, config 
 // explorerInfos is returned from a block explorer status check to allow reporting
 // various configuration parameters.
 type explorerInfos struct {
-	datadir  string
+	datadir   string
 	aquastats string
-	nodePort int
-	webHost  string
-	webPort  int
+	nodePort  int
+	webHost   string
+	webPort   int
 }
 
 // Report converts the typed struct into a plain string->string map, containing
@@ -161,7 +161,7 @@ func (info *explorerInfos) Report() map[string]string {
 	report := map[string]string{
 		"Data directory":         info.datadir,
 		"Node listener port ":    strconv.Itoa(info.nodePort),
-		"Aquastats username":      info.aquastats,
+		"Aquastats username":     info.aquastats,
 		"Website address ":       info.webHost,
 		"Website listener port ": strconv.Itoa(info.webPort),
 	}
@@ -201,10 +201,10 @@ func checkExplorer(client *sshClient, network string) (*explorerInfos, error) {
 	}
 	// Assemble and return the useful infos
 	stats := &explorerInfos{
-		datadir:  infos.volumes["/root/.local/share/io.parity.aquachain"],
-		nodePort: nodePort,
-		webHost:  host,
-		webPort:  webPort,
+		datadir:   infos.volumes["/root/.local/share/io.parity.aquachain"],
+		nodePort:  nodePort,
+		webHost:   host,
+		webPort:   webPort,
 		aquastats: infos.envvars["STATS"],
 	}
 	return stats, nil

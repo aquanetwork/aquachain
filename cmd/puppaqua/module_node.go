@@ -40,11 +40,11 @@ ADD genesis.json /genesis.json
 	ADD signer.pass /signer.pass
 {{end}}
 RUN \
-  echo 'aquad --cache 512 init /genesis.json' > aquad.sh && \{{if .Unlock}}
-	echo 'mkdir -p /root/.aquachain/keystore/ && cp /signer.json /root/.aquachain/keystore/' >> aquad.sh && \{{end}}
-	echo $'aquad --networkid {{.NetworkID}} --cache 512 --port {{.Port}} --maxpeers {{.Peers}} {{.LightFlag}} --aquastats \'{{.Aquastats}}\' {{if .Bootnodes}}--bootnodes {{.Bootnodes}}{{end}} {{if .Aquabase}}--aquabase {{.Aquabase}} --mine --minerthreads 1{{end}} {{if .Unlock}}--unlock 0 --password /signer.pass --mine{{end}} --targetgaslimit {{.GasTarget}} --gasprice {{.GasPrice}}' >> aquad.sh
+  echo 'aquachain --cache 512 init /genesis.json' > aquachain.sh && \{{if .Unlock}}
+	echo 'mkdir -p /root/.aquachain/keystore/ && cp /signer.json /root/.aquachain/keystore/' >> aquachain.sh && \{{end}}
+	echo $'aquachain --networkid {{.NetworkID}} --cache 512 --port {{.Port}} --maxpeers {{.Peers}} {{.LightFlag}} --aquastats \'{{.Aquastats}}\' {{if .Bootnodes}}--bootnodes {{.Bootnodes}}{{end}} {{if .Aquabase}}--aquabase {{.Aquabase}} --mine --minerthreads 1{{end}} {{if .Unlock}}--unlock 0 --password /signer.pass --mine{{end}} --targetgaslimit {{.GasTarget}} --gasprice {{.GasPrice}}' >> aquachain.sh
 
-ENTRYPOINT ["/bin/sh", "aquad.sh"]
+ENTRYPOINT ["/bin/sh", "aquachain.sh"]
 `
 
 // nodeComposefile is the docker-compose.yml file required to deploy and maintain
@@ -101,8 +101,8 @@ func deployNode(client *sshClient, network string, bootnodes []string, config *n
 		"Peers":     config.peersTotal,
 		"LightFlag": lightFlag,
 		"Bootnodes": strings.Join(bootnodes, ","),
-		"Aquastats":  config.aquastats,
-		"Aquabase": config.aquabase,
+		"Aquastats": config.aquastats,
+		"Aquabase":  config.aquabase,
 		"GasTarget": uint64(1000000 * config.gasTarget),
 		"GasPrice":  uint64(1000000000 * config.gasPrice),
 		"Unlock":    config.keyJSON != "",
@@ -111,18 +111,18 @@ func deployNode(client *sshClient, network string, bootnodes []string, config *n
 
 	composefile := new(bytes.Buffer)
 	template.Must(template.New("").Parse(nodeComposefile)).Execute(composefile, map[string]interface{}{
-		"Type":       kind,
-		"Datadir":    config.datadir,
-		"Aquahashdir":  config.ethashdir,
-		"Network":    network,
-		"Port":       config.port,
-		"TotalPeers": config.peersTotal,
-		"Light":      config.peersLight > 0,
-		"LightPeers": config.peersLight,
+		"Type":        kind,
+		"Datadir":     config.datadir,
+		"Aquahashdir": config.ethashdir,
+		"Network":     network,
+		"Port":        config.port,
+		"TotalPeers":  config.peersTotal,
+		"Light":       config.peersLight > 0,
+		"LightPeers":  config.peersLight,
 		"Aquastats":   config.aquastats[:strings.Index(config.aquastats, ":")],
-		"Aquabase":  config.aquabase,
-		"GasTarget":  config.gasTarget,
-		"GasPrice":   config.gasPrice,
+		"Aquabase":    config.aquabase,
+		"GasTarget":   config.gasTarget,
+		"GasPrice":    config.gasPrice,
 	})
 	files[filepath.Join(workdir, "docker-compose.yaml")] = composefile.Bytes()
 
@@ -151,12 +151,12 @@ type nodeInfos struct {
 	network    int64
 	datadir    string
 	ethashdir  string
-	aquastats   string
+	aquastats  string
 	port       int
 	enode      string
 	peersTotal int
 	peersLight int
-	aquabase  string
+	aquabase   string
 	keyJSON    string
 	keyPass    string
 	gasTarget  float64
@@ -171,7 +171,7 @@ func (info *nodeInfos) Report() map[string]string {
 		"Listener port":            strconv.Itoa(info.port),
 		"Peer count (all total)":   strconv.Itoa(info.peersTotal),
 		"Peer count (light nodes)": strconv.Itoa(info.peersLight),
-		"Aquastats username":        info.aquastats,
+		"Aquastats username":       info.aquastats,
 	}
 	if info.gasTarget > 0 {
 		// Miner or signer node
@@ -221,7 +221,7 @@ func checkNode(client *sshClient, network string, boot bool) (*nodeInfos, error)
 
 	// Container available, retrieve its node ID and its genesis json
 	var out []byte
-	if out, err = client.Run(fmt.Sprintf("docker exec %s_%s_1 aquad --exec admin.nodeInfo.id attach", network, kind)); err != nil {
+	if out, err = client.Run(fmt.Sprintf("docker exec %s_%s_1 aquachain --exec admin.nodeInfo.id attach", network, kind)); err != nil {
 		return nil, ErrServiceUnreachable
 	}
 	id := bytes.Trim(bytes.TrimSpace(out), "\"")
@@ -251,8 +251,8 @@ func checkNode(client *sshClient, network string, boot bool) (*nodeInfos, error)
 		port:       port,
 		peersTotal: totalPeers,
 		peersLight: lightPeers,
-		aquastats:   infos.envvars["STATS_NAME"],
-		aquabase:  infos.envvars["MINER_NAME"],
+		aquastats:  infos.envvars["STATS_NAME"],
+		aquabase:   infos.envvars["MINER_NAME"],
 		keyJSON:    keyJSON,
 		keyPass:    keyPass,
 		gasTarget:  gasTarget,

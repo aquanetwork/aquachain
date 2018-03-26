@@ -17,9 +17,10 @@
 package fuse
 
 import (
-	"github.com/aquanetwork/aquachain/swarm/api"
 	"sync"
 	"time"
+
+	"github.com/aquanetwork/aquachain/swarm/api"
 )
 
 const (
