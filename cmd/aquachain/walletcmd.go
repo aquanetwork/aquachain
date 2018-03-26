@@ -1,19 +1,46 @@
 package main
 
 import (
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/aquanetwork/aquachain/cmd/internal/browser"
 	"github.com/aquanetwork/aquachain/cmd/internal/maw"
+	"github.com/aquanetwork/aquachain/cmd/utils"
+	"github.com/aquanetwork/aquachain/crypto"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
 var (
+	mawCommand = cli.Command{
+		Name:     "maw",
+		Usage:    `Launch MyAquaWallet, an offline wallet that connects to this aquachain program via JSON-RPC/HTTP`,
+		Category: "ACCOUNT COMMANDS",
+		Action:   launchmaw,
+		Description: `
+	aquachain maw
+
+will launch browser MAW`,
+	}
 	walletCommand = cli.Command{
 		Name:     "wallet",
 		Usage:    `Launch MyAquaWallet, an offline wallet that connects to this aquachain program via JSON-RPC/HTTP`,
 		Category: "ACCOUNT COMMANDS",
 		Action:   launchmaw,
+		Description: `
+  aquachain wallet
+
+will launch browser MAW`,
+	}
+	paperCommand = cli.Command{
+		Name:      "paper",
+		Usage:     `Generate paper wallet keypair`,
+		Flags:     append(consoleFlags, utils.JsonFlag),
+		ArgsUsage: "[number of wallets]",
+		Category:  "ACCOUNT COMMANDS",
+		Action:    paper,
 		Description: `
   aquachain wallet
 
@@ -38,5 +65,48 @@ func launchmaw(c *cli.Context) error {
 	node.Server().Logger.Info("Serving MAW", "port", "8042", "url", "http://localhost:8042")
 	browser.Open("http://localhost:8042")
 	node.Wait()
+	return nil
+}
+
+type paperWallet struct{ Private, Public string }
+
+func paper(c *cli.Context) error {
+
+	if c.NArg() > 1 {
+		return fmt.Errorf("too many arguments")
+	}
+	var (
+		count = 1
+		err   error
+	)
+	if c.NArg() == 1 {
+		count, err = strconv.Atoi(c.Args().First())
+		if err != nil {
+			return err
+		}
+	}
+	wallets := []paperWallet{}
+	for i := 0; i < count; i++ {
+		key, err := crypto.GenerateKey()
+		if err != nil {
+			return err
+		}
+
+		addr := crypto.PubkeyToAddress(key.PublicKey)
+		wallet := paperWallet{
+			Private: hex.EncodeToString(crypto.FromECDSA(key)),
+			Public:  "0x" + hex.EncodeToString(addr[:]),
+		}
+
+		if c.Bool("json") {
+			wallets = append(wallets, wallet)
+		} else {
+			fmt.Println(wallet.Private, wallet.Public)
+		}
+	}
+	if c.Bool("json") {
+		b, _ := json.Marshal(wallets)
+		fmt.Println(string(b))
+	}
 	return nil
 }

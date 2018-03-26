@@ -29,8 +29,15 @@ import (
 	"gopkg.in/urfave/cli.v1"
 )
 
+const logo = `                              _           _
+  __ _  __ _ _   _  __ _  ___| |__   __ _(_)_ __
+ / _ '|/ _' | | | |/ _' |/ __| '_ \ / _' | | '_ \
+| (_| | (_| | |_| | (_| | (__| | | | (_| | | | | |
+ \__,_|\__, |\__,_|\__,_|\___|_| |_|\__,_|_|_| |_|
+          |_|` + "Update Often! https://github.com/aquanetwork/aquachain\n\n"
+
 // AppHelpTemplate is the test template for the default, global app help topic.
-var AppHelpTemplate = `NAME:
+var AppHelpTemplate = logo + `NAME:
    {{.App.Name}} - {{.App.Usage}}
 
    Copyright 2013-2017 The aquachain Authors

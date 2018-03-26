@@ -113,6 +113,11 @@ func NewApp(gitCommit, usage string) *cli.App {
 
 var (
 	// General settings
+	JsonFlag = cli.BoolFlag{
+		Name:  "json",
+		Usage: "Print paper keypair as json",
+	}
+	// General settings
 	DataDirFlag = DirectoryFlag{
 		Name:  "datadir",
 		Usage: "Data directory for the databases and keystore",

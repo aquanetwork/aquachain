@@ -64,6 +64,13 @@ Web links:
 
 `
 
+const logo = `                              _           _
+  __ _  __ _ _   _  __ _  ___| |__   __ _(_)_ __
+ / _ '|/ _' | | | |/ _' |/ __| '_ \ / _' | | '_ \
+| (_| | (_| | |_| | (_| | (__| | | | (_| | | | | |
+ \__,_|\__, |\__,_|\__,_|\___|_| |_|\__,_|_|_| |_|
+          |_|` + "\nUpdate Often! https://github.com/aquanetwork/aquachain\n\n"
+
 // Config is the collection of configurations to fine tune the behavior of the
 // JavaScript console.
 type Config struct {
@@ -290,12 +297,7 @@ func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, str
 func (c *Console) Welcome() {
 	// Print some generic AquaChain metadata
 	fmt.Fprintf(c.printer, "\nWelcome to the AquaChain JavaScript console!\n")
-	fmt.Fprintf(c.printer, `                              _           _
-  __ _  __ _ _   _  __ _  ___| |__   __ _(_)_ __
- / _ '|/ _' | | | |/ _' |/ __| '_ \ / _' | | '_ \
-| (_| | (_| | |_| | (_| | (__| | | | (_| | | | | |
- \__,_|\__, |\__,_|\__,_|\___|_| |_|\__,_|_|_| |_|
-          |_|`+"\nUpdate Often! https://github.com/aquanetwork/aquachain\n\n")
+	fmt.Fprintf(c.printer, logo)
 
 	c.jsre.Run(`
 		console.log("instance: " + web3.version.node);

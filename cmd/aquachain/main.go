@@ -160,7 +160,10 @@ func init() {
 		monitorCommand,
 		// See accountcmd.go:
 		accountCommand,
+
+		// See walletcmd.go
 		walletCommand,
+		paperCommand,
 		// See consolecmd.go:
 		consoleCommand,
 		attachCommand,
