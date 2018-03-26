@@ -27,6 +27,7 @@ func launchmaw(c *cli.Context) error {
 	if !c.GlobalBool("rpc") {
 		c.GlobalSet("rpc", "true")
 	}
+	c.GlobalSet("rpccorsdomain", "http://localhost:8042")
 	if !c.GlobalBool("rpc") {
 		return fmt.Errorf("Please use the -rpc flag when using MAW")
 	}
@@ -34,8 +35,8 @@ func launchmaw(c *cli.Context) error {
 	if err := node.Start(); err != nil {
 		return err
 	}
-	node.Server().Logger.Info("Serving MAW", "port", "8042", "url", "http://127.0.0.1:8042")
-	browser.Open("http://127.0.0.1:8042")
+	node.Server().Logger.Info("Serving MAW", "port", "8042", "url", "http://localhost:8042")
+	browser.Open("http://localhost:8042")
 	node.Wait()
 	return nil
 }
