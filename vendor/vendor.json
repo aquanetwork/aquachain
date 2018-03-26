@@ -394,6 +394,12 @@
 			"revisionTime": "2016-06-18T19:32:21Z"
 		},
 		{
+			"checksumSHA1": "dCvuKKbrgIk4OXLelrA6O9Ey4Og=",
+			"path": "github.com/spkg/zipfs",
+			"revision": "4c5941d51e663b230ac0358e38f6f1d93d0cf810",
+			"revisionTime": "2016-06-24T12:13:28Z"
+		},
+		{
 			"checksumSHA1": "mGbTYZ8dHVTiPTTJu3ktp+84pPI=",
 			"path": "github.com/stretchr/testify/assert",
 			"revision": "890a5c3458b43e6104ff5da8dfa139d013d77544",

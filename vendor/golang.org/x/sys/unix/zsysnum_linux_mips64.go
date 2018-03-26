@@ -171,7 +171,7 @@ const (
 	SYS_SWAPON                 = 5162
 	SYS_SWAPOFF                = 5163
 	SYS_REBOOT                 = 5164
-	SYS_SAQUAOSTNAME            = 5165
+	SYS_SAQUAOSTNAME           = 5165
 	SYS_SETDOMAINNAME          = 5166
 	SYS_CREATE_MODULE          = 5167
 	SYS_INIT_MODULE            = 5168

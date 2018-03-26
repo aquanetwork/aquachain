@@ -59,11 +59,11 @@ const (
 	IFT_EON                           = 0x19
 	IFT_EPLRS                         = 0x57
 	IFT_ESCON                         = 0x49
-	IFT_AQUAER                         = 0x6
+	IFT_AQUAER                        = 0x6
 	IFT_FAITH                         = 0xf2
 	IFT_FAST                          = 0x7d
-	IFT_FASTAQUAER                     = 0x3e
-	IFT_FASTAQUAERFX                   = 0x45
+	IFT_FASTAQUAER                    = 0x3e
+	IFT_FASTAQUAERFX                  = 0x45
 	IFT_FDDI                          = 0xf
 	IFT_FIBRECHANNEL                  = 0x38
 	IFT_FRAMERELAYINTERCONNECT        = 0x3a
@@ -76,7 +76,7 @@ const (
 	IFT_G703AT2MB                     = 0x43
 	IFT_G703AT64K                     = 0x42
 	IFT_GIF                           = 0xf0
-	IFT_GIGABITAQUAERNET               = 0x75
+	IFT_GIGABITAQUAERNET              = 0x75
 	IFT_GR303IDT                      = 0xb2
 	IFT_GR303RDT                      = 0xb1
 	IFT_H323GATEKEEPER                = 0xa4
@@ -207,7 +207,7 @@ const (
 	IFT_X25HUNTGROUP                  = 0x7a
 	IFT_X25MLP                        = 0x79
 	IFT_X25PLE                        = 0x28
-	IFT_XAQUAER                        = 0x1a
+	IFT_XAQUAER                       = 0x1a
 	IPPROTO_MAXID                     = 0x34
 	IPV6_FAITH                        = 0x1d
 	IP_FAITH                          = 0x16

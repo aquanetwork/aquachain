@@ -80,7 +80,7 @@ const (
 	SYS_SETREGID               = 4071
 	SYS_SIGSUSPEND             = 4072
 	SYS_SIGPENDING             = 4073
-	SYS_SAQUAOSTNAME            = 4074
+	SYS_SAQUAOSTNAME           = 4074
 	SYS_SETRLIMIT              = 4075
 	SYS_GETRLIMIT              = 4076
 	SYS_GETRUSAGE              = 4077

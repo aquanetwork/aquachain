@@ -63,7 +63,7 @@ enum ethash_io_rc {
 #define AQUAASH_CRITICAL(...)							\
 	do													\
 	{													\
-		printf("AQUAASH CRITICAL ERROR: "__VA_ARGS__);	\
+		printf("AQUAHASH CRITICAL ERROR: "__VA_ARGS__);	\
 		printf("\n");									\
 		fflush(stdout);									\
 	} while (0)
