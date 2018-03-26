@@ -31,7 +31,6 @@ func launchmaw(c *cli.Context) error {
 		return fmt.Errorf("Please use the -rpc flag when using MAW")
 	}
 	node := makeFullNode(c)
-	startNode(c, node)
 	if err := node.Start(); err != nil {
 		return err
 	}
