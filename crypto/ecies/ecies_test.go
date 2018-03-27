@@ -31,7 +31,7 @@ package ecies
 
 import (
 	"bytes"
-	"crypto"
+	"github.com/aquanetwork/aquachain/crypto"
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
