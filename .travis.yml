@@ -12,7 +12,7 @@ matrix:
         - sudo chmod 666 /dev/fuse
         - sudo chown root:$USER /etc/fuse.conf
         - go run build/ci.go install
-        - travis_wait go run build/ci.go test -coverage
+        - go run build/ci.go test -coverage
 
     - os: linux
       dist: trusty
@@ -23,7 +23,7 @@ matrix:
         - sudo chmod 666 /dev/fuse
         - sudo chown root:$USER /etc/fuse.conf
         - go run build/ci.go install
-        - travis_wait go run build/ci.go test -coverage
+        - go run build/ci.go test -coverage
 
     - os: osx
       go: 1.9.x
@@ -33,7 +33,7 @@ matrix:
         - brew install caskroom/cask/brew-cask
         - brew cask install osxfuse
         - go run build/ci.go install
-        - travis_wait go run build/ci.go test -coverage
+        - go run build/ci.go test -coverage
 
     # This builder only tests code linters on latest version of Go
     - os: linux
