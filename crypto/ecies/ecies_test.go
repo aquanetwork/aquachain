@@ -31,13 +31,13 @@ package ecies
 
 import (
 	"bytes"
-	"github.com/aquanetwork/aquachain/crypto"
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"flag"
 	"fmt"
+	"github.com/aquanetwork/aquachain/crypto"
 	"math/big"
 	"testing"
 )
