@@ -36,13 +36,13 @@ var customGenesisTests = []struct {
 			"difficulty" : "0x20000",
 			"extraData"  : "",
 			"gasLimit"   : "0x2fefd8",
-			"nonce"      : "0x0000000000000042",
+			"nonce"      : "0x000000000000002a",
 			"mixhash"    : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"parentHash" : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"timestamp"  : "0x00"
 		}`,
 		query:  "aqua.getBlock(0).nonce",
-		result: "0x0000000000000042",
+		result: "0x000000000000002a",
 	},
 	// Genesis file with an empty chain configuration (ensure missing fields work)
 	{
@@ -52,14 +52,14 @@ var customGenesisTests = []struct {
 			"difficulty" : "0x20000",
 			"extraData"  : "",
 			"gasLimit"   : "0x2fefd8",
-			"nonce"      : "0x0000000000000042",
+			"nonce"      : "0x000000000000002a",
 			"mixhash"    : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"parentHash" : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"timestamp"  : "0x00",
 			"config"     : {}
 		}`,
 		query:  "aqua.getBlock(0).nonce",
-		result: "0x0000000000000042",
+		result: "0x000000000000002a",
 	},
 	// Genesis file with specific chain configurations
 	{
@@ -69,7 +69,7 @@ var customGenesisTests = []struct {
 			"difficulty" : "0x20000",
 			"extraData"  : "",
 			"gasLimit"   : "0x2fefd8",
-			"nonce"      : "0x0000000000000042",
+			"nonce"      : "0x000000000000002a",
 			"mixhash"    : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"parentHash" : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"timestamp"  : "0x00",
@@ -80,7 +80,7 @@ var customGenesisTests = []struct {
 			},
 		}`,
 		query:  "aqua.getBlock(0).nonce",
-		result: "0x0000000000000042",
+		result: "0x000000000000002a",
 	},
 }
 
