@@ -22,10 +22,10 @@ import (
 	"github.com/aquanetwork/aquachain"
 	"github.com/aquanetwork/aquachain/common/hexutil"
 	"github.com/aquanetwork/aquachain/rpc"
-	whisper "github.com/aquanetwork/aquachain/whisper/whisperv5"
+	whisper "github.com/aquanetwork/aquachain/whisper/whisperv6"
 )
 
-// Client defines typed wrappers for the Whisper v5 RPC API.
+// Client defines typed wrappers for the Whisper v6 RPC API.
 type Client struct {
 	c *rpc.Client
 }
