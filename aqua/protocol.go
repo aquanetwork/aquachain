@@ -32,8 +32,8 @@ import (
 const (
 	aqua64 = 64
 	aqua65 = 65
-	eth62  = 62
-	eth63  = 63
+	//eth62  = 62
+	//aqua64  = 63
 )
 
 // Official short name of the protocol used during capability negotiation.
