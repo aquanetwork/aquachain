@@ -23,7 +23,7 @@
 // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
 // LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
 // DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHAQUAER IN CONTRACT, STRICT LIABILITY, OR TORT
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
@@ -230,7 +230,7 @@ func symEncrypt(rand io.Reader, params *ECIESParams, key, m []byte) (ct []byte, 
 
 // symDecrypt carries out CTR decryption using the block cipher specified in
 // the parameters
-func symDecrypt(rand io.Reader, params *ECIESParams, key, ct []byte) (m []byte, err error) {
+func symDecrypt(params *ECIESParams, key, ct []byte) (m []byte, err error) {
 	c, err := params.Cipher(key)
 	if err != nil {
 		return
@@ -292,7 +292,7 @@ func Encrypt(rand io.Reader, pub *PublicKey, m, s1, s2 []byte) (ct []byte, err e
 }
 
 // Decrypt decrypts an ECIES ciphertext.
-func (prv *PrivateKey) Decrypt(rand io.Reader, c, s1, s2 []byte) (m []byte, err error) {
+func (prv *PrivateKey) Decrypt(c, s1, s2 []byte) (m []byte, err error) {
 	if len(c) == 0 {
 		return nil, ErrInvalidMessage
 	}
@@ -361,6 +361,6 @@ func (prv *PrivateKey) Decrypt(rand io.Reader, c, s1, s2 []byte) (m []byte, err 
 		return
 	}
 
-	m, err = symDecrypt(rand, params, Ke, c[mStart:mEnd])
+	m, err = symDecrypt(params, Ke, c[mStart:mEnd])
 	return
 }
