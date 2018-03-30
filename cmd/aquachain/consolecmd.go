@@ -46,6 +46,14 @@ which exposes a node admin interface as well as the Ðapp JavaScript API.
 See https://github.com/aquanetwork/aquachain/wiki/JavaScript-Console.`,
 	}
 
+	daemonCommand = cli.Command{
+		Action:      utils.MigrateFlags(daemonStart),
+		Name:        "daemon",
+		Usage:       "Start a full node",
+		Category:    "CONSOLE COMMANDS",
+		Description: "",
+	}
+
 	attachCommand = cli.Command{
 		Action:    utils.MigrateFlags(remoteConsole),
 		Name:      "attach",
