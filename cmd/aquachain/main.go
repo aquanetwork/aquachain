@@ -147,7 +147,7 @@ func init() {
 	// Initialize the CLI app and start AquaChain
 	app.Action = localConsole // default command is 'console'
 
-	app.HideVersion = true      // we have a command to print the version
+	app.HideVersion = true // we have a command to print the version
 	app.Copyright = "Copyright 2018 The Aquachain Authors"
 	app.Commands = []cli.Command{
 		// See chaincmd.go:
