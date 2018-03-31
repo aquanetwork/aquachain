@@ -385,6 +385,18 @@ func (c *Console) Interactive() {
 				fmt.Fprintln(c.printer, helpText)
 				continue
 			}
+
+			// command: 'send'
+			if strings.TrimSuffix(strings.TrimSpace(line), ";") == "send" {
+				err := handleSend(c)
+				if err != nil {
+					fmt.Fprintln(c.printer, "Error:", err)
+					continue
+				}
+
+				fmt.Fprintf(c.printer, "TX Send: 0x%x\n", "the tx hash")
+				continue
+			}
 			// Append the line to the input and check for multi-line interpretation
 			input += line + "\n"
 
@@ -409,6 +421,59 @@ func (c *Console) Interactive() {
 			}
 		}
 	}
+}
+
+func handleSend(c *Console) error {
+
+	cont, err := c.prompter.PromptConfirm("You are about to create a transaction from your Aquabase. Right?")
+	if err != nil {
+		return fmt.Errorf("input error: %v", err)
+	}
+	if !cont {
+		return fmt.Errorf("transaction canceled")
+	}
+	_, err = c.jsre.Run(`personal.unlockAccount(aqua.coinbase);`)
+	if err != nil {
+		return fmt.Errorf("error: %v", err)
+	}
+
+	amount, err := c.prompter.PromptInput("How much AQUA to send? For example: 0.1: ")
+	if err != nil {
+		return fmt.Errorf("input error: %v", err)
+	}
+
+	fmt.Fprintf(c.printer, "Send %q to whom?", amount)
+
+	destination, err := c.prompter.PromptInput("Where to send? With 0x prefix: ")
+	if err != nil {
+		return fmt.Errorf("input error: %v", err)
+	}
+
+	cont, err = c.prompter.PromptConfirm(fmt.Sprintf("Send %s to %s?", amount, destination))
+	if err != nil {
+		return fmt.Errorf("input error: %v", err)
+	}
+	if !cont {
+		return fmt.Errorf("transaction canceled")
+	}
+
+	fmt.Fprintln(c.printer, "Running:\n"+`aqua.sendTransaction({from: aqua.coinbase, to: '`+destination+`', value: web3.toWei(`+amount+`,'aqua')});`)
+	cont, err = c.prompter.PromptConfirm(fmt.Sprintf("REALLY Send %s to %s?", amount, destination))
+	if err != nil {
+		return fmt.Errorf("input error: %v", err)
+	}
+	if !cont {
+		return fmt.Errorf("transaction canceled")
+	}
+	if !strings.HasPrefix(destination, "0x") && !strings.HasPrefix(destination, "aqua.accounts[") {
+		return fmt.Errorf("does not have 0x prefix")
+	}
+	_, err = c.jsre.Run(`aqua.sendTransaction({from: aqua.coinbase, to: '` + destination + `', value: web3.toWei(` + amount + `,'aqua')});`)
+	if err != nil {
+		return fmt.Errorf("error: %v", err)
+	}
+
+	return nil
 }
 
 // countIndents returns the number of identations for the given input.

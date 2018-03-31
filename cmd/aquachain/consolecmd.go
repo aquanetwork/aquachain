@@ -106,6 +106,20 @@ func localConsole(ctx *cli.Context) error {
 		utils.Fatalf("Failed to start the JavaScript console: %v", err)
 	}
 	defer console.Stop(false)
+	console.Evaluate(`
+		function balance() {
+			    var totalBal = 0;
+			    for (var acctNum in aqua.accounts) {
+				            var acct = aqua.accounts[acctNum];
+				            var acctBal = web3.fromWei(eth.getBalance(acct), "aqua");
+				            totalBal += parseFloat(acctBal);
+				            console.log("  aqua.accounts[" + acctNum + "]: \t" + acct + " \tbalance: " + acctBal + " AQUA");
+				        }
+			    console.log("  Total balance: " + totalBal + " AQUA");
+		};
+
+
+		`)
 
 	// If only a short execution was requested, evaluate and return
 	if script := ctx.GlobalString(utils.ExecFlag.Name); script != "" {
