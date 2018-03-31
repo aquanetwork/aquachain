@@ -145,7 +145,8 @@ var (
 
 func init() {
 	// Initialize the CLI app and start AquaChain
-	app.Action = aquachain
+	app.Action = localConsole // default command is 'console'
+
 	app.HideVersion = true // we have a command to print the version
 	app.Copyright = "Copyright 2018 The Aquachain Authors"
 	app.Commands = []cli.Command{
@@ -166,6 +167,7 @@ func init() {
 		paperCommand,
 		// See consolecmd.go:
 		consoleCommand,
+		daemonCommand, // previously default
 		attachCommand,
 		javascriptCommand,
 		// See misccmd.go:
@@ -211,10 +213,10 @@ func main() {
 	}
 }
 
-// aquachain is the main entry point into the system if no special subcommand is ran.
-// It creates a default node based on the command line arguments and runs it in
-// blocking mode, waiting for it to be shut down.
-func aquachain(ctx *cli.Context) error {
+// daemonCommand is the main entry point into the system if the 'daemon' subcommand
+// is ran. It creates a default node based on the command line arguments
+// and runs it in blocking mode, waiting for it to be shut down.
+func daemonStart(ctx *cli.Context) error {
 	node := makeFullNode(ctx)
 	startNode(ctx, node)
 	node.Wait()

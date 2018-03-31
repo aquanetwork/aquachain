@@ -26,7 +26,7 @@ import (
 var (
 	MainnetGenesisHash = common.HexToHash("0x381c8d2c3e3bc702533ee504d7621d510339cafd830028337a4b532ff27cd505") // Mainnet genesis hash to enforce below configs on
 	//MainnetGenesisHash = common.HexToHash("0x2461b9b2e5b57ed037fe99f470511c6dbef8e0ed976b3f3197ae689f5b100a9b") // Mainnet genesis hash to enforce below configs on
-	TestnetGenesisHash = common.HexToHash("0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d") // Testnet genesis hash to enforce below configs on
+	TestnetGenesisHash = common.HexToHash("0x817df985008bb2178975203c512c19f97d8e7a04389b5fea4968a4359534d6b2") // Testnet genesis hash to enforce below configs on
 )
 var (
 	AquachainHF = ForkMap{
@@ -34,7 +34,7 @@ var (
 		1: big.NewInt(3600),  // increase min difficulty to the next multiple of 2048
 		2: big.NewInt(7200),  // use simple difficulty algo (240 seconds)
 		3: big.NewInt(13026), // increase min difficulty for anticipation of gpu mining
-		4: big.NewInt(28000), // reserved for possible HF4
+		4: big.NewInt(21800), // HF4
 	}
 )
 var (

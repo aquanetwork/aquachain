@@ -17,6 +17,7 @@
 package core
 
 import (
+	"fmt"
 	"math/big"
 	"reflect"
 	"testing"
@@ -29,15 +30,26 @@ import (
 	"github.com/davecgh/go-spew/spew"
 )
 
+func TestDefaultGenesisAlloc(t *testing.T) {
+
+	m := DefaultGenesisBlock().Alloc
+	fmt.Println("Bad Balances:", len(m))
+	//aquawei := big.NewFloat(params.Aqua)
+	for k := range m {
+		//fmt.Printf("%x %.6f\n", k, new(big.Float).Quo(new(big.Float).SetInt(v.Balance), aquawei))
+		fmt.Printf(`"%x",`+"\n", k)
+	}
+}
 func TestDefaultGenesisBlock(t *testing.T) {
 	block := DefaultGenesisBlock().ToBlock(nil)
 	if block.Hash() != params.MainnetGenesisHash {
-		t.Errorf("wrong mainnet genesis hash, got %v, want %v", block.Hash(), params.MainnetGenesisHash)
+		t.Errorf("wrong mainnet genesis hash, got %x, want %x", block.Hash(), params.MainnetGenesisHash)
 	}
 	block = DefaultTestnetGenesisBlock().ToBlock(nil)
 	if block.Hash() != params.TestnetGenesisHash {
-		t.Errorf("wrong testnet genesis hash, got %v, want %v", block.Hash(), params.TestnetGenesisHash)
+		t.Errorf("wrong testnet genesis hash, got %x, want %x", block.Hash(), params.TestnetGenesisHash)
 	}
+
 }
 
 func TestSetupGenesis(t *testing.T) {
