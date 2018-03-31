@@ -33,17 +33,17 @@ func (f ForkMap) String() (s string) {
 	return "HF-Ready: " + strings.TrimSpace(s)
 }
 
-// DAOForkBlockExtra is the block header extra-data field to set for the DAO fork
-// point and a number of consecutive blocks to allow fast/light syncers to correctly
-// pick the side they want  ("dao-hard-fork").
-var DAOForkBlockExtra = common.FromHex("0x64616f2d686172642d666f726b")
-
-// DAOForkExtraRange is the number of consecutive blocks from the DAO fork point
-// to override the extra-data in to prevent no-fork attacks.
-var DAOForkExtraRange = big.NewInt(10)
-
-// DAORefundContract is the address of the refund contract to send DAO balances to.
-var DAORefundContract = common.HexToAddress("0x0")
+// // DAOForkBlockExtra is the block header extra-data field to set for the DAO fork
+// // point and a number of consecutive blocks to allow fast/light syncers to correctly
+// // pick the side they want  ("dao-hard-fork").
+// var DAOForkBlockExtra = common.FromHex("0x64616f2d686172642d666f726b")
+//
+// // DAOForkExtraRange is the number of consecutive blocks from the DAO fork point
+// // to override the extra-data in to prevent no-fork attacks.
+// var DAOForkExtraRange = big.NewInt(10)
+//
+// // DAORefundContract is the address of the refund contract to send DAO balances to.
+// var DAORefundContract = common.HexToAddress("0x0")
 
 // DAODrainList is the list of accounts whose full balances will be moved into a
 // refund contract at the beginning of the dao-fork block.

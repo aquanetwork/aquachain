@@ -444,9 +444,12 @@ func (self *worker) commitNewWork() {
 	}
 	// Create the current work task and check any fork transitions needed
 	work := self.current
-	if nexthf := self.config.NextHF(big.NewInt(0).Add(header.Number, big.NewInt(-1))); nexthf != nil && nexthf.Cmp(header.Number) == 0 {
-		misc.ApplyHardFork(work.state)
+
+	// Mutate the work state according to any hard-fork specs
+	if params.AquachainHF[4].Cmp(header.Number) == 0 {
+		misc.ApplyHardFork4(work.state)
 	}
+
 	pending, err := self.aqua.TxPool().Pending()
 	if err != nil {
 		log.Error("Failed to fetch pending transactions", "err", err)
