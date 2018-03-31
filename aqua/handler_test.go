@@ -499,7 +499,7 @@ func testDAOChallenge(t *testing.T, localForked, remoteForked bool, timeout bool
 	if !timeout {
 		blocks, _ := core.GenerateChain(&params.ChainConfig{}, genesis, aquahash.NewFaker(), db, 1, func(i int, block *core.BlockGen) {
 			if remoteForked {
-				block.SetExtra(params.DAOForkBlockExtra)
+				//		block.SetExtra(params.DAOForkBlockExtra)
 			}
 		})
 		if err := p2p.Send(peer.app, BlockHeadersMsg, []*types.Header{blocks[0].Header()}); err != nil {
