@@ -37,6 +37,6 @@ func ApplyHardFork(statedb *state.StateDB) {
 func ApplyHardFork4(statedb *state.StateDB) {
 	zero := new(big.Int)
 	for _, addr := range DeallocListHF4 {
-		statedb.SetBalance(common.StringToAddress(addr), zero)
+		statedb.SetBalance(common.HexToAddress(addr), zero)
 	}
 }
