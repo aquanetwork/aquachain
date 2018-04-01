@@ -28,10 +28,6 @@ import (
 type Config struct {
 	// Debug enabled debugging Interpreter options
 	Debug bool
-	// EnableJit enabled the JIT VM
-	EnableJit bool
-	// ForceJit forces the JIT VM
-	ForceJit bool
 	// Tracer is the op code logger
 	Tracer Tracer
 	// NoRecursion disabled Interpreter call, callcode,
@@ -68,6 +64,8 @@ func NewInterpreter(evm *EVM, cfg Config) *Interpreter {
 	// we'll set the default jump table.
 	if !cfg.JumpTable[STOP].valid {
 		switch {
+		case evm.ChainConfig().IsHF(5, evm.BlockNumber):
+			cfg.JumpTable = springInstructionSet
 		case evm.ChainConfig().IsConstantinople(evm.BlockNumber):
 			cfg.JumpTable = constantinopleInstructionSet
 		case evm.ChainConfig().IsByzantium(evm.BlockNumber):

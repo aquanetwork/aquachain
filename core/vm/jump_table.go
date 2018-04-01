@@ -55,7 +55,16 @@ var (
 	homesteadInstructionSet      = NewHomesteadInstructionSet()
 	byzantiumInstructionSet      = NewByzantiumInstructionSet()
 	constantinopleInstructionSet = NewConstantinopleInstructionSet()
+	springInstructionSet         = NewSpringInstructionSet()
 )
+
+// NewSpring returns the frontier, homestead
+// byzantium, contantinople, and spring instructions.
+func NewSpringInstructionSet() [256]operation {
+	// instructions that can be executed during the contantinople phase.
+	instructionSet := NewConstantinopleInstructionSet()
+	return instructionSet
+}
 
 // NewConstantinopleInstructionSet returns the frontier, homestead
 // byzantium and contantinople instructions.
