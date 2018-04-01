@@ -41,7 +41,6 @@ type Config struct {
 	GasLimit    uint64
 	GasPrice    *big.Int
 	Value       *big.Int
-	DisableJit  bool // "disable" so it's enabled by default
 	Debug       bool
 	EVMConfig   vm.Config
 

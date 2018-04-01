@@ -60,15 +60,15 @@ var (
 
 	// ErrInsufficientFunds is returned if the total cost of executing a transaction
 	// is higher than the balance of the user's account.
-	ErrInsufficientFunds = errors.New("insufficient funds for gas * price + value")
+	ErrInsufficientFunds = errors.New("insufficient funds for fuel * price + value")
 
 	// ErrIntrinsicGas is returned if the transaction is specified to use less gas
 	// than required to start the invocation.
-	ErrIntrinsicGas = errors.New("intrinsic gas too low")
+	ErrIntrinsicGas = errors.New("intrinsic fuel too low")
 
 	// ErrGasLimit is returned if a transaction's requested gas limit exceeds the
 	// maximum allowance of the current block.
-	ErrGasLimit = errors.New("exceeds block gas limit")
+	ErrGasLimit = errors.New("exceeds block fuel limit")
 
 	// ErrNegativeValue is a sanity error to ensure noone is able to specify a
 	// transaction with a negative value.
