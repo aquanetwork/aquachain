@@ -39,6 +39,7 @@ var (
 	BlockReward            *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block
 	ByzantiumBlockReward   *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block upward from Byzantium
 	maxUncles                       = 2                 // Maximum number of uncles allowed in a single block
+	maxUnclesHF5                    = 0                 // Maximum number of uncles allowed in a single block after HF5 is activated
 	allowedFutureBlockTime          = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
 )
 
@@ -175,6 +176,10 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 	}
 	// Verify that there are at most 2 uncles included in this block
 	if len(block.Uncles()) > maxUncles {
+		return errTooManyUncles
+	}
+	// Verify that there are at most 0 uncles included in this block
+	if chain.Config().IsHF(5, block.Number()) && len(block.Uncles()) > maxUnclesHF5 {
 		return errTooManyUncles
 	}
 	// Gather the set of past uncles and ancestors
