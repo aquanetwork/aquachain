@@ -34,7 +34,7 @@ import (
 
 // DefaultConfig contains default settings for use on the AquaChain main net.
 var DefaultConfig = Config{
-	SyncMode: downloader.FastSync,
+	SyncMode: downloader.FullSync,
 	Aquahash: aquahash.Config{
 		CacheDir:       "aquahash",
 		CachesInMem:    2,
