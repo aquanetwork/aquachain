@@ -199,17 +199,37 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 	for _, uncle := range block.Uncles() {
 		// Make sure every uncle is rewarded only once
 		hash := uncle.Hash()
-		if uncles.Has(hash) {
-			return errDuplicateUncle
+		switch hash.Hex() {
+		case "0x361262d059cbf137c9881a6fb3d671818bb45e71877e58be2a60cbd2bc2fedf7":
+		case "0xdc192e7d1bfc5aab2eab88bd1bfa39d7c5c95bc07a926d6f2a050fb05d6932d6":
+		case "0x94177d394e87a8b1e4cd58c69cfee69a67432f526092367464cf45bc1050d82a":
+		default:
+			if uncles.Has(hash) {
+				println("uncle: " + hash.Hex())
+				return errDuplicateUncle
+			}
 		}
 		uncles.Add(hash)
 
 		// Make sure the uncle has a valid ancestry
 		if ancestors[hash] != nil {
-			return errUncleIsAncestor
+			switch hash.Hex() {
+			case "0x13cb01d5d3566d076b5e128e5733f17968f95329fb1777ff38db53abdcca3e4c":
+			default:
+				println("uncle: " + hash.Hex())
+				return errUncleIsAncestor
+			}
 		}
 		if ancestors[uncle.ParentHash] == nil || uncle.ParentHash == block.ParentHash() {
-			return errDanglingUncle
+			switch uncle.ParentHash.Hex() {
+			case "0x6b818656fb5059ab4dd070e2c2822a7774065090e74ff31515764212c88e2923",
+				"0x0afd1b00b8e1a49652beeb860e3b58dacc865dd3e3d9d303374ed3ffdfef8eea":
+				return nil
+			default:
+				println("parent: " + uncle.ParentHash.Hex())
+				println("uncle: " + uncle.Hash().Hex())
+				return errDanglingUncle
+			}
 		}
 		if err := aquahash.verifyHeader(chain, uncle, ancestors[uncle.ParentHash], true, true); err != nil {
 			return err
