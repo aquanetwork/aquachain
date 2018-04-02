@@ -311,13 +311,11 @@ func GenesisBlockForTesting(db aquadb.Database, addr common.Address, balance *bi
 // DefaultGenesisBlock returns the AquaChain main net genesis block.
 func DefaultGenesisBlock() *Genesis {
 	return &Genesis{
-		Config: params.MainnetChainConfig,
-		Nonce:  42,
-		//ExtraData: hexutil.MustDecode("0x94e867e9f25b4d01bd4762bf37317b23dbe17f16858a2dff6c89e4b0423e8821"),
-		GasLimit: 4200000,
-		//Difficulty: big.NewInt(17179869184),
+		Config:     params.MainnetChainConfig,
+		Nonce:      42,
+		GasLimit:   4200000,
 		Difficulty: big.NewInt(99999999),
-		Alloc:      decodePrealloc(mainnetAllocData),
+		Alloc:      decodePrealloc(mainnetAllocData), // fixed in HF4
 	}
 }
 
