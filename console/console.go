@@ -41,6 +41,7 @@ var (
 	onlyWhitespace = regexp.MustCompile(`^\s*$`)
 	exit           = regexp.MustCompile(`^\s*exit\s*;*\s*$`)
 	help           = regexp.MustCompile(`^\s*help\s*;*\s*$`)
+	sendline       = regexp.MustCompile(`^\s*send\s*;*\s*$`)
 )
 
 // HistoryFile is the file within the data directory to store input scrollback.
@@ -58,6 +59,8 @@ Web links:
  New address:   personal.newAccount()
  Start CPU mining:  miner.start()
  Get balance:   aqua.balance(aqua.coinbase)
+ Get all balance: balance()
+ Send transaction: send
  List accounts: aqua.accounts
 	 Press TAB to autocomplete commands
 
@@ -387,14 +390,13 @@ func (c *Console) Interactive() {
 			}
 
 			// command: 'send'
-			if strings.TrimSuffix(strings.TrimSpace(line), ";") == "send" {
+			if sendline.MatchString(line) {
 				err := handleSend(c)
 				if err != nil {
 					fmt.Fprintln(c.printer, "Error:", err)
 					continue
 				}
-
-				fmt.Fprintf(c.printer, "TX Send: 0x%x\n", "the tx hash")
+				fmt.Fprintln(c.printer, "TX Sent!")
 				continue
 			}
 			// Append the line to the input and check for multi-line interpretation
