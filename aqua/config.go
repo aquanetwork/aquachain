@@ -20,28 +20,28 @@ import (
 	"math/big"
 	"os"
 	"os/user"
-	"path/filepath"
-	"runtime"
 	"time"
 
 	"github.com/aquanetwork/aquachain/aqua/downloader"
 	"github.com/aquanetwork/aquachain/aqua/gasprice"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/hexutil"
-	"github.com/aquanetwork/aquachain/consensus/aquahash"
+	//"github.com/aquanetwork/aquachain/consensus/aquahash"
+	aquahash "github.com/aquanetwork/aquachain/consensus/aquahash2"
 	"github.com/aquanetwork/aquachain/core"
 )
 
 // DefaultConfig contains default settings for use on the AquaChain main net.
 var DefaultConfig = Config{
 	SyncMode: downloader.FullSync,
-	Aquahash: aquahash.Config{
-		CacheDir:       "aquahash",
-		CachesInMem:    2,
-		CachesOnDisk:   3,
-		DatasetsInMem:  1,
-		DatasetsOnDisk: 2,
-	},
+	Aquahash: aquahash.Config{},
+	// Aquahash: aquahash.Config{
+	// 	CacheDir:       "aquahash",
+	// 	CachesInMem:    2,
+	// 	CachesOnDisk:   3,
+	// 	DatasetsInMem:  1,
+	// 	DatasetsOnDisk: 2,
+	// },
 	NetworkId:     61717561,
 	LightPeers:    100,
 	DatabaseCache: 768,
@@ -63,11 +63,11 @@ func init() {
 			home = user.HomeDir
 		}
 	}
-	if runtime.GOOS == "windows" {
-		DefaultConfig.Aquahash.DatasetDir = filepath.Join(home, "AppData", "Aquahash")
-	} else {
-		DefaultConfig.Aquahash.DatasetDir = filepath.Join(home, ".aquahash")
-	}
+	// if runtime.GOOS == "windows" {
+	// 	DefaultConfig.Aquahash.DatasetDir = filepath.Join(home, "AppData", "Aquahash")
+	// } else {
+	// 	DefaultConfig.Aquahash.DatasetDir = filepath.Join(home, ".aquahash")
+	// }
 }
 
 //go:generate gencodec -type Config -field-override configMarshaling -formats toml -out gen_config.go
@@ -100,6 +100,7 @@ type Config struct {
 	GasPrice     *big.Int
 
 	// Aquahash options
+	//Aquahash  aquahash.Config
 	Aquahash aquahash.Config
 
 	// Transaction pool options

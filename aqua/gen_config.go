@@ -9,7 +9,7 @@ import (
 	"github.com/aquanetwork/aquachain/aqua/gasprice"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/hexutil"
-	"github.com/aquanetwork/aquachain/consensus/aquahash"
+	aquahash "github.com/aquanetwork/aquachain/consensus/aquahash2"
 	"github.com/aquanetwork/aquachain/core"
 )
 

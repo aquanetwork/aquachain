@@ -33,7 +33,8 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/hexutil"
 	"github.com/aquanetwork/aquachain/consensus"
-	"github.com/aquanetwork/aquachain/consensus/aquahash"
+	//"github.com/aquanetwork/aquachain/consensus/aquahash"
+	"github.com/aquanetwork/aquachain/consensus/aquahash2"
 	"github.com/aquanetwork/aquachain/consensus/clique"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/bloombits"
@@ -211,34 +212,39 @@ func CreateDB(ctx *node.ServiceContext, config *Config, name string) (aquadb.Dat
 }
 
 // CreateConsensusEngine creates the required type of consensus engine instance for an AquaChain service
-func CreateConsensusEngine(ctx *node.ServiceContext, config *aquahash.Config, chainConfig *params.ChainConfig, db aquadb.Database) consensus.Engine {
+func CreateConsensusEngine(ctx *node.ServiceContext, config *aquahash2.Config, chainConfig *params.ChainConfig, db aquadb.Database) consensus.Engine {
 	// If proof-of-authority is requested, set it up
 	if chainConfig.Clique != nil {
 		return clique.New(chainConfig.Clique, db)
 	}
-	// Otherwise assume proof-of-work
-	switch {
-	case config.PowMode == aquahash.ModeFake:
-		log.Warn("Aquahash used in fake mode")
-		return aquahash.NewFaker()
-	case config.PowMode == aquahash.ModeTest:
-		log.Warn("Aquahash used in test mode")
-		return aquahash.NewTester()
-	case config.PowMode == aquahash.ModeShared:
-		log.Warn("Aquahash used in shared mode")
-		return aquahash.NewShared()
-	default:
-		engine := aquahash.New(aquahash.Config{
-			CacheDir:       ctx.ResolvePath(config.CacheDir),
-			CachesInMem:    config.CachesInMem,
-			CachesOnDisk:   config.CachesOnDisk,
-			DatasetDir:     config.DatasetDir,
-			DatasetsInMem:  config.DatasetsInMem,
-			DatasetsOnDisk: config.DatasetsOnDisk,
-		})
-		engine.SetThreads(-1) // Disable CPU mining
-		return engine
-	}
+	//if chainConfig.Aquahash2 != nil {
+	log.Error("Aquahash v2 Initialized")
+	return aquahash2.New(aquahash2.Config{})
+	//}
+	panic("not initialized aquahash v2")
+	// // Otherwise assume proof-of-work
+	// switch {
+	// case config.PowMode == aquahash.ModeFake:
+	// 	log.Warn("Aquahash used in fake mode")
+	// 	return aquahash.NewFaker()
+	// case config.PowMode == aquahash.ModeTest:
+	// 	log.Warn("Aquahash used in test mode")
+	// 	return aquahash.NewTester()
+	// case config.PowMode == aquahash.ModeShared:
+	// 	log.Warn("Aquahash used in shared mode")
+	// 	return aquahash.NewShared()
+	// default:
+	// 	engine := aquahash.New(aquahash.Config{
+	// 		CacheDir:       ctx.ResolvePath(config.CacheDir),
+	// 		CachesInMem:    config.CachesInMem,
+	// 		CachesOnDisk:   config.CachesOnDisk,
+	// 		DatasetDir:     config.DatasetDir,
+	// 		DatasetsInMem:  config.DatasetsInMem,
+	// 		DatasetsOnDisk: config.DatasetsOnDisk,
+	// 	})
+	// 	engine.SetThreads(-1) // Disable CPU mining
+	// 	return engine
+	// }
 }
 
 // APIs returns the collection of RPC services the aquachain package offers.

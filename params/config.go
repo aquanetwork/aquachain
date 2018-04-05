@@ -44,6 +44,7 @@ var (
 		HomesteadBlock: big.NewInt(0),
 		EIP150Block:    big.NewInt(0),
 		Aquahash:       new(AquahashConfig),
+		Aquahash2:      new(Aquahash2Config),
 	}
 
 	// TestnetChainConfig contains the chain parameters to run a node on the Ropsten test network.
@@ -54,7 +55,8 @@ var (
 		// HF: map[int]*big.Int{
 		// 	1: big.NewInt(5), // increase min difficulty to the next multiple of 2048
 		// },
-		Aquahash: new(AquahashConfig),
+		Aquahash:  new(AquahashConfig),
+		Aquahash2: new(Aquahash2Config),
 	}
 
 	// RinkebyChainConfig contains the chain parameters to run a node on the Rinkeby test network.
@@ -80,16 +82,16 @@ var (
 	//
 	// This configuration is intentionally not using keyed fields to force anyone
 	// adding flags to the config to also have to set these fields.
-	AllAquahashProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil}
+	AllAquahashProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil, new(Aquahash2Config)}
 
 	// AllCliqueProtocolChanges contains every protocol change (EIPs) introduced
 	// and accepted by the AquaChain core developers into the Clique consensus.
 	//
 	// This configuration is intentionally not using keyed fields to force anyone
 	// adding flags to the config to also have to set these fields.
-	AllCliqueProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, &CliqueConfig{Period: 0, Epoch: 30000}}
+	AllCliqueProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, &CliqueConfig{Period: 0, Epoch: 30000}, nil}
 
-	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil}
+	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil, new(Aquahash2Config)}
 	TestRules       = TestChainConfig.Rules(new(big.Int))
 )
 
@@ -121,8 +123,9 @@ type ChainConfig struct {
 	ConstantinopleBlock *big.Int `json:"constantinopleBlock,omitempty"` // Constantinople switch block (nil = no fork, 0 = already activated)
 
 	// Various consensus engines
-	Aquahash *AquahashConfig `json:"aquahash,omitempty"`
-	Clique   *CliqueConfig   `json:"clique,omitempty"`
+	Aquahash  *AquahashConfig  `json:"aquahash,omitempty"`
+	Clique    *CliqueConfig    `json:"clique,omitempty"`
+	Aquahash2 *Aquahash2Config `json:"aquahash2,omitempty"`
 }
 
 // AquahashConfig is the consensus engine configs for proof-of-work based sealing.
@@ -131,6 +134,14 @@ type AquahashConfig struct{}
 // String implements the stringer interface, returning the consensus engine details.
 func (c *AquahashConfig) String() string {
 	return "aquahash"
+}
+
+// Aquahash2Config is the consensus engine configs for proof-of-work based sealing.
+type Aquahash2Config struct{}
+
+// String implements the stringer interface, returning the consensus engine details.
+func (c *Aquahash2Config) String() string {
+	return "aquahash2"
 }
 
 // CliqueConfig is the consensus engine configs for proof-of-authority based sealing.

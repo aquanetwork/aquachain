@@ -38,7 +38,7 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/fdlimit"
 	"github.com/aquanetwork/aquachain/consensus"
-	"github.com/aquanetwork/aquachain/consensus/aquahash"
+	aquahash "github.com/aquanetwork/aquachain/consensus/aquahash2"
 	"github.com/aquanetwork/aquachain/consensus/clique"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/state"
