@@ -30,7 +30,6 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/hexutil"
 	"github.com/aquanetwork/aquachain/common/math"
-	"github.com/aquanetwork/aquachain/consensus/aquahash"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
@@ -1403,14 +1402,14 @@ func (api *PublicDebugAPI) PrintBlock(ctx context.Context, number uint64) (strin
 	return block.String(), nil
 }
 
-// SeedHash retrieves the seed hash of a block.
-func (api *PublicDebugAPI) SeedHash(ctx context.Context, number uint64) (string, error) {
-	block, _ := api.b.BlockByNumber(ctx, rpc.BlockNumber(number))
-	if block == nil {
-		return "", fmt.Errorf("block #%d not found", number)
-	}
-	return fmt.Sprintf("0x%x", aquahash.SeedHash(number)), nil
-}
+// // SeedHash retrieves the seed hash of a block.
+// func (api *PublicDebugAPI) SeedHash(ctx context.Context, number uint64) (string, error) {
+// 	block, _ := api.b.BlockByNumber(ctx, rpc.BlockNumber(number))
+// 	if block == nil {
+// 		return "", fmt.Errorf("block #%d not found", number)
+// 	}
+// 	return fmt.Sprintf("0x%x", aquahash.SeedHash(number)), nil
+// }
 
 // PrivateDebugAPI is the collection of AquaChain APIs exposed over the private
 // debugging endpoint.

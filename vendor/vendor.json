@@ -484,6 +484,18 @@
 			"revisionTime": "2017-07-25T06:48:36Z"
 		},
 		{
+			"checksumSHA1": "a25Kbna+fLQPeKt0z+hcreYzXdU=",
+			"path": "golang.org/x/crypto/argon2",
+			"revision": "85f98707c97e11569271e4d9b3d397e079c4f4d0",
+			"revisionTime": "2018-03-01T00:49:11Z"
+		},
+		{
+			"checksumSHA1": "7bRAi6c5cMYkcyby84u/Gpt9rcs=",
+			"path": "golang.org/x/crypto/blake2b",
+			"revision": "b2aa35443fbc700ab74c586ae79b81c171851023",
+			"revisionTime": "2018-04-03T08:00:15Z"
+		},
+		{
 			"checksumSHA1": "TT1rac6kpQp2vz24m5yDGUNQ/QQ=",
 			"path": "golang.org/x/crypto/cast5",
 			"revision": "6a293f2d4b14b8e6d3f0539e383f6d0d30fce3fd",

@@ -25,7 +25,6 @@ import (
 
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/consensus"
-	"github.com/aquanetwork/aquachain/consensus/aquahash"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/log"
 )
@@ -116,8 +115,8 @@ func (a *RemoteAgent) GetWork() ([3]string, error) {
 		block := a.currentWork.Block
 
 		res[0] = block.HashNoNonce().Hex()
-		seedHash := aquahash.SeedHash(block.NumberU64())
-		res[1] = common.BytesToHash(seedHash).Hex()
+		//seedHash := aquahash.SeedHash(block.NumberU64())
+		//res[1] = common.BytesToHash(seedHash).Hex()
 		// Calculate the "target" to be returned to the external miner
 		n := big.NewInt(1)
 		n.Lsh(n, 255)

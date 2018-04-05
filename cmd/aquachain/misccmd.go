@@ -20,43 +20,41 @@ import (
 	"fmt"
 	"os"
 	"runtime"
-	"strconv"
 	"strings"
 
 	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/consensus/aquahash"
 	"github.com/aquanetwork/aquachain/params"
 	"gopkg.in/urfave/cli.v1"
 )
 
 var (
-	makecacheCommand = cli.Command{
-		Action:    utils.MigrateFlags(makecache),
-		Name:      "makecache",
-		Usage:     "Generate aquahash verification cache (for testing)",
-		ArgsUsage: "<blockNum> <outputDir>",
-		Category:  "MISCELLANEOUS COMMANDS",
-		Description: `
-The makecache command generates an aquahash cache in <outputDir>.
-
-This command exists to support the system testing project.
-Regular users do not need to execute it.
-`,
-	}
-	makedagCommand = cli.Command{
-		Action:    utils.MigrateFlags(makedag),
-		Name:      "makedag",
-		Usage:     "Generate aquahash mining DAG (for testing)",
-		ArgsUsage: "<blockNum> <outputDir>",
-		Category:  "MISCELLANEOUS COMMANDS",
-		Description: `
-The makedag command generates an aquahash DAG in <outputDir>.
-
-This command exists to support the system testing project.
-Regular users do not need to execute it.
-`,
-	}
+	// 	makecacheCommand = cli.Command{
+	// 		Action:    utils.MigrateFlags(makecache),
+	// 		Name:      "makecache",
+	// 		Usage:     "Generate aquahash verification cache (for testing)",
+	// 		ArgsUsage: "<blockNum> <outputDir>",
+	// 		Category:  "MISCELLANEOUS COMMANDS",
+	// 		Description: `
+	// The makecache command generates an aquahash cache in <outputDir>.
+	//
+	// This command exists to support the system testing project.
+	// Regular users do not need to execute it.
+	// `,
+	// 	}
+	// 	makedagCommand = cli.Command{
+	// 		Action:    utils.MigrateFlags(makedag),
+	// 		Name:      "makedag",
+	// 		Usage:     "Generate aquahash mining DAG (for testing)",
+	// 		ArgsUsage: "<blockNum> <outputDir>",
+	// 		Category:  "MISCELLANEOUS COMMANDS",
+	// 		Description: `
+	// The makedag command generates an aquahash DAG in <outputDir>.
+	//
+	// This command exists to support the system testing project.
+	// Regular users do not need to execute it.
+	// `,
+	// 	}
 	versionCommand = cli.Command{
 		Action:    utils.MigrateFlags(version),
 		Name:      "version",
@@ -76,35 +74,35 @@ The output of this command is supposed to be machine-readable.
 	}
 )
 
-// makecache generates an aquahash verification cache into the provided folder.
-func makecache(ctx *cli.Context) error {
-	args := ctx.Args()
-	if len(args) != 2 {
-		utils.Fatalf(`Usage: aquachain makecache <block number> <outputdir>`)
-	}
-	block, err := strconv.ParseUint(args[0], 0, 64)
-	if err != nil {
-		utils.Fatalf("Invalid block number: %v", err)
-	}
-	aquahash.MakeCache(block, args[1])
-
-	return nil
-}
-
-// makedag generates an aquahash mining DAG into the provided folder.
-func makedag(ctx *cli.Context) error {
-	args := ctx.Args()
-	if len(args) != 2 {
-		utils.Fatalf(`Usage: aquachain makedag <block number> <outputdir>`)
-	}
-	block, err := strconv.ParseUint(args[0], 0, 64)
-	if err != nil {
-		utils.Fatalf("Invalid block number: %v", err)
-	}
-	aquahash.MakeDataset(block, args[1])
-
-	return nil
-}
+// // makecache generates an aquahash verification cache into the provided folder.
+// func makecache(ctx *cli.Context) error {
+// 	args := ctx.Args()
+// 	if len(args) != 2 {
+// 		utils.Fatalf(`Usage: aquachain makecache <block number> <outputdir>`)
+// 	}
+// 	block, err := strconv.ParseUint(args[0], 0, 64)
+// 	if err != nil {
+// 		utils.Fatalf("Invalid block number: %v", err)
+// 	}
+// 	aquahash.MakeCache(block, args[1])
+//
+// 	return nil
+// }
+//
+// // makedag generates an aquahash mining DAG into the provided folder.
+// func makedag(ctx *cli.Context) error {
+// 	args := ctx.Args()
+// 	if len(args) != 2 {
+// 		utils.Fatalf(`Usage: aquachain makedag <block number> <outputdir>`)
+// 	}
+// 	block, err := strconv.ParseUint(args[0], 0, 64)
+// 	if err != nil {
+// 		utils.Fatalf("Invalid block number: %v", err)
+// 	}
+// 	aquahash.MakeDataset(block, args[1])
+//
+// 	return nil
+// }
 
 func version(ctx *cli.Context) error {
 	fmt.Println(strings.Title(clientIdentifier))
