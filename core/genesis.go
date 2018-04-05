@@ -315,8 +315,8 @@ func DefaultGenesisBlock() *Genesis {
 		Nonce:    42,
 		GasLimit: 4200000,
 		//Difficulty: big.NewInt(99999999),
-		Difficulty: big.NewInt(999),
-		Alloc:      decodePrealloc(mainnetAllocData), // fixed in HF4
+		Difficulty: big.NewInt(1),
+//		Alloc:      decodePrealloc(mainnetAllocData), // fixed in HF4
 	}
 }
 
