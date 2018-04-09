@@ -55,7 +55,7 @@ const (
 var (
 	big8        = big.NewInt(8)
 	big32       = big.NewInt(32)
-	BlockReward = big.NewInt(1)
+	BlockReward = big.NewInt(1e+18)
 )
 
 // AccumulateRewards credits the coinbase of the given block with the mining
