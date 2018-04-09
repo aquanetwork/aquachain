@@ -29,6 +29,7 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/hexutil"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
+	"github.com/aquanetwork/aquachain/consensus/argonated"
 	"github.com/aquanetwork/aquachain/core"
 )
 
@@ -42,6 +43,14 @@ var DefaultConfig = Config{
 		DatasetsInMem:  1,
 		DatasetsOnDisk: 2,
 	},
+	Argonated: argonated.Config{
+		AquahashConfig: aquahash.Config{
+			CacheDir:       "aquahash",
+			CachesInMem:    2,
+			CachesOnDisk:   3,
+			DatasetsInMem:  1,
+			DatasetsOnDisk: 2,
+		}},
 	NetworkId:     61717561,
 	LightPeers:    100,
 	DatabaseCache: 768,
@@ -100,7 +109,8 @@ type Config struct {
 	GasPrice     *big.Int
 
 	// Aquahash options
-	Aquahash aquahash.Config
+	Aquahash  aquahash.Config
+	Argonated argonated.Config
 
 	// Transaction pool options
 	TxPool core.TxPoolConfig

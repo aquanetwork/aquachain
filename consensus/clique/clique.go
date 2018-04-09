@@ -229,6 +229,10 @@ func New(config *params.CliqueConfig, db aquadb.Database) *Clique {
 	}
 }
 
+func (c *Clique) Name() string {
+	return "clique"
+}
+
 // Author implements consensus.Engine, returning the AquaChain address recovered
 // from the signature in the header's extra-data section.
 func (c *Clique) Author(header *types.Header) (common.Address, error) {

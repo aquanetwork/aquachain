@@ -18,6 +18,7 @@ package miner
 
 import (
 	"errors"
+	"fmt"
 	"math/big"
 	"sync"
 	"sync/atomic"
@@ -111,13 +112,24 @@ func (a *RemoteAgent) GetWork() ([3]string, error) {
 	defer a.mu.Unlock()
 
 	var res [3]string
+	var seedHash []byte
 
 	if a.currentWork != nil {
 		block := a.currentWork.Block
-
 		res[0] = block.HashNoNonce().Hex()
-		seedHash := aquahash.SeedHash(block.NumberU64())
+		// if a.chain.Config().IsHF(5, block.Number()) {
+		//
+		// }
+		switch a.engine.Name() {
+		case "aquahash":
+			seedHash = aquahash.SeedHash(block.NumberU64())
+		case "argonated":
+			seedHash = []byte{}
+		default:
+			panic(fmt.Sprintf("unknown POW engine: %q", a.engine.Name()))
+		}
 		res[1] = common.BytesToHash(seedHash).Hex()
+
 		// Calculate the "target" to be returned to the external miner
 		n := big.NewInt(1)
 		n.Lsh(n, 255)

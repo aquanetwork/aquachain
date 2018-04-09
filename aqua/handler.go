@@ -161,6 +161,7 @@ func NewProtocolManager(config *params.ChainConfig, mode downloader.SyncMode, ne
 	manager.downloader = downloader.New(mode, chaindb, manager.eventMux, blockchain, nil, manager.removePeer)
 
 	validator := func(header *types.Header) error {
+		log.Info("Validating downloaded block:", "number", header.Number.String())
 		return engine.VerifyHeader(blockchain, header, true)
 	}
 	heighter := func() uint64 {

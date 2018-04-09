@@ -80,11 +80,13 @@ const (
 )
 
 var (
-	DifficultyBoundDivisor   = big.NewInt(2048)            // The bound divisor of the difficulty, used in the update calculations.
-	GenesisDifficulty        = big.NewInt(99999999)        // Difficulty of the Genesis block.
-	MinimumDifficultyGenesis = big.NewInt(99999999)        // The minimum that the difficulty may ever be
-	MinimumDifficultyHF1     = big.NewInt(100001792)       // The minimum that the difficulty may ever be (changed to a nice multiple of 2048).
-	MinimumDifficultyHF3     = big.NewInt(3095918580 * 10) // The minimum that the difficulty may ever be (changed to a nice multiple of 2048).
-	DurationLimit            = big.NewInt(240)             // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
-	MaxMoney                 = big.NewInt(42000000)        // At block 42mil rewards will be fees-only
+	DifficultyBoundDivisor    = big.NewInt(2048)            // The bound divisor of the difficulty, used in the update calculations.
+	DifficultyBoundDivisorHF5 = big.NewInt(8)               // The bound divisor of the difficulty, used in the update calculations.
+	GenesisDifficulty         = big.NewInt(99999999)        // Difficulty of the Genesis block.
+	MinimumDifficultyGenesis  = big.NewInt(99999999)        // The minimum that the difficulty may ever be (from genesis until HF1)
+	MinimumDifficultyHF1      = big.NewInt(100001792)       // The minimum that the difficulty may ever be (changed to a nice multiple of 2048).
+	MinimumDifficultyHF3      = big.NewInt(3095918580 * 10) // gpu announce
+	MinimumDifficultyHF5      = big.NewInt(256)             // argonated
+	DurationLimit             = big.NewInt(240)             // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	MaxMoney                  = big.NewInt(42000000)        // At block 42mil rewards will be fees-only
 )

@@ -60,6 +60,10 @@ var (
 	errInvalidPoW        = errors.New("invalid proof-of-work")
 )
 
+func (aquahash *Aquahash) Name() string {
+	return "aquahash"
+}
+
 // Author implements consensus.Engine, returning the header's coinbase as the
 // proof-of-work verified author of the block.
 func (aquahash *Aquahash) Author(header *types.Header) (common.Address, error) {
@@ -80,6 +84,7 @@ func (aquahash *Aquahash) VerifyHeader(chain consensus.ChainReader, header *type
 	}
 	parent := chain.GetHeader(header.ParentHash, number-1)
 	if parent == nil {
+		<-time.After(time.Millisecond * 250)
 		return consensus.ErrUnknownAncestor
 	}
 	// Sanity checks passed, do a proper verification
@@ -178,10 +183,10 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 	if len(block.Uncles()) > maxUncles {
 		return errTooManyUncles
 	}
-	// Verify that there are at most 0 uncles included in this block
-	if chain.Config().IsHF(5, block.Number()) && len(block.Uncles()) > maxUnclesHF5 {
-		return errTooManyUncles
-	}
+	// // Verify that there are at most 0 uncles included in this block
+	// if chain.Config().IsHF(5, block.Number()) && len(block.Uncles()) > maxUnclesHF5 {
+	// 	return errTooManyUncles
+	// }
 	// Gather the set of past uncles and ancestors
 	uncles, ancestors := set.New(), make(map[common.Hash]*types.Header)
 

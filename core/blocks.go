@@ -20,6 +20,7 @@ import "github.com/aquanetwork/aquachain/common"
 
 // BadHashes represent a set of manually tracked bad hashes (usually hard forks)
 var BadHashes = map[common.Hash]bool{
+	common.HexToHash("0x80383d70125b0570d7fa98acb9c0c917508d4f57d98fee2b65c1ab99490d6552"): true,
 	// common.HexToHash("05bef30ef572270f654746da22639a7a0c97dd97a7050b9e252391996aaeb689"): true,
 	// common.HexToHash("7d05d08cbc596a2e5e4f13b80a743e53e09221b5323c3a61946b20873e58583f"): true,
 }
