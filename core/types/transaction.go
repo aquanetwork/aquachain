@@ -201,7 +201,7 @@ func (tx *Transaction) Hash() common.Hash {
 	if hash := tx.hash.Load(); hash != nil {
 		return hash.(common.Hash)
 	}
-	v := rlpHash(tx)
+	v := rlpHashOld(tx)
 	tx.hash.Store(v)
 	return v
 }

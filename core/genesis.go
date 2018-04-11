@@ -314,7 +314,7 @@ func DefaultGenesisBlock() *Genesis {
 		Config:     params.MainnetChainConfig,
 		Nonce:      42,
 		GasLimit:   4200000,
-		Difficulty: big.NewInt(99999999),
+		Difficulty: new(big.Int).Set(params.GenesisDifficulty),
 		Alloc:      decodePrealloc(mainnetAllocData), // fixed in HF4
 	}
 }

@@ -17,6 +17,7 @@
 package crypto
 
 import (
+	"bytes"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -30,6 +31,7 @@ import (
 
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/math"
+	"github.com/aquanetwork/aquachain/crypto/argon2"
 	"github.com/aquanetwork/aquachain/crypto/sha3"
 	"github.com/aquanetwork/aquachain/rlp"
 )
@@ -38,6 +40,21 @@ var (
 	secp256k1_N, _  = new(big.Int).SetString("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141", 16)
 	secp256k1_halfN = new(big.Int).Div(secp256k1_N, big.NewInt(2))
 )
+
+const (
+	argonThreads uint8  = 1
+	argonTime    uint32 = 1
+	argonMem     uint32 = 1024 * 32
+)
+
+// Argon2id calculates and returns the Argon2id hash of the input data.
+func Argon2id(data ...[]byte) []byte {
+	buf := &bytes.Buffer{}
+	for i := range data {
+		buf.Write(data[i])
+	}
+	return argon2.IDKey(buf.Bytes(), nil, argonTime, argonMem, argonThreads, common.HashLength)
+}
 
 // Keccak256 calculates and returns the Keccak256 hash of the input data.
 func Keccak256(data ...[]byte) []byte {

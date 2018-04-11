@@ -94,7 +94,7 @@ func pongToTicket(localTime mclock.AbsTime, topics []Topic, node *Node, p *ingre
 	if len(topics) != len(wps) {
 		return nil, fmt.Errorf("bad wait period list: got %d values, want %d", len(topics), len(wps))
 	}
-	if rlpHash(topics) != p.data.(*pong).TopicHash {
+	if rlpHashOld(topics) != p.data.(*pong).TopicHash {
 		return nil, fmt.Errorf("bad topic hash")
 	}
 	t := &ticket{
@@ -113,7 +113,7 @@ func pongToTicket(localTime mclock.AbsTime, topics []Topic, node *Node, p *ingre
 
 func ticketToPong(t *ticket, pong *pong) {
 	pong.Expiration = uint64(t.issueTime / mclock.AbsTime(time.Second))
-	pong.TopicHash = rlpHash(t.topics)
+	pong.TopicHash = rlpHashOld(t.topics)
 	pong.TicketSerial = t.serial
 	pong.WaitPeriods = make([]uint32, len(t.regTime))
 	for i, regTime := range t.regTime {

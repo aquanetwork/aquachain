@@ -313,19 +313,21 @@ func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint6
 // the difficulty that a new block should have when created at time
 // given the parent block's time and difficulty.
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
-	next := new(big.Int).Add(parent.Number, big1)
-	switch {
-	case config.IsHF(3, next):
-		return calcDifficultyHF3(time, parent)
-	case config.IsHF(2, next):
-		return calcDifficultyHF2(time, parent)
-	case config.IsHF(1, next):
-		return calcDifficultyHF1(time, parent)
-	case config.IsHomestead(next):
-		return calcDifficultyHomestead(time, parent)
-	default:
-		return calcDifficultyHomestead(time, parent)
-	}
+	return calcDifficultyHF3(time, parent)
+	//
+	// next := new(big.Int).Add(parent.Number, big1)
+	// switch {
+	// case config.IsHF(3, next):
+	// 	return calcDifficultyHF3(time, parent)
+	// case config.IsHF(2, next):
+	// 	return calcDifficultyHF2(time, parent)
+	// case config.IsHF(1, next):
+	// 	return calcDifficultyHF1(time, parent)
+	// case config.IsHomestead(next):
+	// 	return calcDifficultyHomestead(time, parent)
+	// default:
+	// 	return calcDifficultyHomestead(time, parent)
+	// }
 }
 
 // Some weird constants to avoid constant memory allocs for them.

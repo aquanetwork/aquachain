@@ -18,6 +18,7 @@
 package types
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -29,6 +30,7 @@ import (
 
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/hexutil"
+	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/crypto/sha3"
 	"github.com/aquanetwork/aquachain/rlp"
 )
@@ -128,11 +130,18 @@ func (h *Header) Size() common.StorageSize {
 	return common.StorageSize(unsafe.Sizeof(*h)) + common.StorageSize(len(h.Extra)+(h.Difficulty.BitLen()+h.Number.BitLen()+h.Time.BitLen())/8)
 }
 
-func rlpHash(x interface{}) (h common.Hash) {
+func rlpHashOld(x interface{}) (h common.Hash) {
 	hw := sha3.NewKeccak256()
 	rlp.Encode(hw, x)
 	hw.Sum(h[:0])
 	return h
+}
+
+func rlpHash(x interface{}) (h common.Hash) {
+	buf := &bytes.Buffer{}
+	rlp.Encode(buf, x)
+
+	return common.BytesToHash(crypto.Argon2id(buf.Bytes()))
 }
 
 // Body is a simple (mutable, non-safe) data container for storing and moving

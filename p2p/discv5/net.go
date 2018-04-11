@@ -1227,7 +1227,7 @@ func (net *Network) checkTopicRegister(data *topicRegister) (*pong, error) {
 	}
 	// check that we previously authorised all topics
 	// that the other side is trying to register.
-	if rlpHash(data.Topics) != pongpkt.data.(*pong).TopicHash {
+	if rlpHashOld(data.Topics) != pongpkt.data.(*pong).TopicHash {
 		return nil, errors.New("topic hash mismatch")
 	}
 	if data.Idx < 0 || int(data.Idx) >= len(data.Topics) {
@@ -1236,7 +1236,7 @@ func (net *Network) checkTopicRegister(data *topicRegister) (*pong, error) {
 	return pongpkt.data.(*pong), nil
 }
 
-func rlpHash(x interface{}) (h common.Hash) {
+func rlpHashOld(x interface{}) (h common.Hash) {
 	hw := sha3.NewKeccak256()
 	rlp.Encode(hw, x)
 	hw.Sum(h[:0])
