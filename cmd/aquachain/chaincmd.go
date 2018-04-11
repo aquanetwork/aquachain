@@ -17,6 +17,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -374,9 +375,11 @@ func dump(ctx *cli.Context) error {
 		var block *types.Block
 		if hashish(arg) {
 			block = chain.GetBlockByHash(common.HexToHash(arg))
+			common.Report("woah!")
 		} else {
 			num, _ := strconv.Atoi(arg)
 			block = chain.GetBlockByNumber(uint64(num))
+			common.Report("red!")
 		}
 		if block == nil {
 			fmt.Println("{}")
@@ -393,8 +396,14 @@ func dump(ctx *cli.Context) error {
 	return nil
 }
 
+// numberish returns true for strings that look like numbers.
+func numberish(i string) bool {
+	_, err := strconv.Atoi(i)
+	return err != nil
+}
+
 // hashish returns true for strings that look like hashes.
 func hashish(x string) bool {
-	_, err := strconv.Atoi(x)
+	_, err := hex.DecodeString(x)
 	return err != nil
 }

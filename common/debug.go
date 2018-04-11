@@ -37,8 +37,13 @@ func Report(extra ...interface{}) {
 	fmt.Fprintln(os.Stderr, "#### BUG! PLEASE REPORT ####")
 }
 
-// PrintDepricationWarning prinst the given string in a box using fmt.Println.
-func PrintDepricationWarning(str string) {
+func Panic(extra ...interface{}) {
+	Report(extra...)
+	panic("")
+}
+
+// PrintWarning prinst the given string in a box using fmt.Println.
+func PrintWarning(str string) {
 	line := strings.Repeat("#", len(str)+4)
 	emptyLine := strings.Repeat(" ", len(str))
 	fmt.Printf(`
