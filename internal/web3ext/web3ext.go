@@ -130,6 +130,18 @@ web3._extend({
 			inputFormatter: [null]
 		}),
 		new web3._extend.Method({
+			name: 'exportState',
+			call: 'admin_exportState',
+			params: 1,
+			inputFormatter: [null]
+		}),
+		new web3._extend.Method({
+			name: 'exportRealloc',
+			call: 'admin_exportRealloc',
+			params: 1,
+			inputFormatter: [null]
+		}),
+		new web3._extend.Method({
 			name: 'importChain',
 			call: 'admin_importChain',
 			params: 1
