@@ -18,6 +18,7 @@ package aquahash
 
 import (
 	"bytes"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"math/big"
@@ -27,10 +28,11 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/math"
 	"github.com/aquanetwork/aquachain/consensus"
-	"github.com/aquanetwork/aquachain/consensus/misc"
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
+	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/params"
+
 	set "gopkg.in/fatih/set.v0"
 )
 
@@ -39,7 +41,7 @@ var (
 	BlockReward            *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block
 	ByzantiumBlockReward   *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block upward from Byzantium
 	maxUncles                       = 2                 // Maximum number of uncles allowed in a single block
-	maxUnclesHF5                    = 0                 // Maximum number of uncles allowed in a single block after HF5 is activated
+	maxUnclesHF5                    = 1                 // Maximum number of uncles allowed in a single block after HF5 is activated
 	allowedFutureBlockTime          = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
 )
 
@@ -161,7 +163,7 @@ func (aquahash *Aquahash) verifyHeaderWorker(chain consensus.ChainReader, header
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}
-	if chain.GetHeader(headers[index].Hash(), headers[index].Number.Uint64()) != nil {
+	if chain.GetHeader(headers[index].SetVersion(byte(chain.Config().GetBlockVersion(headers[index].Number))), headers[index].Number.Uint64()) != nil {
 		return nil // known block
 	}
 	return aquahash.verifyHeader(chain, headers[index], parent, false, seals[index])
@@ -179,7 +181,7 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 		return errTooManyUncles
 	}
 	// Verify that there are at most 0 uncles included in this block
-	if chain.Config().IsHF(5, block.Number()) && len(block.Uncles()) > maxUnclesHF5 {
+	if len(block.Uncles()) > maxUnclesHF5 && chain.Config().IsHF(5, block.Number()) {
 		return errTooManyUncles
 	}
 	// Gather the set of past uncles and ancestors
@@ -222,6 +224,7 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 			case "0x13cb01d5d3566d076b5e128e5733f17968f95329fb1777ff38db53abdcca3e4c":
 			default:
 				println("uncle: " + hash.Hex())
+				common.Report(block)
 				return errUncleIsAncestor
 			}
 		}
@@ -300,13 +303,6 @@ func (aquahash *Aquahash) verifyHeader(chain consensus.ChainReader, header, pare
 			return err
 		}
 	}
-	// If all checks passed, validate any special fields for hard forks
-	if err := misc.VerifyHFHeaderExtraData(chain.Config(), header); err != nil {
-		return err
-	}
-	if err := misc.VerifyForkHashes(chain.Config(), header, uncle); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -323,15 +319,25 @@ func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint6
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
+	case (config.GetHF(5) != nil && next.Cmp(config.GetHF(5)) == 0):
+		return params.MinimumDifficultyHF5 // reset diff since pow is much different
+	case config.IsHF(5, next):
+		//fmt.Println("calcdiff hf5:", next)
+		return calcDifficultyHF5(time, parent)
 	case config.IsHF(3, next):
+		//fmt.Println("calcdiff hf3:", next)
 		return calcDifficultyHF3(time, parent)
 	case config.IsHF(2, next):
+		//fmt.Println("calcdiff hf2:", next)
 		return calcDifficultyHF2(time, parent)
 	case config.IsHF(1, next):
+		//fmt.Println("calcdiff hf1:", next)
 		return calcDifficultyHF1(time, parent)
 	case config.IsHomestead(next):
+		//fmt.Println("calcdiff IsHomestead:", next)
 		return calcDifficultyHomestead(time, parent)
 	default:
+		//fmt.Println("calcdiff default:", next)
 		return calcDifficultyHomestead(time, parent)
 	}
 }
@@ -541,6 +547,29 @@ func calcDifficultyHF3(time uint64, parent *types.Header) *big.Int {
 	return diff
 }
 
+// calcDifficultyHF5
+func calcDifficultyHF5(time uint64, parent *types.Header) *big.Int {
+	diff := new(big.Int)
+	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF5)
+	bigTime := new(big.Int)
+	bigParentTime := new(big.Int)
+
+	bigTime.SetUint64(time)
+	bigParentTime.Set(parent.Time)
+
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+		diff.Add(parent.Difficulty, adjust)
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
+
+	if diff.Cmp(params.MinimumDifficultyHF5) < 0 {
+		diff.Set(params.MinimumDifficultyHF5)
+	}
+
+	return diff
+}
+
 // calcDifficultyFrontier is the difficulty adjustment algorithm. It returns the
 // difficulty that a new block should have when created at time given the parent
 // block's time and difficulty. The calculation uses the Frontier rules.
@@ -606,16 +635,32 @@ func (aquahash *Aquahash) VerifySeal(chain consensus.ChainReader, header *types.
 	if aquahash.config.PowMode == ModeTest {
 		size = 32 * 1024
 	}
-	digest, result := hashimotoLight(size, cache.cache, header.HashNoNonce().Bytes(), header.Nonce.Uint64())
+	var (
+		digest []byte
+		result []byte
+	)
+	switch header.Version {
+	case 0:
+		panic("version not set")
+	case 1:
+		digest, result = hashimotoLight(size, cache.cache, header.HashNoNonce().Bytes(), header.Nonce.Uint64())
+	case 2:
+		seed := make([]byte, 40)
+		copy(seed, header.HashNoNonce().Bytes())
+		binary.LittleEndian.PutUint64(seed[32:], header.Nonce.Uint64())
+		result = crypto.Argon2id(seed)
+	}
 	// Caches are unmapped in a finalizer. Ensure that the cache stays live
 	// until after the call to hashimotoLight so it's not unmapped while being used.
 	runtime.KeepAlive(cache)
 
-	if !bytes.Equal(header.MixDigest[:], digest) {
+	if header.Version == 1 && !bytes.Equal(header.MixDigest[:], digest) {
 		return errInvalidMixDigest
 	}
 	target := new(big.Int).Div(maxUint256, header.Difficulty)
 	if new(big.Int).SetBytes(result).Cmp(target) > 0 {
+		fmt.Printf("Want %x\nGot  %x\n", new(big.Int).SetBytes(result), header.Hash())
+		common.Report(header)
 		return errInvalidPoW
 	}
 	return nil
@@ -637,8 +682,8 @@ func (aquahash *Aquahash) Prepare(chain consensus.ChainReader, header *types.Hea
 func (aquahash *Aquahash) Finalize(chain consensus.ChainReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, uncles []*types.Header, receipts []*types.Receipt) (*types.Block, error) {
 	// Accumulate any block and uncle rewards and commit the final state root
 	accumulateRewards(chain.Config(), state, header, uncles)
+	header.Version = chain.Config().GetBlockVersion(header.Number)
 	header.Root = state.IntermediateRoot(chain.Config().IsEIP158(header.Number))
-
 	// Header seems complete, assemble into a block and return
 	return types.NewBlock(header, txs, uncles, receipts), nil
 }

@@ -100,6 +100,9 @@ func newTester() *downloadTester {
 
 	return tester
 }
+func (dl *downloadTester) RetrieveHeaderVersion(height *big.Int) params.HeaderVersion {
+	return params.TestChainConfig.GetBlockVersion(height)
+}
 
 // makeChain creates a chain of n blocks starting at and including parent.
 // the returned hash chain is ordered head->parent. In addition, every 3rd block

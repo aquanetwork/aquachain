@@ -172,21 +172,8 @@ func GenerateChain(config *params.ChainConfig, parent *types.Block, engine conse
 		b := &BlockGen{i: i, parent: parent, chain: blocks, chainReader: blockchain, statedb: statedb, config: config, engine: engine}
 		b.header = makeHeader(b.chainReader, parent, statedb, b.engine)
 
-		// Mutate the state and block according to any hard-fork specs
-		// if daoBlock := config.DAOForkBlock; daoBlock != nil {
-		// 	limit := new(big.Int).Add(daoBlock, params.DAOForkExtraRange)
-		// 	if b.header.Number.Cmp(daoBlock) >= 0 && b.header.Number.Cmp(limit) < 0 {
-		// 		if config.DAOForkSupport {
-		// 			b.header.Extra = common.CopyBytes(params.DAOForkBlockExtra)
-		// 		}
-		// 	}
-		// }
-		// if nexthf := config.NextHF(big.NewInt(0).Add(b.header.Number, big.NewInt(-1))); nexthf != nil && nexthf.Cmp(b.header.Number) == 0 {
-		// 	misc.ApplyHardFork(statedb)
-		// }
-
 		// Mutate the the block and state according to any hard-fork specs
-		if params.AquachainHF[4].Cmp(b.header.Number) == 0 {
+		if hf4 := config.GetHF(4); hf4 != nil && hf4.Cmp(b.header.Number) == 0 {
 			misc.ApplyHardFork4(statedb)
 		}
 		// Execute any user modifications to the block and finalize it
@@ -207,7 +194,7 @@ func GenerateChain(config *params.ChainConfig, parent *types.Block, engine conse
 			return block, b.receipts
 		}
 		return nil, nil
-	}
+	} // end of genblock()
 	for i := 0; i < n; i++ {
 		statedb, err := state.New(parent.Root(), state.NewDatabase(db))
 		if err != nil {
@@ -224,24 +211,26 @@ func GenerateChain(config *params.ChainConfig, parent *types.Block, engine conse
 func makeHeader(chain consensus.ChainReader, parent *types.Block, state *state.StateDB, engine consensus.Engine) *types.Header {
 	var time *big.Int
 	if parent.Time() == nil {
-		time = big.NewInt(10)
+		time = big.NewInt(240)
 	} else {
-		time = new(big.Int).Add(parent.Time(), big.NewInt(10)) // block time is fixed at 10 seconds
+		time = new(big.Int).Add(parent.Time(), big.NewInt(240)) // block time is fixed at 10 seconds
 	}
+	num := new(big.Int).Add(parent.Number(), common.Big1)
 
 	return &types.Header{
 		Root:       state.IntermediateRoot(chain.Config().IsEIP158(parent.Number())),
-		ParentHash: parent.Hash(),
+		ParentHash: parent.SetVersion(chain.Config().GetBlockVersion(parent.Number())),
 		Coinbase:   parent.Coinbase(),
 		Difficulty: engine.CalcDifficulty(chain, time.Uint64(), &types.Header{
 			Number:     parent.Number(),
-			Time:       new(big.Int).Sub(time, big.NewInt(10)),
+			Time:       new(big.Int).Sub(time, big.NewInt(240)),
 			Difficulty: parent.Difficulty(),
 			UncleHash:  parent.UncleHash(),
 		}),
 		GasLimit: CalcGasLimit(parent),
-		Number:   new(big.Int).Add(parent.Number(), common.Big1),
+		Number:   num,
 		Time:     time,
+		Version:  chain.Config().GetBlockVersion(num),
 	}
 }
 

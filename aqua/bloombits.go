@@ -93,23 +93,23 @@ const (
 type BloomIndexer struct {
 	size uint64 // section size to generate bloombits for
 
-	db  aquadb.Database      // database instance to write index data and metadata into
-	gen *bloombits.Generator // generator to rotate the bloom bits crating the bloom index
-
+	db      aquadb.Database      // database instance to write index data and metadata into
+	gen     *bloombits.Generator // generator to rotate the bloom bits crating the bloom index
+	cfg     *params.ChainConfig
 	section uint64      // Section is the section number being processed currently
 	head    common.Hash // Head is the hash of the last header processed
 }
 
 // NewBloomIndexer returns a chain indexer that generates bloom bits data for the
 // canonical chain for fast logs filtering.
-func NewBloomIndexer(db aquadb.Database, size uint64) *core.ChainIndexer {
+func NewBloomIndexer(cfg *params.ChainConfig, db aquadb.Database, size uint64) *core.ChainIndexer {
 	backend := &BloomIndexer{
 		db:   db,
 		size: size,
 	}
 	table := aquadb.NewTable(db, string(core.BloomBitsIndexPrefix))
 
-	return core.NewChainIndexer(db, table, backend, size, bloomConfirms, bloomThrottling, "bloombits")
+	return core.NewChainIndexer(cfg, db, table, backend, size, bloomConfirms, bloomThrottling, "bloombits")
 }
 
 // Reset implements core.ChainIndexerBackend, starting a new bloombits index

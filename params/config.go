@@ -35,6 +35,15 @@ var (
 		2: big.NewInt(7200),  // use simple difficulty algo (240 seconds)
 		3: big.NewInt(13026), // increase min difficulty for anticipation of gpu mining
 		4: big.NewInt(21800), // HF4
+		5: big.NewInt(22800), // HF5
+	}
+	TestnetHF = ForkMap{
+		0: big.NewInt(0), //  hf0 had no changes
+		1: big.NewInt(1), // increase min difficulty to the next multiple of 2048
+		2: big.NewInt(2), // use simple difficulty algo (240 seconds)
+		3: big.NewInt(3), // increase min difficulty for anticipation of gpu mining
+		4: big.NewInt(4), // HF4
+		5: big.NewInt(5), // HF5
 	}
 )
 var (
@@ -44,6 +53,7 @@ var (
 		HomesteadBlock: big.NewInt(0),
 		EIP150Block:    big.NewInt(0),
 		Aquahash:       new(AquahashConfig),
+		HF:             AquachainHF,
 	}
 
 	// TestnetChainConfig contains the chain parameters to run a node on the Ropsten test network.
@@ -51,28 +61,17 @@ var (
 		ChainId:        big.NewInt(3),
 		HomesteadBlock: big.NewInt(0),
 		EIP150Block:    big.NewInt(0),
-		// HF: map[int]*big.Int{
-		// 	1: big.NewInt(5), // increase min difficulty to the next multiple of 2048
-		// },
-		Aquahash: new(AquahashConfig),
+		Aquahash:       new(AquahashConfig),
+		HF:             TestnetHF,
 	}
 
 	// RinkebyChainConfig contains the chain parameters to run a node on the Rinkeby test network.
 	RinkebyChainConfig = &ChainConfig{
 		ChainId:        big.NewInt(4),
 		HomesteadBlock: big.NewInt(1),
-		DAOForkBlock:   nil,
-		DAOForkSupport: true,
-		EIP150Block:    big.NewInt(2),
-		EIP150Hash:     common.HexToHash("0x9b095b36c15eaf13044373aef8ee0bd3a382a5abb92e402afa44b8249c3a90e9"),
-		// EIP155Block:         big.NewInt(3),
-		// EIP158Block:         big.NewInt(3),
-		// ByzantiumBlock:      big.NewInt(1035301),
-		// ConstantinopleBlock: nil,
-		Clique: &CliqueConfig{
-			Period: 15,
-			Epoch:  30000,
-		},
+		EIP150Block:    big.NewInt(0),
+		Aquahash:       new(AquahashConfig),
+		HF:             TestnetHF,
 	}
 
 	// AllAquahashProtocolChanges contains every protocol change (EIPs) introduced
@@ -80,16 +79,9 @@ var (
 	//
 	// This configuration is intentionally not using keyed fields to force anyone
 	// adding flags to the config to also have to set these fields.
-	AllAquahashProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil}
+	AllAquahashProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil, TestnetHF}
 
-	// AllCliqueProtocolChanges contains every protocol change (EIPs) introduced
-	// and accepted by the AquaChain core developers into the Clique consensus.
-	//
-	// This configuration is intentionally not using keyed fields to force anyone
-	// adding flags to the config to also have to set these fields.
-	AllCliqueProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, &CliqueConfig{Period: 0, Epoch: 30000}}
-
-	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil}
+	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil, TestnetHF}
 	TestRules       = TestChainConfig.Rules(new(big.Int))
 )
 
@@ -123,6 +115,7 @@ type ChainConfig struct {
 	// Various consensus engines
 	Aquahash *AquahashConfig `json:"aquahash,omitempty"`
 	Clique   *CliqueConfig   `json:"clique,omitempty"`
+	HF       ForkMap         `json:"hf,omitempty"`
 }
 
 // AquahashConfig is the consensus engine configs for proof-of-work based sealing.
@@ -158,7 +151,7 @@ func (c *ChainConfig) String() string {
 	return fmt.Sprintf("{ChainID: %v, Engine: %v, HF-Ready: %s}",
 		c.ChainId,
 		engine,
-		AquachainHF,
+		c.HF,
 	)
 	// return fmt.Sprintf("{ChainID: %v Homestead: %v DAO: %v DAOSupport: %v EIP150: %v EIP155: %v EIP158: %v Byzantium: %v Constantinople: %v Engine: %v}",
 	// 	c.ChainId,
@@ -176,16 +169,24 @@ func (c *ChainConfig) String() string {
 
 // IsHF returns whether num is either equal to the hf block or greater.
 func (c *ChainConfig) IsHF(hf int, num *big.Int) bool {
-	if AquachainHF[hf] == nil {
+	if c.HF[hf] == nil {
 		return false
 	}
-	return isForked(AquachainHF[hf], num)
+	return isForked(c.HF[hf], num)
+}
+
+// GetHF returns the height of input hf, can be nil.
+func (c *ChainConfig) GetHF(hf int) *big.Int {
+	if c.HF[hf] == nil {
+		return nil
+	}
+	return c.HF[hf]
 }
 
 // NextHF returns the next scheduled hard fork block number
 func (c *ChainConfig) NextHF(cur *big.Int) *big.Int {
 	if cur != nil {
-		for _, height := range AquachainHF {
+		for _, height := range c.HF {
 			if cur.Cmp(height) < 0 {
 				return height
 			}

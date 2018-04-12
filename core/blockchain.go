@@ -500,6 +500,11 @@ func (bc *BlockChain) Genesis() *types.Block {
 	return bc.genesisBlock
 }
 
+// RetrieveHeaderVersion returns the version byte for the given height
+func (bc *BlockChain) RetrieveHeaderVersion(height *big.Int) params.HeaderVersion {
+	return bc.Config().GetBlockVersion(height)
+}
+
 // GetBody retrieves a block body (transactions and uncles) from the database by
 // hash, caching it if found.
 func (bc *BlockChain) GetBody(hash common.Hash) *types.Body {
@@ -560,7 +565,7 @@ func (bc *BlockChain) HasBlockAndState(hash common.Hash, number uint64) bool {
 }
 
 // GetBlock retrieves a block from the database by hash and number,
-// caching it if found.
+// caching it if found, adding the correct version
 func (bc *BlockChain) GetBlock(hash common.Hash, number uint64) *types.Block {
 	// Short circuit if the block's already in the cache, retrieve otherwise
 	if block, ok := bc.blockCache.Get(hash); ok {
@@ -570,8 +575,9 @@ func (bc *BlockChain) GetBlock(hash common.Hash, number uint64) *types.Block {
 	if block == nil {
 		return nil
 	}
+	hashv := block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
 	// Cache the found block for next time and return
-	bc.blockCache.Add(block.Hash(), block)
+	bc.blockCache.Add(hashv, block)
 	return block
 }
 
@@ -882,7 +888,7 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	externTd := new(big.Int).Add(block.Difficulty(), ptd)
 
 	// Irrelevant of the canonical status, write the block itself to the database
-	if err := bc.hc.WriteTd(block.Hash(), block.NumberU64(), externTd); err != nil {
+	if err := bc.hc.WriteTd(block.SetVersion(bc.chainConfig.GetBlockVersion(block.Number())), block.NumberU64(), externTd); err != nil {
 		return NonStatTy, err
 	}
 	// Write other block data using a batch.
@@ -1007,7 +1013,7 @@ func (bc *BlockChain) InsertChain(chain types.Blocks) (int, error) {
 func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*types.Log, error) {
 	// Do a sanity check that the provided chain is actually ordered and linked
 	for i := 1; i < len(chain); i++ {
-		if chain[i].NumberU64() != chain[i-1].NumberU64()+1 || chain[i].ParentHash() != chain[i-1].Hash() {
+		if chain[i].NumberU64() != chain[i-1].NumberU64()+1 || chain[i].ParentHash() != chain[i-1].SetVersion(bc.chainConfig.GetBlockVersion(chain[i-1].Number())) {
 			// Chain broke ancestry, log a messge (programming error) and skip insertion
 			log.Error("Non contiguous block insert", "number", chain[i].Number(), "hash", chain[i].Hash(),
 				"parent", chain[i].ParentHash(), "prevnumber", chain[i-1].Number(), "prevhash", chain[i-1].Hash())

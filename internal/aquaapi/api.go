@@ -807,6 +807,9 @@ func FormatLogs(logs []vm.StructLog) []StructLogRes {
 // transaction hashes.
 func (s *PublicBlockChainAPI) rpcOutputBlock(b *types.Block, inclTx bool, fullTx bool) (map[string]interface{}, error) {
 	head := b.Header() // copies the header once
+	if head.Version == 0 {
+		head.Version = s.b.ChainConfig().GetBlockVersion(head.Number)
+	}
 	fields := map[string]interface{}{
 		"number":           (*hexutil.Big)(head.Number),
 		"hash":             b.Hash(),
@@ -826,8 +829,8 @@ func (s *PublicBlockChainAPI) rpcOutputBlock(b *types.Block, inclTx bool, fullTx
 		"timestamp":        (*hexutil.Big)(head.Time),
 		"transactionsRoot": head.TxHash,
 		"receiptsRoot":     head.ReceiptHash,
+		"version":          head.Version,
 	}
-
 	if inclTx {
 		formatTx := func(tx *types.Transaction) (interface{}, error) {
 			return tx.Hash(), nil
@@ -853,6 +856,7 @@ func (s *PublicBlockChainAPI) rpcOutputBlock(b *types.Block, inclTx bool, fullTx
 	uncles := b.Uncles()
 	uncleHashes := make([]common.Hash, len(uncles))
 	for i, uncle := range uncles {
+		uncle.Version = s.b.ChainConfig().GetBlockVersion(uncle.Number)
 		uncleHashes[i] = uncle.Hash()
 	}
 	fields["uncles"] = uncleHashes

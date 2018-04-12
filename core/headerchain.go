@@ -353,6 +353,7 @@ func (hc *HeaderChain) GetHeader(hash common.Hash, number uint64) *types.Header 
 	if header == nil {
 		return nil
 	}
+	header.Version = hc.Config().GetBlockVersion(header.Number)
 	// Cache the found header for next time and return
 	hc.headerCache.Add(hash, header)
 	return header
@@ -391,6 +392,7 @@ func (hc *HeaderChain) CurrentHeader() *types.Header {
 
 // SetCurrentHeader sets the current head header of the canonical chain.
 func (hc *HeaderChain) SetCurrentHeader(head *types.Header) {
+	head.Version = hc.Config().GetBlockVersion(head.Number)
 	if err := WriteHeadHeaderHash(hc.chainDb, head.Hash()); err != nil {
 		log.Crit("Failed to insert head header hash", "err", err)
 	}

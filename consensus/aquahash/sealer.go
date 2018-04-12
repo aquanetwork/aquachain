@@ -18,6 +18,7 @@ package aquahash
 
 import (
 	crand "crypto/rand"
+	"encoding/binary"
 	"math"
 	"math/big"
 	"math/rand"
@@ -27,6 +28,7 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/core/types"
+	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/log"
 )
 
@@ -102,6 +104,7 @@ func (aquahash *Aquahash) mine(block *types.Block, id int, seed uint64, abort ch
 		target  = new(big.Int).Div(maxUint256, header.Difficulty)
 		number  = header.Number.Uint64()
 		dataset = aquahash.dataset(number)
+		version = header.Version
 	)
 	// Start generating random nonces until we abort or find a good one
 	var (
@@ -112,6 +115,7 @@ func (aquahash *Aquahash) mine(block *types.Block, id int, seed uint64, abort ch
 	logger.Trace("Started aquahash search for new nonces", "seed", seed)
 search:
 	for {
+
 		select {
 		case <-abort:
 			// Mining terminated, update stats and abort
@@ -126,8 +130,25 @@ search:
 				aquahash.hashrate.Mark(attempts)
 				attempts = 0
 			}
+
 			// Compute the PoW value of this nonce
-			digest, result := hashimotoFull(dataset.dataset, hash, nonce)
+			var (
+				digest []byte
+				result []byte
+			)
+			switch version {
+			case 1:
+				digest, result = hashimotoFull(dataset.dataset, hash, nonce)
+			case 2:
+				seed := make([]byte, 40)
+				copy(seed, hash)
+				binary.LittleEndian.PutUint64(seed[32:], nonce)
+				result = crypto.Argon2id(seed)
+			default:
+				common.Report("Mining incorrect version")
+				break search
+			}
+
 			if new(big.Int).SetBytes(result).Cmp(target) <= 0 {
 				// Correct nonce found, create a new header with it
 				header = types.CopyHeader(header)

@@ -141,14 +141,16 @@ func (a *RemoteAgent) SubmitWork(nonce types.BlockNonce, mixDigest, hash common.
 	// Make sure the work submitted is present
 	work := a.work[hash]
 	if work == nil {
-		log.Info("Work submitted but none pending", "hash", hash)
+		log.Info("Work submitted but wasnt pending", "hash", hash)
 		return false
 	}
 	// Make sure the Engine solutions is indeed valid
 	result := work.Block.Header()
 	result.Nonce = nonce
 	result.MixDigest = mixDigest
-
+	if result.Version == 0 {
+		log.Info("Not real work", "version", result.Version)
+	}
 	if err := a.engine.VerifySeal(a.chain, result); err != nil {
 		log.Warn("Invalid proof-of-work submitted", "hash", hash, "err", err)
 		return false

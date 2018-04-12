@@ -175,7 +175,7 @@ func NewProtocolManager(config *params.ChainConfig, mode downloader.SyncMode, ne
 		atomic.StoreUint32(&manager.acceptTxs, 1) // Mark initial sync done on any fetcher import
 		return manager.blockchain.InsertChain(blocks)
 	}
-	manager.fetcher = fetcher.New(blockchain.GetBlockByHash, validator, manager.BroadcastBlock, heighter, inserter, manager.removePeer)
+	manager.fetcher = fetcher.New(config.GetBlockVersion, blockchain.GetBlockByHash, validator, manager.BroadcastBlock, heighter, inserter, manager.removePeer)
 
 	return manager, nil
 }
@@ -396,44 +396,9 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 		if err := msg.Decode(&headers); err != nil {
 			return errResp(ErrDecode, "msg %v: %v", msg, err)
 		}
-		// If no headers were received, but we're expending a DAO fork check, maybe it's that
-		if len(headers) == 0 && p.forkDrop != nil {
-			// // Possibly an empty reply to the fork header checks, sanity check TDs
-			// verifyHF := true
-			//
-			// // If we already have a DAO header, we can check the peer's TD against it. If
-			// // the peer's ahead of this, it too must have a reply to the DAO check
-			// if hfHeader := pm.blockchain.GetHeaderByNumber(pm.chainconfig.HF[0].Uint64()); hfHeader != nil {
-			// 	if _, td := p.Head(); td.Cmp(pm.blockchain.GetTd(hfHeader.Hash(), hfHeader.Number.Uint64())) >= 0 {
-			// 		verifyHF = false
-			// 	}
-			// }
-			// // If we're seemingly on the same chain, disable the drop timer
-			// if verifyHF {
-			// 	p.Log().Debug("Peer seems to be HF1 Compatible, for now...")
-			// 	p.forkDrop.Stop()
-			// 	p.forkDrop = nil
-			// 	return nil
-			// }
-		}
 		// Filter out any explicitly requested headers, deliver the rest to the downloader
 		filter := len(headers) == 1
 		if filter {
-			// // If it's a potential fork check, validate against the rules
-			// if p.forkDrop != nil && pm.chainconfig.HF[0].Cmp(headers[0].Number) == 0 {
-			// 	// Disable the fork drop timer
-			// 	p.forkDrop.Stop()
-			// 	p.forkDrop = nil
-			//
-			// 	// Validate the header and either drop the peer or continue
-			// 	if err := misc.VerifyHFHeaderExtraData(pm.chainconfig, headers[0]); err != nil {
-			// 		p.Log().Debug("Verified to be on HF Incompatible, dropping")
-			// 		return err
-			// 	}
-			// 	p.Log().Debug("Verified to be HF Compatible")
-			// 	return nil
-			// }
-			// Irrelevant of the fork checks, send the header to the fetcher just in case
 			headers = pm.fetcher.FilterHeaders(p.id, headers, time.Now())
 		}
 		if len(headers) > 0 || !filter {

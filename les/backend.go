@@ -105,9 +105,9 @@ func New(ctx *node.ServiceContext, config *aqua.Config) (*LightAquaChain, error)
 		shutdownChan:     make(chan bool),
 		networkId:        config.NetworkId,
 		bloomRequests:    make(chan chan *bloombits.Retrieval),
-		bloomIndexer:     aqua.NewBloomIndexer(chainDb, light.BloomTrieFrequency),
-		chtIndexer:       light.NewChtIndexer(chainDb, true),
-		bloomTrieIndexer: light.NewBloomTrieIndexer(chainDb, true),
+		bloomIndexer:     aqua.NewBloomIndexer(chainConfig, chainDb, light.BloomTrieFrequency),
+		chtIndexer:       light.NewChtIndexer(chainConfig, chainDb, true),
+		bloomTrieIndexer: light.NewBloomTrieIndexer(chainConfig, chainDb, true),
 	}
 
 	leth.relay = NewLesTxRelay(peers, leth.reqDist)

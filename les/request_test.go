@@ -27,6 +27,7 @@ import (
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/light"
+	"github.com/aquanetwork/aquachain/params"
 )
 
 var testBankSecureTrieKey = secAddr(testBankAddress)
@@ -82,7 +83,7 @@ func testAccess(t *testing.T, protocol int, fn accessTestFn) {
 	rm := newRetrieveManager(peers, dist, nil)
 	db, _ := aquadb.NewMemDatabase()
 	ldb, _ := aquadb.NewMemDatabase()
-	odr := NewLesOdr(ldb, light.NewChtIndexer(db, true), light.NewBloomTrieIndexer(db, true), aqua.NewBloomIndexer(db, light.BloomTrieFrequency), rm)
+	odr := NewLesOdr(ldb, light.NewChtIndexer(params.TestChainConfig, db, true), light.NewBloomTrieIndexer(params.TestChainConfig, db, true), aqua.NewBloomIndexer(params.TestChainConfig, db, light.BloomTrieFrequency), rm)
 
 	pm := newTestProtocolManagerMust(t, false, 4, testChainGen, nil, nil, db)
 	lpm := newTestProtocolManagerMust(t, true, 0, nil, peers, odr, ldb)

@@ -22,6 +22,7 @@ package downloader
 import (
 	"errors"
 	"fmt"
+	"math/big"
 	"sync"
 	"time"
 
@@ -29,6 +30,7 @@ import (
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/metrics"
+	"github.com/aquanetwork/aquachain/params"
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
 )
 
@@ -68,15 +70,16 @@ type queue struct {
 	mode SyncMode // Synchronisation mode to decide on the block parts to schedule for fetching
 
 	// Headers are "special", they download in batches, supported by a skeleton chain
-	headerHead      common.Hash                    // [aqua/62] Hash of the last queued header to verify order
-	headerTaskPool  map[uint64]*types.Header       // [aqua/62] Pending header retrieval tasks, mapping starting indexes to skeleton headers
-	headerTaskQueue *prque.Prque                   // [aqua/62] Priority queue of the skeleton indexes to fetch the filling headers for
-	headerPeerMiss  map[string]map[uint64]struct{} // [aqua/62] Set of per-peer header batches known to be unavailable
-	headerPendPool  map[string]*fetchRequest       // [aqua/62] Currently pending header retrieval operations
-	headerResults   []*types.Header                // [aqua/62] Result cache accumulating the completed headers
-	headerProced    int                            // [aqua/62] Number of headers already processed from the results
-	headerOffset    uint64                         // [aqua/62] Number of the first header in the result cache
-	headerContCh    chan bool                      // [aqua/62] Channel to notify when header download finishes
+	headerHead        common.Hash                    // [aqua/62] Hash of the last queued header to verify order
+	headerTaskPool    map[uint64]*types.Header       // [aqua/62] Pending header retrieval tasks, mapping starting indexes to skeleton headers
+	headerTaskQueue   *prque.Prque                   // [aqua/62] Priority queue of the skeleton indexes to fetch the filling headers for
+	headerPeerMiss    map[string]map[uint64]struct{} // [aqua/62] Set of per-peer header batches known to be unavailable
+	headerPendPool    map[string]*fetchRequest       // [aqua/62] Currently pending header retrieval operations
+	headerResults     []*types.Header                // [aqua/62] Result cache accumulating the completed headers
+	headerProced      int                            // [aqua/62] Number of headers already processed from the results
+	headerOffset      uint64                         // [aqua/62] Number of the first header in the result cache
+	headerContCh      chan bool                      // [aqua/62] Channel to notify when header download finishes
+	headerVersionRule func(*big.Int) params.HeaderVersion
 
 	// All data retrievals below are based on an already assembles header chain
 	blockTaskPool  map[common.Hash]*types.Header // [aqua/62] Pending block (body) retrieval tasks, mapping hashes to headers
@@ -99,22 +102,23 @@ type queue struct {
 }
 
 // newQueue creates a new download queue for scheduling block retrieval.
-func newQueue() *queue {
+func newQueue(headerVersionRule func(*big.Int) params.HeaderVersion) *queue {
 	lock := new(sync.Mutex)
 	return &queue{
-		headerPendPool:   make(map[string]*fetchRequest),
-		headerContCh:     make(chan bool),
-		blockTaskPool:    make(map[common.Hash]*types.Header),
-		blockTaskQueue:   prque.New(),
-		blockPendPool:    make(map[string]*fetchRequest),
-		blockDonePool:    make(map[common.Hash]struct{}),
-		receiptTaskPool:  make(map[common.Hash]*types.Header),
-		receiptTaskQueue: prque.New(),
-		receiptPendPool:  make(map[string]*fetchRequest),
-		receiptDonePool:  make(map[common.Hash]struct{}),
-		resultCache:      make([]*fetchResult, blockCacheItems),
-		active:           sync.NewCond(lock),
-		lock:             lock,
+		headerPendPool:    make(map[string]*fetchRequest),
+		headerContCh:      make(chan bool),
+		blockTaskPool:     make(map[common.Hash]*types.Header),
+		blockTaskQueue:    prque.New(),
+		blockPendPool:     make(map[string]*fetchRequest),
+		blockDonePool:     make(map[common.Hash]struct{}),
+		receiptTaskPool:   make(map[common.Hash]*types.Header),
+		receiptTaskQueue:  prque.New(),
+		receiptPendPool:   make(map[string]*fetchRequest),
+		receiptDonePool:   make(map[common.Hash]struct{}),
+		resultCache:       make([]*fetchResult, blockCacheItems),
+		active:            sync.NewCond(lock),
+		lock:              lock,
+		headerVersionRule: headerVersionRule,
 	}
 }
 
@@ -314,7 +318,7 @@ func (q *queue) Schedule(headers []*types.Header, from uint64) []*types.Header {
 	inserts := make([]*types.Header, 0, len(headers))
 	for _, header := range headers {
 		// Make sure chain order is honoured and preserved throughout
-		hash := header.Hash()
+		hash := header.SetVersion(byte(q.headerVersionRule(header.Number)))
 		if header.Number == nil || header.Number.Uint64() != from {
 			log.Warn("Header broke chain ordering", "number", header.Number, "hash", hash, "expected", from)
 			break
@@ -504,7 +508,8 @@ func (q *queue) reserveHeaders(p *peerConnection, count int, taskPool map[common
 	progress := false
 	for proc := 0; proc < space && len(send) < count && !taskQueue.Empty(); proc++ {
 		header := taskQueue.PopItem().(*types.Header)
-		hash := header.Hash()
+
+		hash := header.SetVersion(byte(q.headerVersionRule(header.Number)))
 
 		// If we're the first to request this task, initialise the result container
 		index := int(header.Number.Int64() - int64(q.resultOffset))

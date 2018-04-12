@@ -58,7 +58,7 @@ func TestArgon2id(t *testing.T) {
 	if hex2hash.Big().Cmp(bytes2hash.Big()) != 0 {
 		t.Errorf("Unequal")
 	}
-	if bytes.Compare(hex2hash.Bytes(), bytes2hash.Bytes()) != 0 {
+	if !bytes.Equal(hex2hash.Bytes(), bytes2hash.Bytes()) {
 		t.Errorf("Unequal")
 	}
 	fmt.Printf("Argonated: 0x%x\n", argon2idA(argon2idA(a)))

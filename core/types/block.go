@@ -18,6 +18,7 @@
 package types
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"io"
@@ -29,7 +30,9 @@ import (
 
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/hexutil"
+	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/crypto/sha3"
+	"github.com/aquanetwork/aquachain/params"
 	"github.com/aquanetwork/aquachain/rlp"
 )
 
@@ -84,6 +87,7 @@ type Header struct {
 	Extra       []byte         `json:"extraData"        gencodec:"required"`
 	MixDigest   common.Hash    `json:"mixHash"          gencodec:"required"`
 	Nonce       BlockNonce     `json:"nonce"            gencodec:"required"`
+	Version     HeaderVersion  `json:"version" gencodec:"required" rlp:"-"` // ignored by rlp
 }
 
 // field type overrides for gencodec
@@ -95,12 +99,39 @@ type headerMarshaling struct {
 	Time       *hexutil.Big
 	Extra      hexutil.Bytes
 	Hash       common.Hash `json:"hash"` // adds call to Hash() in MarshalJSON
+	Version    hexutil.Bytes
+}
+
+type HeaderVersion = params.HeaderVersion // byte
+
+const (
+	H_UNSET HeaderVersion = iota
+	H_KECCAK256
+	H_ARGON2ID
+)
+
+func (h *Header) SetVersion(version byte) common.Hash {
+	h.Version = HeaderVersion(version)
+	return h.Hash()
 }
 
 // Hash returns the block hash of the header, which is simply the keccak256 hash of its
 // RLP encoding.
 func (h *Header) Hash() common.Hash {
-	return rlpHash(h)
+	if h.Version == H_UNSET { // special cases
+		if h.Number.Uint64() == 0 {
+			h.Version = H_KECCAK256
+		}
+	}
+	switch h.Version {
+	case H_KECCAK256:
+		return rlpHash(h)
+	case H_ARGON2ID:
+		return rlpHashArgon2id(h)
+	default:
+		common.Report(fmt.Sprintf("Number: %v, Version: %v", h.Number, h.Version))
+		return rlpHash(h)
+	}
 }
 
 // HashNoNonce returns the hash which is used as input for the proof-of-work search.
@@ -133,6 +164,11 @@ func rlpHash(x interface{}) (h common.Hash) {
 	rlp.Encode(hw, x)
 	hw.Sum(h[:0])
 	return h
+}
+func rlpHashArgon2id(x interface{}) (h common.Hash) {
+	buf := &bytes.Buffer{}
+	rlp.Encode(buf, x)
+	return common.BytesToHash(crypto.Argon2id(buf.Bytes()))
 }
 
 // Body is a simple (mutable, non-safe) data container for storing and moving
@@ -290,7 +326,9 @@ func (b *StorageBlock) DecodeRLP(s *rlp.Stream) error {
 
 // TODO: copies
 
-func (b *Block) Uncles() []*Header          { return b.uncles }
+func (b *Block) Uncles() []*Header {
+	return b.uncles
+}
 func (b *Block) Transactions() Transactions { return b.transactions }
 
 func (b *Block) Transaction(hash common.Hash) *Transaction {
@@ -378,12 +416,21 @@ func (b *Block) WithBody(transactions []*Transaction, uncles []*Header) *Block {
 	return block
 }
 
-// Hash returns the keccak256 hash of b's header.
+// Hash returns the proper hash of b's header, based on version.
 // The hash is computed on the first call and cached thereafter.
 func (b *Block) Hash() common.Hash {
 	if hash := b.hash.Load(); hash != nil {
 		return hash.(common.Hash)
 	}
+	v := b.header.Hash()
+	b.hash.Store(v)
+	return v
+}
+
+// SetVersion sets the block header's Version, recalculates the hash,
+// and stores in cache so that later invocations of Hash() return the same
+func (b *Block) SetVersion(version HeaderVersion) common.Hash {
+	b.header.Version = version
 	v := b.header.Hash()
 	b.hash.Store(v)
 	return v
@@ -420,7 +467,8 @@ func (h *Header) String() string {
 	Extra:		    %s
 	MixDigest:      %x
 	Nonce:		    %x
-]`, h.Hash(), h.ParentHash, h.UncleHash, h.Coinbase, h.Root, h.TxHash, h.ReceiptHash, h.Bloom, h.Difficulty, h.Number, h.GasLimit, h.GasUsed, h.Time, h.Extra, h.MixDigest, h.Nonce)
+	Version:	    %v
+]`, h.Hash(), h.ParentHash, h.UncleHash, h.Coinbase, h.Root, h.TxHash, h.ReceiptHash, h.Bloom, h.Difficulty, h.Number, h.GasLimit, h.GasUsed, h.Time, h.Extra, h.MixDigest, h.Nonce, h.Version)
 }
 
 type Blocks []*Block

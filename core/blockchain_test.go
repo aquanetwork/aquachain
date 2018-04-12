@@ -1009,7 +1009,8 @@ func TestCanonicalBlockRetrieval(t *testing.T) {
 				if fb == nil {
 					t.Fatalf("unable to retrieve block %d for canonical hash: %s", block.NumberU64(), ch.Hex())
 				}
-				if fb.Hash() != block.Hash() {
+
+				if fb.SetVersion(blockchain.Config().GetBlockVersion(fb.Number())) != block.Hash() {
 					t.Fatalf("invalid block hash for block %d, want %s, got %s", block.NumberU64(), block.Hash().Hex(), fb.Hash().Hex())
 				}
 				return
