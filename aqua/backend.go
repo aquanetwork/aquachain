@@ -34,6 +34,7 @@ import (
 	"github.com/aquanetwork/aquachain/common/hexutil"
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
+	"github.com/aquanetwork/aquachain/consensus/argonated"
 	"github.com/aquanetwork/aquachain/consensus/clique"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/bloombits"
@@ -215,6 +216,11 @@ func CreateConsensusEngine(ctx *node.ServiceContext, config *aquahash.Config, ch
 	// If proof-of-authority is requested, set it up
 	if chainConfig.Clique != nil {
 		return clique.New(chainConfig.Clique, db)
+	}
+	// If argonated is requested, set it up
+	if chainConfig.ConsensusConfig != nil {
+		log.Info("Argonating...")
+		return argonated.New(argonated.Config{PowMode: consensus.ModeNormal, AquahashConfig: *config, AquahashCacheDir: ctx.ResolvePath(config.CacheDir)})
 	}
 	// Otherwise assume proof-of-work
 	switch {

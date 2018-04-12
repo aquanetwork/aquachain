@@ -340,7 +340,6 @@ func copyDb(ctx *cli.Context) error {
 
 func removeDB(ctx *cli.Context) error {
 	stack, _ := makeConfigNode(ctx)
-
 	for _, name := range []string{"chaindata", "lightchaindata"} {
 		// Ensure the database exists in the first place
 		logger := log.New("database", name)

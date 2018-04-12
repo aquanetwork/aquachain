@@ -25,8 +25,7 @@ import (
 
 var (
 	MainnetGenesisHash = common.HexToHash("0x381c8d2c3e3bc702533ee504d7621d510339cafd830028337a4b532ff27cd505") // Mainnet genesis hash to enforce below configs on
-	//MainnetGenesisHash = common.HexToHash("0x2461b9b2e5b57ed037fe99f470511c6dbef8e0ed976b3f3197ae689f5b100a9b") // Mainnet genesis hash to enforce below configs on
-	TestnetGenesisHash = common.HexToHash("0x817df985008bb2178975203c512c19f97d8e7a04389b5fea4968a4359534d6b2") // Testnet genesis hash to enforce below configs on
+	TestnetGenesisHash = common.HexToHash("0x3116d55259a6babc9ecac1eee645cbbdeaa4ee7aa7cab75693e21d2f0cf724a4") // Testnet genesis hash to enforce below configs on
 )
 var (
 	AquachainHF = ForkMap{
@@ -34,45 +33,47 @@ var (
 		1: big.NewInt(3600),  // increase min difficulty to the next multiple of 2048
 		2: big.NewInt(7200),  // use simple difficulty algo (240 seconds)
 		3: big.NewInt(13026), // increase min difficulty for anticipation of gpu mining
-		4: big.NewInt(21800), // HF4
+		4: big.NewInt(21800), // fix bad genesis alloc and improve p2p
+		5: big.NewInt(22800), // move to keccak256(argon2id())
+	}
+	TestnetHF = ForkMap{
+		0: big.NewInt(0),  //  hf0 had no changes
+		1: big.NewInt(-1), // increase min difficulty to the next multiple of 2048
+		2: big.NewInt(0),  // use simple difficulty algo (240 seconds)
+		3: big.NewInt(-1), // increase min difficulty for anticipation of gpu mining
+		4: big.NewInt(1),  //
+		5: big.NewInt(1),
 	}
 )
 var (
 	// MainnetChainConfig is the chain parameters to run a node on the main network.
 	MainnetChainConfig = &ChainConfig{
-		ChainId:        big.NewInt(61717561),
-		HomesteadBlock: big.NewInt(0),
-		EIP150Block:    big.NewInt(0),
-		Aquahash:       new(AquahashConfig),
+		ChainId:         big.NewInt(61717561),
+		HomesteadBlock:  big.NewInt(0),
+		EIP150Block:     big.NewInt(0),
+		Aquahash:        new(AquahashConfig),
+		ConsensusConfig: new(ConsensusConfig),
+		HF:              AquachainHF,
 	}
 
 	// TestnetChainConfig contains the chain parameters to run a node on the Ropsten test network.
 	TestnetChainConfig = &ChainConfig{
-		ChainId:        big.NewInt(3),
-		HomesteadBlock: big.NewInt(0),
-		EIP150Block:    big.NewInt(0),
-		// HF: map[int]*big.Int{
-		// 	1: big.NewInt(5), // increase min difficulty to the next multiple of 2048
-		// },
-		Aquahash: new(AquahashConfig),
+		ChainId:         big.NewInt(617175610),
+		HomesteadBlock:  big.NewInt(0),
+		EIP150Block:     big.NewInt(0),
+		Aquahash:        new(AquahashConfig),
+		ConsensusConfig: new(ConsensusConfig),
+		HF:              TestnetHF,
 	}
 
-	// RinkebyChainConfig contains the chain parameters to run a node on the Rinkeby test network.
-	RinkebyChainConfig = &ChainConfig{
-		ChainId:        big.NewInt(4),
-		HomesteadBlock: big.NewInt(1),
-		DAOForkBlock:   nil,
-		DAOForkSupport: true,
-		EIP150Block:    big.NewInt(2),
-		EIP150Hash:     common.HexToHash("0x9b095b36c15eaf13044373aef8ee0bd3a382a5abb92e402afa44b8249c3a90e9"),
-		// EIP155Block:         big.NewInt(3),
-		// EIP158Block:         big.NewInt(3),
-		// ByzantiumBlock:      big.NewInt(1035301),
-		// ConstantinopleBlock: nil,
-		Clique: &CliqueConfig{
-			Period: 15,
-			Epoch:  30000,
-		},
+	// Testnet2ChainConfig contains the chain parameters to run a node on the Rinkeby test network.
+	Testnet2ChainConfig = &ChainConfig{
+		ChainId:         big.NewInt(617175611),
+		HomesteadBlock:  big.NewInt(0),
+		EIP150Block:     big.NewInt(0),
+		Aquahash:        new(AquahashConfig),
+		ConsensusConfig: new(ConsensusConfig),
+		HF:              TestnetHF,
 	}
 
 	// AllAquahashProtocolChanges contains every protocol change (EIPs) introduced
@@ -80,16 +81,16 @@ var (
 	//
 	// This configuration is intentionally not using keyed fields to force anyone
 	// adding flags to the config to also have to set these fields.
-	AllAquahashProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil}
+	AllAquahashProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil, new(ConsensusConfig), AquachainHF}
 
 	// AllCliqueProtocolChanges contains every protocol change (EIPs) introduced
 	// and accepted by the AquaChain core developers into the Clique consensus.
 	//
 	// This configuration is intentionally not using keyed fields to force anyone
 	// adding flags to the config to also have to set these fields.
-	AllCliqueProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, &CliqueConfig{Period: 0, Epoch: 30000}}
+	AllCliqueProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, nil, &CliqueConfig{Period: 0, Epoch: 30000}, new(ConsensusConfig), AquachainHF}
 
-	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil}
+	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), nil, new(ConsensusConfig), TestnetHF}
 	TestRules       = TestChainConfig.Rules(new(big.Int))
 )
 
@@ -121,8 +122,10 @@ type ChainConfig struct {
 	ConstantinopleBlock *big.Int `json:"constantinopleBlock,omitempty"` // Constantinople switch block (nil = no fork, 0 = already activated)
 
 	// Various consensus engines
-	Aquahash *AquahashConfig `json:"aquahash,omitempty"`
-	Clique   *CliqueConfig   `json:"clique,omitempty"`
+	Aquahash        *AquahashConfig  `json:"aquahash,omitempty"`
+	Clique          *CliqueConfig    `json:"clique,omitempty"`
+	ConsensusConfig *ConsensusConfig `json:"consensus,omitempty"`
+	HF              ForkMap          `json:"hf,omitempty"`
 }
 
 // AquahashConfig is the consensus engine configs for proof-of-work based sealing.
@@ -131,6 +134,15 @@ type AquahashConfig struct{}
 // String implements the stringer interface, returning the consensus engine details.
 func (c *AquahashConfig) String() string {
 	return "aquahash"
+}
+
+// ConsensusConfig is the consensus engine configs for proof-of-work based sealing.
+type ConsensusConfig struct {
+}
+
+// String implements the stringer interface, returning the consensus engine details.
+func (c *ConsensusConfig) String() string {
+	return "argonated"
 }
 
 // CliqueConfig is the consensus engine configs for proof-of-authority based sealing.
@@ -148,6 +160,8 @@ func (c *CliqueConfig) String() string {
 func (c *ChainConfig) String() string {
 	var engine interface{}
 	switch {
+	case c.ConsensusConfig != nil:
+		engine = c.ConsensusConfig
 	case c.Aquahash != nil:
 		engine = c.Aquahash
 	case c.Clique != nil:
@@ -158,7 +172,7 @@ func (c *ChainConfig) String() string {
 	return fmt.Sprintf("{ChainID: %v, Engine: %v, HF-Ready: %s}",
 		c.ChainId,
 		engine,
-		AquachainHF,
+		c.HF,
 	)
 	// return fmt.Sprintf("{ChainID: %v Homestead: %v DAO: %v DAOSupport: %v EIP150: %v EIP155: %v EIP158: %v Byzantium: %v Constantinople: %v Engine: %v}",
 	// 	c.ChainId,
@@ -176,23 +190,28 @@ func (c *ChainConfig) String() string {
 
 // IsHF returns whether num is either equal to the hf block or greater.
 func (c *ChainConfig) IsHF(hf int, num *big.Int) bool {
-	if AquachainHF[hf] == nil {
+	forkheight := c.HF[hf]
+	if forkheight == nil || forkheight.Sign() == -1 {
 		return false
 	}
-	return isForked(AquachainHF[hf], num)
+	return isForked(forkheight, num)
 }
 
-// NextHF returns the next scheduled hard fork block number
+// GetHF returns the height of the requested hf (CAN BE NIL)
+func (c *ChainConfig) GetHF(hf int) *big.Int {
+	return c.HF[hf]
+}
+
+// NextHF returns the first next scheduled hard fork block number
 func (c *ChainConfig) NextHF(cur *big.Int) *big.Int {
 	if cur != nil {
-		for _, height := range AquachainHF {
+		for _, height := range c.HF {
 			if cur.Cmp(height) < 0 {
 				return height
 			}
 		}
 	}
 	return nil
-
 }
 
 // IsHomestead returns whether num is either equal to the homestead block or greater.

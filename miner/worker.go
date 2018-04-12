@@ -473,10 +473,9 @@ func (self *worker) commitNewWork() {
 
 			badUncles = append(badUncles, hash)
 		}
-		if uncle.Transactions().Len() == 0 {
+		if self.config.IsHF(5, work.header.Number) && uncle.Transactions().Len() == 0 {
 			log.Trace("Empty uncle found and will be removed", "hash", hash)
 			log.Trace(fmt.Sprint(uncle))
-
 			badUncles = append(badUncles, hash)
 		}
 
