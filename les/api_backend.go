@@ -46,6 +46,10 @@ func (b *LesApiBackend) ChainConfig() *params.ChainConfig {
 	return b.aqua.chainConfig
 }
 
+func (b *LesApiBackend) GetHeaderVersion(height *big.Int) params.HeaderVersion {
+	return b.aqua.chainConfig.GetBlockVersion(height)
+}
+
 func (b *LesApiBackend) CurrentBlock() *types.Block {
 	return types.NewBlockWithHeader(b.aqua.BlockChain().CurrentHeader())
 }

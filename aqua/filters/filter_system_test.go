@@ -55,6 +55,9 @@ func (b *testBackend) EventMux() *event.TypeMux {
 	return b.mux
 }
 
+func (b *testBackend) GetHeaderVersion(h *big.Int) params.HeaderVersion {
+	return params.TestChainConfig.GetBlockVersion(h)
+}
 func (b *testBackend) HeaderByNumber(ctx context.Context, blockNr rpc.BlockNumber) (*types.Header, error) {
 	var hash common.Hash
 	var num uint64

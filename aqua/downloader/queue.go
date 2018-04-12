@@ -698,7 +698,8 @@ func (q *queue) DeliverHeaders(id string, headers []*types.Header, headerProcCh 
 	delete(q.headerPendPool, id)
 
 	// Ensure headers can be mapped onto the skeleton chain
-	target := q.headerTaskPool[request.From].Hash()
+	q.headerVersionRule(q.headerTaskPool[request.From].Number)
+	target := q.headerTaskPool[request.From].SetVersion(byte(q.headerVersionRule(q.headerTaskPool[request.From].Number)))
 
 	accepted := len(headers) == MaxHeaderFetch
 	if accepted {
