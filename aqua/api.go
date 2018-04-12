@@ -210,6 +210,72 @@ func NewPrivateAdminAPI(aqua *AquaChain) *PrivateAdminAPI {
 	return &PrivateAdminAPI{aqua: aqua}
 }
 
+// ExportState exports the current state database into a simplified json file.
+func (api *PrivateAdminAPI) ExportState(file string) (bool, error) {
+	// Make sure we can create the file to export into
+	out, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
+	if err != nil {
+		return false, err
+	}
+	defer out.Close()
+	statedb, err := api.aqua.BlockChain().State()
+	if err != nil {
+		return false, err
+	}
+	var writer io.Writer = out
+	if strings.HasSuffix(file, ".gz") {
+		writer = gzip.NewWriter(writer)
+		defer writer.(*gzip.Writer).Close()
+	}
+	// Export the state
+	if err := statedb.TakeSnapshot(writer); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// ExportState exports the current state database into a simplified json file.
+func (api *PrivateAdminAPI) ExportRealloc(file string) (bool, error) {
+	// Make sure we can create the file to export into
+	out, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
+	if err != nil {
+		return false, err
+	}
+	defer out.Close()
+	statedb, err := api.aqua.BlockChain().State()
+	if err != nil {
+		return false, err
+	}
+	var writer io.Writer = out
+	if strings.HasSuffix(file, ".gz") {
+		writer = gzip.NewWriter(writer)
+		defer writer.(*gzip.Writer).Close()
+	}
+	writer.Write([]byte(`` +
+		`{
+"config":{
+  "chainId":61717561,
+  "homesteadBlock":0,
+  "eip150Block":0,
+  "eip150Hash":"0x0000000000000000000000000000000000000000000000000000000000000000"
+},
+  "nonce":"0x2a",
+  "timestamp":"0x0",
+  "extraData":"0x",
+  "gasLimit":"0x401640",
+  "difficulty":"0x5f5e0ff",
+  "mixHash":"0x0000000000000000000000000000000000000000000000000000000000000000",
+  "coinbase":"0x0000000000000000000000000000000000000000",
+       "alloc":
+`))
+	// Export the state
+	if err := statedb.TakeSnapshot(writer); err != nil {
+		return false, err
+	}
+	writer.Write([]byte("}"))
+	return true, nil
+}
+
 // ExportChain exports the current blockchain into a local file.
 func (api *PrivateAdminAPI) ExportChain(file string) (bool, error) {
 	// Make sure we can create the file to export into

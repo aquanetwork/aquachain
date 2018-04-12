@@ -18,12 +18,15 @@
 package state
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"math/big"
 	"sort"
 	"sync"
 
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/hexutil"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/log"
@@ -193,6 +196,46 @@ func (self *StateDB) GetBalance(addr common.Address) *big.Int {
 		return stateObject.Balance()
 	}
 	return common.Big0
+}
+
+// Retrieve the balance from the given address or 0 if object not found
+func (self *StateDB) TakeSnapshot(writer io.Writer) error {
+
+	// Lets export in the format required for genesis alloc!
+	type (
+		GenesisAccount struct {
+			Balance string `json:"balance" gencodec:"required"`
+		}
+		GenesisAlloc map[common.Address]GenesisAccount
+	)
+	var (
+		accounts      = GenesisAlloc{}
+		dump          = self.RawDump()
+		skipped       = 0
+		currentSupply = big.NewFloat(0.00)
+	)
+	for addr, acct := range dump.Accounts {
+		if acct.Balance == "0" || addr == "" {
+			skipped++
+			continue
+		}
+		bal, ok := new(big.Float).SetString(acct.Balance)
+		if !ok {
+			panic("cant decode bigfloat")
+		}
+		bigbal, ok := new(big.Int).SetString(acct.Balance, 10)
+		if !ok {
+			panic("cant decode bigint")
+		}
+		currentSupply = new(big.Float).Add(bal, currentSupply)
+		fmt.Println(addr, new(big.Float).Quo(bal, big.NewFloat(1e18)))
+		accounts[common.HexToAddress(addr)] = GenesisAccount{Balance: hexutil.EncodeBig(bigbal)}
+	}
+
+	fmt.Printf("Found %v State Accounts\n", len(accounts))
+	fmt.Printf("Skipped %v empty acct\n", skipped)
+	fmt.Printf("Current supply: %f\n", new(big.Float).Quo(currentSupply, big.NewFloat(1e18)))
+	return json.NewEncoder(writer).Encode(accounts)
 }
 
 func (self *StateDB) GetNonce(addr common.Address) uint64 {
