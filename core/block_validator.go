@@ -57,8 +57,6 @@ func (v *BlockValidator) ValidateBody(block *types.Block) error {
 		if !v.bc.HasBlock(block.ParentHash(), block.NumberU64()-1) {
 			return consensus.ErrUnknownAncestor
 		}
-		fmt.Println("block: ", block)
-		fmt.Println("parent:", v.bc.GetBlockByHash(block.ParentHash()))
 		return consensus.ErrPrunedAncestor
 	}
 	// Header validity is known at this point, check the uncles and transactions
