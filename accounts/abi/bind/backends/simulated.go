@@ -420,6 +420,11 @@ type filterBackend struct {
 }
 
 func (fb *filterBackend) ChainDb() aquadb.Database { return fb.db }
+
+func (fb *filterBackend) GetHeaderVersion(height *big.Int) params.HeaderVersion {
+	return fb.bc.Config().GetBlockVersion(height)
+}
+
 func (fb *filterBackend) EventMux() *event.TypeMux { panic("not supported") }
 
 func (fb *filterBackend) HeaderByNumber(ctx context.Context, block rpc.BlockNumber) (*types.Header, error) {

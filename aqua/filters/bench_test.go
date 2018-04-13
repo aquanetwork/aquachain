@@ -94,10 +94,11 @@ func benchmarkBloomBits(b *testing.B, sectionSize uint64) {
 		var header *types.Header
 		for i := sectionIdx * sectionSize; i < (sectionIdx+1)*sectionSize; i++ {
 			hash := core.GetCanonicalHash(db, i)
-			header = core.GetHeader(db, hash, i)
+			header = core.GetHeaderNoVersion(db, hash, i)
 			if header == nil {
 				b.Fatalf("Error creating bloomBits data")
 			}
+			header.Version = 1
 			bc.AddBloom(uint(i-sectionIdx*sectionSize), header.Bloom)
 		}
 		sectionHead := core.GetCanonicalHash(db, (sectionIdx+1)*sectionSize-1)

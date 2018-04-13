@@ -26,11 +26,13 @@ import (
 	"github.com/aquanetwork/aquachain/core/bloombits"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/event"
+	"github.com/aquanetwork/aquachain/params"
 	"github.com/aquanetwork/aquachain/rpc"
 )
 
 type Backend interface {
 	ChainDb() aquadb.Database
+	GetHeaderVersion(*big.Int) params.HeaderVersion
 	EventMux() *event.TypeMux
 	HeaderByNumber(ctx context.Context, blockNr rpc.BlockNumber) (*types.Header, error)
 	GetReceipts(ctx context.Context, blockHash common.Hash) (types.Receipts, error)
@@ -202,6 +204,7 @@ func (f *Filter) unindexedLogs(ctx context.Context, end uint64) ([]*types.Log, e
 // match the filter criteria. This function is called when the bloom filter signals a potential match.
 func (f *Filter) checkMatches(ctx context.Context, header *types.Header) (logs []*types.Log, err error) {
 	// Get the logs of the block
+	header.Version = params.TestnetChainConfig.GetBlockVersion(header.Number)
 	logsList, err := f.backend.GetLogs(ctx, header.Hash())
 	if err != nil {
 		return nil, err
