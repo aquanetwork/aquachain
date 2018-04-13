@@ -286,7 +286,7 @@ func exportChain(ctx *cli.Context) error {
 	if err != nil {
 		utils.Fatalf("Export error: %v\n", err)
 	}
-	fmt.Printf("Export done in %v", time.Since(start))
+	fmt.Printf("Export done in %v\n", time.Since(start))
 	return nil
 }
 
