@@ -8,6 +8,8 @@ Block Reward: Ⱥ1.00
 
 Max Supply: 42 million
 
+HF5: 22800
+
 ## GET AQUACHAIN
 
 To begin, you must have the aquachain command installed. The `aquachain` command is a portable program that doesn't really need an 'installer', you can run it from anywhere.

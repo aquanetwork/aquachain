@@ -84,8 +84,8 @@ var (
 	GenesisDifficulty         = big.NewInt(99999999)        // Difficulty of the Genesis block.
 	MinimumDifficultyGenesis  = big.NewInt(99999999)        // The minimum that the difficulty may ever be
 	MinimumDifficultyHF1      = big.NewInt(100001792)       // The minimum that the difficulty may ever be (changed to a nice multiple of 2048).
-	MinimumDifficultyHF3      = big.NewInt(3095918580 * 10) //
-	MinimumDifficultyHF5      = big.NewInt(1024)            //
+	MinimumDifficultyHF3      = big.NewInt(3095918580 * 10) // GPU Announcement
+	MinimumDifficultyHF5      = big.NewInt(46039386)        // Argon2id Announcement
 	DifficultyBoundDivisorHF5 = big.NewInt(16)              // The bound divisor of the difficulty, used in the update calculations.
 	DurationLimit             = big.NewInt(240)             // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
 	MaxMoney                  = big.NewInt(42000000)        // At block 42mil rewards will be fees-only
