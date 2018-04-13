@@ -53,6 +53,9 @@ func (odr *LesOdr) Stop() {
 	close(odr.stop)
 }
 func (odr *LesOdr) GetHeaderVersion(height *big.Int) params.HeaderVersion {
+	if odr.hashFunc == nil {
+		panic("les/odr:header version was not set")
+	}
 	return odr.hashFunc(height)
 }
 

@@ -266,7 +266,7 @@ func (self *LightChain) GetBlock(ctx context.Context, hash common.Hash, number u
 	if block, ok := self.blockCache.Get(hash); ok {
 		return block.(*types.Block), nil
 	}
-	block, err := GetBlock(ctx, self.odr, hash, number)
+	block, err := GetBlockNoVersion(ctx, self.odr, hash, number)
 	if err != nil {
 		return nil, err
 	}
