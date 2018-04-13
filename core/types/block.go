@@ -130,7 +130,6 @@ func (h *Header) Hash() common.Hash {
 		return rlpHashArgon2id(h)
 	default:
 		common.Report(fmt.Sprintf("Number: %v, Version: %v", h.Number, h.Version))
-		panic("die fast and loud")
 		return rlpHash(h)
 	}
 }
