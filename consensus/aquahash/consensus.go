@@ -205,15 +205,15 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 
 	// Verify each of the uncles that it's recent, but not an ancestor
 	for _, uncle := range block.Uncles() {
-		// Make sure every uncle is rewarded only once
 		hash := uncle.Hash()
-		switch hash.Hex() {
+		switch hash.Hex() { // strange uncles that ended up in the main chain
 		case "0x361262d059cbf137c9881a6fb3d671818bb45e71877e58be2a60cbd2bc2fedf7":
 		case "0xdc192e7d1bfc5aab2eab88bd1bfa39d7c5c95bc07a926d6f2a050fb05d6932d6":
 		case "0x94177d394e87a8b1e4cd58c69cfee69a67432f526092367464cf45bc1050d82a":
+		case "0xbac2283407b519ffbb8c47772d1b7cf740646dddf69744ff44219cb868b00548":
 		default:
+			// Make sure every uncle is rewarded only once
 			if uncles.Has(hash) {
-				println("uncle: " + hash.Hex())
 				return errDuplicateUncle
 			}
 		}
