@@ -35,8 +35,20 @@ func ApplyHardFork(statedb *state.StateDB) {
 }
 
 func ApplyHardFork4(statedb *state.StateDB) {
-	zero := new(big.Int)
-	for _, addr := range DeallocListHF4 {
-		statedb.SetBalance(common.HexToAddress(addr), zero)
+	big0 := new(big.Int)
+	for _, hexadd := range DeallocListHF4 {
+		address := common.HexToAddress(hexadd)
+		if statedb.Exist(address) {
+			statedb.SetBalance(address, big0)
+		}
+	}
+}
+
+func ApplyHardFork5(statedb *state.StateDB) {
+	for _, hexadd := range DeallocListHF4 {
+		address := common.HexToAddress(hexadd)
+		if statedb.Exist(address) {
+			statedb.Empty(address)
+		}
 	}
 }
