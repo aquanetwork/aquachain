@@ -170,6 +170,7 @@ func (pool *TxPool) checkMinedTxs(ctx context.Context, hash common.Hash, number 
 	if err != nil {
 		return err
 	}
+	block.SetVersion(pool.chain.RetrieveHeaderVersion(block.Number()))
 	// Gather all the local transaction mined in this block
 	list := pool.mined[hash]
 	for _, tx := range block.Transactions() {

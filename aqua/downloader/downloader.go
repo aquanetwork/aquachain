@@ -168,6 +168,8 @@ type LightChain interface {
 
 	// Rollback removes a few recently added elements from the local chain.
 	Rollback([]common.Hash)
+
+	RetrieveHeaderVersion(*big.Int) types.HeaderVersion
 }
 
 // BlockChain encapsulates functions required to sync a (full or fast) blockchain.
@@ -194,8 +196,6 @@ type BlockChain interface {
 
 	// InsertReceiptChain inserts a batch of receipts into the local chain.
 	InsertReceiptChain(types.Blocks, []types.Receipts) (int, error)
-
-	RetrieveHeaderVersion(*big.Int) types.HeaderVersion
 }
 
 // New creates a new downloader to fetch hashes and blocks from remote peers.
@@ -203,12 +203,11 @@ func New(mode SyncMode, stateDb aquadb.Database, mux *event.TypeMux, chain Block
 	if lightchain == nil {
 		lightchain = chain
 	}
-
 	dl := &Downloader{
 		mode:           mode,
 		stateDB:        stateDb,
 		mux:            mux,
-		queue:          newQueue(chain.RetrieveHeaderVersion),
+		queue:          newQueue(lightchain.RetrieveHeaderVersion),
 		peers:          newPeerSet(),
 		rttEstimate:    uint64(rttMaxEstimate),
 		rttConfidence:  uint64(1000000),
@@ -1257,7 +1256,8 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 					// Collect the yet unknown headers to mark them as uncertain
 					unknown := make([]*types.Header, 0, len(headers))
 					for _, header := range chunk {
-						if !d.lightchain.HasHeader(header.SetVersion(byte(d.blockchain.RetrieveHeaderVersion(header.Number))), header.Number.Uint64()) {
+						header.Version = d.lightchain.RetrieveHeaderVersion(header.Number)
+						if !d.lightchain.HasHeader(header.SetVersion(byte(d.lightchain.RetrieveHeaderVersion(header.Number))), header.Number.Uint64()) {
 							unknown = append(unknown, header)
 						}
 					}

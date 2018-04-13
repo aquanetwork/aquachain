@@ -331,7 +331,7 @@ func TestReorgBadHeaderHashes(t *testing.T) {
 	if _, err := bc.InsertHeaderChain(headers, 1); err != nil {
 		t.Fatalf("failed to import headers: %v", err)
 	}
-	if bc.CurrentHeader().Hash() != headers[3].Hash() {
+	if bc.CurrentHeader().Hash() != headers[3].SetVersion(byte(bc.RetrieveHeaderVersion(headers[3].Number))) {
 		t.Errorf("last header hash mismatch: have: %x, want %x", bc.CurrentHeader().Hash(), headers[3].Hash())
 	}
 	core.BadHashes[headers[3].Hash()] = true
