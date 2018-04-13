@@ -126,7 +126,8 @@ func (p *FakePeer) RequestBodies(hashes []common.Hash) error {
 		uncles [][]*types.Header
 	)
 	for _, hash := range hashes {
-		block := core.GetBlock(p.db, hash, p.hc.GetBlockNumber(hash))
+		block := core.GetBlockNoVersion(p.db, hash, p.hc.GetBlockNumber(hash))
+		// dont need version for body with known hash
 
 		txs = append(txs, block.Transactions())
 		uncles = append(uncles, block.Uncles())

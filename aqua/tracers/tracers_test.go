@@ -187,7 +187,7 @@ func TestCallTracer(t *testing.T) {
 				t.Fatalf("failed to unmarshal trace result: %v", err)
 			}
 			if !reflect.DeepEqual(ret, test.Result) {
-				t.Fatalf("trace mismatch: have %+v, want %+v", ret, test.Result)
+				t.Fatalf("trace mismatch: \nhave %+v, \nwant %+v", ret, test.Result)
 			}
 		})
 	}

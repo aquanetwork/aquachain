@@ -45,6 +45,9 @@ type AquaApiBackend struct {
 func (b *AquaApiBackend) ChainConfig() *params.ChainConfig {
 	return b.aqua.chainConfig
 }
+func (b *AquaApiBackend) GetHeaderVersion(height *big.Int) params.HeaderVersion {
+	return b.aqua.chainConfig.GetBlockVersion(height)
+}
 
 func (b *AquaApiBackend) CurrentBlock() *types.Block {
 	return b.aqua.blockchain.CurrentBlock()

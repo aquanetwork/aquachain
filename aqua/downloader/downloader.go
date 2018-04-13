@@ -168,6 +168,8 @@ type LightChain interface {
 
 	// Rollback removes a few recently added elements from the local chain.
 	Rollback([]common.Hash)
+
+	RetrieveHeaderVersion(*big.Int) types.HeaderVersion
 }
 
 // BlockChain encapsulates functions required to sync a (full or fast) blockchain.
@@ -201,12 +203,11 @@ func New(mode SyncMode, stateDb aquadb.Database, mux *event.TypeMux, chain Block
 	if lightchain == nil {
 		lightchain = chain
 	}
-
 	dl := &Downloader{
 		mode:           mode,
 		stateDB:        stateDb,
 		mux:            mux,
-		queue:          newQueue(),
+		queue:          newQueue(lightchain.RetrieveHeaderVersion),
 		peers:          newPeerSet(),
 		rttEstimate:    uint64(rttMaxEstimate),
 		rttConfidence:  uint64(1000000),
@@ -541,6 +542,7 @@ func (d *Downloader) fetchHeight(p *peerConnection) (*types.Header, error) {
 
 	// Request the advertised remote head block and wait for the response
 	head, _ := p.peer.Head()
+
 	go p.peer.RequestHeadersByHash(head, 1, 0, false)
 
 	ttl := d.requestTTL()
@@ -563,7 +565,7 @@ func (d *Downloader) fetchHeight(p *peerConnection) (*types.Header, error) {
 				return nil, errBadPeer
 			}
 			head := headers[0]
-			p.log.Debug("Remote head header identified", "number", head.Number, "hash", head.Hash())
+			p.log.Debug("Remote head header identified", "number", head.Number, "hash-no-nonce", head.HashNoNonce(), "nonce", head.Nonce)
 			return head, nil
 
 		case <-timeout:
@@ -651,7 +653,8 @@ func (d *Downloader) findAncestor(p *peerConnection, height uint64) (uint64, err
 					continue
 				}
 				// Otherwise check if we already know the header or not
-				if (d.mode == FullSync && d.blockchain.HasBlock(headers[i].Hash(), headers[i].Number.Uint64())) || (d.mode != FullSync && d.lightchain.HasHeader(headers[i].Hash(), headers[i].Number.Uint64())) {
+				//headers[i].SetVersion(d.blockchain.GetBlockVersion(headers[i].Number))
+				if (d.mode == FullSync && d.blockchain.HasBlock(headers[i].SetVersion(byte(d.blockchain.RetrieveHeaderVersion(headers[i].Number))), headers[i].Number.Uint64())) || (d.mode != FullSync && d.lightchain.HasHeader(headers[i].Hash(), headers[i].Number.Uint64())) {
 					number, hash = headers[i].Number.Uint64(), headers[i].Hash()
 
 					// If every header is known, even future ones, the peer straight out lied about its head
@@ -1210,7 +1213,7 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 				// R: Nothing to give
 				if d.mode != LightSync {
 					head := d.blockchain.CurrentBlock()
-					if !gotHeaders && td.Cmp(d.blockchain.GetTd(head.Hash(), head.NumberU64())) > 0 {
+					if !gotHeaders && td.Cmp(d.blockchain.GetTd(head.SetVersion(d.blockchain.RetrieveHeaderVersion(head.Number())), head.NumberU64())) > 0 {
 						return errStallingPeer
 					}
 				}
@@ -1253,7 +1256,8 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 					// Collect the yet unknown headers to mark them as uncertain
 					unknown := make([]*types.Header, 0, len(headers))
 					for _, header := range chunk {
-						if !d.lightchain.HasHeader(header.Hash(), header.Number.Uint64()) {
+						header.Version = d.lightchain.RetrieveHeaderVersion(header.Number)
+						if !d.lightchain.HasHeader(header.SetVersion(byte(d.lightchain.RetrieveHeaderVersion(header.Number))), header.Number.Uint64()) {
 							unknown = append(unknown, header)
 						}
 					}
