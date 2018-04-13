@@ -80,7 +80,7 @@ const (
 	SYS_SETREGID               = 71
 	SYS_SIGSUSPEND             = 72
 	SYS_SIGPENDING             = 73
-	SYS_SAQUAOSTNAME           = 74
+	SYS_SETHOSTNAME            = 74
 	SYS_SETRLIMIT              = 75
 	SYS_GETRLIMIT              = 76
 	SYS_GETRUSAGE              = 77
@@ -367,4 +367,7 @@ const (
 	SYS_PWRITEV2               = 381
 	SYS_KEXEC_FILE_LOAD        = 382
 	SYS_STATX                  = 383
+	SYS_PKEY_ALLOC             = 384
+	SYS_PKEY_FREE              = 385
+	SYS_PKEY_MPROTECT          = 386
 )

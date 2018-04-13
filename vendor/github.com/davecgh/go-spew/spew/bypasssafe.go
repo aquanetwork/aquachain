@@ -8,7 +8,7 @@
 // WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 // MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
 // ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHAQUAER IN AN
+// WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
@@ -16,7 +16,7 @@
 // when the code is running on Google App Engine, compiled by GopherJS, or
 // "-tags safe" is added to the go build command line.  The "disableunsafe"
 // tag is deprecated and thus should not be used.
-// +build js appengine safe disableunsafe
+// +build js appengine safe disableunsafe !go1.4
 
 package spew
 

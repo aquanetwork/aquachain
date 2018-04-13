@@ -351,6 +351,8 @@ const (
 	CSTOP                          = 0x13
 	CSTOPB                         = 0x400
 	CSUSP                          = 0x1a
+	CTL_HW                         = 0x6
+	CTL_KERN                       = 0x1
 	CTL_MAXNAME                    = 0x18
 	CTL_NET                        = 0x4
 	DLT_A429                       = 0xb8
@@ -390,7 +392,7 @@ const (
 	DLT_ENC                        = 0x6d
 	DLT_EPON                       = 0x103
 	DLT_ERF                        = 0xc5
-	DLT_ERF_AQUA                   = 0xaf
+	DLT_ERF_ETH                    = 0xaf
 	DLT_ERF_POS                    = 0xb0
 	DLT_FC_2                       = 0xe0
 	DLT_FC_2_WITH_FRAME_DELIMS     = 0xe1
@@ -433,7 +435,7 @@ const (
 	DLT_JUNIPER_ATM_CEMIC          = 0xee
 	DLT_JUNIPER_CHDLC              = 0xb5
 	DLT_JUNIPER_ES                 = 0x84
-	DLT_JUNIPER_AQUAER             = 0xb2
+	DLT_JUNIPER_ETHER              = 0xb2
 	DLT_JUNIPER_FIBRECHANNEL       = 0xea
 	DLT_JUNIPER_FRELAY             = 0xb4
 	DLT_JUNIPER_GGSN               = 0x85
@@ -485,7 +487,7 @@ const (
 	DLT_PPI                        = 0xc0
 	DLT_PPP                        = 0x9
 	DLT_PPP_BSDOS                  = 0xe
-	DLT_PPP_AQUAER                 = 0x33
+	DLT_PPP_ETHER                  = 0x33
 	DLT_PPP_PPPD                   = 0xa6
 	DLT_PPP_SERIAL                 = 0x32
 	DLT_PPP_WITH_DIR               = 0xcc
@@ -615,6 +617,7 @@ const (
 	F_UNLCKSYS                     = 0x4
 	F_WRLCK                        = 0x3
 	HUPCL                          = 0x4000
+	HW_MACHINE                     = 0x1
 	ICANON                         = 0x100
 	ICMP6_FILTER                   = 0x12
 	ICRNL                          = 0x100
@@ -703,7 +706,7 @@ const (
 	IPPROTO_ENCAP                  = 0x62
 	IPPROTO_EON                    = 0x50
 	IPPROTO_ESP                    = 0x32
-	IPPROTO_AQUAERIP               = 0x61
+	IPPROTO_ETHERIP                = 0x61
 	IPPROTO_FRAGMENT               = 0x2c
 	IPPROTO_GGP                    = 0x3
 	IPPROTO_GMTP                   = 0x64
@@ -951,6 +954,10 @@ const (
 	IXANY                          = 0x800
 	IXOFF                          = 0x400
 	IXON                           = 0x200
+	KERN_HOSTNAME                  = 0xa
+	KERN_OSRELEASE                 = 0x2
+	KERN_OSTYPE                    = 0x1
+	KERN_VERSION                   = 0x4
 	LOCK_EX                        = 0x2
 	LOCK_NB                        = 0x4
 	LOCK_SH                        = 0x1

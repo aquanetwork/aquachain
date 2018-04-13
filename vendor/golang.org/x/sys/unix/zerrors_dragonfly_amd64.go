@@ -168,6 +168,8 @@ const (
 	CSTOP                             = 0x13
 	CSTOPB                            = 0x400
 	CSUSP                             = 0x1a
+	CTL_HW                            = 0x6
+	CTL_KERN                          = 0x1
 	CTL_MAXNAME                       = 0xc
 	CTL_NET                           = 0x4
 	DLT_A429                          = 0xb8
@@ -196,7 +198,7 @@ const (
 	DLT_EN3MB                         = 0x2
 	DLT_ENC                           = 0x6d
 	DLT_ERF                           = 0xc5
-	DLT_ERF_AQUA                      = 0xaf
+	DLT_ERF_ETH                       = 0xaf
 	DLT_ERF_POS                       = 0xb0
 	DLT_FDDI                          = 0xa
 	DLT_FLEXRAY                       = 0xd2
@@ -227,7 +229,7 @@ const (
 	DLT_JUNIPER_ATM2                  = 0x87
 	DLT_JUNIPER_CHDLC                 = 0xb5
 	DLT_JUNIPER_ES                    = 0x84
-	DLT_JUNIPER_AQUAER                = 0xb2
+	DLT_JUNIPER_ETHER                 = 0xb2
 	DLT_JUNIPER_FRELAY                = 0xb4
 	DLT_JUNIPER_GGSN                  = 0x85
 	DLT_JUNIPER_ISM                   = 0xc2
@@ -262,7 +264,7 @@ const (
 	DLT_PPI                           = 0xc0
 	DLT_PPP                           = 0x9
 	DLT_PPP_BSDOS                     = 0x10
-	DLT_PPP_AQUAER                    = 0x33
+	DLT_PPP_ETHER                     = 0x33
 	DLT_PPP_PPPD                      = 0xa6
 	DLT_PPP_SERIAL                    = 0x32
 	DLT_PPP_WITH_DIR                  = 0xcc
@@ -353,6 +355,7 @@ const (
 	F_UNLCK                           = 0x2
 	F_WRLCK                           = 0x3
 	HUPCL                             = 0x4000
+	HW_MACHINE                        = 0x1
 	ICANON                            = 0x100
 	ICMP6_FILTER                      = 0x12
 	ICRNL                             = 0x100
@@ -437,11 +440,11 @@ const (
 	IFT_EON                           = 0x19
 	IFT_EPLRS                         = 0x57
 	IFT_ESCON                         = 0x49
-	IFT_AQUAER                        = 0x6
+	IFT_ETHER                         = 0x6
 	IFT_FAITH                         = 0xf2
 	IFT_FAST                          = 0x7d
-	IFT_FASTAQUAER                    = 0x3e
-	IFT_FASTAQUAERFX                  = 0x45
+	IFT_FASTETHER                     = 0x3e
+	IFT_FASTETHERFX                   = 0x45
 	IFT_FDDI                          = 0xf
 	IFT_FIBRECHANNEL                  = 0x38
 	IFT_FRAMERELAYINTERCONNECT        = 0x3a
@@ -454,7 +457,7 @@ const (
 	IFT_G703AT2MB                     = 0x43
 	IFT_G703AT64K                     = 0x42
 	IFT_GIF                           = 0xf0
-	IFT_GIGABITAQUAERNET              = 0x75
+	IFT_GIGABITETHERNET               = 0x75
 	IFT_GR303IDT                      = 0xb2
 	IFT_GR303RDT                      = 0xb1
 	IFT_H323GATEKEEPER                = 0xa4
@@ -589,7 +592,7 @@ const (
 	IFT_X25HUNTGROUP                  = 0x7a
 	IFT_X25MLP                        = 0x79
 	IFT_X25PLE                        = 0x28
-	IFT_XAQUAER                       = 0x1a
+	IFT_XETHER                        = 0x1a
 	IGNBRK                            = 0x1
 	IGNCR                             = 0x80
 	IGNPAR                            = 0x4
@@ -637,7 +640,7 @@ const (
 	IPPROTO_ENCAP                     = 0x62
 	IPPROTO_EON                       = 0x50
 	IPPROTO_ESP                       = 0x32
-	IPPROTO_AQUAERIP                  = 0x61
+	IPPROTO_ETHERIP                   = 0x61
 	IPPROTO_FRAGMENT                  = 0x2c
 	IPPROTO_GGP                       = 0x3
 	IPPROTO_GMTP                      = 0x64
@@ -835,6 +838,10 @@ const (
 	IXANY                             = 0x800
 	IXOFF                             = 0x400
 	IXON                              = 0x200
+	KERN_HOSTNAME                     = 0xa
+	KERN_OSRELEASE                    = 0x2
+	KERN_OSTYPE                       = 0x1
+	KERN_VERSION                      = 0x4
 	LOCK_EX                           = 0x2
 	LOCK_NB                           = 0x4
 	LOCK_SH                           = 0x1
@@ -973,7 +980,10 @@ const (
 	RLIMIT_CPU                        = 0x0
 	RLIMIT_DATA                       = 0x2
 	RLIMIT_FSIZE                      = 0x1
+	RLIMIT_MEMLOCK                    = 0x6
 	RLIMIT_NOFILE                     = 0x8
+	RLIMIT_NPROC                      = 0x7
+	RLIMIT_RSS                        = 0x5
 	RLIMIT_STACK                      = 0x3
 	RLIM_INFINITY                     = 0x7fffffffffffffff
 	RTAX_AUTHOR                       = 0x6
