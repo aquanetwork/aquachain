@@ -30,6 +30,7 @@ import (
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/params"
 )
 
 // Seal implements consensus.Engine, attempting to find a nonce that satisfies
@@ -38,6 +39,7 @@ func (aquahash *Aquahash) Seal(chain consensus.ChainReader, block *types.Block, 
 	// If we're running a fake PoW, simply return a 0 nonce immediately
 	if aquahash.config.PowMode == ModeFake || aquahash.config.PowMode == ModeFullFake {
 		header := block.Header()
+		header.Version = chain.Config().GetBlockVersion(header.Number)
 		header.Nonce, header.MixDigest = types.BlockNonce{}, common.Hash{}
 		return block.WithSeal(header), nil
 	}
@@ -67,11 +69,12 @@ func (aquahash *Aquahash) Seal(chain consensus.ChainReader, block *types.Block, 
 		threads = 0 // Allows disabling local mining without extra logic around local/remote
 	}
 	var pend sync.WaitGroup
+	version := chain.Config().GetBlockVersion(block.Number())
 	for i := 0; i < threads; i++ {
 		pend.Add(1)
 		go func(id int, nonce uint64) {
 			defer pend.Done()
-			aquahash.mine(block, id, nonce, abort, found)
+			aquahash.mine(version, block, id, nonce, abort, found)
 		}(i, uint64(aquahash.rand.Int63()))
 	}
 	// Wait until sealing is terminated or a nonce is found
@@ -96,7 +99,7 @@ func (aquahash *Aquahash) Seal(chain consensus.ChainReader, block *types.Block, 
 
 // mine is the actual proof-of-work miner that searches for a nonce starting from
 // seed that results in correct final block difficulty.
-func (aquahash *Aquahash) mine(block *types.Block, id int, seed uint64, abort chan struct{}, found chan *types.Block) {
+func (aquahash *Aquahash) mine(version params.HeaderVersion, block *types.Block, id int, seed uint64, abort chan struct{}, found chan *types.Block) {
 	// Extract some data from the header
 	var (
 		header  = block.Header()
@@ -104,8 +107,8 @@ func (aquahash *Aquahash) mine(block *types.Block, id int, seed uint64, abort ch
 		target  = new(big.Int).Div(maxUint256, header.Difficulty)
 		number  = header.Number.Uint64()
 		dataset = aquahash.dataset(number)
-		version = header.Version
 	)
+	header.Version = version
 	// Start generating random nonces until we abort or find a good one
 	var (
 		attempts = int64(0)
@@ -136,7 +139,7 @@ search:
 				digest []byte
 				result []byte
 			)
-			switch version {
+			switch header.Version {
 			case 1:
 				digest, result = hashimotoFull(dataset.dataset, hash, nonce)
 			case 2:

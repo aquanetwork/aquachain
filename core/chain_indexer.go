@@ -361,6 +361,7 @@ func (c *ChainIndexer) processSection(section uint64, lastHead common.Hash) (com
 		} else if header.ParentHash != lastHead {
 			return common.Hash{}, fmt.Errorf("chain reorged during section processing")
 		}
+		header.Version = c.config.GetBlockVersion(header.Number)
 		c.backend.Process(header)
 		lastHead = header.Hash()
 	}

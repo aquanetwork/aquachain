@@ -39,7 +39,7 @@ func TestBlockEncoding(t *testing.T) {
 			t.Errorf("%s mismatch: got %x, want %x", f, got, want)
 		}
 	}
-	block.header.Version = H_KECCAK256
+	block.SetVersion(H_KECCAK256)
 	check("Difficulty", block.Difficulty(), big.NewInt(131072))
 	check("GasLimit", block.GasLimit(), uint64(3141592))
 	check("GasUsed", block.GasUsed(), uint64(21000))
@@ -60,9 +60,10 @@ func TestBlockEncoding(t *testing.T) {
 		t.Fatal("encode error: ", err)
 	}
 	if !bytes.Equal(ourBlockEnc, blockEnc) {
-		t.Errorf("encoded block mismatch:\ngot:  %x\nwant: %x", ourBlockEnc, blockEnc)
+		t.Errorf("encoded 1 block mismatch:\ngot:  %x\nwant: %x", ourBlockEnc, blockEnc)
 	}
 
+	block.SetVersion(H_ARGON2ID)
 	check("Difficulty", block.Difficulty(), big.NewInt(131072))
 	check("GasLimit", block.GasLimit(), uint64(3141592))
 	check("GasUsed", block.GasUsed(), uint64(21000))
@@ -70,7 +71,6 @@ func TestBlockEncoding(t *testing.T) {
 	check("MixDigest", block.MixDigest(), common.HexToHash("bd4472abb6659ebe3ee06ee4d7b72a00a9f4d001caca51342001075469aff498"))
 	check("Root", block.Root(), common.HexToHash("ef1552a40b7165c3cd773806b9e0c165b75356e0314bf0706f279c729f51e017"))
 
-	block.SetVersion(H_ARGON2ID)
 	check("Hash", block.Hash(), common.HexToHash("be4e21842e8d41f69ad652cb8fee606ccc47ef58ede42e544f25cf58eeb045c7")) // argonated
 	check("Nonce", block.Nonce(), uint64(0xa13a5a8c8f2bb1c4))
 	check("Time", block.Time(), big.NewInt(1426516743))
@@ -85,6 +85,6 @@ func TestBlockEncoding(t *testing.T) {
 		t.Fatal("encode error: ", err)
 	}
 	if !bytes.Equal(ourBlockEnc, blockEnc) {
-		t.Errorf("encoded block mismatch:\ngot:  %x\nwant: %x", ourBlockEnc, blockEnc)
+		t.Errorf("encoded 2 block mismatch:\ngot:  %x\nwant: %x", ourBlockEnc, blockEnc)
 	}
 }

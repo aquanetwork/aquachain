@@ -76,6 +76,9 @@ func testFork(t *testing.T, blockchain *BlockChain, i, n int, full bool, compara
 
 	if full {
 		tdPre = blockchain.GetTdByHash(blockchain.CurrentBlock().Hash())
+		if tdPre.Uint64() == 0 {
+			panic("what")
+		}
 		if err := testBlockChainImport(blockChainB, blockchain); err != nil {
 			t.Fatalf("failed to import forked block chain: %v", err)
 		}
@@ -102,6 +105,7 @@ func printChain(bc *BlockChain) {
 // the database if successful.
 func testBlockChainImport(chain types.Blocks, blockchain *BlockChain) error {
 	for _, block := range chain {
+		block.SetVersion(params.AllAquahashProtocolChanges.GetBlockVersion(block.Number()))
 		// Try and process the block
 		err := blockchain.engine.VerifyHeader(blockchain, block.Header(), true)
 		if err == nil {
@@ -328,7 +332,7 @@ func TestReorgLongHeaders(t *testing.T) { testReorgLong(t, false) }
 func TestReorgLongBlocks(t *testing.T)  { testReorgLong(t, true) }
 
 func testReorgLong(t *testing.T, full bool) {
-	testReorg(t, []int64{0, 0, -9}, []int64{0, 0, 0, -9}, 400048824, full)
+	testReorg(t, []int64{0, 0, -9}, []int64{0, 0, 0, -9}, 62133491973, full)
 }
 
 // Tests that reorganising a short difficult chain after a long easy one
@@ -348,7 +352,7 @@ func testReorgShort(t *testing.T, full bool) {
 	for i := 0; i < len(diff); i++ {
 		diff[i] = -9
 	}
-	testReorg(t, easy, diff, 9726099381, full)
+	testReorg(t, easy, diff, 62137574813, full)
 }
 
 func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
@@ -937,11 +941,11 @@ func TestReorgSideEvent(t *testing.T) {
 	// side chains because up to that point the first one is considered the
 	// heavier chain.
 	expectedSideHashes := map[common.Hash]bool{
-		replacementBlocks[0].Hash(): true,
-		replacementBlocks[1].Hash(): true,
-		chain[0].Hash():             true,
-		chain[1].Hash():             true,
-		chain[2].Hash():             true,
+		replacementBlocks[0].SetVersion(params.TestChainConfig.GetBlockVersion(replacementBlocks[0].Number())): true,
+		replacementBlocks[1].SetVersion(params.TestChainConfig.GetBlockVersion(replacementBlocks[1].Number())): true,
+		chain[0].SetVersion(params.TestChainConfig.GetBlockVersion(chain[0].Number())):                         true,
+		chain[1].SetVersion(params.TestChainConfig.GetBlockVersion(chain[1].Number())):                         true,
+		chain[2].SetVersion(params.TestChainConfig.GetBlockVersion(chain[2].Number())):                         true,
 	}
 
 	i := 0
@@ -953,8 +957,9 @@ done:
 		select {
 		case ev := <-chainSideCh:
 			block := ev.Block
+			block.SetVersion(params.TestChainConfig.GetBlockVersion(block.Number()))
 			if _, ok := expectedSideHashes[block.Hash()]; !ok {
-				t.Errorf("%d: didn't expect %x to be in side chain", i, block.Hash())
+				t.Errorf("%d: didn't expect %x to be in side chain: %s", i, block.Number(), block)
 			}
 			i++
 

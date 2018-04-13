@@ -130,6 +130,7 @@ func (h *Header) Hash() common.Hash {
 		return rlpHashArgon2id(h)
 	default:
 		common.Report(fmt.Sprintf("Number: %v, Version: %v", h.Number, h.Version))
+		panic("die fast and loud")
 		return rlpHash(h)
 	}
 }
@@ -340,6 +341,7 @@ func (b *Block) Transaction(hash common.Hash) *Transaction {
 	return nil
 }
 
+//func (b *Block) Version() params.HeaderVersion { return b.header.Version }
 func (b *Block) Number() *big.Int     { return new(big.Int).Set(b.header.Number) }
 func (b *Block) GasLimit() uint64     { return b.header.GasLimit }
 func (b *Block) GasUsed() uint64      { return b.header.GasUsed }
@@ -430,6 +432,9 @@ func (b *Block) Hash() common.Hash {
 // SetVersion sets the block header's Version, recalculates the hash,
 // and stores in cache so that later invocations of Hash() return the same
 func (b *Block) SetVersion(version HeaderVersion) common.Hash {
+	for i := range b.uncles {
+		b.uncles[i].Version = version
+	}
 	b.header.Version = version
 	v := b.header.Hash()
 	b.hash.Store(v)

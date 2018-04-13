@@ -195,11 +195,11 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 		}
 		ancestors[ancestor.Hash()] = ancestor.Header()
 		for _, uncle := range ancestor.Uncles() {
-			uncles.Add(uncle.Hash())
+			uncles.Add(uncle.SetVersion(byte(chain.Config().GetBlockVersion(uncle.Number))))
 		}
 		parent, number = ancestor.ParentHash(), number-1
 	}
-	ancestors[block.Hash()] = block.Header()
+	ancestors[block.SetVersion(chain.Config().GetBlockVersion(block.Number()))] = block.Header()
 	uncles.Add(block.Hash())
 
 	// Verify each of the uncles that it's recent, but not an ancestor
@@ -654,7 +654,8 @@ func (aquahash *Aquahash) VerifySeal(chain consensus.ChainReader, header *types.
 	// until after the call to hashimotoLight so it's not unmapped while being used.
 	runtime.KeepAlive(cache)
 
-	if header.Version == 1 && !bytes.Equal(header.MixDigest[:], digest) {
+	if !bytes.Equal(header.MixDigest[:], digest) {
+		fmt.Printf("Invalid Digest (%v):\n%x (!=) %x\n", header.Number.Uint64(), header.MixDigest[:], digest)
 		return errInvalidMixDigest
 	}
 	target := new(big.Int).Div(maxUint256, header.Difficulty)
@@ -681,8 +682,11 @@ func (aquahash *Aquahash) Prepare(chain consensus.ChainReader, header *types.Hea
 // setting the final state and assembling the block.
 func (aquahash *Aquahash) Finalize(chain consensus.ChainReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, uncles []*types.Header, receipts []*types.Receipt) (*types.Block, error) {
 	// Accumulate any block and uncle rewards and commit the final state root
+	header.SetVersion(byte(chain.Config().GetBlockVersion(header.Number)))
+	for i := range uncles {
+		uncles[i].Version = header.Version // uncles must have same version
+	}
 	accumulateRewards(chain.Config(), state, header, uncles)
-	header.Version = chain.Config().GetBlockVersion(header.Number)
 	header.Root = state.IntermediateRoot(chain.Config().IsEIP158(header.Number))
 	// Header seems complete, assemble into a block and return
 	return types.NewBlock(header, txs, uncles, receipts), nil

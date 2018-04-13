@@ -339,7 +339,9 @@ func (bc *BlockChain) GasLimit() uint64 {
 // CurrentBlock retrieves the current head block of the canonical chain. The
 // block is retrieved from the blockchain's internal cache.
 func (bc *BlockChain) CurrentBlock() *types.Block {
-	return bc.currentBlock.Load().(*types.Block)
+	b := bc.currentBlock.Load().(*types.Block)
+	b.SetVersion(bc.Config().GetBlockVersion(b.Number()))
+	return b
 }
 
 // CurrentFastBlock retrieves the current fast-sync head block of the canonical
@@ -1067,6 +1069,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 		err := <-results
 		if err == nil {
+			block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
 			err = bc.Validator().ValidateBody(block)
 		}
 		switch {

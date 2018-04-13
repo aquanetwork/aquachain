@@ -171,7 +171,6 @@ func GenerateChain(config *params.ChainConfig, parent *types.Block, engine conse
 
 		b := &BlockGen{i: i, parent: parent, chain: blocks, chainReader: blockchain, statedb: statedb, config: config, engine: engine}
 		b.header = makeHeader(b.chainReader, parent, statedb, b.engine)
-
 		// Mutate the the block and state according to any hard-fork specs
 		if hf4 := config.GetHF(4); hf4 != nil && hf4.Cmp(b.header.Number) == 0 {
 			misc.ApplyHardFork4(statedb)

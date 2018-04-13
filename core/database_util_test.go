@@ -24,7 +24,9 @@ import (
 	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/types"
+	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/crypto/sha3"
+	"github.com/aquanetwork/aquachain/params"
 	"github.com/aquanetwork/aquachain/rlp"
 )
 
@@ -33,7 +35,8 @@ func TestHeaderStorage(t *testing.T) {
 	db, _ := aquadb.NewMemDatabase()
 
 	// Create a test header to move around the database and make sure it's really new
-	header := &types.Header{Number: big.NewInt(42), Extra: []byte("test header")}
+	header := &types.Header{Number: big.NewInt(2), Extra: []byte("test header")}
+	header.Version = params.TestChainConfig.GetBlockVersion(header.Number)
 	if entry := GetHeader(db, header.Hash(), header.Number.Uint64()); entry != nil {
 		t.Fatalf("Non existent header returned: %v", entry)
 	}
@@ -42,17 +45,53 @@ func TestHeaderStorage(t *testing.T) {
 		t.Fatalf("Failed to write header into database: %v", err)
 	}
 	if entry := GetHeader(db, header.Hash(), header.Number.Uint64()); entry == nil {
+
 		t.Fatalf("Stored header not found")
-	} else if entry.Hash() != header.Hash() {
+	} else if entry.SetVersion(byte(header.Version)) != header.Hash() {
 		t.Fatalf("Retrieved header mismatch: have %v, want %v", entry, header)
 	}
 	if entry := GetHeaderRLP(db, header.Hash(), header.Number.Uint64()); entry == nil {
 		t.Fatalf("Stored header RLP not found")
 	} else {
+
 		hasher := sha3.NewKeccak256()
 		hasher.Write(entry)
 
 		if hash := common.BytesToHash(hasher.Sum(nil)); hash != header.Hash() {
+			t.Fatalf("Retrieved RLP header mismatch: have %v, want %v", entry, header)
+		}
+	}
+	// Delete the header and verify the execution
+	DeleteHeader(db, header.Hash(), header.Number.Uint64())
+	if entry := GetHeader(db, header.Hash(), header.Number.Uint64()); entry != nil {
+		t.Fatalf("Deleted header returned: %v", entry)
+	}
+}
+
+// Tests block header storage and retrieval operations.
+func TestHeaderStorageArgon(t *testing.T) {
+	db, _ := aquadb.NewMemDatabase()
+
+	// Create a test header to move around the database and make sure it's really new
+	header := &types.Header{Number: big.NewInt(6), Extra: []byte("test header")}
+	header.Version = params.TestChainConfig.GetBlockVersion(header.Number)
+	if entry := GetHeader(db, header.Hash(), header.Number.Uint64()); entry != nil {
+		t.Fatalf("Non existent header returned: %v", entry)
+	}
+	// Write and verify the header in the database
+	if err := WriteHeader(db, header); err != nil {
+		t.Fatalf("Failed to write header into database: %v", err)
+	}
+	if entry := GetHeader(db, header.Hash(), header.Number.Uint64()); entry == nil {
+
+		t.Fatalf("Stored header not found")
+	} else if entry.SetVersion(byte(header.Version)) != header.Hash() {
+		t.Fatalf("Retrieved header mismatch: have %v, want %v", entry, header)
+	}
+	if entry := GetHeaderRLP(db, header.Hash(), header.Number.Uint64()); entry == nil {
+		t.Fatalf("Stored header RLP not found")
+	} else {
+		if hash := crypto.Argon2idHash(entry); hash != header.Hash() {
 			t.Fatalf("Retrieved RLP header mismatch: have %v, want %v", entry, header)
 		}
 	}
@@ -296,7 +335,7 @@ func TestLookupStorage(t *testing.T) {
 	txs := []*types.Transaction{tx1, tx2, tx3}
 
 	block := types.NewBlock(&types.Header{Number: big.NewInt(314)}, txs, nil, nil)
-
+	block.SetVersion(params.TestChainConfig.GetBlockVersion(block.Number()))
 	// Check that no transactions entries are in a pristine database
 	for i, tx := range txs {
 		if txn, _, _, _ := GetTransaction(db, tx.Hash()); txn != nil {

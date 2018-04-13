@@ -344,7 +344,7 @@ func (dl *downloadTester) InsertChain(blocks types.Blocks) (int, error) {
 		} else if _, err := dl.stateDb.Get(parent.Root().Bytes()); err != nil {
 			return i, fmt.Errorf("unknown parent state %x: %v", parent.Root(), err)
 		}
-		if _, ok := dl.ownHeaders[block.Hash()]; !ok {
+		if _, ok := dl.ownHeaders[block.SetVersion(params.TestChainConfig.GetBlockVersion(block.Number()))]; !ok {
 			dl.ownHashes = append(dl.ownHashes, block.Hash())
 			dl.ownHeaders[block.Hash()] = block.Header()
 		}
