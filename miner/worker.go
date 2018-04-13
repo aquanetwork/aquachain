@@ -297,16 +297,16 @@ func (self *worker) wait() {
 			}
 			block := result.Block
 			work := result.Work
-
+			hash := block.SetVersion(self.config.GetBlockVersion(block.Number()))
 			// Update the block hash in all logs since it is now available and not when the
 			// receipt/log of individual transactions were created.
 			for _, r := range work.receipts {
 				for _, l := range r.Logs {
-					l.BlockHash = block.Hash()
+					l.BlockHash = hash
 				}
 			}
 			for _, log := range work.state.Logs() {
-				log.BlockHash = block.Hash()
+				log.BlockHash = hash
 			}
 			stat, err := self.chain.WriteBlockWithState(block, work.receipts, work.state)
 			if err != nil {
@@ -324,14 +324,14 @@ func (self *worker) wait() {
 				events []interface{}
 				logs   = work.state.Logs()
 			)
-			events = append(events, core.ChainEvent{Block: block, Hash: block.Hash(), Logs: logs})
+			events = append(events, core.ChainEvent{Block: block, Hash: hash, Logs: logs})
 			if stat == core.CanonStatTy {
 				events = append(events, core.ChainHeadEvent{Block: block})
 			}
 			self.chain.PostChainEvents(events, logs)
 
 			// Insert the block into the set of pending ones to wait for confirmations
-			self.unconfirmed.Insert(block.NumberU64(), block.Hash())
+			self.unconfirmed.Insert(block.NumberU64(), hash)
 
 			if mustCommitNewWork {
 				self.commitNewWork()
@@ -359,6 +359,7 @@ func (self *worker) makeCurrent(parent *types.Block, header *types.Header) error
 	if err != nil {
 		return err
 	}
+
 	work := &Work{
 		config:    self.config,
 		signer:    types.NewEIP155Signer(self.config.ChainId),
@@ -373,7 +374,7 @@ func (self *worker) makeCurrent(parent *types.Block, header *types.Header) error
 	// when 08 is processed ancestors contain 07 (quick block)
 	for _, ancestor := range self.chain.GetBlocksFromHash(parent.Hash(), 7) {
 		for _, uncle := range ancestor.Uncles() {
-			work.family.Add(uncle.Hash())
+			work.family.Add(uncle.SetVersion(byte(self.config.GetBlockVersion(uncle.Number))))
 		}
 		work.family.Add(ancestor.Hash())
 		work.ancestors.Add(ancestor.Hash())
@@ -408,12 +409,14 @@ func (self *worker) commitNewWork() {
 	}
 
 	num := parent.Number()
+	numnew := num.Add(num, common.Big1)
 	header := &types.Header{
 		ParentHash: parent.Hash(),
-		Number:     num.Add(num, common.Big1),
+		Number:     numnew,
 		GasLimit:   core.CalcGasLimit(parent),
 		Extra:      self.extra,
 		Time:       big.NewInt(tstamp),
+		Version:    self.chain.Config().GetBlockVersion(numnew),
 	}
 	// Only set the coinbase if we are mining (avoid spurious block rewards)
 	if atomic.LoadInt32(&self.mining) == 1 {
@@ -446,8 +449,11 @@ func (self *worker) commitNewWork() {
 	work := self.current
 
 	// Mutate the work state according to any hard-fork specs
-	if params.AquachainHF[4].Cmp(header.Number) == 0 {
+	if hf4 := work.config.GetHF(4); hf4 != nil && hf4.Cmp(work.header.Number) == 0 {
 		misc.ApplyHardFork4(work.state)
+	}
+	if hf5 := work.config.GetHF(5); hf5 != nil && hf5.Cmp(work.header.Number) == 0 {
+		misc.ApplyHardFork5(work.state)
 	}
 
 	pending, err := self.aqua.TxPool().Pending()
@@ -464,21 +470,23 @@ func (self *worker) commitNewWork() {
 		badUncles []common.Hash
 	)
 	for hash, uncle := range self.possibleUncles {
-		if len(uncles) == 2 {
+		if len(uncles) == 1 {
 			break
 		}
-		if err := self.commitUncle(work, uncle.Header()); err != nil {
+		unclehead := uncle.Header()
+		unclehead.Version = self.chain.Config().GetBlockVersion(unclehead.Number)
+		if err := self.commitUncle(work, unclehead); err != nil {
 			log.Trace("Bad uncle found and will be removed", "hash", hash)
 			log.Trace(fmt.Sprint(uncle))
 
 			badUncles = append(badUncles, hash)
+			continue
 		}
-		if uncle.Transactions().Len() == 0 {
-			log.Trace("Empty uncle found and will be removed", "hash", hash)
-			log.Trace(fmt.Sprint(uncle))
-
-			badUncles = append(badUncles, hash)
-		}
+		// if uncle.Transactions().Len() == 0 {
+		// 	log.Trace("Empty uncle found and will be removed", "hash", hash)
+		// 	log.Trace(fmt.Sprint(uncle))
+		// 	badUncles = append(badUncles, hash)
+		// }
 
 		log.Debug("Committing new uncle to block", "hash", hash)
 		uncles = append(uncles, uncle.Header())
@@ -494,7 +502,10 @@ func (self *worker) commitNewWork() {
 	}
 	// We only care about logging if we're actually mining.
 	if atomic.LoadInt32(&self.mining) == 1 {
-		log.Info("Commit new mining work", "number", work.Block.Number(), "txs", work.tcount, "uncles", len(uncles), "elapsed", common.PrettyDuration(time.Since(tstart)))
+		log.Info("Commit new mining work", "number", work.Block.Number(),
+			"txs", work.tcount, "uncles", len(uncles),
+			"bench", common.PrettyDuration(time.Since(tstart)),
+			"algo", header.Version)
 		self.unconfirmed.Shift(work.Block.NumberU64() - 1)
 	}
 	self.push(work)
@@ -502,6 +513,9 @@ func (self *worker) commitNewWork() {
 
 func (self *worker) commitUncle(work *Work, uncle *types.Header) error {
 	hash := uncle.Hash()
+	if work.uncles.Size() > 0 {
+		return fmt.Errorf("too many uncles")
+	}
 	if work.uncles.Has(hash) {
 		return fmt.Errorf("uncle not unique")
 	}
