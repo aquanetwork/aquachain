@@ -26,16 +26,17 @@ import (
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/crypto"
+	"github.com/aquanetwork/aquachain/params"
 	"github.com/aquanetwork/aquachain/trie"
 )
 
-func NewState(ctx context.Context, head *types.Header, odr OdrBackend) *state.StateDB {
-	state, _ := state.New(head.Root, NewStateDatabase(ctx, head, odr))
+func NewState(ctx context.Context, head *types.Header, headVersion params.HeaderVersion, odr OdrBackend) *state.StateDB {
+	state, _ := state.New(head.Root, NewStateDatabase(ctx, head, headVersion, odr))
 	return state
 }
 
-func NewStateDatabase(ctx context.Context, head *types.Header, odr OdrBackend) state.Database {
-	return &odrDatabase{ctx, StateTrieID(head), odr}
+func NewStateDatabase(ctx context.Context, head *types.Header, headVersion params.HeaderVersion, odr OdrBackend) state.Database {
+	return &odrDatabase{ctx, StateTrieID(head, headVersion), odr}
 }
 
 type odrDatabase struct {

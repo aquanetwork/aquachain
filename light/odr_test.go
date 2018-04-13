@@ -128,7 +128,7 @@ func odrAccounts(ctx context.Context, db aquadb.Database, bc *core.BlockChain, l
 	var st *state.StateDB
 	if bc == nil {
 		header := lc.GetHeaderByHash(bhash)
-		st = NewState(ctx, header, lc.Odr())
+		st = NewState(ctx, header, lc.Config().GetBlockVersion(header.Number), lc.Odr())
 	} else {
 		header := bc.GetHeaderByHash(bhash)
 		st, _ = state.New(header.Root, state.NewDatabase(db))
@@ -167,7 +167,7 @@ func odrContractCall(ctx context.Context, db aquadb.Database, bc *core.BlockChai
 		if bc == nil {
 			chain = lc
 			header = lc.GetHeaderByHash(bhash)
-			st = NewState(ctx, header, lc.Odr())
+			st = NewState(ctx, header, lc.Config().GetBlockVersion(header.Number), lc.Odr())
 		} else {
 			chain = bc
 			header = bc.GetHeaderByHash(bhash)

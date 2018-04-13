@@ -110,10 +110,11 @@ func (r *BlockRequest) Validate(db aquadb.Database, msg *Msg) error {
 	body := bodies[0]
 
 	// Retrieve our stored header and validate block content against it
-	header := core.GetHeader(db, r.Hash, r.Number)
+	header := core.GetHeaderNoVersion(db, r.Hash, r.Number)
 	if header == nil {
 		return errHeaderUnavailable
 	}
+	// dont need version for storing rlp
 	if header.TxHash != types.DeriveSha(types.Transactions(body.Transactions)) {
 		return errTxHashMismatch
 	}
@@ -166,10 +167,11 @@ func (r *ReceiptsRequest) Validate(db aquadb.Database, msg *Msg) error {
 	receipt := receipts[0]
 
 	// Retrieve our stored header and validate receipt content against it
-	header := core.GetHeader(db, r.Hash, r.Number)
+	header := core.GetHeaderNoVersion(db, r.Hash, r.Number)
 	if header == nil {
 		return errHeaderUnavailable
 	}
+	// dont need version for checking receipts
 	if header.ReceiptHash != types.DeriveSha(receipt) {
 		return errReceiptHashMismatch
 	}

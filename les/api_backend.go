@@ -46,6 +46,10 @@ func (b *LesApiBackend) ChainConfig() *params.ChainConfig {
 	return b.aqua.chainConfig
 }
 
+func (b *LesApiBackend) GetHeaderVersion(height *big.Int) params.HeaderVersion {
+	return b.aqua.chainConfig.GetBlockVersion(height)
+}
+
 func (b *LesApiBackend) CurrentBlock() *types.Block {
 	return types.NewBlockWithHeader(b.aqua.BlockChain().CurrentHeader())
 }
@@ -76,7 +80,7 @@ func (b *LesApiBackend) StateAndHeaderByNumber(ctx context.Context, blockNr rpc.
 	if header == nil || err != nil {
 		return nil, nil, err
 	}
-	return light.NewState(ctx, header, b.aqua.odr), header, nil
+	return light.NewState(ctx, header, b.ChainConfig().GetBlockVersion(header.Number), b.aqua.odr), header, nil
 }
 
 func (b *LesApiBackend) GetBlock(ctx context.Context, blockHash common.Hash) (*types.Block, error) {

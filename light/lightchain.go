@@ -114,6 +114,10 @@ func NewLightChain(odr OdrBackend, config *params.ChainConfig, engine consensus.
 	return bc, nil
 }
 
+func (self *LightChain) RetrieveHeaderVersion(height *big.Int) params.HeaderVersion {
+	return self.Config().GetBlockVersion(height)
+}
+
 // addTrustedCheckpoint adds a trusted checkpoint to the blockchain
 func (self *LightChain) addTrustedCheckpoint(cp trustedCheckpoint) {
 	if self.odr.ChtIndexer() != nil {
@@ -262,12 +266,13 @@ func (self *LightChain) GetBlock(ctx context.Context, hash common.Hash, number u
 	if block, ok := self.blockCache.Get(hash); ok {
 		return block.(*types.Block), nil
 	}
-	block, err := GetBlock(ctx, self.odr, hash, number)
+	block, err := GetBlockNoVersion(ctx, self.odr, hash, number)
 	if err != nil {
 		return nil, err
 	}
+
 	// Cache the found block for next time and return
-	self.blockCache.Add(block.Hash(), block)
+	self.blockCache.Add(block.SetVersion(self.RetrieveHeaderVersion(block.Number())), block)
 	return block, nil
 }
 
@@ -362,7 +367,7 @@ func (self *LightChain) InsertHeaderChain(chain []*types.Header, checkFreq int) 
 	whFunc := func(header *types.Header) error {
 		self.mu.Lock()
 		defer self.mu.Unlock()
-
+		header.Version = self.RetrieveHeaderVersion(header.Number)
 		status, err := self.hc.WriteHeader(header)
 
 		switch status {

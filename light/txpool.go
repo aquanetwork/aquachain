@@ -110,7 +110,8 @@ func NewTxPool(config *params.ChainConfig, chain *LightChain, relay TxRelayBacke
 
 // currentState returns the light state of the current head header
 func (pool *TxPool) currentState(ctx context.Context) *state.StateDB {
-	return NewState(ctx, pool.chain.CurrentHeader(), pool.odr)
+	head := pool.chain.CurrentHeader()
+	return NewState(ctx, head, pool.chain.Config().GetBlockVersion(head.Number), pool.odr)
 }
 
 // GetNonce returns the "pending" nonce of a given address. It always queries
@@ -166,10 +167,11 @@ func (pool *TxPool) checkMinedTxs(ctx context.Context, hash common.Hash, number 
 	if len(pool.pending) == 0 {
 		return nil
 	}
-	block, err := GetBlock(ctx, pool.odr, hash, number)
+	block, err := GetBlockNoVersion(ctx, pool.odr, hash, number)
 	if err != nil {
 		return err
 	}
+	block.SetVersion(pool.config.GetBlockVersion(block.Number()))
 	// Gather all the local transaction mined in this block
 	list := pool.mined[hash]
 	for _, tx := range block.Transactions() {

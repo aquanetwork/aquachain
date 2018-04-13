@@ -18,6 +18,7 @@ package les
 
 import (
 	"context"
+	"math/big"
 	"testing"
 	"time"
 
@@ -27,6 +28,7 @@ import (
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/light"
+	"github.com/aquanetwork/aquachain/params"
 )
 
 var testBankSecureTrieKey = secAddr(testBankAddress)
@@ -58,7 +60,10 @@ func TestTrieEntryAccessLes1(t *testing.T) { testAccess(t, 1, tfTrieEntryAccess)
 func TestTrieEntryAccessLes2(t *testing.T) { testAccess(t, 2, tfTrieEntryAccess) }
 
 func tfTrieEntryAccess(db aquadb.Database, bhash common.Hash, number uint64) light.OdrRequest {
-	return &light.TrieRequest{Id: light.StateTrieID(core.GetHeader(db, bhash, core.GetBlockNumber(db, bhash))), Key: testBankSecureTrieKey}
+	return &light.TrieRequest{
+		Id: light.StateTrieID(core.GetHeaderNoVersion(db, bhash, core.GetBlockNumber(db, bhash)),
+			params.TestChainConfig.GetBlockVersion(big.NewInt(int64(core.GetBlockNumber(db, bhash))))),
+		Key: testBankSecureTrieKey}
 }
 
 func TestCodeAccessLes1(t *testing.T) { testAccess(t, 1, tfCodeAccess) }
@@ -66,11 +71,11 @@ func TestCodeAccessLes1(t *testing.T) { testAccess(t, 1, tfCodeAccess) }
 func TestCodeAccessLes2(t *testing.T) { testAccess(t, 2, tfCodeAccess) }
 
 func tfCodeAccess(db aquadb.Database, bhash common.Hash, number uint64) light.OdrRequest {
-	header := core.GetHeader(db, bhash, core.GetBlockNumber(db, bhash))
+	header := core.GetHeaderNoVersion(db, bhash, core.GetBlockNumber(db, bhash))
 	if header.Number.Uint64() < testContractDeployed {
 		return nil
 	}
-	sti := light.StateTrieID(header)
+	sti := light.StateTrieID(header, params.TestChainConfig.GetBlockVersion(header.Number))
 	ci := light.StorageTrieID(sti, crypto.Keccak256Hash(testContractAddr[:]), common.Hash{})
 	return &light.CodeRequest{Id: ci, Hash: crypto.Keccak256Hash(testContractCodeDeployed)}
 }
@@ -82,7 +87,10 @@ func testAccess(t *testing.T, protocol int, fn accessTestFn) {
 	rm := newRetrieveManager(peers, dist, nil)
 	db, _ := aquadb.NewMemDatabase()
 	ldb, _ := aquadb.NewMemDatabase()
-	odr := NewLesOdr(ldb, light.NewChtIndexer(db, true), light.NewBloomTrieIndexer(db, true), aqua.NewBloomIndexer(db, light.BloomTrieFrequency), rm)
+	odr := NewLesOdr(params.TestChainConfig.GetBlockVersion, ldb,
+		light.NewChtIndexer(params.TestChainConfig, db, true),
+		light.NewBloomTrieIndexer(params.TestChainConfig, db, true),
+		aqua.NewBloomIndexer(params.TestChainConfig, db, light.BloomTrieFrequency), rm)
 
 	pm := newTestProtocolManagerMust(t, false, 4, testChainGen, nil, nil, db)
 	lpm := newTestProtocolManagerMust(t, true, 0, nil, peers, odr, ldb)

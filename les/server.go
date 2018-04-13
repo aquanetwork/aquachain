@@ -60,14 +60,14 @@ func NewLesServer(aqua *aqua.AquaChain, config *aqua.Config) (*LesServer, error)
 	for i, pv := range AdvertiseProtocolVersions {
 		lesTopics[i] = lesTopic(aqua.BlockChain().Genesis().Hash(), pv)
 	}
-
+	cfg := aqua.BlockChain().Config()
 	srv := &LesServer{
 		config:           config,
 		protocolManager:  pm,
 		quitSync:         quitSync,
 		lesTopics:        lesTopics,
-		chtIndexer:       light.NewChtIndexer(aqua.ChainDb(), false),
-		bloomTrieIndexer: light.NewBloomTrieIndexer(aqua.ChainDb(), false),
+		chtIndexer:       light.NewChtIndexer(cfg, aqua.ChainDb(), false),
+		bloomTrieIndexer: light.NewBloomTrieIndexer(cfg, aqua.ChainDb(), false),
 	}
 	logger := log.New()
 
@@ -333,7 +333,7 @@ func (pm *ProtocolManager) blockLoop() {
 					if td != nil && td.Cmp(lastBroadcastTd) > 0 {
 						var reorg uint64
 						if lastHead != nil {
-							reorg = lastHead.Number.Uint64() - core.FindCommonAncestor(pm.chainDb, header, lastHead).Number.Uint64()
+							reorg = lastHead.Number.Uint64() - core.FindCommonAncestor(pm.chainDb, header, lastHead, pm.chainConfig.GetBlockVersion).Number.Uint64()
 						}
 						lastHead = header
 						lastBroadcastTd = td

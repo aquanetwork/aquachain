@@ -93,7 +93,7 @@ func odrAccounts(ctx context.Context, db aquadb.Database, config *params.ChainCo
 			st, err = state.New(header.Root, state.NewDatabase(db))
 		} else {
 			header := lc.GetHeaderByHash(bhash)
-			st = light.NewState(ctx, header, lc.Odr())
+			st = light.NewState(ctx, header, bc.Config().GetBlockVersion(header.Number), lc.Odr())
 		}
 		if err == nil {
 			bal := st.GetBalance(addr)
@@ -140,7 +140,7 @@ func odrContractCall(ctx context.Context, db aquadb.Database, config *params.Cha
 			}
 		} else {
 			header := lc.GetHeaderByHash(bhash)
-			state := light.NewState(ctx, header, lc.Odr())
+			state := light.NewState(ctx, header, lc.Config().GetBlockVersion(header.Number), lc.Odr())
 			state.SetBalance(testBankAddress, math.MaxBig256)
 			msg := callmsg{types.NewMessage(testBankAddress, &testContractAddr, 0, new(big.Int), 100000, new(big.Int), data, false)}
 			context := core.NewEVMContext(msg, header, lc, nil)
@@ -162,7 +162,7 @@ func testOdr(t *testing.T, protocol int, expFail uint64, fn odrTestFn) {
 	rm := newRetrieveManager(peers, dist, nil)
 	db, _ := aquadb.NewMemDatabase()
 	ldb, _ := aquadb.NewMemDatabase()
-	odr := NewLesOdr(ldb, light.NewChtIndexer(db, true), light.NewBloomTrieIndexer(db, true), aqua.NewBloomIndexer(db, light.BloomTrieFrequency), rm)
+	odr := NewLesOdr(params.TestChainConfig.GetBlockVersion, ldb, light.NewChtIndexer(params.TestChainConfig, db, true), light.NewBloomTrieIndexer(params.TestChainConfig, db, true), aqua.NewBloomIndexer(params.TestChainConfig, db, light.BloomTrieFrequency), rm)
 	pm := newTestProtocolManagerMust(t, false, 4, testChainGen, nil, nil, db)
 	lpm := newTestProtocolManagerMust(t, true, 0, nil, peers, odr, ldb)
 	_, err1, lpeer, err2 := newTestPeerPair("peer", protocol, pm, lpm)
