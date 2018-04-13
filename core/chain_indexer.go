@@ -28,6 +28,7 @@ import (
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/event"
 	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/params"
 )
 
 // ChainIndexerBackend defines the methods needed to process chain segments in
@@ -48,9 +49,8 @@ type ChainIndexerBackend interface {
 
 // ChainIndexerChain interface is used for connecting the indexer to a blockchain
 type ChainIndexerChain interface {
-	// CurrentHeader retrieves the latest locally known header.
+	// CurrentHeader retrieves the latest locally known header complete with version.
 	CurrentHeader() *types.Header
-
 	// SubscribeChainEvent subscribes to new head header notifications.
 	SubscribeChainEvent(ch chan<- ChainEvent) event.Subscription
 }
@@ -69,10 +69,10 @@ type ChainIndexer struct {
 	indexDb  aquadb.Database     // Prefixed table-view of the db to write index metadata into
 	backend  ChainIndexerBackend // Background processor generating the index data content
 	children []*ChainIndexer     // Child indexers to cascade chain updates to
-
-	active uint32          // Flag whether the event loop was started
-	update chan struct{}   // Notification channel that headers should be processed
-	quit   chan chan error // Quit channel to tear down running goroutines
+	config   *params.ChainConfig
+	active   uint32          // Flag whether the event loop was started
+	update   chan struct{}   // Notification channel that headers should be processed
+	quit     chan chan error // Quit channel to tear down running goroutines
 
 	sectionSize uint64 // Number of blocks in a single chain segment to process
 	confirmsReq uint64 // Number of confirmations before processing a completed segment
@@ -90,9 +90,10 @@ type ChainIndexer struct {
 // NewChainIndexer creates a new chain indexer to do background processing on
 // chain segments of a given size after certain number of confirmations passed.
 // The throttling parameter might be used to prevent database thrashing.
-func NewChainIndexer(chainDb, indexDb aquadb.Database, backend ChainIndexerBackend, section, confirm uint64, throttling time.Duration, kind string) *ChainIndexer {
+func NewChainIndexer(config *params.ChainConfig, chainDb, indexDb aquadb.Database, backend ChainIndexerBackend, section, confirm uint64, throttling time.Duration, kind string) *ChainIndexer {
 	c := &ChainIndexer{
 		chainDb:     chainDb,
+		config:      config,
 		indexDb:     indexDb,
 		backend:     backend,
 		update:      make(chan struct{}, 1),
@@ -177,6 +178,7 @@ func (c *ChainIndexer) eventLoop(currentHeader *types.Header, events chan ChainE
 	atomic.StoreUint32(&c.active, 1)
 
 	defer sub.Unsubscribe()
+	currentHeader.Version = c.config.GetBlockVersion(currentHeader.Number)
 
 	// Fire the initial new head event to start any outstanding processing
 	c.newHead(currentHeader.Number.Uint64(), false)
@@ -200,19 +202,19 @@ func (c *ChainIndexer) eventLoop(currentHeader *types.Header, events chan ChainE
 				return
 			}
 			header := ev.Block.Header()
+			header.Version = c.config.GetBlockVersion(header.Number)
 			if header.ParentHash != prevHash {
 				// Reorg to the common ancestor (might not exist in light sync mode, skip reorg then)
 				// TODO(karalabe, zsfelfoldi): This seems a bit brittle, can we detect this case explicitly?
 
 				// TODO(karalabe): This operation is expensive and might block, causing the event system to
 				// potentially also lock up. We need to do with on a different thread somehow.
-				if h := FindCommonAncestor(c.chainDb, prevHeader, header); h != nil {
+				if h := FindCommonAncestor(c.chainDb, prevHeader, header, c.config.GetBlockVersion); h != nil {
 					c.newHead(h.Number.Uint64(), true)
 				}
 			}
 			c.newHead(header.Number.Uint64(), false)
-
-			prevHeader, prevHash = header, header.Hash()
+			prevHeader, prevHash = header, header.SetVersion(byte(c.config.GetBlockVersion(header.Number)))
 		}
 	}
 }
@@ -353,12 +355,13 @@ func (c *ChainIndexer) processSection(section uint64, lastHead common.Hash) (com
 		if hash == (common.Hash{}) {
 			return common.Hash{}, fmt.Errorf("canonical block #%d unknown", number)
 		}
-		header := GetHeader(c.chainDb, hash, number)
+		header := GetHeaderNoVersion(c.chainDb, hash, number)
 		if header == nil {
 			return common.Hash{}, fmt.Errorf("block #%d [%x…] not found", number, hash[:4])
 		} else if header.ParentHash != lastHead {
 			return common.Hash{}, fmt.Errorf("chain reorged during section processing")
 		}
+		header.Version = c.config.GetBlockVersion(header.Number)
 		c.backend.Process(header)
 		lastHead = header.Hash()
 	}

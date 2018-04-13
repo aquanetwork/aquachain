@@ -19,6 +19,7 @@ package fetcher
 
 import (
 	"errors"
+	"math/big"
 	"math/rand"
 	"time"
 
@@ -26,6 +27,7 @@ import (
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/params"
 	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
 )
 
@@ -130,12 +132,13 @@ type Fetcher struct {
 	queued map[common.Hash]*inject // Set of already queued blocks (to dedup imports)
 
 	// Callbacks
-	getBlock       blockRetrievalFn   // Retrieves a block from the local chain
-	verifyHeader   headerVerifierFn   // Checks if a block's headers have a valid proof of work
-	broadcastBlock blockBroadcasterFn // Broadcasts a block to connected peers
-	chainHeight    chainHeightFn      // Retrieves the current chain's height
-	insertChain    chainInsertFn      // Injects a batch of blocks into the chain
-	dropPeer       peerDropFn         // Drops a peer for misbehaving
+	getBlock       blockRetrievalFn                    // Retrieves a block from the local chain
+	verifyHeader   headerVerifierFn                    // Checks if a block's headers have a valid proof of work
+	broadcastBlock blockBroadcasterFn                  // Broadcasts a block to connected peers
+	chainHeight    chainHeightFn                       // Retrieves the current chain's height
+	insertChain    chainInsertFn                       // Injects a batch of blocks into the chain
+	dropPeer       peerDropFn                          // Drops a peer for misbehaving
+	hashFunc       func(*big.Int) params.HeaderVersion // Chooses a hashing algorith
 
 	// Testing hooks
 	announceChangeHook func(common.Hash, bool) // Method to call upon adding or deleting a hash from the announce list
@@ -146,8 +149,9 @@ type Fetcher struct {
 }
 
 // New creates a block fetcher to retrieve blocks based on hash announcements.
-func New(getBlock blockRetrievalFn, verifyHeader headerVerifierFn, broadcastBlock blockBroadcasterFn, chainHeight chainHeightFn, insertChain chainInsertFn, dropPeer peerDropFn) *Fetcher {
+func New(hashfunc func(*big.Int) params.HeaderVersion, getBlock blockRetrievalFn, verifyHeader headerVerifierFn, broadcastBlock blockBroadcasterFn, chainHeight chainHeightFn, insertChain chainInsertFn, dropPeer peerDropFn) *Fetcher {
 	return &Fetcher{
+		hashFunc:       hashfunc,
 		notify:         make(chan *announce),
 		inject:         make(chan *inject),
 		blockFilter:    make(chan chan []*types.Block),
@@ -443,6 +447,7 @@ func (f *Fetcher) loop() {
 			// known incomplete ones (requiring body retrievals) and completed blocks.
 			unknown, incomplete, complete := []*types.Header{}, []*announce{}, []*types.Block{}
 			for _, header := range task.headers {
+				header.SetVersion(byte(f.hashFunc(header.Number)))
 				hash := header.Hash()
 
 				// Filter fetcher-requested headers from other synchronisation algorithms

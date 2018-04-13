@@ -348,14 +348,17 @@ func (es *EventSystem) lightFilterNewHead(newHeader *types.Header, callBack func
 	for oldh.Hash() != newh.Hash() {
 		if oldh.Number.Uint64() >= newh.Number.Uint64() {
 			oldHeaders = append(oldHeaders, oldh)
-			oldh = core.GetHeader(es.backend.ChainDb(), oldh.ParentHash, oldh.Number.Uint64()-1)
+			oldh = core.GetHeaderNoVersion(es.backend.ChainDb(), oldh.ParentHash, oldh.Number.Uint64()-1)
+			oldh.Version = es.backend.GetHeaderVersion(oldh.Number)
 		}
 		if oldh.Number.Uint64() < newh.Number.Uint64() {
 			newHeaders = append(newHeaders, newh)
-			newh = core.GetHeader(es.backend.ChainDb(), newh.ParentHash, newh.Number.Uint64()-1)
+			newh = core.GetHeaderNoVersion(es.backend.ChainDb(), newh.ParentHash, newh.Number.Uint64()-1)
 			if newh == nil {
 				// happens when CHT syncing, nothing to do
 				newh = oldh
+			} else {
+				newh.Version = es.backend.GetHeaderVersion(newh.Number)
 			}
 		}
 	}

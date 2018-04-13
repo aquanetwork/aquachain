@@ -84,6 +84,7 @@ type BlockChain interface {
 	GetBlockHashesFromHash(hash common.Hash, max uint64) []common.Hash
 	Genesis() *types.Block
 	SubscribeChainHeadEvent(ch chan<- core.ChainHeadEvent) event.Subscription
+	RetrieveHeaderVersion(*big.Int) params.HeaderVersion
 }
 
 type txPool interface {
@@ -578,7 +579,8 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 		}
 		for _, req := range req.Reqs {
 			// Retrieve the requested state entry, stopping if enough was found
-			if header := core.GetHeader(pm.chainDb, req.BHash, core.GetBlockNumber(pm.chainDb, req.BHash)); header != nil {
+			if header := core.GetHeaderNoVersion(pm.chainDb, req.BHash, core.GetBlockNumber(pm.chainDb, req.BHash)); header != nil {
+				header.Version = pm.chainConfig.GetBlockVersion(header.Number)
 				statedb, err := pm.blockchain.State()
 				if err != nil {
 					continue
@@ -704,7 +706,8 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 		}
 		for _, req := range req.Reqs {
 			// Retrieve the requested state entry, stopping if enough was found
-			if header := core.GetHeader(pm.chainDb, req.BHash, core.GetBlockNumber(pm.chainDb, req.BHash)); header != nil {
+			if header := core.GetHeaderNoVersion(pm.chainDb, req.BHash, core.GetBlockNumber(pm.chainDb, req.BHash)); header != nil {
+				header.Version = pm.chainConfig.GetBlockVersion(header.Number)
 				statedb, err := pm.blockchain.State()
 				if err != nil {
 					continue
@@ -762,7 +765,8 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 			if statedb == nil || req.BHash != lastBHash {
 				statedb, root, lastBHash = nil, common.Hash{}, req.BHash
 
-				if header := core.GetHeader(pm.chainDb, req.BHash, core.GetBlockNumber(pm.chainDb, req.BHash)); header != nil {
+				if header := core.GetHeaderNoVersion(pm.chainDb, req.BHash, core.GetBlockNumber(pm.chainDb, req.BHash)); header != nil {
+					// dont need version for state root
 					statedb, _ = pm.blockchain.State()
 					root = header.Root
 				}

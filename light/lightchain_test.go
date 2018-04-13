@@ -244,13 +244,15 @@ func TestBrokenHeaderChain(t *testing.T) {
 func makeHeaderChainWithDiff(genesis *types.Block, d []int, seed byte) []*types.Header {
 	var chain []*types.Header
 	for i, difficulty := range d {
+		number := big.NewInt(int64(i + 1))
 		header := &types.Header{
 			Coinbase:    common.Address{seed},
-			Number:      big.NewInt(int64(i + 1)),
+			Number:      number,
 			Difficulty:  big.NewInt(int64(difficulty)),
 			UncleHash:   types.EmptyUncleHash,
 			TxHash:      types.EmptyRootHash,
 			ReceiptHash: types.EmptyRootHash,
+			Version:     params.TestChainConfig.GetBlockVersion(number),
 		}
 		if i == 0 {
 			header.ParentHash = genesis.Hash()
@@ -331,7 +333,7 @@ func TestReorgBadHeaderHashes(t *testing.T) {
 	if _, err := bc.InsertHeaderChain(headers, 1); err != nil {
 		t.Fatalf("failed to import headers: %v", err)
 	}
-	if bc.CurrentHeader().Hash() != headers[3].Hash() {
+	if bc.CurrentHeader().Hash() != headers[3].SetVersion(byte(bc.RetrieveHeaderVersion(headers[3].Number))) {
 		t.Errorf("last header hash mismatch: have: %x, want %x", bc.CurrentHeader().Hash(), headers[3].Hash())
 	}
 	core.BadHashes[headers[3].Hash()] = true

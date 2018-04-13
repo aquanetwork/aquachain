@@ -126,7 +126,7 @@ type ChtIndexerBackend struct {
 }
 
 // NewBloomTrieIndexer creates a BloomTrie chain indexer
-func NewChtIndexer(db aquadb.Database, clientMode bool) *core.ChainIndexer {
+func NewChtIndexer(cfg *params.ChainConfig, db aquadb.Database, clientMode bool) *core.ChainIndexer {
 	var sectionSize, confirmReq uint64
 	if clientMode {
 		sectionSize = CHTFrequencyClient
@@ -141,7 +141,7 @@ func NewChtIndexer(db aquadb.Database, clientMode bool) *core.ChainIndexer {
 		triedb:      trie.NewDatabase(aquadb.NewTable(db, ChtTablePrefix)),
 		sectionSize: sectionSize,
 	}
-	return core.NewChainIndexer(db, idb, backend, sectionSize, confirmReq, time.Millisecond*100, "cht")
+	return core.NewChainIndexer(cfg, db, idb, backend, sectionSize, confirmReq, time.Millisecond*100, "cht")
 }
 
 // Reset implements core.ChainIndexerBackend
@@ -222,7 +222,7 @@ type BloomTrieIndexerBackend struct {
 }
 
 // NewBloomTrieIndexer creates a BloomTrie chain indexer
-func NewBloomTrieIndexer(db aquadb.Database, clientMode bool) *core.ChainIndexer {
+func NewBloomTrieIndexer(cfg *params.ChainConfig, db aquadb.Database, clientMode bool) *core.ChainIndexer {
 	backend := &BloomTrieIndexerBackend{
 		diskdb: db,
 		triedb: trie.NewDatabase(aquadb.NewTable(db, BloomTrieTablePrefix)),
@@ -239,7 +239,7 @@ func NewBloomTrieIndexer(db aquadb.Database, clientMode bool) *core.ChainIndexer
 	}
 	backend.bloomTrieRatio = BloomTrieFrequency / backend.parentSectionSize
 	backend.sectionHeads = make([]common.Hash, backend.bloomTrieRatio)
-	return core.NewChainIndexer(db, idb, backend, BloomTrieFrequency, confirmReq-ethBloomBitsConfirmations, time.Millisecond*100, "bloomtrie")
+	return core.NewChainIndexer(cfg, db, idb, backend, BloomTrieFrequency, confirmReq-ethBloomBitsConfirmations, time.Millisecond*100, "bloomtrie")
 }
 
 // Reset implements core.ChainIndexerBackend

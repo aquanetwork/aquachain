@@ -339,7 +339,9 @@ func (bc *BlockChain) GasLimit() uint64 {
 // CurrentBlock retrieves the current head block of the canonical chain. The
 // block is retrieved from the blockchain's internal cache.
 func (bc *BlockChain) CurrentBlock() *types.Block {
-	return bc.currentBlock.Load().(*types.Block)
+	b := bc.currentBlock.Load().(*types.Block)
+	b.SetVersion(bc.Config().GetBlockVersion(b.Number()))
+	return b
 }
 
 // CurrentFastBlock retrieves the current fast-sync head block of the canonical
@@ -500,6 +502,11 @@ func (bc *BlockChain) Genesis() *types.Block {
 	return bc.genesisBlock
 }
 
+// RetrieveHeaderVersion returns the version byte for the given height
+func (bc *BlockChain) RetrieveHeaderVersion(height *big.Int) params.HeaderVersion {
+	return bc.Config().GetBlockVersion(height)
+}
+
 // GetBody retrieves a block body (transactions and uncles) from the database by
 // hash, caching it if found.
 func (bc *BlockChain) GetBody(hash common.Hash) *types.Body {
@@ -508,9 +515,13 @@ func (bc *BlockChain) GetBody(hash common.Hash) *types.Body {
 		body := cached.(*types.Body)
 		return body
 	}
-	body := GetBody(bc.db, hash, bc.hc.GetBlockNumber(hash))
+	body := GetBodyNoVersion(bc.db, hash, bc.hc.GetBlockNumber(hash))
 	if body == nil {
 		return nil
+	}
+
+	for i := range body.Uncles {
+		body.Uncles[i].Version = bc.RetrieveHeaderVersion(body.Uncles[0].Number) // only one version
 	}
 	// Cache the found body for next time and return
 	bc.bodyCache.Add(hash, body)
@@ -556,22 +567,24 @@ func (bc *BlockChain) HasBlockAndState(hash common.Hash, number uint64) bool {
 	if block == nil {
 		return false
 	}
+	block.SetVersion(bc.RetrieveHeaderVersion(block.Number()))
 	return bc.HasState(block.Root())
 }
 
 // GetBlock retrieves a block from the database by hash and number,
-// caching it if found.
+// caching it if found, adding the correct version
 func (bc *BlockChain) GetBlock(hash common.Hash, number uint64) *types.Block {
 	// Short circuit if the block's already in the cache, retrieve otherwise
 	if block, ok := bc.blockCache.Get(hash); ok {
 		return block.(*types.Block)
 	}
-	block := GetBlock(bc.db, hash, number)
+	block := GetBlockNoVersion(bc.db, hash, number)
 	if block == nil {
 		return nil
 	}
+	hashv := block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
 	// Cache the found block for next time and return
-	bc.blockCache.Add(block.Hash(), block)
+	bc.blockCache.Add(hashv, block)
 	return block
 }
 
@@ -653,7 +666,7 @@ func (bc *BlockChain) Stop() {
 			if number := bc.CurrentBlock().NumberU64(); number > offset {
 				recent := bc.GetBlockByNumber(number - offset)
 
-				log.Info("Writing cached state to disk", "block", recent.Number(), "hash", recent.Hash(), "root", recent.Root())
+				log.Info("Writing cached state to disk", "block", recent.Number(), "hash", recent.SetVersion(bc.RetrieveHeaderVersion(recent.Number())), "root", recent.Root())
 				if err := triedb.Commit(recent.Root(), true); err != nil {
 					log.Error("Failed to commit recent state trie", "err", err)
 				}
@@ -882,7 +895,7 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	externTd := new(big.Int).Add(block.Difficulty(), ptd)
 
 	// Irrelevant of the canonical status, write the block itself to the database
-	if err := bc.hc.WriteTd(block.Hash(), block.NumberU64(), externTd); err != nil {
+	if err := bc.hc.WriteTd(block.SetVersion(bc.chainConfig.GetBlockVersion(block.Number())), block.NumberU64(), externTd); err != nil {
 		return NonStatTy, err
 	}
 	// Write other block data using a batch.
@@ -1007,7 +1020,7 @@ func (bc *BlockChain) InsertChain(chain types.Blocks) (int, error) {
 func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*types.Log, error) {
 	// Do a sanity check that the provided chain is actually ordered and linked
 	for i := 1; i < len(chain); i++ {
-		if chain[i].NumberU64() != chain[i-1].NumberU64()+1 || chain[i].ParentHash() != chain[i-1].Hash() {
+		if chain[i].NumberU64() != chain[i-1].NumberU64()+1 || chain[i].ParentHash() != chain[i-1].SetVersion(bc.chainConfig.GetBlockVersion(chain[i-1].Number())) {
 			// Chain broke ancestry, log a messge (programming error) and skip insertion
 			log.Error("Non contiguous block insert", "number", chain[i].Number(), "hash", chain[i].Hash(),
 				"parent", chain[i].ParentHash(), "prevnumber", chain[i-1].Number(), "prevhash", chain[i-1].Hash())
@@ -1045,6 +1058,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
+		block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
 		// If the chain is terminating, stop processing blocks
 		if atomic.LoadInt32(&bc.procInterrupt) == 1 {
 			log.Debug("Premature abort during blocks processing")
@@ -1060,6 +1074,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 		err := <-results
 		if err == nil {
+			block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
 			err = bc.Validator().ValidateBody(block)
 		}
 		switch {

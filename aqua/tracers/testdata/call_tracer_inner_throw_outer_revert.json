@@ -41,7 +41,8 @@
       "eip155Block": 10,
       "eip158Block": 10,
       "aquahash": {},
-      "homesteadBlock": 0
+      "homesteadBlock": 0,
+      "hf": {"0":1,"1":1,"2":2,"3":3,"4":4,"5":5}
     },
     "difficulty": "3956606365",
     "extraData": "0x566961425443",

@@ -18,6 +18,7 @@ package aquahash
 
 import (
 	crand "crypto/rand"
+	"encoding/binary"
 	"math"
 	"math/big"
 	"math/rand"
@@ -27,15 +28,22 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/core/types"
+	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/params"
 )
 
 // Seal implements consensus.Engine, attempting to find a nonce that satisfies
 // the block's difficulty requirements.
 func (aquahash *Aquahash) Seal(chain consensus.ChainReader, block *types.Block, stop <-chan struct{}) (*types.Block, error) {
 	// If we're running a fake PoW, simply return a 0 nonce immediately
+	chaincfg := params.TestChainConfig
+	if chain != nil {
+		chaincfg = chain.Config()
+	}
 	if aquahash.config.PowMode == ModeFake || aquahash.config.PowMode == ModeFullFake {
 		header := block.Header()
+		header.Version = chaincfg.GetBlockVersion(header.Number)
 		header.Nonce, header.MixDigest = types.BlockNonce{}, common.Hash{}
 		return block.WithSeal(header), nil
 	}
@@ -65,11 +73,12 @@ func (aquahash *Aquahash) Seal(chain consensus.ChainReader, block *types.Block, 
 		threads = 0 // Allows disabling local mining without extra logic around local/remote
 	}
 	var pend sync.WaitGroup
+	version := chaincfg.GetBlockVersion(block.Number())
 	for i := 0; i < threads; i++ {
 		pend.Add(1)
 		go func(id int, nonce uint64) {
 			defer pend.Done()
-			aquahash.mine(block, id, nonce, abort, found)
+			aquahash.mine(version, block, id, nonce, abort, found)
 		}(i, uint64(aquahash.rand.Int63()))
 	}
 	// Wait until sealing is terminated or a nonce is found
@@ -94,7 +103,7 @@ func (aquahash *Aquahash) Seal(chain consensus.ChainReader, block *types.Block, 
 
 // mine is the actual proof-of-work miner that searches for a nonce starting from
 // seed that results in correct final block difficulty.
-func (aquahash *Aquahash) mine(block *types.Block, id int, seed uint64, abort chan struct{}, found chan *types.Block) {
+func (aquahash *Aquahash) mine(version params.HeaderVersion, block *types.Block, id int, seed uint64, abort chan struct{}, found chan *types.Block) {
 	// Extract some data from the header
 	var (
 		header  = block.Header()
@@ -103,6 +112,7 @@ func (aquahash *Aquahash) mine(block *types.Block, id int, seed uint64, abort ch
 		number  = header.Number.Uint64()
 		dataset = aquahash.dataset(number)
 	)
+	header.Version = version
 	// Start generating random nonces until we abort or find a good one
 	var (
 		attempts = int64(0)
@@ -112,6 +122,7 @@ func (aquahash *Aquahash) mine(block *types.Block, id int, seed uint64, abort ch
 	logger.Trace("Started aquahash search for new nonces", "seed", seed)
 search:
 	for {
+
 		select {
 		case <-abort:
 			// Mining terminated, update stats and abort
@@ -126,8 +137,26 @@ search:
 				aquahash.hashrate.Mark(attempts)
 				attempts = 0
 			}
+
 			// Compute the PoW value of this nonce
-			digest, result := hashimotoFull(dataset.dataset, hash, nonce)
+			var (
+				digest []byte
+				result []byte
+			)
+			switch header.Version {
+			case 1:
+				digest, result = hashimotoFull(dataset.dataset, hash, nonce)
+			case 2:
+				seed := make([]byte, 40)
+				copy(seed, hash)
+				binary.LittleEndian.PutUint64(seed[32:], nonce)
+				result = crypto.Argon2id(seed)
+				digest = make([]byte, common.HashLength)
+			default:
+				common.Report("Mining incorrect version")
+				break search
+			}
+
 			if new(big.Int).SetBytes(result).Cmp(target) <= 0 {
 				// Correct nonce found, create a new header with it
 				header = types.CopyHeader(header)

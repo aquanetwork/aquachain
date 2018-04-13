@@ -34,10 +34,11 @@ func GetHeaderByNumber(ctx context.Context, odr OdrBackend, number uint64) (*typ
 	hash := core.GetCanonicalHash(db, number)
 	if (hash != common.Hash{}) {
 		// if there is a canonical hash, there is a header too
-		header := core.GetHeader(db, hash, number)
+		header := core.GetHeaderNoVersion(db, hash, number)
 		if header == nil {
 			panic("Canonical hash present but header not found")
 		}
+		header.Version = odr.GetHeaderVersion(header.Number)
 		return header, nil
 	}
 
@@ -109,9 +110,9 @@ func GetBody(ctx context.Context, odr OdrBackend, hash common.Hash, number uint6
 
 // GetBlock retrieves an entire block corresponding to the hash, assembling it
 // back from the stored header and body.
-func GetBlock(ctx context.Context, odr OdrBackend, hash common.Hash, number uint64) (*types.Block, error) {
+func GetBlockNoVersion(ctx context.Context, odr OdrBackend, hash common.Hash, number uint64) (*types.Block, error) {
 	// Retrieve the block header and body contents
-	header := core.GetHeader(odr.Database(), hash, number)
+	header := core.GetHeaderNoVersion(odr.Database(), hash, number)
 	if header == nil {
 		return nil, ErrNoHeader
 	}
@@ -137,10 +138,11 @@ func GetBlockReceipts(ctx context.Context, odr OdrBackend, hash common.Hash, num
 	}
 	// If the receipts are incomplete, fill the derived fields
 	if len(receipts) > 0 && receipts[0].TxHash == (common.Hash{}) {
-		block, err := GetBlock(ctx, odr, hash, number)
+		block, err := GetBlockNoVersion(ctx, odr, hash, number)
 		if err != nil {
 			return nil, err
 		}
+		// dont need header version for receipts
 		genesis := core.GetCanonicalHash(odr.Database(), 0)
 		config, _ := core.GetChainConfig(odr.Database(), genesis)
 

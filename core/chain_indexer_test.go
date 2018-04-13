@@ -26,6 +26,7 @@ import (
 	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/types"
+	"github.com/aquanetwork/aquachain/params"
 )
 
 // Runs multiple tests with randomized parameters.
@@ -58,7 +59,7 @@ func testChainIndexer(t *testing.T, count int) {
 			confirmsReq = uint64(rand.Intn(10))
 		)
 		backends[i] = &testChainIndexBackend{t: t, processCh: make(chan uint64)}
-		backends[i].indexer = NewChainIndexer(db, aquadb.NewTable(db, string([]byte{byte(i)})), backends[i], sectionSize, confirmsReq, 0, fmt.Sprintf("indexer-%d", i))
+		backends[i].indexer = NewChainIndexer(params.TestChainConfig, db, aquadb.NewTable(db, string([]byte{byte(i)})), backends[i], sectionSize, confirmsReq, 0, fmt.Sprintf("indexer-%d", i))
 
 		if sections, _, _ := backends[i].indexer.Sections(); sections != 0 {
 			t.Fatalf("Canonical section count mismatch: have %v, want %v", sections, 0)
@@ -89,23 +90,26 @@ func testChainIndexer(t *testing.T, count int) {
 		}
 	}
 	// inject inserts a new random canonical header into the database directly
-	inject := func(number uint64) {
+	inject := func(number uint64, headerVersion params.HeaderVersion) {
 		header := &types.Header{Number: big.NewInt(int64(number)), Extra: big.NewInt(rand.Int63()).Bytes()}
 		if number > 0 {
 			header.ParentHash = GetCanonicalHash(db, number-1)
+			header.Version = headerVersion
 		}
 		WriteHeader(db, header)
 		WriteCanonicalHash(db, header.Hash(), number)
 	}
 	// Start indexer with an already existing chain
 	for i := uint64(0); i <= 100; i++ {
-		inject(i)
+		version := params.TestChainConfig.GetBlockVersion(new(big.Int).SetUint64(i))
+		inject(i, version)
 	}
 	notify(100, 100, false)
 
 	// Add new blocks one by one
 	for i := uint64(101); i <= 1000; i++ {
-		inject(i)
+		version := params.TestChainConfig.GetBlockVersion(new(big.Int).SetUint64(i))
+		inject(i, version)
 		notify(i, i, false)
 	}
 	// Do a reorg
@@ -113,11 +117,13 @@ func testChainIndexer(t *testing.T, count int) {
 
 	// Create new fork
 	for i := uint64(501); i <= 1000; i++ {
-		inject(i)
+		version := params.TestChainConfig.GetBlockVersion(new(big.Int).SetUint64(i))
+		inject(i, version)
 		notify(i, i, false)
 	}
 	for i := uint64(1001); i <= 1500; i++ {
-		inject(i)
+		version := params.TestChainConfig.GetBlockVersion(new(big.Int).SetUint64(i))
+		inject(i, version)
 	}
 	// Failed processing scenario where less blocks are available than notified
 	notify(2000, 1500, false)
@@ -127,7 +133,8 @@ func testChainIndexer(t *testing.T, count int) {
 
 	// Create new fork
 	for i := uint64(1501); i <= 2000; i++ {
-		inject(i)
+		version := params.TestChainConfig.GetBlockVersion(new(big.Int).SetUint64(i))
+		inject(i, version)
 		notify(i, i, false)
 	}
 }

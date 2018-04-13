@@ -132,7 +132,7 @@ func New(ctx *node.ServiceContext, config *Config) (*AquaChain, error) {
 		gasPrice:       config.GasPrice,
 		aquabase:       config.Aquabase,
 		bloomRequests:  make(chan chan *bloombits.Retrieval),
-		bloomIndexer:   NewBloomIndexer(chainDb, params.BloomBitsBlocks),
+		bloomIndexer:   NewBloomIndexer(chainConfig, chainDb, params.BloomBitsBlocks),
 	}
 
 	log.Info("Initialising AquaChain protocol", "versions", ProtocolVersions, "network", config.NetworkId)

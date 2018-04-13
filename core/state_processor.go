@@ -62,7 +62,7 @@ func (p *StateProcessor) Process(block *types.Block, statedb *state.StateDB, cfg
 		gp       = new(GasPool).AddGas(block.GasLimit())
 	)
 	// Mutate the the block and state according to any hard-fork specs
-	if params.AquachainHF[4].Cmp(header.Number) == 0 {
+	if hf4 := p.config.GetHF(4); hf4 != nil && hf4.Cmp(header.Number) == 0 {
 		misc.ApplyHardFork4(statedb)
 	}
 	// Iterate over and process the individual transactions

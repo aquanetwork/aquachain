@@ -26,6 +26,7 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/types"
+	"github.com/aquanetwork/aquachain/params"
 )
 
 // NoOdr is the default context passed to an ODR capable function when the ODR
@@ -39,6 +40,7 @@ type OdrBackend interface {
 	BloomTrieIndexer() *core.ChainIndexer
 	BloomIndexer() *core.ChainIndexer
 	Retrieve(ctx context.Context, req OdrRequest) error
+	GetHeaderVersion(*big.Int) params.HeaderVersion
 }
 
 // OdrRequest is an interface for retrieval requests

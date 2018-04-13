@@ -292,7 +292,7 @@ func benchReadChain(b *testing.B, full bool, count uint64) {
 			header := chain.GetHeaderByNumber(n)
 			if full {
 				hash := header.Hash()
-				GetBody(db, hash, n)
+				GetBodyNoVersion(db, hash, n)
 				GetBlockReceipts(db, hash, n)
 			}
 		}

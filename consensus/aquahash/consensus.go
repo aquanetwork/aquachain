@@ -18,6 +18,7 @@ package aquahash
 
 import (
 	"bytes"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"math/big"
@@ -27,10 +28,11 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/math"
 	"github.com/aquanetwork/aquachain/consensus"
-	"github.com/aquanetwork/aquachain/consensus/misc"
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
+	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/params"
+
 	set "gopkg.in/fatih/set.v0"
 )
 
@@ -39,7 +41,7 @@ var (
 	BlockReward            *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block
 	ByzantiumBlockReward   *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block upward from Byzantium
 	maxUncles                       = 2                 // Maximum number of uncles allowed in a single block
-	maxUnclesHF5                    = 0                 // Maximum number of uncles allowed in a single block after HF5 is activated
+	maxUnclesHF5                    = 1                 // Maximum number of uncles allowed in a single block after HF5 is activated
 	allowedFutureBlockTime          = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
 )
 
@@ -161,7 +163,7 @@ func (aquahash *Aquahash) verifyHeaderWorker(chain consensus.ChainReader, header
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}
-	if chain.GetHeader(headers[index].Hash(), headers[index].Number.Uint64()) != nil {
+	if chain.GetHeader(headers[index].SetVersion(byte(chain.Config().GetBlockVersion(headers[index].Number))), headers[index].Number.Uint64()) != nil {
 		return nil // known block
 	}
 	return aquahash.verifyHeader(chain, headers[index], parent, false, seals[index])
@@ -179,7 +181,7 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 		return errTooManyUncles
 	}
 	// Verify that there are at most 0 uncles included in this block
-	if chain.Config().IsHF(5, block.Number()) && len(block.Uncles()) > maxUnclesHF5 {
+	if len(block.Uncles()) > maxUnclesHF5 && chain.Config().IsHF(5, block.Number()) {
 		return errTooManyUncles
 	}
 	// Gather the set of past uncles and ancestors
@@ -193,11 +195,11 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 		}
 		ancestors[ancestor.Hash()] = ancestor.Header()
 		for _, uncle := range ancestor.Uncles() {
-			uncles.Add(uncle.Hash())
+			uncles.Add(uncle.SetVersion(byte(chain.Config().GetBlockVersion(uncle.Number))))
 		}
 		parent, number = ancestor.ParentHash(), number-1
 	}
-	ancestors[block.Hash()] = block.Header()
+	ancestors[block.SetVersion(chain.Config().GetBlockVersion(block.Number()))] = block.Header()
 	uncles.Add(block.Hash())
 
 	// Verify each of the uncles that it's recent, but not an ancestor
@@ -222,6 +224,7 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 			case "0x13cb01d5d3566d076b5e128e5733f17968f95329fb1777ff38db53abdcca3e4c":
 			default:
 				println("uncle: " + hash.Hex())
+				common.Report(block)
 				return errUncleIsAncestor
 			}
 		}
@@ -231,8 +234,6 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 				"0x0afd1b00b8e1a49652beeb860e3b58dacc865dd3e3d9d303374ed3ffdfef8eea":
 				return nil
 			default:
-				println("parent: " + uncle.ParentHash.Hex())
-				println("uncle: " + uncle.Hash().Hex())
 				return errDanglingUncle
 			}
 		}
@@ -300,13 +301,6 @@ func (aquahash *Aquahash) verifyHeader(chain consensus.ChainReader, header, pare
 			return err
 		}
 	}
-	// If all checks passed, validate any special fields for hard forks
-	if err := misc.VerifyHFHeaderExtraData(chain.Config(), header); err != nil {
-		return err
-	}
-	if err := misc.VerifyForkHashes(chain.Config(), header, uncle); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -323,255 +317,27 @@ func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint6
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 	switch {
+	case (config.GetHF(5) != nil && next.Cmp(config.GetHF(5)) == 0):
+		return params.MinimumDifficultyHF5 // reset diff since pow is much different
+	case config.IsHF(5, next):
+		//fmt.Println("calcdiff hf5:", next)
+		return calcDifficultyHF5(time, parent)
 	case config.IsHF(3, next):
+		//fmt.Println("calcdiff hf3:", next)
 		return calcDifficultyHF3(time, parent)
 	case config.IsHF(2, next):
+		//fmt.Println("calcdiff hf2:", next)
 		return calcDifficultyHF2(time, parent)
 	case config.IsHF(1, next):
+		//fmt.Println("calcdiff hf1:", next)
 		return calcDifficultyHF1(time, parent)
 	case config.IsHomestead(next):
+		//fmt.Println("calcdiff IsHomestead:", next)
 		return calcDifficultyHomestead(time, parent)
 	default:
+		//fmt.Println("calcdiff default:", next)
 		return calcDifficultyHomestead(time, parent)
 	}
-}
-
-// Some weird constants to avoid constant memory allocs for them.
-var (
-	expDiffPeriod = big.NewInt(100000)
-	big1          = big.NewInt(1)
-	big2          = big.NewInt(2)
-	big9          = big.NewInt(9)
-	big10         = big.NewInt(10)
-	bigMinus99    = big.NewInt(-99)
-	big2999999    = big.NewInt(2999999)
-)
-
-// calcDifficultyByzantium is the difficulty adjustment algorithm. It returns
-// the difficulty that a new block should have when created at time given the
-// parent block's time and difficulty. The calculation uses the Byzantium rules.
-func calcDifficultyByzantium(time uint64, parent *types.Header) *big.Int {
-	// https://github.com/aquanetwork/EIPs/issues/100.
-	// algorithm:
-	// diff = (parent_diff +
-	//         (parent_diff / 2048 * max((2 if len(parent.uncles) else 1) - ((timestamp - parent.timestamp) // 9), -99))
-	//        ) + 2^(periodCount - 2)
-	bigTime := new(big.Int).SetUint64(time)
-	bigParentTime := new(big.Int).Set(parent.Time)
-
-	// holds intermediate values to make the algo easier to read & audit
-	x := new(big.Int)
-	y := new(big.Int)
-
-	// (2 if len(parent_uncles) else 1) - (block_timestamp - parent_timestamp) // 9
-	x.Sub(bigTime, bigParentTime)
-	x.Div(x, big9)
-	if parent.UncleHash == types.EmptyUncleHash {
-		x.Sub(big1, x)
-	} else {
-		x.Sub(big2, x)
-	}
-	// max((2 if len(parent_uncles) else 1) - (block_timestamp - parent_timestamp) // 9, -99)
-	if x.Cmp(bigMinus99) < 0 {
-		x.Set(bigMinus99)
-	}
-	// parent_diff + (parent_diff / 2048 * max((2 if len(parent.uncles) else 1) - ((timestamp - parent.timestamp) // 9), -99))
-	y.Div(parent.Difficulty, params.DifficultyBoundDivisor)
-	x.Mul(y, x)
-	x.Add(parent.Difficulty, x)
-
-	// minimum difficulty can ever be (before exponential factor)
-	if x.Cmp(params.MinimumDifficultyGenesis) < 0 {
-		x.Set(params.MinimumDifficultyGenesis)
-	}
-	// calculate a fake block numer for the ice-age delay:
-	//   https://github.com/aquanetwork/EIPs/pull/669
-	//   fake_block_number = min(0, block.number - 3_000_000
-	fakeBlockNumber := new(big.Int)
-	if parent.Number.Cmp(big2999999) >= 0 {
-		fakeBlockNumber = fakeBlockNumber.Sub(parent.Number, big2999999) // Note, parent is 1 less than the actual block number
-	}
-	// for the exponential factor
-	periodCount := fakeBlockNumber
-	periodCount.Div(periodCount, expDiffPeriod)
-
-	// the exponential factor, commonly referred to as "the bomb"
-	// diff = diff + 2^(periodCount - 2)
-	if periodCount.Cmp(big1) > 0 {
-		y.Sub(periodCount, big2)
-		y.Exp(big2, y, nil)
-		x.Add(x, y)
-	}
-	return x
-}
-
-// calcDifficultyHomestead is the difficulty adjustment algorithm. It returns
-// the difficulty that a new block should have when created at time given the
-// parent block's time and difficulty. The calculation uses the Homestead rules.
-func calcDifficultyHomestead(time uint64, parent *types.Header) *big.Int {
-	// https://github.com/aquanetwork/EIPs/blob/master/EIPS/eip-2.md
-	// algorithm:
-	// diff = (parent_diff +
-	//         (parent_diff / 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
-	//        ) + 2^(periodCount - 2)
-	bigTime := new(big.Int).SetUint64(time)
-	bigParentTime := new(big.Int).Set(parent.Time)
-
-	// holds intermediate values to make the algo easier to read & audit
-	x := new(big.Int)
-	y := new(big.Int)
-
-	// 1 - (block_timestamp - parent_timestamp) // 10
-	x.Sub(bigTime, bigParentTime)
-	x.Div(x, big10)
-	x.Sub(big1, x)
-
-	// max(1 - (block_timestamp - parent_timestamp) // 10, -99)
-	if x.Cmp(bigMinus99) < 0 {
-		x.Set(bigMinus99)
-	}
-	// (parent_diff + parent_diff // 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
-	y.Div(parent.Difficulty, params.DifficultyBoundDivisor)
-	x.Mul(y, x)
-	x.Add(parent.Difficulty, x)
-
-	// minimum difficulty can ever be (before exponential factor)
-	x = math.BigMax(x, params.MinimumDifficultyGenesis)
-
-	periodCount := new(big.Int).Add(parent.Number, big1)
-
-	// for the exponential factor
-	periodCount.Div(periodCount, expDiffPeriod)
-
-	// the exponential factor, commonly referred to as "the bomb"
-	// diff = diff + 2^(periodCount - 2)
-	if periodCount.Cmp(big1) > 0 {
-		y.Sub(periodCount, big2)
-		y.Exp(big2, y, nil)
-		x.Add(x, y)
-	}
-	return x
-}
-
-// calcDifficultyHF1 is the difficulty adjustment algorithm. It returns
-// the difficulty that a new block should have when created at time given the
-// parent block's time and difficulty. The calculation uses modified Homestead rules.
-func calcDifficultyHF1(time uint64, parent *types.Header) *big.Int {
-	bigTime := new(big.Int).SetUint64(time)
-	bigParentTime := new(big.Int).Set(parent.Time)
-
-	// holds intermediate values to make the algo easier to read & audit
-	x := new(big.Int)
-	y := new(big.Int)
-
-	// 1 - (block_timestamp - parent_timestamp) // 10
-	x.Sub(bigTime, bigParentTime)
-	x.Div(x, big10)
-	x.Sub(big1, x)
-
-	// max(1 - (block_timestamp - parent_timestamp) // 10, -99)
-	if x.Cmp(bigMinus99) < 0 {
-		x.Set(bigMinus99)
-	}
-	// (parent_diff + parent_diff // 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
-	y.Div(parent.Difficulty, params.DifficultyBoundDivisor)
-	x.Mul(y, x)
-	x.Add(parent.Difficulty, x)
-
-	// minimum difficulty can ever be (before exponential factor)
-	x = math.BigMax(x, params.MinimumDifficultyHF1)
-
-	// for the exponential factor
-	periodCount := new(big.Int).Add(parent.Number, big1)
-	periodCount.Div(periodCount, expDiffPeriod)
-
-	// the exponential factor, commonly referred to as "the bomb"
-	// diff = diff + 2^(periodCount - 2)
-	if periodCount.Cmp(big1) > 0 {
-		y.Sub(periodCount, big2)
-		y.Exp(big2, y, nil)
-		x.Add(x, y)
-	}
-	return x
-}
-
-// calcDifficultyHF2
-func calcDifficultyHF2(time uint64, parent *types.Header) *big.Int {
-	diff := new(big.Int)
-	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
-	bigTime := new(big.Int)
-	bigParentTime := new(big.Int)
-
-	bigTime.SetUint64(time)
-	bigParentTime.Set(parent.Time)
-
-	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
-		diff.Add(parent.Difficulty, adjust)
-	} else {
-		diff.Sub(parent.Difficulty, adjust)
-	}
-
-	if diff.Cmp(params.MinimumDifficultyHF1) < 0 {
-		diff.Set(params.MinimumDifficultyHF1)
-	}
-
-	return diff
-}
-
-// calcDifficultyHF3
-func calcDifficultyHF3(time uint64, parent *types.Header) *big.Int {
-	diff := new(big.Int)
-	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
-	bigTime := new(big.Int)
-	bigParentTime := new(big.Int)
-
-	bigTime.SetUint64(time)
-	bigParentTime.Set(parent.Time)
-
-	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
-		diff.Add(parent.Difficulty, adjust)
-	} else {
-		diff.Sub(parent.Difficulty, adjust)
-	}
-
-	if diff.Cmp(params.MinimumDifficultyHF3) < 0 {
-		diff.Set(params.MinimumDifficultyHF3)
-	}
-
-	return diff
-}
-
-// calcDifficultyFrontier is the difficulty adjustment algorithm. It returns the
-// difficulty that a new block should have when created at time given the parent
-// block's time and difficulty. The calculation uses the Frontier rules.
-func calcDifficultyFrontier(time uint64, parent *types.Header) *big.Int {
-	diff := new(big.Int)
-	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
-	bigTime := new(big.Int)
-	bigParentTime := new(big.Int)
-
-	bigTime.SetUint64(time)
-	bigParentTime.Set(parent.Time)
-
-	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
-		diff.Add(parent.Difficulty, adjust)
-	} else {
-		diff.Sub(parent.Difficulty, adjust)
-	}
-	if diff.Cmp(params.MinimumDifficultyGenesis) < 0 {
-		diff.Set(params.MinimumDifficultyGenesis)
-	}
-
-	periodCount := new(big.Int).Add(parent.Number, big1)
-	periodCount.Div(periodCount, expDiffPeriod)
-	if periodCount.Cmp(big1) > 0 {
-		// diff = diff + 2^(periodCount - 2)
-		expDiff := periodCount.Sub(periodCount, big2)
-		expDiff.Exp(big2, expDiff, nil)
-		diff.Add(diff, expDiff)
-		diff = math.BigMax(diff, params.MinimumDifficultyGenesis)
-	}
-	return diff
 }
 
 // VerifySeal implements consensus.Engine, checking whether the given block satisfies
@@ -606,12 +372,28 @@ func (aquahash *Aquahash) VerifySeal(chain consensus.ChainReader, header *types.
 	if aquahash.config.PowMode == ModeTest {
 		size = 32 * 1024
 	}
-	digest, result := hashimotoLight(size, cache.cache, header.HashNoNonce().Bytes(), header.Nonce.Uint64())
+	var (
+		digest []byte
+		result []byte
+	)
+	switch header.Version {
+	default: // types.H_UNSET: // 0
+		panic("header version not set")
+	case types.H_KECCAK256: // 1
+		digest, result = hashimotoLight(size, cache.cache, header.HashNoNonce().Bytes(), header.Nonce.Uint64())
+	case types.H_ARGON2ID: // 2
+		seed := make([]byte, 40)
+		copy(seed, header.HashNoNonce().Bytes())
+		binary.LittleEndian.PutUint64(seed[32:], header.Nonce.Uint64())
+		result = crypto.Argon2id(seed)
+		digest = make([]byte, common.HashLength)
+	}
 	// Caches are unmapped in a finalizer. Ensure that the cache stays live
 	// until after the call to hashimotoLight so it's not unmapped while being used.
 	runtime.KeepAlive(cache)
 
 	if !bytes.Equal(header.MixDigest[:], digest) {
+		//fmt.Printf("Invalid Digest (%v):\n%x (!=) %x\n", header.Number.Uint64(), header.MixDigest[:], digest)
 		return errInvalidMixDigest
 	}
 	target := new(big.Int).Div(maxUint256, header.Difficulty)
@@ -636,9 +418,12 @@ func (aquahash *Aquahash) Prepare(chain consensus.ChainReader, header *types.Hea
 // setting the final state and assembling the block.
 func (aquahash *Aquahash) Finalize(chain consensus.ChainReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, uncles []*types.Header, receipts []*types.Receipt) (*types.Block, error) {
 	// Accumulate any block and uncle rewards and commit the final state root
+	header.SetVersion(byte(chain.Config().GetBlockVersion(header.Number)))
+	for i := range uncles {
+		uncles[i].Version = header.Version // uncles must have same version
+	}
 	accumulateRewards(chain.Config(), state, header, uncles)
 	header.Root = state.IntermediateRoot(chain.Config().IsEIP158(header.Number))
-
 	// Header seems complete, assemble into a block and return
 	return types.NewBlock(header, txs, uncles, receipts), nil
 }
