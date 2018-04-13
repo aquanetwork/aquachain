@@ -367,7 +367,7 @@ func (self *LightChain) InsertHeaderChain(chain []*types.Header, checkFreq int) 
 	whFunc := func(header *types.Header) error {
 		self.mu.Lock()
 		defer self.mu.Unlock()
-
+		header.Version = self.RetrieveHeaderVersion(header.Number)
 		status, err := self.hc.WriteHeader(header)
 
 		switch status {
