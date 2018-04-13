@@ -661,8 +661,6 @@ func (aquahash *Aquahash) VerifySeal(chain consensus.ChainReader, header *types.
 	}
 	target := new(big.Int).Div(maxUint256, header.Difficulty)
 	if new(big.Int).SetBytes(result).Cmp(target) > 0 {
-		fmt.Printf("Want %x\nGot  %x\n", new(big.Int).SetBytes(result), header.Hash())
-		common.Report(header)
 		return errInvalidPoW
 	}
 	return nil
