@@ -25,12 +25,13 @@ import (
 	"testing"
 
 	"github.com/aquanetwork/aquachain/core/types"
+	"github.com/aquanetwork/aquachain/params"
 )
 
 // Tests that aquahash works correctly in test mode.
 func TestTestMode(t *testing.T) {
 	head := &types.Header{Number: big.NewInt(1), Difficulty: big.NewInt(100)}
-
+	head.Version = types.H_KECCAK256
 	aquahash := NewTester()
 	block, err := aquahash.Seal(nil, types.NewBlockWithHeader(head), nil)
 	if err != nil {
@@ -74,6 +75,7 @@ func verifyTest(wg *sync.WaitGroup, e *Aquahash, workerIndex, epochs int) {
 			block = 0
 		}
 		head := &types.Header{Number: big.NewInt(block), Difficulty: big.NewInt(100)}
+		head.Version = params.AllAquahashProtocolChanges.GetBlockVersion(big.NewInt(block))
 		e.VerifySeal(nil, head)
 	}
 }

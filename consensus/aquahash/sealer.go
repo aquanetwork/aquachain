@@ -37,9 +37,13 @@ import (
 // the block's difficulty requirements.
 func (aquahash *Aquahash) Seal(chain consensus.ChainReader, block *types.Block, stop <-chan struct{}) (*types.Block, error) {
 	// If we're running a fake PoW, simply return a 0 nonce immediately
+	chaincfg := params.TestChainConfig
+	if chain != nil {
+		chaincfg = chain.Config()
+	}
 	if aquahash.config.PowMode == ModeFake || aquahash.config.PowMode == ModeFullFake {
 		header := block.Header()
-		header.Version = chain.Config().GetBlockVersion(header.Number)
+		header.Version = chaincfg.GetBlockVersion(header.Number)
 		header.Nonce, header.MixDigest = types.BlockNonce{}, common.Hash{}
 		return block.WithSeal(header), nil
 	}
@@ -69,7 +73,7 @@ func (aquahash *Aquahash) Seal(chain consensus.ChainReader, block *types.Block, 
 		threads = 0 // Allows disabling local mining without extra logic around local/remote
 	}
 	var pend sync.WaitGroup
-	version := chain.Config().GetBlockVersion(block.Number())
+	version := chaincfg.GetBlockVersion(block.Number())
 	for i := 0; i < threads; i++ {
 		pend.Add(1)
 		go func(id int, nonce uint64) {
