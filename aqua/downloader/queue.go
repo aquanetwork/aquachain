@@ -706,20 +706,20 @@ func (q *queue) DeliverHeaders(id string, headers []*types.Header, headerProcCh 
 		if headers[0].Number.Uint64() != request.From {
 			log.Trace("First header broke chain ordering", "peer", id, "number", headers[0].Number, "hash", headers[0].Hash(), request.From)
 			accepted = false
-		} else if headers[len(headers)-1].Hash() != target {
+		} else if headers[len(headers)-1].SetVersion(byte(q.headerVersionRule(headers[len(headers)-1].Number))) != target {
 			log.Trace("Last header broke skeleton structure ", "peer", id, "number", headers[len(headers)-1].Number, "hash", headers[len(headers)-1].Hash(), "expected", target)
 			accepted = false
 		}
 	}
 	if accepted {
 		for i, header := range headers[1:] {
-			hash := header.Hash()
+			hash := header.SetVersion(byte(q.headerVersionRule(header.Number)))
 			if want := request.From + 1 + uint64(i); header.Number.Uint64() != want {
 				log.Warn("Header broke chain ordering", "peer", id, "number", header.Number, "hash", hash, "expected", want)
 				accepted = false
 				break
 			}
-			if headers[i].Hash() != header.ParentHash {
+			if headers[i].SetVersion(byte(q.headerVersionRule(headers[i].Number))) != header.ParentHash {
 				log.Warn("Header broke chain ancestry", "peer", id, "number", header.Number, "hash", hash)
 				accepted = false
 				break

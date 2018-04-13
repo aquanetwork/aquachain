@@ -161,6 +161,7 @@ func NewProtocolManager(config *params.ChainConfig, mode downloader.SyncMode, ne
 	manager.downloader = downloader.New(mode, chaindb, manager.eventMux, blockchain, nil, manager.removePeer)
 
 	validator := func(header *types.Header) error {
+		header.Version = manager.chainconfig.GetBlockVersion(header.Number)
 		return engine.VerifyHeader(blockchain, header, true)
 	}
 	heighter := func() uint64 {
@@ -576,7 +577,7 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 		request.Block.ReceivedFrom = p
 
 		// Mark the peer as owning the block and schedule it for import
-		p.MarkBlock(request.Block.Hash())
+		p.MarkBlock(request.Block.SetVersion(pm.chainconfig.GetBlockVersion(request.Block.Number())))
 		pm.fetcher.Enqueue(p.id, request.Block)
 
 		// Assuming the block is importable by the peer, but possibly not yet done so,

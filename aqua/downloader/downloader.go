@@ -1257,7 +1257,7 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 					// Collect the yet unknown headers to mark them as uncertain
 					unknown := make([]*types.Header, 0, len(headers))
 					for _, header := range chunk {
-						if !d.lightchain.HasHeader(header.Hash(), header.Number.Uint64()) {
+						if !d.lightchain.HasHeader(header.SetVersion(byte(d.blockchain.RetrieveHeaderVersion(header.Number))), header.Number.Uint64()) {
 							unknown = append(unknown, header)
 						}
 					}
