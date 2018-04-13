@@ -162,7 +162,7 @@ func testOdr(t *testing.T, protocol int, expFail uint64, fn odrTestFn) {
 	rm := newRetrieveManager(peers, dist, nil)
 	db, _ := aquadb.NewMemDatabase()
 	ldb, _ := aquadb.NewMemDatabase()
-	odr := NewLesOdr(ldb, light.NewChtIndexer(params.TestChainConfig, db, true), light.NewBloomTrieIndexer(params.TestChainConfig, db, true), aqua.NewBloomIndexer(params.TestChainConfig, db, light.BloomTrieFrequency), rm)
+	odr := NewLesOdr(params.TestChainConfig.GetBlockVersion, ldb, light.NewChtIndexer(params.TestChainConfig, db, true), light.NewBloomTrieIndexer(params.TestChainConfig, db, true), aqua.NewBloomIndexer(params.TestChainConfig, db, light.BloomTrieFrequency), rm)
 	pm := newTestProtocolManagerMust(t, false, 4, testChainGen, nil, nil, db)
 	lpm := newTestProtocolManagerMust(t, true, 0, nil, peers, odr, ldb)
 	_, err1, lpeer, err2 := newTestPeerPair("peer", protocol, pm, lpm)

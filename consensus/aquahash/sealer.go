@@ -151,6 +151,7 @@ search:
 				copy(seed, hash)
 				binary.LittleEndian.PutUint64(seed[32:], nonce)
 				result = crypto.Argon2id(seed)
+				digest = make([]byte, common.HashLength)
 			default:
 				common.Report("Mining incorrect version")
 				break search

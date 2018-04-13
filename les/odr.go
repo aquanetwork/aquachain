@@ -18,11 +18,13 @@ package les
 
 import (
 	"context"
+	"math/big"
 
 	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/light"
 	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/params"
 )
 
 // LesOdr implements light.OdrBackend
@@ -31,9 +33,10 @@ type LesOdr struct {
 	chtIndexer, bloomTrieIndexer, bloomIndexer *core.ChainIndexer
 	retriever                                  *retrieveManager
 	stop                                       chan struct{}
+	hashFunc                                   func(*big.Int) params.HeaderVersion
 }
 
-func NewLesOdr(db aquadb.Database, chtIndexer, bloomTrieIndexer, bloomIndexer *core.ChainIndexer, retriever *retrieveManager) *LesOdr {
+func NewLesOdr(hashFunc func(*big.Int) params.HeaderVersion, db aquadb.Database, chtIndexer, bloomTrieIndexer, bloomIndexer *core.ChainIndexer, retriever *retrieveManager) *LesOdr {
 	return &LesOdr{
 		db:               db,
 		chtIndexer:       chtIndexer,
@@ -41,12 +44,16 @@ func NewLesOdr(db aquadb.Database, chtIndexer, bloomTrieIndexer, bloomIndexer *c
 		bloomIndexer:     bloomIndexer,
 		retriever:        retriever,
 		stop:             make(chan struct{}),
+		hashFunc:         hashFunc,
 	}
 }
 
 // Stop cancels all pending retrievals
 func (odr *LesOdr) Stop() {
 	close(odr.stop)
+}
+func (odr *LesOdr) GetHeaderVersion(height *big.Int) params.HeaderVersion {
+	return odr.hashFunc(height)
 }
 
 // Database returns the backing database

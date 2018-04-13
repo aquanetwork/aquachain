@@ -37,14 +37,14 @@ func TestHeaderStorage(t *testing.T) {
 	// Create a test header to move around the database and make sure it's really new
 	header := &types.Header{Number: big.NewInt(2), Extra: []byte("test header")}
 	header.Version = params.TestChainConfig.GetBlockVersion(header.Number)
-	if entry := GetHeader(db, header.Hash(), header.Number.Uint64()); entry != nil {
+	if entry := GetHeaderNoVersion(db, header.Hash(), header.Number.Uint64()); entry != nil {
 		t.Fatalf("Non existent header returned: %v", entry)
 	}
 	// Write and verify the header in the database
 	if err := WriteHeader(db, header); err != nil {
 		t.Fatalf("Failed to write header into database: %v", err)
 	}
-	if entry := GetHeader(db, header.Hash(), header.Number.Uint64()); entry == nil {
+	if entry := GetHeaderNoVersion(db, header.Hash(), header.Number.Uint64()); entry == nil {
 
 		t.Fatalf("Stored header not found")
 	} else if entry.SetVersion(byte(header.Version)) != header.Hash() {
@@ -63,7 +63,7 @@ func TestHeaderStorage(t *testing.T) {
 	}
 	// Delete the header and verify the execution
 	DeleteHeader(db, header.Hash(), header.Number.Uint64())
-	if entry := GetHeader(db, header.Hash(), header.Number.Uint64()); entry != nil {
+	if entry := GetHeaderNoVersion(db, header.Hash(), header.Number.Uint64()); entry != nil {
 		t.Fatalf("Deleted header returned: %v", entry)
 	}
 }
@@ -75,14 +75,14 @@ func TestHeaderStorageArgon(t *testing.T) {
 	// Create a test header to move around the database and make sure it's really new
 	header := &types.Header{Number: big.NewInt(6), Extra: []byte("test header")}
 	header.Version = params.TestChainConfig.GetBlockVersion(header.Number)
-	if entry := GetHeader(db, header.Hash(), header.Number.Uint64()); entry != nil {
+	if entry := GetHeaderNoVersion(db, header.Hash(), header.Number.Uint64()); entry != nil {
 		t.Fatalf("Non existent header returned: %v", entry)
 	}
 	// Write and verify the header in the database
 	if err := WriteHeader(db, header); err != nil {
 		t.Fatalf("Failed to write header into database: %v", err)
 	}
-	if entry := GetHeader(db, header.Hash(), header.Number.Uint64()); entry == nil {
+	if entry := GetHeaderNoVersion(db, header.Hash(), header.Number.Uint64()); entry == nil {
 
 		t.Fatalf("Stored header not found")
 	} else if entry.SetVersion(byte(header.Version)) != header.Hash() {
@@ -97,7 +97,7 @@ func TestHeaderStorageArgon(t *testing.T) {
 	}
 	// Delete the header and verify the execution
 	DeleteHeader(db, header.Hash(), header.Number.Uint64())
-	if entry := GetHeader(db, header.Hash(), header.Number.Uint64()); entry != nil {
+	if entry := GetHeaderNoVersion(db, header.Hash(), header.Number.Uint64()); entry != nil {
 		t.Fatalf("Deleted header returned: %v", entry)
 	}
 }
@@ -113,14 +113,14 @@ func TestBodyStorage(t *testing.T) {
 	rlp.Encode(hasher, body)
 	hash := common.BytesToHash(hasher.Sum(nil))
 
-	if entry := GetBody(db, hash, 0); entry != nil {
+	if entry := GetBodyNoVersion(db, hash, 0); entry != nil {
 		t.Fatalf("Non existent body returned: %v", entry)
 	}
 	// Write and verify the body in the database
 	if err := WriteBody(db, hash, 0, body); err != nil {
 		t.Fatalf("Failed to write body into database: %v", err)
 	}
-	if entry := GetBody(db, hash, 0); entry == nil {
+	if entry := GetBodyNoVersion(db, hash, 0); entry == nil {
 		t.Fatalf("Stored body not found")
 	} else if types.DeriveSha(types.Transactions(entry.Transactions)) != types.DeriveSha(types.Transactions(body.Transactions)) || types.CalcUncleHash(entry.Uncles) != types.CalcUncleHash(body.Uncles) {
 		t.Fatalf("Retrieved body mismatch: have %v, want %v", entry, body)
@@ -137,7 +137,7 @@ func TestBodyStorage(t *testing.T) {
 	}
 	// Delete the body and verify the execution
 	DeleteBody(db, hash, 0)
-	if entry := GetBody(db, hash, 0); entry != nil {
+	if entry := GetBodyNoVersion(db, hash, 0); entry != nil {
 		t.Fatalf("Deleted body returned: %v", entry)
 	}
 }
@@ -152,44 +152,45 @@ func TestBlockStorage(t *testing.T) {
 		UncleHash:   types.EmptyUncleHash,
 		TxHash:      types.EmptyRootHash,
 		ReceiptHash: types.EmptyRootHash,
+		Version:     1,
 	})
-	if entry := GetBlock(db, block.Hash(), block.NumberU64()); entry != nil {
+	if entry := GetBlockNoVersion(db, block.Hash(), block.NumberU64()); entry != nil {
 		t.Fatalf("Non existent block returned: %v", entry)
 	}
-	if entry := GetHeader(db, block.Hash(), block.NumberU64()); entry != nil {
+	if entry := GetHeaderNoVersion(db, block.Hash(), block.NumberU64()); entry != nil {
 		t.Fatalf("Non existent header returned: %v", entry)
 	}
-	if entry := GetBody(db, block.Hash(), block.NumberU64()); entry != nil {
+	if entry := GetBodyNoVersion(db, block.Hash(), block.NumberU64()); entry != nil {
 		t.Fatalf("Non existent body returned: %v", entry)
 	}
 	// Write and verify the block in the database
 	if err := WriteBlock(db, block); err != nil {
 		t.Fatalf("Failed to write block into database: %v", err)
 	}
-	if entry := GetBlock(db, block.Hash(), block.NumberU64()); entry == nil {
+	if entry := GetBlockNoVersion(db, block.Hash(), block.NumberU64()); entry == nil {
 		t.Fatalf("Stored block not found")
-	} else if entry.Hash() != block.Hash() {
+	} else if entry.SetVersion(block.Header().Version) != block.Hash() {
 		t.Fatalf("Retrieved block mismatch: have %v, want %v", entry, block)
 	}
-	if entry := GetHeader(db, block.Hash(), block.NumberU64()); entry == nil {
+	if entry := GetHeaderNoVersion(db, block.Hash(), block.NumberU64()); entry == nil {
 		t.Fatalf("Stored header not found")
-	} else if entry.Hash() != block.Header().Hash() {
+	} else if entry.SetVersion(byte(block.Header().Version)) != block.Header().Hash() {
 		t.Fatalf("Retrieved header mismatch: have %v, want %v", entry, block.Header())
 	}
-	if entry := GetBody(db, block.Hash(), block.NumberU64()); entry == nil {
+	if entry := GetBodyNoVersion(db, block.Hash(), block.NumberU64()); entry == nil {
 		t.Fatalf("Stored body not found")
 	} else if types.DeriveSha(types.Transactions(entry.Transactions)) != types.DeriveSha(block.Transactions()) || types.CalcUncleHash(entry.Uncles) != types.CalcUncleHash(block.Uncles()) {
 		t.Fatalf("Retrieved body mismatch: have %v, want %v", entry, block.Body())
 	}
 	// Delete the block and verify the execution
 	DeleteBlock(db, block.Hash(), block.NumberU64())
-	if entry := GetBlock(db, block.Hash(), block.NumberU64()); entry != nil {
+	if entry := GetBlockNoVersion(db, block.Hash(), block.NumberU64()); entry != nil {
 		t.Fatalf("Deleted block returned: %v", entry)
 	}
-	if entry := GetHeader(db, block.Hash(), block.NumberU64()); entry != nil {
+	if entry := GetHeaderNoVersion(db, block.Hash(), block.NumberU64()); entry != nil {
 		t.Fatalf("Deleted header returned: %v", entry)
 	}
-	if entry := GetBody(db, block.Hash(), block.NumberU64()); entry != nil {
+	if entry := GetBodyNoVersion(db, block.Hash(), block.NumberU64()); entry != nil {
 		t.Fatalf("Deleted body returned: %v", entry)
 	}
 }
@@ -207,7 +208,7 @@ func TestPartialBlockStorage(t *testing.T) {
 	if err := WriteHeader(db, block.Header()); err != nil {
 		t.Fatalf("Failed to write header into database: %v", err)
 	}
-	if entry := GetBlock(db, block.Hash(), block.NumberU64()); entry != nil {
+	if entry := GetBlockNoVersion(db, block.Hash(), block.NumberU64()); entry != nil {
 		t.Fatalf("Non existent block returned: %v", entry)
 	}
 	DeleteHeader(db, block.Hash(), block.NumberU64())
@@ -216,7 +217,7 @@ func TestPartialBlockStorage(t *testing.T) {
 	if err := WriteBody(db, block.Hash(), block.NumberU64(), block.Body()); err != nil {
 		t.Fatalf("Failed to write body into database: %v", err)
 	}
-	if entry := GetBlock(db, block.Hash(), block.NumberU64()); entry != nil {
+	if entry := GetBlockNoVersion(db, block.Hash(), block.NumberU64()); entry != nil {
 		t.Fatalf("Non existent block returned: %v", entry)
 	}
 	DeleteBody(db, block.Hash(), block.NumberU64())
@@ -228,9 +229,9 @@ func TestPartialBlockStorage(t *testing.T) {
 	if err := WriteBody(db, block.Hash(), block.NumberU64(), block.Body()); err != nil {
 		t.Fatalf("Failed to write body into database: %v", err)
 	}
-	if entry := GetBlock(db, block.Hash(), block.NumberU64()); entry == nil {
+	if entry := GetBlockNoVersion(db, block.Hash(), block.NumberU64()); entry == nil {
 		t.Fatalf("Stored block not found")
-	} else if entry.Hash() != block.Hash() {
+	} else if entry.SetVersion(block.Header().Version) != block.Hash() {
 		t.Fatalf("Retrieved block mismatch: have %v, want %v", entry, block)
 	}
 }

@@ -333,7 +333,7 @@ func (pm *ProtocolManager) blockLoop() {
 					if td != nil && td.Cmp(lastBroadcastTd) > 0 {
 						var reorg uint64
 						if lastHead != nil {
-							reorg = lastHead.Number.Uint64() - core.FindCommonAncestor(pm.chainDb, header, lastHead).Number.Uint64()
+							reorg = lastHead.Number.Uint64() - core.FindCommonAncestor(pm.chainDb, header, lastHead, pm.chainConfig.GetBlockVersion).Number.Uint64()
 						}
 						lastHead = header
 						lastBroadcastTd = td

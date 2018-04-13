@@ -347,13 +347,20 @@ func (hc *HeaderChain) WriteTd(hash common.Hash, number uint64, td *big.Int) err
 func (hc *HeaderChain) GetHeader(hash common.Hash, number uint64) *types.Header {
 	// Short circuit if the header's already in the cache, retrieve otherwise
 	if header, ok := hc.headerCache.Get(hash); ok {
+		if header.(*types.Header).Version == types.H_UNSET {
+			common.Report(fmt.Sprintf("Hash (%v): %x", number, hash))
+			panic("header version is not set from cache")
+		}
 		return header.(*types.Header)
 	}
-	header := GetHeader(hc.chainDb, hash, number)
+	header := GetHeaderNoVersion(hc.chainDb, hash, number)
 	if header == nil {
 		return nil
 	}
 	header.Version = hc.Config().GetBlockVersion(header.Number)
+	if header.Hash() != hash {
+		common.Report(fmt.Sprintf("hc.GetHeader(%x)", hash))
+	}
 	// Cache the found header for next time and return
 	hc.headerCache.Add(hash, header)
 	return header

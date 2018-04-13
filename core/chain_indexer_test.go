@@ -94,8 +94,8 @@ func testChainIndexer(t *testing.T, count int) {
 		header := &types.Header{Number: big.NewInt(int64(number)), Extra: big.NewInt(rand.Int63()).Bytes()}
 		if number > 0 {
 			header.ParentHash = GetCanonicalHash(db, number-1)
+			header.Version = headerVersion
 		}
-		header.Version = headerVersion
 		WriteHeader(db, header)
 		WriteCanonicalHash(db, header.Hash(), number)
 	}

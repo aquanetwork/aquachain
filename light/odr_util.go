@@ -34,10 +34,11 @@ func GetHeaderByNumber(ctx context.Context, odr OdrBackend, number uint64) (*typ
 	hash := core.GetCanonicalHash(db, number)
 	if (hash != common.Hash{}) {
 		// if there is a canonical hash, there is a header too
-		header := core.GetHeader(db, hash, number)
+		header := core.GetHeaderNoVersion(db, hash, number)
 		if header == nil {
 			panic("Canonical hash present but header not found")
 		}
+		header.Version = odr.GetHeaderVersion(header.Number)
 		return header, nil
 	}
 
@@ -111,10 +112,11 @@ func GetBody(ctx context.Context, odr OdrBackend, hash common.Hash, number uint6
 // back from the stored header and body.
 func GetBlock(ctx context.Context, odr OdrBackend, hash common.Hash, number uint64) (*types.Block, error) {
 	// Retrieve the block header and body contents
-	header := core.GetHeader(odr.Database(), hash, number)
+	header := core.GetHeaderNoVersion(odr.Database(), hash, number)
 	if header == nil {
 		return nil, ErrNoHeader
 	}
+	header.Version = odr.GetHeaderVersion(header.Number)
 	body, err := GetBody(ctx, odr, hash, number)
 	if err != nil {
 		return nil, err

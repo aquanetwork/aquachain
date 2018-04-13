@@ -166,8 +166,8 @@ func TestSetupGenesis(t *testing.T) {
 			t.Errorf("%s: returned hash %s, want %s", test.name, hash.Hex(), test.wantHash.Hex())
 		} else if err == nil {
 			// Check database content.
-			stored := GetBlock(db, test.wantHash, 0)
-			if stored.Hash() != test.wantHash {
+			stored := GetBlockNoVersion(db, test.wantHash, 0)
+			if stored.SetVersion(config.GetBlockVersion(stored.Number())) != test.wantHash {
 				t.Errorf("%s: block in DB has hash %s, want %s", test.name, stored.Hash(), test.wantHash)
 			}
 		}

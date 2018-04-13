@@ -515,9 +515,13 @@ func (bc *BlockChain) GetBody(hash common.Hash) *types.Body {
 		body := cached.(*types.Body)
 		return body
 	}
-	body := GetBody(bc.db, hash, bc.hc.GetBlockNumber(hash))
+	body := GetBodyNoVersion(bc.db, hash, bc.hc.GetBlockNumber(hash))
 	if body == nil {
 		return nil
+	}
+
+	for i := range body.Uncles {
+		body.Uncles[i].Version = bc.RetrieveHeaderVersion(body.Uncles[0].Number) // only one version
 	}
 	// Cache the found body for next time and return
 	bc.bodyCache.Add(hash, body)
@@ -563,6 +567,7 @@ func (bc *BlockChain) HasBlockAndState(hash common.Hash, number uint64) bool {
 	if block == nil {
 		return false
 	}
+	block.SetVersion(bc.RetrieveHeaderVersion(block.Number()))
 	return bc.HasState(block.Root())
 }
 
@@ -573,7 +578,7 @@ func (bc *BlockChain) GetBlock(hash common.Hash, number uint64) *types.Block {
 	if block, ok := bc.blockCache.Get(hash); ok {
 		return block.(*types.Block)
 	}
-	block := GetBlock(bc.db, hash, number)
+	block := GetBlockNoVersion(bc.db, hash, number)
 	if block == nil {
 		return nil
 	}
@@ -661,7 +666,7 @@ func (bc *BlockChain) Stop() {
 			if number := bc.CurrentBlock().NumberU64(); number > offset {
 				recent := bc.GetBlockByNumber(number - offset)
 
-				log.Info("Writing cached state to disk", "block", recent.Number(), "hash", recent.Hash(), "root", recent.Root())
+				log.Info("Writing cached state to disk", "block", recent.Number(), "hash", recent.SetVersion(bc.RetrieveHeaderVersion(recent.Number())), "root", recent.Root())
 				if err := triedb.Commit(recent.Root(), true); err != nil {
 					log.Error("Failed to commit recent state trie", "err", err)
 				}

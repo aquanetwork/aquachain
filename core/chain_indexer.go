@@ -209,7 +209,7 @@ func (c *ChainIndexer) eventLoop(currentHeader *types.Header, events chan ChainE
 
 				// TODO(karalabe): This operation is expensive and might block, causing the event system to
 				// potentially also lock up. We need to do with on a different thread somehow.
-				if h := FindCommonAncestor(c.chainDb, prevHeader, header); h != nil {
+				if h := FindCommonAncestor(c.chainDb, prevHeader, header, c.config.GetBlockVersion); h != nil {
 					c.newHead(h.Number.Uint64(), true)
 				}
 			}
@@ -355,7 +355,7 @@ func (c *ChainIndexer) processSection(section uint64, lastHead common.Hash) (com
 		if hash == (common.Hash{}) {
 			return common.Hash{}, fmt.Errorf("canonical block #%d unknown", number)
 		}
-		header := GetHeader(c.chainDb, hash, number)
+		header := GetHeaderNoVersion(c.chainDb, hash, number)
 		if header == nil {
 			return common.Hash{}, fmt.Errorf("block #%d [%x…] not found", number, hash[:4])
 		} else if header.ParentHash != lastHead {

@@ -692,9 +692,9 @@ func TestConcurrentDiskCacheGeneration(t *testing.T) {
 		GasUsed:     0,
 		Time:        big.NewInt(1488928920),
 		Extra:       []byte("www.bw.com"),
-		MixDigest:   common.HexToHash("0x71024955e50c1a2f1aecb278c1a5398141a286c5582f8d4022be9e5568f8575b"),
+		MixDigest:   common.HexToHash("0x3e140b0784516af5e5ec6730f2fb20cca22f32be399b9e4ad77d32541f798cd0"),
 		Nonce:       types.EncodeNonce(0xf400cd0006070c49),
-		Version:     types.H_ARGON2ID,
+		Version:     types.H_KECCAK256,
 	})
 	// Simulate multiple processes sharing the same datadir
 	var pend sync.WaitGroup

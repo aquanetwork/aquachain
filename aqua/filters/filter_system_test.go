@@ -68,7 +68,11 @@ func (b *testBackend) HeaderByNumber(ctx context.Context, blockNr rpc.BlockNumbe
 		num = uint64(blockNr)
 		hash = core.GetCanonicalHash(b.db, num)
 	}
-	return core.GetHeader(b.db, hash, num), nil
+	header := core.GetHeaderNoVersion(b.db, hash, num)
+	if header != nil {
+		header.Version = b.GetHeaderVersion(header.Number)
+	}
+	return header, nil
 }
 
 func (b *testBackend) GetReceipts(ctx context.Context, blockHash common.Hash) (types.Receipts, error) {

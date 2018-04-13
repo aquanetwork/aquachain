@@ -369,6 +369,7 @@ func (api *PrivateDebugAPI) TraceBlock(ctx context.Context, blob []byte, config 
 	if err := rlp.Decode(bytes.NewReader(blob), block); err != nil {
 		return nil, fmt.Errorf("could not decode block: %v", err)
 	}
+	block.SetVersion(api.config.GetBlockVersion(block.Number()))
 	return api.traceBlock(ctx, block, config)
 }
 

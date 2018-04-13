@@ -166,7 +166,7 @@ func GetHeaderRLP(db DatabaseReader, hash common.Hash, number uint64) rlp.RawVal
 
 // GetHeader retrieves the block header corresponding to the hash, nil if none
 // found.
-func GetHeader(db DatabaseReader, hash common.Hash, number uint64) *types.Header {
+func GetHeaderNoVersion(db DatabaseReader, hash common.Hash, number uint64) *types.Header {
 	data := GetHeaderRLP(db, hash, number)
 	if len(data) == 0 {
 		return nil
@@ -193,9 +193,9 @@ func blockBodyKey(hash common.Hash, number uint64) []byte {
 	return append(append(bodyPrefix, encodeBlockNumber(number)...), hash.Bytes()...)
 }
 
-// GetBody retrieves the block body (transactons, uncles) corresponding to the
+// GetBodyNoVersion retrieves the block body (transactons, uncles) corresponding to the
 // hash, nil if none found.
-func GetBody(db DatabaseReader, hash common.Hash, number uint64) *types.Body {
+func GetBodyNoVersion(db DatabaseReader, hash common.Hash, number uint64) *types.Body {
 	data := GetBodyRLP(db, hash, number)
 	if len(data) == 0 {
 		return nil
@@ -229,13 +229,13 @@ func GetTd(db DatabaseReader, hash common.Hash, number uint64) *big.Int {
 //
 // Note, due to concurrent download of header and block body the header and thus
 // canonical hash can be stored in the database but the body data not (yet).
-func GetBlock(db DatabaseReader, hash common.Hash, number uint64) *types.Block {
+func GetBlockNoVersion(db DatabaseReader, hash common.Hash, number uint64) *types.Block {
 	// Retrieve the block header and body contents
-	header := GetHeader(db, hash, number)
+	header := GetHeaderNoVersion(db, hash, number)
 	if header == nil {
 		return nil
 	}
-	body := GetBody(db, hash, number)
+	body := GetBodyNoVersion(db, hash, number)
 	if body == nil {
 		return nil
 	}
@@ -286,7 +286,7 @@ func GetTransaction(db DatabaseReader, hash common.Hash) (*types.Transaction, co
 	blockHash, blockNumber, txIndex := GetTxLookupEntry(db, hash)
 
 	if blockHash != (common.Hash{}) {
-		body := GetBody(db, blockHash, blockNumber)
+		body := GetBodyNoVersion(db, blockHash, blockNumber)
 		if body == nil || len(body.Transactions) <= int(txIndex) {
 			log.Error("Transaction referenced missing", "number", blockNumber, "hash", blockHash, "index", txIndex)
 			return nil, common.Hash{}, 0, 0
@@ -625,28 +625,30 @@ func GetChainConfig(db DatabaseReader, hash common.Hash) (*params.ChainConfig, e
 }
 
 // FindCommonAncestor returns the last common ancestor of two block headers
-func FindCommonAncestor(db DatabaseReader, a, b *types.Header) *types.Header {
+func FindCommonAncestor(db DatabaseReader, a, b *types.Header, versionFunc func(*big.Int) params.HeaderVersion) *types.Header {
 	for bn := b.Number.Uint64(); a.Number.Uint64() > bn; {
-		a = GetHeader(db, a.ParentHash, a.Number.Uint64()-1)
+		a = GetHeaderNoVersion(db, a.ParentHash, a.Number.Uint64()-1)
 		if a == nil {
 			return nil
 		}
 	}
 	for an := a.Number.Uint64(); an < b.Number.Uint64(); {
-		b = GetHeader(db, b.ParentHash, b.Number.Uint64()-1)
+		b = GetHeaderNoVersion(db, b.ParentHash, b.Number.Uint64()-1)
 		if b == nil {
 			return nil
 		}
 	}
-	for a.Hash() != b.Hash() {
-		a = GetHeader(db, a.ParentHash, a.Number.Uint64()-1)
+	for a.Hash() != b.Hash() { // we dont need version here
+		a = GetHeaderNoVersion(db, a.ParentHash, a.Number.Uint64()-1)
 		if a == nil {
 			return nil
 		}
-		b = GetHeader(db, b.ParentHash, b.Number.Uint64()-1)
+		a.Version = versionFunc(a.Number)
+		b = GetHeaderNoVersion(db, b.ParentHash, b.Number.Uint64()-1)
 		if b == nil {
 			return nil
 		}
+		b.Version = versionFunc(b.Number)
 	}
 	return a
 }
