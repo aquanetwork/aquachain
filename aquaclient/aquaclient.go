@@ -476,6 +476,17 @@ func (ec *Client) SendTransaction(ctx context.Context, tx *types.Transaction) er
 	return ec.c.CallContext(ctx, nil, "aqua_sendRawTransaction", common.ToHex(data))
 }
 
+func (ec *Client) GetWork(ctx context.Context) ([3]string, error) {
+	var work [3]string
+	err := ec.c.CallContext(ctx, &work, "aqua_getWork")
+	return work, err
+}
+
+func (ec *Client) SubmitWork(ctx context.Context, nonce types.BlockNonce, solution, digest common.Hash) bool {
+	var ok bool
+	return ec.c.CallContext(ctx, &ok, "aqua_submitWork", nonce, solution, digest) == nil && ok
+}
+
 func toCallArg(msg aquachain.CallMsg) interface{} {
 	arg := map[string]interface{}{
 		"from": msg.From,
