@@ -103,10 +103,8 @@ func printChain(bc *BlockChain) {
 // testBlockChainImport tries to process a chain of blocks, writing them into
 // the database if successful.
 func testBlockChainImport(chain types.Blocks, blockchain *BlockChain) error {
-	for i, block := range chain {
-		block.SetVersion(blockchain.RetrieveHeaderVersion(block.Number()))
+	for _, block := range chain {
 		// Try and process the block
-		println(i)
 		block.SetVersion(blockchain.RetrieveHeaderVersion(block.Number()))
 		err := blockchain.engine.VerifyHeader(blockchain, block.Header(), true)
 		if err == nil {
