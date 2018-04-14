@@ -46,9 +46,10 @@ var (
 // contains a transaction and every 5th an uncle to allow testing correct block
 // reassembly.
 func makeChain(n int, seed byte, parent *types.Block) ([]common.Hash, map[common.Hash]*types.Block) {
+	parent.SetVersion(params.TestChainConfig.GetBlockVersion(parent.Number()))
 	blocks, _ := core.GenerateChain(params.TestChainConfig, parent, aquahash.NewFaker(), testdb, n, func(i int, block *core.BlockGen) {
 		block.SetCoinbase(common.Address{seed})
-
+		block.SetVersion(params.TestChainConfig.GetBlockVersion(block.Number()))
 		// If the block number is multiple of 3, send a bonus transaction to the miner
 		if parent == genesis && i%3 == 0 {
 			signer := types.MakeSigner(params.TestChainConfig, block.Number())

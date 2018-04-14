@@ -68,6 +68,11 @@ func (b *BlockGen) SetCoinbase(addr common.Address) {
 	b.gasPool = new(GasPool).AddGas(b.header.GasLimit)
 }
 
+// Setversion sets the header version
+func (b *BlockGen) SetVersion(version params.HeaderVersion) {
+	b.header.Version = version
+}
+
 // SetExtra sets the extra data field of the generated block.
 func (b *BlockGen) SetExtra(data []byte) {
 	b.header.Extra = data
@@ -212,7 +217,7 @@ func GenerateChain(config *params.ChainConfig, parent *types.Block, engine conse
 
 func makeHeader(chain consensus.ChainReader, parent *types.Block, state *state.StateDB, engine consensus.Engine) *types.Header {
 	if parent.Header().Version == 0 {
-		panic("woah there")
+		panic("generate chain: parent header version not set")
 	}
 	parent.SetVersion(chain.Config().GetBlockVersion(parent.Number()))
 	var time *big.Int
