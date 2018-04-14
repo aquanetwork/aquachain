@@ -577,14 +577,7 @@ func (bc *BlockChain) GetBlock(hash common.Hash, number uint64) *types.Block {
 	// Short circuit if the block's already in the cache, retrieve otherwise
 	if block, ok := bc.blockCache.Get(hash); ok {
 		block := block.(*types.Block)
-		oldbit := block.Header().Version
-
 		block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
-		newbit := block.Header().Version
-		if newbit != oldbit {
-			fmt.Println("Got block", number, "version", newbit)
-			panic("woah")
-		}
 		return block
 	}
 	block := GetBlockNoVersion(bc.db, hash, number)

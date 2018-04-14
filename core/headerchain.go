@@ -399,7 +399,7 @@ func (hc *HeaderChain) CurrentHeader() *types.Header {
 
 // SetCurrentHeader sets the current head header of the canonical chain.
 func (hc *HeaderChain) SetCurrentHeader(head *types.Header) {
-	head.Version = hc.Config().GetBlockVersion(head.Number)
+	head.SetVersion(byte(hc.Config().GetBlockVersion(head.Number)))
 	if err := WriteHeadHeaderHash(hc.chainDb, head.Hash()); err != nil {
 		log.Crit("Failed to insert head header hash", "err", err)
 	}
