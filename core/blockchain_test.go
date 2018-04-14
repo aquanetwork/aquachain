@@ -357,7 +357,7 @@ func testReorgShort(t *testing.T, full bool) {
 	for i := 0; i < len(diff); i++ {
 		diff[i] = -9
 	}
-	testReorg(t, easy, diff, 62137574813, full)
+	testReorg(t, easy, diff, 244705518129, full)
 }
 
 func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
