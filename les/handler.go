@@ -707,7 +707,6 @@ func (pm *ProtocolManager) handleMsg(p *peer) error {
 		for _, req := range req.Reqs {
 			// Retrieve the requested state entry, stopping if enough was found
 			if header := core.GetHeaderNoVersion(pm.chainDb, req.BHash, core.GetBlockNumber(pm.chainDb, req.BHash)); header != nil {
-				header.Version = pm.chainConfig.GetBlockVersion(header.Number)
 				statedb, err := pm.blockchain.State()
 				if err != nil {
 					continue
