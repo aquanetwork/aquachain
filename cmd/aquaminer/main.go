@@ -10,6 +10,7 @@ import (
 	"log"
 	"math"
 	"math/big"
+	"os"
 	"runtime"
 	"time"
 
@@ -20,17 +21,24 @@ import (
 	"github.com/aquanetwork/aquachain/crypto"
 )
 
+const version = "aquaminer version 0.1 (https://github.com/aquanetwork/aquachain)"
+
 var (
-	rawurl  = "http://localhost:8543"
-	max     = new(big.Int).SetUint64(math.MaxUint64)
-	digest  = common.BytesToHash(make([]byte, common.HashLength))
-	maxproc = flag.Int("t", runtime.NumCPU(), "cpu to use")
-	farm    = flag.String("F", "http://localhost:8543", "rpc server to mine to")
+	rawurl      = "http://localhost:8543"
+	max         = new(big.Int).SetUint64(math.MaxUint64)
+	digest      = common.BytesToHash(make([]byte, common.HashLength))
+	maxproc     = flag.Int("t", runtime.NumCPU(), "cpu to use")
+	farm        = flag.String("F", "http://localhost:8543", "rpc server to mine to")
+	showVersion = flag.Bool("version", false, "show version and exit")
 )
 
 func main() {
 
 	flag.Parse()
+	if *showVersion {
+		fmt.Println(version)
+		os.Exit(0)
+	}
 	runtime.GOMAXPROCS(*maxproc)
 	runtime.GOMAXPROCS(*maxproc)
 
