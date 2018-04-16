@@ -7,6 +7,7 @@
 .PHONY: aquachain-linux-arm aquachain-linux-arm-5 aquachain-linux-arm-6 aquachain-linux-arm-7 aquachain-linux-arm64
 .PHONY: aquachain-darwin aquachain-darwin-386 aquachain-darwin-amd64
 .PHONY: aquachain-windows aquachain-windows-386 aquachain-windows-amd64
+.PHONY: aquaminer
 
 GOBIN = $(shell pwd)/build/bin
 GO ?= latest
@@ -15,6 +16,11 @@ aquachain:
 	build/env.sh go run build/ci.go install ./cmd/aquachain
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/aquachain\" to launch aquachain."
+
+aquaminer:
+	build/env.sh go run build/ci.go install ./cmd/aquaminer
+	@echo "Done building."
+	@echo "Run \"$(GOBIN)/aquaminer\" to start mining to localhost:8543 rpc-server."
 
 swarm:
 	build/env.sh go run build/ci.go install ./cmd/swarm

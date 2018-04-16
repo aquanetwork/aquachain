@@ -186,9 +186,9 @@ func doInstall(cmdline []string) {
 		var minor int
 		fmt.Sscanf(strings.TrimPrefix(runtime.Version(), "go1."), "%d", &minor)
 
-		if minor < 7 {
+		if minor < 10 {
 			log.Println("You have Go version", runtime.Version())
-			log.Println("aquachain requires at least Go version 1.7 and cannot")
+			log.Println("aquachain requires at least Go version 1.10 and cannot")
 			log.Println("be compiled with an earlier version. Please upgrade your Go installation.")
 			os.Exit(1)
 		}

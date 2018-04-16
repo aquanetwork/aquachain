@@ -58,13 +58,13 @@ func big2diff(large *big.Int) uint64 {
 	return new(big.Int).Div(oneLsh256, denominator).Uint64()
 
 }
-func refreshWork(ctx context.Context, client *aquaclient.Client) (common.Hash, *big.Int) {
+func refreshWork(ctx context.Context, client *aquaclient.Client) (common.Hash, *big.Int, error) {
 	work, err := client.GetWork(ctx)
 	if err != nil {
-		utils.Fatalf("getwork err: %v", err)
+		return common.Hash{}, nil, fmt.Errorf("getwork err: %v", err)
 	}
 	target := new(big.Int).SetBytes(common.HexToHash(work[2]).Bytes())
-	return common.HexToHash(work[0]), target
+	return common.HexToHash(work[0]), target, nil
 }
 func miner(label string, client *aquaclient.Client) {
 	var (
@@ -73,39 +73,55 @@ func miner(label string, client *aquaclient.Client) {
 		fps    = 0
 		ctx    = context.Background()
 	)
-	workHash, target := refreshWork(ctx, client)
-	log.Printf("Begin new work:\n  HashNoNonce: %s\n  Difficulty %v\n", workHash.Hex(), big2diff(target))
 	for {
-		fps++
-		select {
-		case <-minute:
-			log.Printf("(%s) %v H/s\n", label, fps/60)
-			fps = 0
-		case <-second:
-			newWorkHash, newTarget := refreshWork(ctx, client)
-			if newWorkHash != workHash {
-				workHash = newWorkHash
-				target = newTarget
-				log.Printf("Got new work: %s\nDifficulty: %v\n", workHash.Hex(), big2diff(target))
-			}
-		default:
-		}
-		seed := make([]byte, 40)
-		copy(seed, workHash.Bytes())
-		nonce, err := rand.Int(rand.Reader, max)
+		workHash, target, err := refreshWork(ctx, client)
 		if err != nil {
-			utils.Fatalf("prng err: %v", err)
+			log.Println("error getting work:", err)
+			<-time.After(time.Second)
+			continue
 		}
-		nuint := nonce.Uint64()
-		binary.LittleEndian.PutUint64(seed[32:], nuint)
-		result := crypto.Argon2idHash(seed)
-		if new(big.Int).SetBytes(result.Bytes()).Cmp(target) <= 0 {
-			log.Printf("valid nonce found, submitting:\n%v: %x\n", nuint, result)
-			blknonce := types.EncodeNonce(nuint)
-			if client.SubmitWork(ctx, blknonce, workHash, digest) {
-				log.Println("\n\ngood nonce!\n\n")
+		log.Printf("Begin new work:\n  HashNoNonce: %s\n  Difficulty %v\n", workHash.Hex(), big2diff(target))
+		for {
+			fps++
+			select {
+			case <-minute:
+				log.Printf("(%s) %v H/s\n", label, fps/60)
+				fps = 0
+			case <-second:
+				newWorkHash, newTarget, err := refreshWork(ctx, client)
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+				if newWorkHash != workHash {
+					workHash = newWorkHash
+					target = newTarget
+					log.Printf("Got new work: %s\nDifficulty: %v\n", workHash.Hex(), big2diff(target))
+				}
+			default:
 			}
-			workHash, target = refreshWork(ctx, client)
+			seed := make([]byte, 40)
+			copy(seed, workHash.Bytes())
+			nonce, err := rand.Int(rand.Reader, max)
+			if err != nil {
+				utils.Fatalf("prng err: %v", err)
+			}
+			nuint := nonce.Uint64()
+			binary.LittleEndian.PutUint64(seed[32:], nuint)
+			result := crypto.Argon2idHash(seed)
+			if new(big.Int).SetBytes(result.Bytes()).Cmp(target) <= 0 {
+				log.Printf("valid nonce found, submitting:\n%v: %x\n", nuint, result)
+				blknonce := types.EncodeNonce(nuint)
+				if client.SubmitWork(ctx, blknonce, workHash, digest) {
+					log.Printf("\n\n######\n\nGood Nonce!\n\n#####\n\n")
+				}
+				workHash, target, err = refreshWork(ctx, client)
+				if err != nil {
+					log.Println("error getting work:", err)
+					<-time.After(time.Second)
+					break
+				}
+			}
 		}
 	}
 }
