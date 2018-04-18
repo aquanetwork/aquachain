@@ -26,7 +26,7 @@ Apple/Linux Install: (Apple users, replace linux-amd64 with darwin-amd64)
 
 Create account inside the console: `personal.newAccount()`
 
-Your new wallet private key is located inside `datadir` by default is `~/.aquachain/`` or ``%appdata%\Roaming\AquaChain` (windows)
+Your new wallet private key is located inside `datadir` by default is `~/.aquachain/` or `%appdata%\Roaming\AquaChain` (windows)
 
 See more commands: [Wiki](https://github.com/aquanetwork/aquachain/wiki/Basics)
 
