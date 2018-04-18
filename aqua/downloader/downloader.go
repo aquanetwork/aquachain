@@ -652,18 +652,32 @@ func (d *Downloader) findAncestor(p *peerConnection, height uint64) (uint64, err
 				if headers[i].Number.Int64() < from || headers[i].Number.Uint64() > ceil {
 					continue
 				}
-				// Otherwise check if we already know the header or not
-				//headers[i].SetVersion(d.blockchain.GetBlockVersion(headers[i].Number))
-				if (d.mode == FullSync && d.blockchain.HasBlock(headers[i].SetVersion(byte(d.blockchain.RetrieveHeaderVersion(headers[i].Number))), headers[i].Number.Uint64())) || (d.mode != FullSync && d.lightchain.HasHeader(headers[i].Hash(), headers[i].Number.Uint64())) {
-					number, hash = headers[i].Number.Uint64(), headers[i].Hash()
-
-					// If every header is known, even future ones, the peer straight out lied about its head
-					if number > height && i == limit-1 {
-						p.log.Warn("Lied about chain head", "reported", height, "found", number)
-						return 0, errStallingPeer
+				var version byte = 0
+				switch d.mode {
+				case FullSync:
+					// cache the header hash with the correct version (using the block height)
+					version = byte(d.blockchain.RetrieveHeaderVersion(headers[i].Number))
+					hcache := headers[i].SetVersion(version)
+					// check if we already know the header or not
+					if d.blockchain.HasBlock(hcache, headers[i].Number.Uint64()) {
+						number, hash = headers[i].Number.Uint64(), hcache
 					}
-					break
+				default:
+					// cache the header hash with the correct version (using the block height)
+					version = byte(d.lightchain.RetrieveHeaderVersion(headers[i].Number))
+					hcache := headers[i].SetVersion(version)
+					// check if we already know the header or not
+					if d.lightchain.HasHeader(hcache, headers[i].Number.Uint64()) {
+						number, hash = headers[i].Number.Uint64(), hcache
+					}
 				}
+
+				// If every header is known, even future ones, the peer straight out lied about its head
+				if number > height && i == limit-1 {
+					p.log.Warn("Lied about chain head", "reported", height, "found", number)
+					return 0, errStallingPeer
+				}
+				break
 			}
 
 		case <-timeout:
@@ -719,7 +733,9 @@ func (d *Downloader) findAncestor(p *peerConnection, height uint64) (uint64, err
 				arrived = true
 
 				// Modify the search interval based on the response
-				if (d.mode == FullSync && !d.blockchain.HasBlock(headers[0].Hash(), headers[0].Number.Uint64())) || (d.mode != FullSync && !d.lightchain.HasHeader(headers[0].Hash(), headers[0].Number.Uint64())) {
+				firstversion := byte(d.blockchain.RetrieveHeaderVersion(headers[0].Number))
+				if (d.mode == FullSync && !d.blockchain.HasBlock(headers[0].SetVersion(firstversion), headers[0].Number.Uint64())) ||
+					(d.mode != FullSync && !d.lightchain.HasHeader(headers[0].SetVersion(firstversion), headers[0].Number.Uint64())) {
 					end = check
 					break
 				}
@@ -1226,7 +1242,7 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 				// peer gave us something useful, we're already happy/progressed (above check).
 				if d.mode == FastSync || d.mode == LightSync {
 					head := d.lightchain.CurrentHeader()
-					if td.Cmp(d.lightchain.GetTd(head.Hash(), head.Number.Uint64())) > 0 {
+					if td.Cmp(d.lightchain.GetTd(head.SetVersion(byte(d.lightchain.RetrieveHeaderVersion(head.Number))), head.Number.Uint64())) > 0 {
 						return errStallingPeer
 					}
 				}
@@ -1255,9 +1271,9 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 				if d.mode == FastSync || d.mode == LightSync {
 					// Collect the yet unknown headers to mark them as uncertain
 					unknown := make([]*types.Header, 0, len(headers))
-					for _, header := range chunk {
-						header.Version = d.lightchain.RetrieveHeaderVersion(header.Number)
-						if !d.lightchain.HasHeader(header.SetVersion(byte(d.lightchain.RetrieveHeaderVersion(header.Number))), header.Number.Uint64()) {
+					for _, header := range chunk { // copies
+						header.SetVersion(byte(d.lightchain.RetrieveHeaderVersion(header.Number)))
+						if !d.lightchain.HasHeader(header.Hash(), header.Number.Uint64()) {
 							unknown = append(unknown, header)
 						}
 					}
@@ -1271,7 +1287,7 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 						if n > 0 {
 							rollback = append(rollback, chunk[:n]...)
 						}
-						log.Debug("Invalid header encountered", "number", chunk[n].Number, "hash", chunk[n].Hash(), "err", err)
+						log.Debug("Invalid header encountered", "number", chunk[n].Number, "hash", chunk[n].Hash(), "algo", chunk[n].Version, "err", err)
 						return errInvalidChain
 					}
 					// All verifications passed, store newly found uncertain headers
@@ -1348,11 +1364,12 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 	// Retrieve the a batch of results to import
 	first, last := results[0].Header, results[len(results)-1].Header
 	log.Debug("Inserting downloaded chain", "items", len(results),
-		"firstnum", first.Number, "firsthash", first.Hash(),
-		"lastnum", last.Number, "lasthash", last.Hash(),
+		"firstnum", first.Number, "firsthash", first.Hash(), "algo", first.Version,
+		"lastnum", last.Number, "lasthash", last.Hash(), "algo", last.Version,
 	)
 	blocks := make([]*types.Block, len(results))
 	for i, result := range results {
+		result.Header.SetVersion(byte(d.blockchain.RetrieveHeaderVersion(result.Header.Number)))
 		blocks[i] = types.NewBlockWithHeader(result.Header).WithBody(result.Transactions, result.Uncles)
 	}
 	if index, err := d.blockchain.InsertChain(blocks); err != nil {
