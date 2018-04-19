@@ -118,6 +118,9 @@ func main() {
 }
 
 func big2diff(large *big.Int) uint64 {
+	if large == nil {
+		return 0
+	}
 	denominator := new(big.Int).Add(large, bigOne)
 	return new(big.Int).Div(oneLsh256, denominator).Uint64()
 
@@ -128,7 +131,7 @@ func refreshWork(ctx context.Context, client *aquaclient.Client, benchmarking bo
 	}
 	work, err := client.GetWork(ctx)
 	if err != nil {
-		return common.Hash{}, nil, fmt.Errorf("getwork err: %v", err)
+		return common.Hash{}, benchdiff, fmt.Errorf("getwork err: %v", err)
 	}
 	if *debug {
 		fmt.Println(work)
