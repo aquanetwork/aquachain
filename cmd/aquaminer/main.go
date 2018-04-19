@@ -21,7 +21,7 @@ import (
 	"github.com/aquanetwork/aquachain/crypto"
 )
 
-const version = "aquaminer version 0.2 (https://github.com/aquanetwork/aquachain)"
+const version = "aquaminer version 0.3 (https://github.com/aquanetwork/aquachain)"
 
 var (
 	rawurl      = "http://localhost:8543"
