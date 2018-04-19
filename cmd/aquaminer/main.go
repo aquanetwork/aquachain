@@ -32,7 +32,7 @@ var (
 	showVersion = flag.Bool("version", false, "show version and exit")
 	benching    = flag.Bool("B", false, "offline benchmark mode")
 	debug       = flag.Bool("d", false, "debug mode")
-	nonceseed   = flag.Int64("seed", 0, "nonce seed multiplier")
+	nonceseed   = flag.Int64("seed", 1, "nonce seed multiplier")
 	refresh     = flag.Duration("r", time.Second*3, "seconds to wait between asking for more work")
 )
 
@@ -67,6 +67,10 @@ func main() {
 
 	runtime.GOMAXPROCS(*maxproc)
 	runtime.GOMAXPROCS(*maxproc)
+	if *nonceseed == 0 {
+		mrand.Seed(time.Now().UTC().Unix())
+		*nonceseed = mrand.Int63()
+	}
 	mrand.Seed(time.Now().UTC().Unix() * *nonceseed)
 	var (
 		workers    = []*worker{}
@@ -89,7 +93,7 @@ func main() {
 	// spawn miners
 	for i := 0; i < maxProc; i++ {
 		w := new(worker)
-		w.newwork = make(chan workload)
+		w.newwork = make(chan workload, 4) // new work incoming channel
 		workers = append(workers, w)
 		go miner(fmt.Sprintf("cpu%v", i+1), client, *benching, w.newwork)
 	}
@@ -99,8 +103,8 @@ func main() {
 	cachework := common.Hash{}
 	for {
 		select {
-		default:
-		case <-getnewwork:
+		//default:
+		case <-getnewwork: // set -r flag to change this
 			work, target, err := refreshWork(ctx, client, *benching)
 			if err != nil {
 				log.Println("Error fetching new work from pool:", err)
@@ -117,6 +121,7 @@ func main() {
 	}
 }
 
+// courtesy function to display difficulty for humans
 func big2diff(large *big.Int) uint64 {
 	if large == nil {
 		return 0
@@ -125,6 +130,8 @@ func big2diff(large *big.Int) uint64 {
 	return new(big.Int).Div(oneLsh256, denominator).Uint64()
 
 }
+
+// fetch work from a rpc client
 func refreshWork(ctx context.Context, client *aquaclient.Client, benchmarking bool) (common.Hash, *big.Int, error) {
 	if benchmarking {
 		return benchwork, benchdiff, nil
@@ -139,7 +146,10 @@ func refreshWork(ctx context.Context, client *aquaclient.Client, benchmarking bo
 	target := new(big.Int).SetBytes(common.HexToHash(work[2]).Bytes())
 	return common.HexToHash(work[0]), target, nil
 }
-func miner(label string, client *aquaclient.Client, offline bool, getworkchan chan workload) {
+
+// single miner loop
+func miner(label string, client *aquaclient.Client, offline bool, getworkchan <-chan workload) {
+
 	var (
 		second   = time.Tick(*refresh)
 		fps      = 0.00
@@ -148,9 +158,13 @@ func miner(label string, client *aquaclient.Client, offline bool, getworkchan ch
 		target   *big.Int
 		err      error
 	)
+
+	// remember original nonce
 	ononce := mrand.Uint64()
 	nonce := ononce
 	for {
+
+		// accept new work if available
 		select {
 		case newwork := <-getworkchan:
 			workHash = newwork.job
@@ -158,12 +172,15 @@ func miner(label string, client *aquaclient.Client, offline bool, getworkchan ch
 			err = newwork.err
 		default:
 		}
-		//workHash, target, err := refreshWork(ctx, client, offline)
+
+		// error fetching work, wait one second and see if theres more work
 		if err != nil {
 			log.Println("error getting work:", err)
 			<-time.After(time.Second)
 			continue
 		}
+
+		// difficulty isnt set. wait one second for more work.
 		if target == nil {
 			log.Println(label, "waiting for work...")
 			<-time.After(time.Second)
@@ -174,20 +191,35 @@ func miner(label string, client *aquaclient.Client, offline bool, getworkchan ch
 		fps++
 		select {
 		case <-second:
-			log.Printf("(%s) %.3f kH/s\n", label, fps/1000/(*refresh).Seconds())
+			log.Print("(", label, ")", fps/(*refresh).Seconds(), "H/s\n")
 			fps = 0
 		default:
 		}
+
+		// increment nonce
+		nonce++
+
+		// real actual hashing!
 		seed := make([]byte, 40)
 		copy(seed, workHash.Bytes())
-		nonce++
 		binary.LittleEndian.PutUint64(seed[32:], nonce)
 		result := crypto.Argon2idHash(seed)
+
+		// check difficulty of result
 		if new(big.Int).SetBytes(result.Bytes()).Cmp(target) <= 0 {
-			log.Printf("valid nonce found after %v tries (%v): %x\n", nonce-ononce, nonce, result)
+			log.Print("valid nonce found (", nonce, ")\n")
 			blknonce := types.EncodeNonce(nonce)
-			if !offline && client.SubmitWork(ctx, blknonce, workHash, digest) {
-				log.Printf("\n\n######\n\nGood Nonce!\n\n#####\n\n")
+			if offline {
+				continue
+			}
+			// submit the nonce, with the original job
+			if client.SubmitWork(ctx, blknonce, workHash, digest) {
+				log.Print("\n\n######\n\nGood Nonce!\n\n#####\n\n")
+			} else {
+				// there was an error when we send the work. lets get a totally
+				// random nonce, instead of incrementing more
+				mrand.Seed(int64(nonce))
+				nonce = mrand.Uint64()
 			}
 		}
 	}
