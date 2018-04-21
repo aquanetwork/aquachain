@@ -34,7 +34,7 @@ import (
 	"github.com/aquanetwork/aquachain/p2p"
 	"github.com/aquanetwork/aquachain/p2p/nat"
 	"github.com/aquanetwork/aquachain/params"
-	whisper "github.com/aquanetwork/aquachain/whisper/whisperv5"
+	whisper "github.com/aquanetwork/aquachain/whisper/whisperv6"
 )
 
 // NodeConfig represents the collection of configuration values to fine tune the AquaChain
