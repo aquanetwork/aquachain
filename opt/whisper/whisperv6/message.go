@@ -29,9 +29,9 @@ import (
 	"strconv"
 
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/crypto/ecies"
-	"github.com/aquanetwork/aquachain/log"
 )
 
 // MessageParams specifies the exact way a message should be wrapped

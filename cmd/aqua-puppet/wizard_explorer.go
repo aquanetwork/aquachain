@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 // deployExplorer creates a new block explorer based on some user input.

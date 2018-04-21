@@ -21,7 +21,7 @@ package dashboard
 import (
 	"syscall"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 // getProcessCPUTime retrieves the process' CPU time since program startup.

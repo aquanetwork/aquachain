@@ -27,10 +27,10 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/internal/debug"
-	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/node"
 	"github.com/aquanetwork/aquachain/rlp"
 )

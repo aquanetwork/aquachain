@@ -24,10 +24,10 @@ import (
 	"time"
 
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/log"
 )
 
 type hashrate struct {

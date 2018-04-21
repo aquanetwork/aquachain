@@ -24,7 +24,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/metrics"
+	"github.com/aquanetwork/aquachain/common/metrics"
 )
 
 /*

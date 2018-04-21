@@ -27,7 +27,7 @@ import (
 	"strings"
 
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 // faucetDockerfile is the Dockerfile required to build an faucet container to

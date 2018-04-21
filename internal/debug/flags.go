@@ -24,10 +24,10 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/aquanetwork/aquachain/log"
-	"github.com/aquanetwork/aquachain/log/term"
-	"github.com/aquanetwork/aquachain/metrics"
-	"github.com/aquanetwork/aquachain/metrics/exp"
+	"github.com/aquanetwork/aquachain/common/log"
+	"github.com/aquanetwork/aquachain/common/log/term"
+	"github.com/aquanetwork/aquachain/common/metrics"
+	"github.com/aquanetwork/aquachain/common/metrics/exp"
 	colorable "github.com/mattn/go-colorable"
 	"gopkg.in/urfave/cli.v1"
 )

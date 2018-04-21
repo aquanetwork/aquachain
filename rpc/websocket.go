@@ -29,7 +29,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 	"golang.org/x/net/websocket"
 	"gopkg.in/fatih/set.v0"
 )

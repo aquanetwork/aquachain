@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/aquanetwork/aquachain/metrics"
+	"github.com/aquanetwork/aquachain/common/metrics"
 )
 
 // a regexp for extracting the unit from time.Duration.String

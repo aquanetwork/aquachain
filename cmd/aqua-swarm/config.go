@@ -30,7 +30,7 @@ import (
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/node"
 	"github.com/naoina/toml"
 

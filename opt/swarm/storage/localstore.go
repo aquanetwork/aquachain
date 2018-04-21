@@ -19,7 +19,7 @@ package storage
 import (
 	"encoding/binary"
 
-	"github.com/aquanetwork/aquachain/metrics"
+	"github.com/aquanetwork/aquachain/common/metrics"
 )
 
 //metrics variables

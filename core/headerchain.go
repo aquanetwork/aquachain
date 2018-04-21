@@ -29,9 +29,9 @@ import (
 
 	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/params"
 	"github.com/hashicorp/golang-lru"
 )

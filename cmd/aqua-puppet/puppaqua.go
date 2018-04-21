@@ -22,7 +22,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 	"gopkg.in/urfave/cli.v1"
 )
 

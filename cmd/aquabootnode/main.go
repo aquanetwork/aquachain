@@ -25,8 +25,8 @@ import (
 	"os"
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/p2p/discover"
 	"github.com/aquanetwork/aquachain/p2p/discv5"
 	"github.com/aquanetwork/aquachain/p2p/nat"

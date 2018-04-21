@@ -21,7 +21,7 @@ package keystore
 import (
 	"time"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/rjeczalik/notify"
 )
 

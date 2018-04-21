@@ -26,7 +26,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 // dashboardContent is the actual dashboard HTML content to serve up when users

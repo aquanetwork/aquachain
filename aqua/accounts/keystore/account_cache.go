@@ -29,7 +29,7 @@ import (
 
 	"github.com/aquanetwork/aquachain/aqua/accounts"
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 	"gopkg.in/fatih/set.v0"
 )
 

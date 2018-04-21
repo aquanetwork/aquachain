@@ -28,8 +28,8 @@ import (
 	aquachain "github.com/aquanetwork/aquachain"
 	"github.com/aquanetwork/aquachain/aqua/accounts"
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/log"
 	"github.com/karalabe/hid"
 )
 

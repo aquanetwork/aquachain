@@ -19,7 +19,7 @@
 package downloader
 
 import (
-	"github.com/aquanetwork/aquachain/metrics"
+	"github.com/aquanetwork/aquachain/common/metrics"
 )
 
 var (

@@ -31,8 +31,8 @@ import (
 	"time"
 
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/log"
-	"github.com/aquanetwork/aquachain/metrics"
+	"github.com/aquanetwork/aquachain/common/log"
+	"github.com/aquanetwork/aquachain/common/metrics"
 	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 )
 

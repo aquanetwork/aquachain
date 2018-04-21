@@ -6,8 +6,8 @@ import (
 	"math/big"
 
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/params"
 )
 

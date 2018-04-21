@@ -17,7 +17,7 @@
 package aqua
 
 import (
-	"github.com/aquanetwork/aquachain/metrics"
+	"github.com/aquanetwork/aquachain/common/metrics"
 	"github.com/aquanetwork/aquachain/p2p"
 )
 

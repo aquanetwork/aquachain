@@ -23,7 +23,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 /*

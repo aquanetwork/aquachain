@@ -23,8 +23,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/log"
 	"github.com/olekukonko/tablewriter"
 )
 

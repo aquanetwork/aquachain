@@ -21,7 +21,7 @@ import (
 	"fmt"
 
 	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 // deployFaucet queries the user for various input on deploying a faucet, after

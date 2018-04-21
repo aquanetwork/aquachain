@@ -22,7 +22,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 func init() {

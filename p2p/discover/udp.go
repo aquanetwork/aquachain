@@ -25,8 +25,8 @@ import (
 	"net"
 	"time"
 
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/p2p/nat"
 	"github.com/aquanetwork/aquachain/p2p/netutil"
 	"github.com/aquanetwork/aquachain/rlp"

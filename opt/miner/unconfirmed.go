@@ -21,8 +21,8 @@ import (
 	"sync"
 
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/log"
 )
 
 // headerRetriever is used by the unconfirmed block set to verify whether a previously

@@ -23,8 +23,8 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/common/mclock"
-	"github.com/aquanetwork/aquachain/log"
 )
 
 const (

@@ -24,7 +24,7 @@ import (
 	"time"
 
 	"github.com/aquanetwork/aquachain/aqua/accounts/usbwallet"
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/rpc"
 	"github.com/robertkrimen/otto"
 )

@@ -21,7 +21,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 )
 

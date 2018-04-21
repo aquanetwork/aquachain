@@ -36,8 +36,8 @@ import (
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/opt/console"
 	"github.com/aquanetwork/aquachain/opt/whisper/mailserver"
 	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"

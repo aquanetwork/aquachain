@@ -20,7 +20,7 @@ import (
 	"fmt"
 
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 // SecureTrie wraps a trie with key hashing. In a secure trie, all

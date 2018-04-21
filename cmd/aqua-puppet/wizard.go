@@ -31,8 +31,8 @@ import (
 	"sync"
 
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/log"
 	"golang.org/x/crypto/ssh/terminal"
 )
 

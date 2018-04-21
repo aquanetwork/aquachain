@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 // Enabled is checked by the constructor functions for all of the

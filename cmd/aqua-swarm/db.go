@@ -23,7 +23,7 @@ import (
 	"path/filepath"
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 	"gopkg.in/urfave/cli.v1"
 )

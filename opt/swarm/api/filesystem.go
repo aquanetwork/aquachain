@@ -27,7 +27,7 @@ import (
 	"sync"
 
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 )
 

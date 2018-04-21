@@ -19,7 +19,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 // ensureVirtualHost checks whether a reverse-proxy is running on the specified

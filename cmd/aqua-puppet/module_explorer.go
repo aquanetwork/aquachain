@@ -25,7 +25,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 // explorerDockerfile is the Dockerfile required to run a block explorer.

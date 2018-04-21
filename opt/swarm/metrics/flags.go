@@ -20,9 +20,9 @@ import (
 	"time"
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/log"
-	gethmetrics "github.com/aquanetwork/aquachain/metrics"
-	"github.com/aquanetwork/aquachain/metrics/influxdb"
+	"github.com/aquanetwork/aquachain/common/log"
+	gethmetrics "github.com/aquanetwork/aquachain/common/metrics"
+	"github.com/aquanetwork/aquachain/common/metrics/influxdb"
 	"gopkg.in/urfave/cli.v1"
 )
 

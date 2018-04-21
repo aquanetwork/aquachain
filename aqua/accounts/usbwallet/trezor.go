@@ -31,8 +31,8 @@ import (
 	"github.com/aquanetwork/aquachain/aqua/accounts/usbwallet/internal/trezor"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/hexutil"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/log"
 	"github.com/golang/protobuf/proto"
 )
 

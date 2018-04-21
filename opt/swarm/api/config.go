@@ -23,8 +23,8 @@ import (
 	"path/filepath"
 
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/node"
 	"github.com/aquanetwork/aquachain/opt/contracts/ens"
 	"github.com/aquanetwork/aquachain/opt/swarm/network"

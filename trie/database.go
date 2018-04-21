@@ -22,7 +22,7 @@ import (
 
 	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/common/log"
 )
 
 // secureKeyPrefix is the database key prefix used to store trie node preimages.

@@ -31,11 +31,11 @@ import (
 	"github.com/aquanetwork/aquachain/cmd/aqua-vm/internal/compiler"
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/vm"
 	"github.com/aquanetwork/aquachain/core/vm/runtime"
-	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/params"
 	cli "gopkg.in/urfave/cli.v1"
 )

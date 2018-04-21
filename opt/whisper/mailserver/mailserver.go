@@ -23,8 +23,8 @@ import (
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/common"
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/log"
 	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"
 	"github.com/aquanetwork/aquachain/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
