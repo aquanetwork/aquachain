@@ -26,7 +26,7 @@ import (
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/vm"
 	"github.com/aquanetwork/aquachain/log"
-	"github.com/aquanetwork/aquachain/tests"
+	"github.com/aquanetwork/aquachain/opt/tests"
 
 	cli "gopkg.in/urfave/cli.v1"
 )
