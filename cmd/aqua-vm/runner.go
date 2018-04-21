@@ -28,7 +28,7 @@ import (
 	goruntime "runtime"
 
 	"github.com/aquanetwork/aquachain/aquadb"
-	"github.com/aquanetwork/aquachain/cmd/evm/internal/compiler"
+	"github.com/aquanetwork/aquachain/cmd/aqua-vm/internal/compiler"
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core"
