@@ -14,24 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with aquachain. If not, see <http://www.gnu.org/licenses/>.
 
-// p2psim provides a command-line client for a simulation HTTP API.
+// aquap2psim provides a command-line client for a simulation HTTP API.
 //
 // Here is an example of creating a 2 node network with the first node
 // connected to the second:
 //
-//     $ p2psim node create
+//     $ aquap2psim node create
 //     Created node01
 //
-//     $ p2psim node start node01
+//     $ aquap2psim node start node01
 //     Started node01
 //
-//     $ p2psim node create
+//     $ aquap2psim node create
 //     Created node02
 //
-//     $ p2psim node start node02
+//     $ aquap2psim node start node02
 //     Started node02
 //
-//     $ p2psim node connect node01 node02
+//     $ aquap2psim node connect node01 node02
 //     Connected node01 to node02
 //
 package main
@@ -64,9 +64,25 @@ func main() {
 			Name:   "api",
 			Value:  "http://localhost:8888",
 			Usage:  "simulation API URL",
-			EnvVar: "P2PSIM_API_URL",
+			EnvVar: "aquap2psim_API_URL",
 		},
 	}
+	app.UsageText = `
+	    $ aquap2psim node create
+	    Created node01
+
+	    $ aquap2psim node start node01
+	    Started node01
+
+	    $ aquap2psim node create
+	    Created node02
+
+	    $ aquap2psim node start node02
+	    Started node02
+
+	    $ aquap2psim node connect node01 node02
+	    Connected node01 to node02
+`
 	app.Before = func(ctx *cli.Context) error {
 		client = simulations.NewClient(ctx.GlobalString("api"))
 		return nil
