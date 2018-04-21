@@ -44,7 +44,7 @@ import (
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/vm"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/dashboard"
+	"github.com/aquanetwork/aquachain/opt/dashboard"
 	"github.com/aquanetwork/aquachain/opt/les"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/metrics"

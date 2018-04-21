@@ -29,7 +29,7 @@ import (
 
 	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/dashboard"
+	"github.com/aquanetwork/aquachain/opt/dashboard"
 	"github.com/aquanetwork/aquachain/node"
 	"github.com/aquanetwork/aquachain/params"
 	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"
