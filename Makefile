@@ -32,6 +32,8 @@ all:
 
 release: aquachain-windows-amd64 aquachain-darwin-amd64 aquachain-linux-amd64
 
+archive:
+	build/env.sh go run build/ci.go archive
 
 android:
 	build/env.sh go run build/ci.go aar --local

@@ -63,57 +63,56 @@ import (
 
 var (
 	// Files that end up in the aquachain*.zip archive.
-	gethArchiveFiles = []string{
+	aquaArchiveFiles = []string{
 		"COPYING",
+		"README.md",
 		executablePath("aquachain"),
 	}
 
 	// Files that end up in the aquachain-alltools*.zip archive.
 	allToolsArchiveFiles = []string{
 		"COPYING",
-		executablePath("abigen"),
-		executablePath("bootnode"),
-		executablePath("evm"),
+		"README.md",
+		executablePath("aqua-abigen"),
+		executablePath("aqua-maw"),
+		executablePath("aqua-puppet"),
+		executablePath("aqua-rlpdump"),
+		executablePath("aqua-swarm"),
+		executablePath("aqua-vm"),
+		executablePath("aqua-wnode"),
+		executablePath("aquabootnode"),
 		executablePath("aquachain"),
-		executablePath("puppeth"),
-		executablePath("rlpdump"),
-		executablePath("swarm"),
-		executablePath("wnode"),
+		executablePath("aquakey"),
+		executablePath("aquaminer"),
+		executablePath("aquap2psim"),
+		executablePath("aquapaper"),
 	}
 
 	// A debian package is created for all executables listed here.
 	debExecutables = []debExecutable{
 		{
-			Name:        "abigen",
+			Name:        "aqua-abigen",
 			Description: "Source code generator to convert AquaChain contract definitions into easy to use, compile-time type-safe Go packages.",
 		},
 		{
-			Name:        "bootnode",
-			Description: "AquaChain bootnode.",
+			Name:        "aqua-bootnode",
+			Description: "AquaChain bootnode (discovery-only)",
 		},
 		{
-			Name:        "evm",
-			Description: "Developer utility version of the EVM (AquaChain Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode.",
+			Name:        "aqua-vm",
+			Description: "Developer utility version of the AVM (AquaChain Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode.",
 		},
 		{
-			Name:        "aquachain",
-			Description: "AquaChain CLI client.",
-		},
-		{
-			Name:        "puppeth",
-			Description: "AquaChain private network manager.",
-		},
-		{
-			Name:        "rlpdump",
+			Name:        "aqua-rlpdump",
 			Description: "Developer utility tool that prints RLP structures.",
 		},
 		{
-			Name:        "swarm",
+			Name:        "aqua-swarm",
 			Description: "AquaChain Swarm daemon and tools",
 		},
 		{
-			Name:        "wnode",
-			Description: "AquaChain Whisper diagnostic tool",
+			Name:        "aquachain",
+			Description: "AquaChain Full Node and Command Line Wallet",
 		},
 	}
 
@@ -362,7 +361,7 @@ func doArchive(cmdline []string) {
 		arch   = flag.String("arch", runtime.GOARCH, "Architecture cross packaging")
 		atype  = flag.String("type", "zip", "Type of archive to write (zip|tar)")
 		signer = flag.String("signer", "", `Environment variable holding the signing key (e.g. LINUX_SIGNING_KEY)`)
-		upload = flag.String("upload", "", `Destination to upload the archives (usually "gethstore/builds")`)
+		upload = flag.String("upload", "", `Destination to upload the archives (usually "aquastore/builds")`)
 		ext    string
 	)
 	flag.CommandLine.Parse(cmdline)
@@ -382,7 +381,7 @@ func doArchive(cmdline []string) {
 		alltools  = "aquachain-alltools-" + base + ext
 	)
 	maybeSkipArchive(env)
-	if err := build.WriteArchive(aquachain, gethArchiveFiles); err != nil {
+	if err := build.WriteArchive(aquachain, aquaArchiveFiles); err != nil {
 		log.Fatal(err)
 	}
 	if err := build.WriteArchive(alltools, allToolsArchiveFiles); err != nil {
@@ -652,7 +651,7 @@ func doWindowsInstaller(cmdline []string) {
 	var (
 		arch    = flag.String("arch", runtime.GOARCH, "Architecture for cross build packaging")
 		signer  = flag.String("signer", "", `Environment variable holding the signing key (e.g. WINDOWS_SIGNING_KEY)`)
-		upload  = flag.String("upload", "", `Destination to upload the archives (usually "gethstore/builds")`)
+		upload  = flag.String("upload", "", `Destination to upload the archives (usually "aquastore/builds")`)
 		workdir = flag.String("workdir", "", `Output directory for packages (uses temp dir if unset)`)
 	)
 	flag.CommandLine.Parse(cmdline)
@@ -664,7 +663,7 @@ func doWindowsInstaller(cmdline []string) {
 	var (
 		devTools []string
 		allTools []string
-		gethTool string
+		aquaTool string
 	)
 	for _, file := range allToolsArchiveFiles {
 		if file == "COPYING" { // license, copied later
@@ -672,7 +671,7 @@ func doWindowsInstaller(cmdline []string) {
 		}
 		allTools = append(allTools, filepath.Base(file))
 		if filepath.Base(file) == "aquachain.exe" {
-			gethTool = file
+			aquaTool = file
 		} else {
 			devTools = append(devTools, file)
 		}
@@ -682,7 +681,7 @@ func doWindowsInstaller(cmdline []string) {
 	// first section contains the aquachain binary, second section holds the dev tools.
 	templateData := map[string]interface{}{
 		"License":   "COPYING",
-		"AquaChain": gethTool,
+		"AquaChain": aquaTool,
 		"DevTools":  devTools,
 	}
 	build.Render("build/nsis.aquachain.nsi", filepath.Join(*workdir, "aquachain.nsi"), 0644, nil)
@@ -723,7 +722,7 @@ func doAndroidArchive(cmdline []string) {
 		local  = flag.Bool("local", false, `Flag whether we're only doing a local build (skip Maven artifacts)`)
 		signer = flag.String("signer", "", `Environment variable holding the signing key (e.g. ANDROID_SIGNING_KEY)`)
 		deploy = flag.String("deploy", "", `Destination to deploy the archive (usually "https://oss.sonatype.org")`)
-		upload = flag.String("upload", "", `Destination to upload the archive (usually "gethstore/builds")`)
+		upload = flag.String("upload", "", `Destination to upload the archive (usually "aquastore/builds")`)
 	)
 	flag.CommandLine.Parse(cmdline)
 	env := build.Env()
@@ -850,7 +849,7 @@ func doXCodeFramework(cmdline []string) {
 		local  = flag.Bool("local", false, `Flag whether we're only doing a local build (skip Maven artifacts)`)
 		signer = flag.String("signer", "", `Environment variable holding the signing key (e.g. IOS_SIGNING_KEY)`)
 		deploy = flag.String("deploy", "", `Destination to deploy the archive (usually "trunk")`)
-		upload = flag.String("upload", "", `Destination to upload the archives (usually "gethstore/builds")`)
+		upload = flag.String("upload", "", `Destination to upload the archives (usually "aquastore/builds")`)
 	)
 	flag.CommandLine.Parse(cmdline)
 	env := build.Env()
@@ -963,7 +962,7 @@ func doXgo(cmdline []string) {
 		}
 		return
 	}
-	// Otherwise xxecute the explicit cross compilation
+	// Otherwise execute the explicit cross compilation
 	path := args[len(args)-1]
 	args = append(args[:len(args)-1], []string{"--dest", GOBIN, path}...)
 
@@ -990,7 +989,7 @@ func xgoTool(args []string) *exec.Cmd {
 
 func doPurge(cmdline []string) {
 	var (
-		store = flag.String("store", "", `Destination from where to purge archives (usually "gethstore/builds")`)
+		store = flag.String("store", "", `Destination from where to purge archives (usually "aquastore/builds")`)
 		limit = flag.Int("days", 30, `Age threshold above which to delete unstalbe archives`)
 	)
 	flag.CommandLine.Parse(cmdline)
