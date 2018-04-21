@@ -35,7 +35,7 @@ import (
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/event"
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/p2p"
 	"github.com/aquanetwork/aquachain/p2p/discover"
 	"github.com/aquanetwork/aquachain/params"

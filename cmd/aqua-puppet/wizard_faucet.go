@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/accounts/keystore"
+	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
 	"github.com/aquanetwork/aquachain/log"
 )
 

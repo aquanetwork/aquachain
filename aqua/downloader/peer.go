@@ -30,7 +30,7 @@ import (
 	"time"
 
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/event"
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/log"
 )
 

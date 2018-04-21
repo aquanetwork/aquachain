@@ -36,14 +36,14 @@ import (
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/console"
+	"github.com/aquanetwork/aquachain/opt/console"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/p2p"
 	"github.com/aquanetwork/aquachain/p2p/discover"
 	"github.com/aquanetwork/aquachain/p2p/nat"
-	"github.com/aquanetwork/aquachain/whisper/mailserver"
-	whisper "github.com/aquanetwork/aquachain/whisper/whisperv6"
+	"github.com/aquanetwork/aquachain/opt/whisper/mailserver"
+	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"
 	"golang.org/x/crypto/pbkdf2"
 )
 

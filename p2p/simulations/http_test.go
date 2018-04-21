@@ -27,7 +27,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/event"
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/node"
 	"github.com/aquanetwork/aquachain/p2p"
 	"github.com/aquanetwork/aquachain/p2p/discover"

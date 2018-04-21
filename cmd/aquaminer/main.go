@@ -14,11 +14,11 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aquaclient"
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/crypto"
+	"github.com/aquanetwork/aquachain/opt/aquaclient"
 )
 
 const version = "aquaminer version 0.3 (https://github.com/aquanetwork/aquachain)"

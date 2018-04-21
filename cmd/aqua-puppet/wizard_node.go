@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aquanetwork/aquachain/accounts/keystore"
+	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/log"
 )

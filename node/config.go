@@ -25,9 +25,9 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/accounts"
-	"github.com/aquanetwork/aquachain/accounts/keystore"
-	"github.com/aquanetwork/aquachain/accounts/usbwallet"
+	"github.com/aquanetwork/aquachain/aqua/accounts"
+	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
+	"github.com/aquanetwork/aquachain/aqua/accounts/usbwallet"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/log"

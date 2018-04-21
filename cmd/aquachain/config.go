@@ -32,7 +32,7 @@ import (
 	"github.com/aquanetwork/aquachain/dashboard"
 	"github.com/aquanetwork/aquachain/node"
 	"github.com/aquanetwork/aquachain/params"
-	whisper "github.com/aquanetwork/aquachain/whisper/whisperv6"
+	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"
 	"github.com/naoina/toml"
 )
 

@@ -21,7 +21,7 @@ import (
 	"sync"
 
 	aquachain "github.com/aquanetwork/aquachain"
-	"github.com/aquanetwork/aquachain/event"
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/rpc"
 )
 

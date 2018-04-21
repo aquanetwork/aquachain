@@ -26,8 +26,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/accounts"
-	"github.com/aquanetwork/aquachain/accounts/keystore"
+	"github.com/aquanetwork/aquachain/aqua/accounts"
+	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
 	"github.com/aquanetwork/aquachain/internal/cmdtest"
 	"github.com/aquanetwork/aquachain/node"
 	"github.com/aquanetwork/aquachain/p2p"

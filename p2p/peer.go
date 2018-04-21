@@ -25,7 +25,7 @@ import (
 	"time"
 
 	"github.com/aquanetwork/aquachain/common/mclock"
-	"github.com/aquanetwork/aquachain/event"
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/p2p/discover"
 	"github.com/aquanetwork/aquachain/rlp"

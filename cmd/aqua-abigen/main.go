@@ -24,7 +24,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/accounts/abi/bind"
+	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
 	"github.com/aquanetwork/aquachain/common/compiler"
 )
 

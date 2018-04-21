@@ -23,7 +23,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/aquanetwork/aquachain/accounts/keystore"
+	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
 	"github.com/aquanetwork/aquachain/cmd/utils"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/pborman/uuid"

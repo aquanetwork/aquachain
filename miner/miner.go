@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"sync/atomic"
 
-	"github.com/aquanetwork/aquachain/accounts"
+	"github.com/aquanetwork/aquachain/aqua/accounts"
 	"github.com/aquanetwork/aquachain/aqua/downloader"
 	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
@@ -29,7 +29,7 @@ import (
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/event"
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/params"
 )

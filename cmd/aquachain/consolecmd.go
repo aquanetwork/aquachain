@@ -25,7 +25,7 @@ import (
 	"syscall"
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/console"
+	"github.com/aquanetwork/aquachain/opt/console"
 	"github.com/aquanetwork/aquachain/node"
 	"github.com/aquanetwork/aquachain/rpc"
 	"gopkg.in/urfave/cli.v1"

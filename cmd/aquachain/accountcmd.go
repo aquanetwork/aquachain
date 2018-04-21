@@ -20,10 +20,10 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/aquanetwork/aquachain/accounts"
-	"github.com/aquanetwork/aquachain/accounts/keystore"
+	"github.com/aquanetwork/aquachain/aqua/accounts"
+	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
 	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/console"
+	"github.com/aquanetwork/aquachain/opt/console"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/log"
 	"gopkg.in/urfave/cli.v1"
