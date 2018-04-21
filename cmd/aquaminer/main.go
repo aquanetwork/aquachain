@@ -101,22 +101,18 @@ func main() {
 	// get work loop
 	ctx := context.Background()
 	cachework := common.Hash{}
-	for {
-		select {
-		//default:
-		case <-getnewwork: // set -r flag to change this
-			work, target, err := refreshWork(ctx, client, *benching)
-			if err != nil {
-				log.Println("Error fetching new work from pool:", err)
-			}
-			if work == cachework {
-				continue // dont send already known work
-			}
-			cachework = work
-			log.Printf("Begin new work:\n  HashNoNonce: %s\n  Difficulty %v\n", work.Hex(), big2diff(target))
-			for i := range workers {
-				workers[i].newwork <- workload{work, target, err}
-			}
+	for range getnewwork { // set -r flag to change this
+		work, target, err := refreshWork(ctx, client, *benching)
+		if err != nil {
+			log.Println("Error fetching new work from pool:", err)
+		}
+		if work == cachework {
+			continue // dont send already known work
+		}
+		cachework = work
+		log.Printf("Begin new work:\n  HashNoNonce: %s\n  Difficulty %v\n", work.Hex(), big2diff(target))
+		for i := range workers {
+			workers[i].newwork <- workload{work, target, err}
 		}
 	}
 }
