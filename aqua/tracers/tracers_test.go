@@ -32,8 +32,8 @@ import (
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
-	"github.com/aquanetwork/aquachain/rlp"
 	"github.com/aquanetwork/aquachain/opt/tests"
+	"github.com/aquanetwork/aquachain/rlp"
 )
 
 // To generate a new callTracer test, copy paste the makeTest method below into

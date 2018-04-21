@@ -10,9 +10,9 @@ import (
 	ethereum "github.com/aquanetwork/aquachain"
 	"github.com/aquanetwork/aquachain/aqua/accounts/abi"
 	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/aqua/event"
 )
 
 // ChequebookABI is the input ABI used to generate the binding from.

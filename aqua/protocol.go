@@ -21,10 +21,10 @@ import (
 	"io"
 	"math/big"
 
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/rlp"
 )
 

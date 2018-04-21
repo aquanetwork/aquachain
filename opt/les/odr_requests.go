@@ -28,8 +28,8 @@ import (
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/opt/light"
 	"github.com/aquanetwork/aquachain/log"
+	"github.com/aquanetwork/aquachain/opt/light"
 	"github.com/aquanetwork/aquachain/rlp"
 	"github.com/aquanetwork/aquachain/trie"
 )

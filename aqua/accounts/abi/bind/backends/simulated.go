@@ -26,6 +26,7 @@ import (
 
 	"github.com/aquanetwork/aquachain"
 	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/aqua/filters"
 	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
@@ -36,7 +37,6 @@ import (
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
-	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/params"
 	"github.com/aquanetwork/aquachain/rpc"
 )

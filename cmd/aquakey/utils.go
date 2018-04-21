@@ -23,8 +23,8 @@ import (
 	"strings"
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/opt/console"
 	"github.com/aquanetwork/aquachain/crypto"
+	"github.com/aquanetwork/aquachain/opt/console"
 	"gopkg.in/urfave/cli.v1"
 )
 

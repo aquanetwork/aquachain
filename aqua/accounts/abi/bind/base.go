@@ -24,10 +24,10 @@ import (
 
 	"github.com/aquanetwork/aquachain"
 	"github.com/aquanetwork/aquachain/aqua/accounts/abi"
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/aqua/event"
 )
 
 // SignerFn is a signer function callback when a contract requires a method to

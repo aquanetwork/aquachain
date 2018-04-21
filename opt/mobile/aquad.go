@@ -26,15 +26,15 @@ import (
 
 	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/aqua/downloader"
+	"github.com/aquanetwork/aquachain/core"
+	"github.com/aquanetwork/aquachain/node"
 	"github.com/aquanetwork/aquachain/opt/aquaclient"
 	"github.com/aquanetwork/aquachain/opt/aquastats"
-	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/opt/les"
-	"github.com/aquanetwork/aquachain/node"
+	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"
 	"github.com/aquanetwork/aquachain/p2p"
 	"github.com/aquanetwork/aquachain/p2p/nat"
 	"github.com/aquanetwork/aquachain/params"
-	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"
 )
 
 // NodeConfig represents the collection of configuration values to fine tune the AquaChain

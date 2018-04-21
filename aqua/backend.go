@@ -27,6 +27,7 @@ import (
 
 	"github.com/aquanetwork/aquachain/aqua/accounts"
 	"github.com/aquanetwork/aquachain/aqua/downloader"
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/aqua/filters"
 	"github.com/aquanetwork/aquachain/aqua/gasprice"
 	"github.com/aquanetwork/aquachain/aquadb"
@@ -39,7 +40,6 @@ import (
 	"github.com/aquanetwork/aquachain/core/bloombits"
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
-	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/internal/aquaapi"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/miner"

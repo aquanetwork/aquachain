@@ -26,6 +26,7 @@ import (
 	"testing"
 
 	"github.com/aquanetwork/aquachain/aqua"
+	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
@@ -33,7 +34,6 @@ import (
 	"github.com/aquanetwork/aquachain/core/types"
 	"github.com/aquanetwork/aquachain/core/vm"
 	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/aqua/event"
 	"github.com/aquanetwork/aquachain/opt/les/flowcontrol"
 	"github.com/aquanetwork/aquachain/opt/light"
 	"github.com/aquanetwork/aquachain/p2p"

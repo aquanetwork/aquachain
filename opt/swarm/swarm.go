@@ -28,7 +28,6 @@ import (
 	"unicode"
 
 	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
-	"github.com/aquanetwork/aquachain/opt/aquaclient"
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/contracts/chequebook"
 	"github.com/aquanetwork/aquachain/contracts/ens"
@@ -36,6 +35,7 @@ import (
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/metrics"
 	"github.com/aquanetwork/aquachain/node"
+	"github.com/aquanetwork/aquachain/opt/aquaclient"
 	"github.com/aquanetwork/aquachain/p2p"
 	"github.com/aquanetwork/aquachain/p2p/discover"
 	"github.com/aquanetwork/aquachain/params"

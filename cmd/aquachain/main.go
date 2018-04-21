@@ -25,16 +25,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aquanetwork/aquachain/aqua"
 	"github.com/aquanetwork/aquachain/aqua/accounts"
 	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
-	"github.com/aquanetwork/aquachain/aqua"
-	"github.com/aquanetwork/aquachain/opt/aquaclient"
 	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/opt/console"
 	"github.com/aquanetwork/aquachain/internal/debug"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/metrics"
 	"github.com/aquanetwork/aquachain/node"
+	"github.com/aquanetwork/aquachain/opt/aquaclient"
+	"github.com/aquanetwork/aquachain/opt/console"
 	"gopkg.in/urfave/cli.v1"
 )
 

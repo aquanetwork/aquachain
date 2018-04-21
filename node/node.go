@@ -27,8 +27,8 @@ import (
 	"sync"
 
 	"github.com/aquanetwork/aquachain/aqua/accounts"
-	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/aqua/event"
+	"github.com/aquanetwork/aquachain/aquadb"
 	"github.com/aquanetwork/aquachain/internal/debug"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/p2p"

@@ -21,8 +21,8 @@ import (
 
 	"github.com/aquanetwork/aquachain"
 	"github.com/aquanetwork/aquachain/common/hexutil"
-	"github.com/aquanetwork/aquachain/rpc"
 	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"
+	"github.com/aquanetwork/aquachain/rpc"
 )
 
 // Client defines typed wrappers for the Whisper v6 RPC API.
