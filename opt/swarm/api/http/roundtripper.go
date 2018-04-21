@@ -30,7 +30,7 @@ Usage:
 
 import (
  "github.com/aquanetwork/aquachain/common/httpclient"
- "github.com/aquanetwork/aquachain/swarm/api/http"
+ "github.com/aquanetwork/aquachain/opt/swarm/api/http"
 )
 client := httpclient.New()
 // for (private) swarm proxy running locally

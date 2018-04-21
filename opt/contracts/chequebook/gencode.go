@@ -27,9 +27,9 @@ import (
 
 	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
 	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind/backends"
-	"github.com/aquanetwork/aquachain/contracts/chequebook/contract"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/crypto"
+	"github.com/aquanetwork/aquachain/opt/contracts/chequebook/contract"
 )
 
 var (

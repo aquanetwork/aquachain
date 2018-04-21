@@ -24,7 +24,7 @@ import (
 
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/metrics"
-	"github.com/aquanetwork/aquachain/swarm/storage"
+	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 )
 
 //metrics variables

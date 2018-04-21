@@ -22,9 +22,9 @@ import (
 
 	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
 	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind/backends"
-	"github.com/aquanetwork/aquachain/contracts/ens/contract"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/crypto"
+	"github.com/aquanetwork/aquachain/opt/contracts/ens/contract"
 )
 
 var (

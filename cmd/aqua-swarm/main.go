@@ -38,12 +38,12 @@ import (
 	"github.com/aquanetwork/aquachain/node"
 	"github.com/aquanetwork/aquachain/opt/aquaclient"
 	"github.com/aquanetwork/aquachain/opt/console"
+	"github.com/aquanetwork/aquachain/opt/swarm"
+	bzzapi "github.com/aquanetwork/aquachain/opt/swarm/api"
+	swarmmetrics "github.com/aquanetwork/aquachain/opt/swarm/metrics"
 	"github.com/aquanetwork/aquachain/p2p"
 	"github.com/aquanetwork/aquachain/p2p/discover"
 	"github.com/aquanetwork/aquachain/params"
-	"github.com/aquanetwork/aquachain/swarm"
-	bzzapi "github.com/aquanetwork/aquachain/swarm/api"
-	swarmmetrics "github.com/aquanetwork/aquachain/swarm/metrics"
 
 	"gopkg.in/urfave/cli.v1"
 )

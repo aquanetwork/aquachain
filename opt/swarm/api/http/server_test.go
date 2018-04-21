@@ -27,10 +27,10 @@ import (
 	"testing"
 
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/swarm/api"
-	swarm "github.com/aquanetwork/aquachain/swarm/api/client"
-	"github.com/aquanetwork/aquachain/swarm/storage"
-	"github.com/aquanetwork/aquachain/swarm/testutil"
+	"github.com/aquanetwork/aquachain/opt/swarm/api"
+	swarm "github.com/aquanetwork/aquachain/opt/swarm/api/client"
+	"github.com/aquanetwork/aquachain/opt/swarm/storage"
+	"github.com/aquanetwork/aquachain/opt/swarm/testutil"
 )
 
 func TestBzzGetPath(t *testing.T) {

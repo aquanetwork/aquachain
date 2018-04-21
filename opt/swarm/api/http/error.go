@@ -30,7 +30,7 @@ import (
 
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/metrics"
-	"github.com/aquanetwork/aquachain/swarm/api"
+	"github.com/aquanetwork/aquachain/opt/swarm/api"
 )
 
 //templateMap holds a mapping of an HTTP error code to a template

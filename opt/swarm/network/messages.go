@@ -21,11 +21,11 @@ import (
 	"net"
 	"time"
 
-	"github.com/aquanetwork/aquachain/contracts/chequebook"
+	"github.com/aquanetwork/aquachain/opt/contracts/chequebook"
+	"github.com/aquanetwork/aquachain/opt/swarm/network/kademlia"
+	"github.com/aquanetwork/aquachain/opt/swarm/services/swap"
+	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 	"github.com/aquanetwork/aquachain/p2p/discover"
-	"github.com/aquanetwork/aquachain/swarm/network/kademlia"
-	"github.com/aquanetwork/aquachain/swarm/services/swap"
-	"github.com/aquanetwork/aquachain/swarm/storage"
 )
 
 /*

@@ -30,9 +30,9 @@ import (
 	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
 	"github.com/aquanetwork/aquachain/internal/cmdtest"
 	"github.com/aquanetwork/aquachain/node"
+	"github.com/aquanetwork/aquachain/opt/swarm"
 	"github.com/aquanetwork/aquachain/p2p"
 	"github.com/aquanetwork/aquachain/rpc"
-	"github.com/aquanetwork/aquachain/swarm"
 	"github.com/docker/docker/pkg/reexec"
 )
 

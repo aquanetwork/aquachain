@@ -25,8 +25,8 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/swarm/api"
-	"github.com/aquanetwork/aquachain/swarm/testutil"
+	"github.com/aquanetwork/aquachain/opt/swarm/api"
+	"github.com/aquanetwork/aquachain/opt/swarm/testutil"
 )
 
 // TestClientUploadDownloadRaw test uploading and downloading raw data to swarm

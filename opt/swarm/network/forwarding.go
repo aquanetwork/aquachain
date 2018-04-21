@@ -22,7 +22,7 @@ import (
 	"time"
 
 	"github.com/aquanetwork/aquachain/log"
-	"github.com/aquanetwork/aquachain/swarm/storage"
+	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 )
 
 const requesterCount = 3

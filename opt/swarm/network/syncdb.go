@@ -21,7 +21,7 @@ import (
 	"fmt"
 
 	"github.com/aquanetwork/aquachain/log"
-	"github.com/aquanetwork/aquachain/swarm/storage"
+	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/iterator"
 )

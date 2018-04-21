@@ -23,13 +23,13 @@ import (
 	"path/filepath"
 
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/contracts/ens"
 	"github.com/aquanetwork/aquachain/crypto"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/node"
-	"github.com/aquanetwork/aquachain/swarm/network"
-	"github.com/aquanetwork/aquachain/swarm/services/swap"
-	"github.com/aquanetwork/aquachain/swarm/storage"
+	"github.com/aquanetwork/aquachain/opt/contracts/ens"
+	"github.com/aquanetwork/aquachain/opt/swarm/network"
+	"github.com/aquanetwork/aquachain/opt/swarm/services/swap"
+	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 )
 
 const (

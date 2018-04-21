@@ -38,8 +38,8 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/metrics"
-	"github.com/aquanetwork/aquachain/swarm/api"
-	"github.com/aquanetwork/aquachain/swarm/storage"
+	"github.com/aquanetwork/aquachain/opt/swarm/api"
+	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 	"github.com/rs/cors"
 )
 

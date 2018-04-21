@@ -23,7 +23,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
-	swarm "github.com/aquanetwork/aquachain/swarm/api/client"
+	swarm "github.com/aquanetwork/aquachain/opt/swarm/api/client"
 	"gopkg.in/urfave/cli.v1"
 )
 

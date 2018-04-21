@@ -25,7 +25,7 @@ import (
 
 	"golang.org/x/net/html"
 
-	"github.com/aquanetwork/aquachain/swarm/testutil"
+	"github.com/aquanetwork/aquachain/opt/swarm/testutil"
 )
 
 func TestError(t *testing.T) {

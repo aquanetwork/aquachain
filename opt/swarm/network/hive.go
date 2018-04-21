@@ -25,10 +25,10 @@ import (
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/log"
 	"github.com/aquanetwork/aquachain/metrics"
+	"github.com/aquanetwork/aquachain/opt/swarm/network/kademlia"
+	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 	"github.com/aquanetwork/aquachain/p2p/discover"
 	"github.com/aquanetwork/aquachain/p2p/netutil"
-	"github.com/aquanetwork/aquachain/swarm/network/kademlia"
-	"github.com/aquanetwork/aquachain/swarm/storage"
 )
 
 // Hive is the logistic manager of the swarm

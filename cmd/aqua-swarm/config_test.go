@@ -25,9 +25,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aquanetwork/aquachain/opt/swarm"
+	"github.com/aquanetwork/aquachain/opt/swarm/api"
 	"github.com/aquanetwork/aquachain/rpc"
-	"github.com/aquanetwork/aquachain/swarm"
-	"github.com/aquanetwork/aquachain/swarm/api"
 
 	"github.com/docker/docker/pkg/reexec"
 )

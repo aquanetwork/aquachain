@@ -25,7 +25,7 @@ import (
 	"testing"
 
 	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/swarm/storage"
+	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 )
 
 var testDownloadDir, _ = ioutil.TempDir(os.TempDir(), "bzz-test")

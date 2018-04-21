@@ -25,8 +25,8 @@ import (
 	"strings"
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/swarm/api"
-	swarm "github.com/aquanetwork/aquachain/swarm/api/client"
+	"github.com/aquanetwork/aquachain/opt/swarm/api"
+	swarm "github.com/aquanetwork/aquachain/opt/swarm/api/client"
 	"gopkg.in/urfave/cli.v1"
 )
 

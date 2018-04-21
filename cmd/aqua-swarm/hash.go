@@ -22,7 +22,7 @@ import (
 	"os"
 
 	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/swarm/storage"
+	"github.com/aquanetwork/aquachain/opt/swarm/storage"
 	"gopkg.in/urfave/cli.v1"
 )
 
