@@ -29,17 +29,17 @@ type testAquakey struct {
 	*cmdtest.TestCmd
 }
 
-// spawns ethkey with the given command line args.
+// spawns aquakey with the given command line args.
 func runAquakey(t *testing.T, args ...string) *testAquakey {
 	tt := new(testAquakey)
 	tt.TestCmd = cmdtest.NewTestCmd(t, tt)
-	tt.Run("ethkey-test", args...)
+	tt.Run("aquakey-test", args...)
 	return tt
 }
 
 func TestMain(m *testing.M) {
-	// Run the app if we've been exec'd as "ethkey-test" in runAquakey.
-	reexec.Register("ethkey-test", func() {
+	// Run the app if we've been exec'd as "aquakey-test" in runAquakey.
+	reexec.Register("aquakey-test", func() {
 		if err := app.Run(os.Args); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
