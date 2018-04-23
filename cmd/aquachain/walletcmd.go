@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/aquanetwork/aquachain/cmd/internal/browser"
 	"github.com/aquanetwork/aquachain/cmd/internal/maw"
@@ -37,14 +38,12 @@ will launch browser MAW`,
 	paperCommand = cli.Command{
 		Name:      "paper",
 		Usage:     `Generate paper wallet keypair`,
-		Flags:     append(consoleFlags, utils.JsonFlag),
+		Flags:     []cli.Flag{utils.JsonFlag, utils.VanityFlag},
 		ArgsUsage: "[number of wallets]",
 		Category:  "ACCOUNT COMMANDS",
 		Action:    paper,
 		Description: `
-  aquachain wallet
-
-will launch browser MAW`,
+Generate a number of wallets.`,
 	}
 )
 
@@ -86,18 +85,29 @@ func paper(c *cli.Context) error {
 		}
 	}
 	wallets := []paperWallet{}
+	vanity := c.String("vanity")
 	for i := 0; i < count; i++ {
-		key, err := crypto.GenerateKey()
-		if err != nil {
-			return err
-		}
+		var wallet paperWallet
+		for {
+			key, err := crypto.GenerateKey()
+			if err != nil {
+				return err
+			}
 
-		addr := crypto.PubkeyToAddress(key.PublicKey)
-		wallet := paperWallet{
-			Private: hex.EncodeToString(crypto.FromECDSA(key)),
-			Public:  "0x" + hex.EncodeToString(addr[:]),
+			addr := crypto.PubkeyToAddress(key.PublicKey)
+			wallet = paperWallet{
+				Private: hex.EncodeToString(crypto.FromECDSA(key)),
+				Public:  "0x" + hex.EncodeToString(addr[:]),
+			}
+			if vanity == "" {
+				break
+			}
+			pubkey := hex.EncodeToString(addr[:])
+			if strings.HasPrefix(pubkey, vanity) {
+				break
+			}
+			//println(pubkey, "!=", "vanity")
 		}
-
 		if c.Bool("json") {
 			wallets = append(wallets, wallet)
 		} else {
