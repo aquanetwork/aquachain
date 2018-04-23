@@ -961,7 +961,7 @@ done:
 		select {
 		case ev := <-chainSideCh:
 			block := ev.Block
-			if block.Header().Version != blockchain.RetrieveHeaderVersion(block.Number()) {
+			if block.Version() != blockchain.RetrieveHeaderVersion(block.Number()) {
 				panic("ow")
 			}
 			if _, ok := expectedSideHashes[block.Hash()]; !ok {

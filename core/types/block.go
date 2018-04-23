@@ -444,10 +444,9 @@ func (b *Block) SetVersion(version HeaderVersion) common.Hash {
 	return v
 }
 
-// SetVersion sets the block header's Version, recalculates the hash,
-// and stores in cache so that later invocations of Hash() return the same
+// Retrieve underlying header version
 func (b *Block) Version() (version HeaderVersion) {
-	return b.Header().Version
+	return b.header.Version
 }
 
 func (b *Block) String() string {

@@ -169,12 +169,12 @@ func TestBlockStorage(t *testing.T) {
 	}
 	if entry := GetBlockNoVersion(db, block.Hash(), block.NumberU64()); entry == nil {
 		t.Fatalf("Stored block not found")
-	} else if entry.SetVersion(block.Header().Version) != block.Hash() {
+	} else if entry.SetVersion(block.Version()) != block.Hash() {
 		t.Fatalf("Retrieved block mismatch: have %v, want %v", entry, block)
 	}
 	if entry := GetHeaderNoVersion(db, block.Hash(), block.NumberU64()); entry == nil {
 		t.Fatalf("Stored header not found")
-	} else if entry.SetVersion(byte(block.Header().Version)) != block.Header().Hash() {
+	} else if entry.SetVersion(byte(block.Version())) != block.Header().Hash() {
 		t.Fatalf("Retrieved header mismatch: have %v, want %v", entry, block.Header())
 	}
 	if entry := GetBodyNoVersion(db, block.Hash(), block.NumberU64()); entry == nil {
@@ -231,7 +231,7 @@ func TestPartialBlockStorage(t *testing.T) {
 	}
 	if entry := GetBlockNoVersion(db, block.Hash(), block.NumberU64()); entry == nil {
 		t.Fatalf("Stored block not found")
-	} else if entry.SetVersion(block.Header().Version) != block.Hash() {
+	} else if entry.SetVersion(block.Version()) != block.Hash() {
 		t.Fatalf("Retrieved block mismatch: have %v, want %v", entry, block)
 	}
 }
