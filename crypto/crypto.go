@@ -24,15 +24,16 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"math/big"
+	"os"
+
 	"github.com/aquanetwork/aquachain/common"
 	"github.com/aquanetwork/aquachain/common/math"
 	"github.com/aquanetwork/aquachain/crypto/sha3"
 	"github.com/aquanetwork/aquachain/rlp"
 	"golang.org/x/crypto/argon2"
-	"io"
-	"io/ioutil"
-	"math/big"
-	"os"
 )
 
 var (
