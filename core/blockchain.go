@@ -340,7 +340,7 @@ func (bc *BlockChain) GasLimit() uint64 {
 // block is retrieved from the blockchain's internal cache.
 func (bc *BlockChain) CurrentBlock() *types.Block {
 	b := bc.currentBlock.Load().(*types.Block)
-	b.SetVersion(bc.Config().GetBlockVersion(b.Number()))
+	//b.SetVersion(bc.Config().GetBlockVersion(b.Number()))
 	return b
 }
 
@@ -577,7 +577,9 @@ func (bc *BlockChain) GetBlock(hash common.Hash, number uint64) *types.Block {
 	// Short circuit if the block's already in the cache, retrieve otherwise
 	if block, ok := bc.blockCache.Get(hash); ok {
 		block := block.(*types.Block)
-		block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
+		if block.Version() == 0 {
+			block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
+		}
 		return block
 	}
 	block := GetBlockNoVersion(bc.db, hash, number)
@@ -670,7 +672,7 @@ func (bc *BlockChain) Stop() {
 				recent := bc.GetBlockByNumber(number - offset)
 				//fmt.Printf("Recent: %s\n", recent)
 				//fmt.Printf("Root: %x\n", recent.Root())
-				hash := recent.SetVersion(bc.RetrieveHeaderVersion(recent.Number()))
+				hash := recent.Hash()
 				log.Info("Writing cached state to disk", "block", recent.Number(), "hash", hash, "root", recent.Root())
 				if err := triedb.Commit(recent.Root(), true); err != nil {
 					log.Error("Failed to commit recent state trie", "err", err)
@@ -900,7 +902,7 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	externTd := new(big.Int).Add(block.Difficulty(), ptd)
 
 	// Irrelevant of the canonical status, write the block itself to the database
-	if err := bc.hc.WriteTd(block.SetVersion(bc.chainConfig.GetBlockVersion(block.Number())), block.NumberU64(), externTd); err != nil {
+	if err := bc.hc.WriteTd(block.Hash(), block.NumberU64(), externTd); err != nil {
 		return NonStatTy, err
 	}
 	// Write other block data using a batch.
@@ -1025,7 +1027,7 @@ func (bc *BlockChain) InsertChain(chain types.Blocks) (int, error) {
 func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*types.Log, error) {
 	// Do a sanity check that the provided chain is actually ordered and linked
 	for i := 1; i < len(chain); i++ {
-		if chain[i].NumberU64() != chain[i-1].NumberU64()+1 || chain[i].ParentHash() != chain[i-1].SetVersion(bc.chainConfig.GetBlockVersion(chain[i-1].Number())) {
+		if chain[i].NumberU64() != chain[i-1].NumberU64()+1 || chain[i].ParentHash() != chain[i-1].Hash() {
 			// Chain broke ancestry, log a messge (programming error) and skip insertion
 			log.Error("Non contiguous block insert", "number", chain[i].Number(), "hash", chain[i].Hash(),
 				"parent", chain[i].ParentHash(), "prevnumber", chain[i-1].Number(), "prevhash", chain[i-1].Hash())
@@ -1056,6 +1058,9 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	for i, block := range chain {
 		headers[i] = block.Header()
+		if headers[i].Version == 0 {
+			panic("version not set")
+		}
 		seals[i] = true
 	}
 	abort, results := bc.engine.VerifyHeaders(bc, headers, seals)
@@ -1063,7 +1068,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
-		block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
+		//block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
 		// If the chain is terminating, stop processing blocks
 		if atomic.LoadInt32(&bc.procInterrupt) == 1 {
 			log.Debug("Premature abort during blocks processing")
@@ -1079,7 +1084,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 		err := <-results
 		if err == nil {
-			block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
+			block.Hash()
 			err = bc.Validator().ValidateBody(block)
 		}
 		switch {

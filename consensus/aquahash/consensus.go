@@ -107,6 +107,13 @@ func (aquahash *Aquahash) VerifyHeaders(chain consensus.ChainReader, headers []*
 		workers = len(headers)
 	}
 
+	// set version
+	for i := range headers {
+		if headers[i].Version == 0 {
+			panic("hf5: verifyheaders did not receive header version")
+		}
+	}
+
 	// Create a task channel and spawn the verifiers
 	var (
 		inputs = make(chan int)
@@ -163,7 +170,7 @@ func (aquahash *Aquahash) verifyHeaderWorker(chain consensus.ChainReader, header
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}
-	if chain.GetHeader(headers[index].SetVersion(byte(chain.Config().GetBlockVersion(headers[index].Number))), headers[index].Number.Uint64()) != nil {
+	if chain.GetHeader(headers[index].Hash(), headers[index].Number.Uint64()) != nil {
 		return nil // known block
 	}
 	return aquahash.verifyHeader(chain, headers[index], parent, false, seals[index])
@@ -199,13 +206,14 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 		}
 		parent, number = ancestor.ParentHash(), number-1
 	}
-	ancestorhash := block.SetVersion(chain.Config().GetBlockVersion(block.Number()))
+	ancestorhash := block.Hash()
 	ancestors[ancestorhash] = block.Header()
 	uncles.Add(ancestorhash)
 
 	// Verify each of the uncles that it's recent, but not an ancestor
 	for _, uncle := range block.Uncles() {
-		hash := uncle.Hash()
+
+		hash := uncle.SetVersion(byte(chain.Config().GetBlockVersion(uncle.Number)))
 		switch hash.Hex() { // strange uncles that ended up in the main chain
 		case "0x361262d059cbf137c9881a6fb3d671818bb45e71877e58be2a60cbd2bc2fedf7":
 		case "0xdc192e7d1bfc5aab2eab88bd1bfa39d7c5c95bc07a926d6f2a050fb05d6932d6":

@@ -1369,11 +1369,14 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 	)
 	blocks := make([]*types.Block, len(results))
 	for i, result := range results {
-		result.Header.SetVersion(byte(d.blockchain.RetrieveHeaderVersion(result.Header.Number)))
+		result.Header.Version = d.blockchain.RetrieveHeaderVersion(result.Header.Number)
+		for i := range result.Uncles {
+			result.Uncles[i].Version = d.blockchain.RetrieveHeaderVersion(result.Uncles[i].Number)
+		}
 		blocks[i] = types.NewBlockWithHeader(result.Header).WithBody(result.Transactions, result.Uncles)
 	}
 	if index, err := d.blockchain.InsertChain(blocks); err != nil {
-		log.Debug("Downloaded item processing failed", "number", results[index].Header.Number, "hash", results[index].Header.Hash(), "err", err)
+		log.Debug("Downloaded item processing failed", "number", results[index].Header.Number, "err", err)
 		return errInvalidChain
 	}
 	return nil

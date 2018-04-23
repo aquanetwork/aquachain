@@ -431,6 +431,10 @@ func (b *Block) Hash() common.Hash {
 // SetVersion sets the block header's Version, recalculates the hash,
 // and stores in cache so that later invocations of Hash() return the same
 func (b *Block) SetVersion(version HeaderVersion) common.Hash {
+	if b.header.Version == version {
+		common.Report(b.header, "already set version")
+		return b.header.Hash()
+	}
 	for i := range b.uncles {
 		b.uncles[i].Version = version
 	}
@@ -438,6 +442,12 @@ func (b *Block) SetVersion(version HeaderVersion) common.Hash {
 	v := b.header.Hash()
 	b.hash.Store(v)
 	return v
+}
+
+// SetVersion sets the block header's Version, recalculates the hash,
+// and stores in cache so that later invocations of Hash() return the same
+func (b *Block) Version() (version HeaderVersion) {
+	return b.Header().Version
 }
 
 func (b *Block) String() string {
