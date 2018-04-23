@@ -509,7 +509,7 @@ func (q *queue) reserveHeaders(p *peerConnection, count int, taskPool map[common
 	for proc := 0; proc < space && len(send) < count && !taskQueue.Empty(); proc++ {
 		header := taskQueue.PopItem().(*types.Header)
 
-		hash := header.SetVersion(byte(q.headerVersionRule(header.Number)))
+		hash := header.Hash()
 
 		// If we're the first to request this task, initialise the result container
 		index := int(header.Number.Int64() - int64(q.resultOffset))
