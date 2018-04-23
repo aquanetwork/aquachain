@@ -52,19 +52,33 @@ const DefaultPrompt = "AQUA> "
 
 const helpText = `
 Web links:
-   Explorer: http://explorer.aquanetwork.co
-	 Wiki: http://github.com/aquanetwork/aquachain/wiki/Basics
-	 Chat: https://t.me/AquaCrypto
-	 Common commands:
- New address:   personal.newAccount()
- Start CPU mining:  miner.start()
- Get balance:   aqua.balance(aqua.coinbase)
- Get all balance: balance()
- Send transaction: send
- List accounts: aqua.accounts
-	 Press TAB to autocomplete commands
 
+	Explorer: http://explorer.aquanetwork.co
+	Wiki: http://github.com/aquanetwork/aquachain/wiki/Basics
+	Chat: https://t.me/AquaCrypto
 
+Common commands:
+
+	New address:              personal.newAccount()
+	Import private key:       personal.importRawKey('the private key')
+	Start solo mining (cpu):  miner.start()
+	Get balance:              aqua.balance(aqua.coinbase)
+	Get all balances:         balance()
+	Send transaction:         send
+	List accounts:            aqua.accounts
+	Show Transaction:         aqua.getTransaction('the tx hash')
+	Show Block #1000:         aqua.getBlock('1000')
+	Show Latest:              aqua.getBlock('latest')
+
+In this javascript console, you can define variables and load script.
+
+	loadScript('filename.js')
+	block = aqua.getBlock
+	myBlock = block('0x92cd50f36edddd9347ec37ef93206135518acd4115941f6287ea00407f186e15')
+	tx = aqua.getTransaction('0x23eabf63f8da796e2e68cd2ae602c1b5a9cb8f9946ad9d87a9561924e3d20db8')
+	web3.fromWei(tx.value)
+
+Press TAB to autocomplete commands
 `
 
 const logo = `                              _           _
