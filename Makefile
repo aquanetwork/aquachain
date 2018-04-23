@@ -158,3 +158,6 @@ aquachain-windows-amd64:
 
 race:
 	build/env.sh go run build/ci.go install -- -race ./cmd/aquachain/
+
+install:
+	install $(GOBIN)/aquachain /usr/local/bin/
