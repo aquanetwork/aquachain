@@ -383,6 +383,9 @@ func NewPublicWeb3API(stack *Node) *PublicWeb3API {
 
 // ClientVersion returns the node name
 func (s *PublicWeb3API) ClientVersion() string {
+	if s.stack == nil || s.stack.Server() == nil {
+		return "shutting down"
+	}
 	return s.stack.Server().Name
 }
 
