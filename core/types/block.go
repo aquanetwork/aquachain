@@ -118,10 +118,10 @@ func (h *Header) SetVersion(version byte) common.Hash {
 // Hash returns the block hash of the header, which is simply the keccak256 hash of its
 // RLP encoding.
 func (h *Header) Hash() common.Hash {
-	if h.Version == H_UNSET { // special cases
-		if h.Number.Uint64() == 0 {
-			h.Version = H_KECCAK256
-		}
+	if h.Version == H_UNSET {
+		// fatal error to hash a header with no version
+		fmt.Println("header:", h.Number)
+		panic("hash algorithm not set")
 	}
 	switch h.Version {
 	case H_KECCAK256:
@@ -432,8 +432,10 @@ func (b *Block) Hash() common.Hash {
 // and stores in cache so that later invocations of Hash() return the same
 func (b *Block) SetVersion(version HeaderVersion) common.Hash {
 	if b.header.Version == version {
+		// fatal error to setversion while already set
 		common.Report(b.header, "already set version")
-		return b.header.Hash()
+		panic("fatal error")
+		//return b.header.Hash()
 	}
 	for i := range b.uncles {
 		b.uncles[i].Version = version
