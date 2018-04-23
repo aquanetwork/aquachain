@@ -142,7 +142,8 @@ func GetBlockReceipts(ctx context.Context, odr OdrBackend, hash common.Hash, num
 		if err != nil {
 			return nil, err
 		}
-		// dont need header version for receipts
+		// need header version for receipts
+		block.SetVersion(odr.GetHeaderVersion(block.Number()))
 		genesis := core.GetCanonicalHash(odr.Database(), 0)
 		config, _ := core.GetChainConfig(odr.Database(), genesis)
 

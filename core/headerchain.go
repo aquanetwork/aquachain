@@ -100,6 +100,7 @@ func NewHeaderChain(chainDb aquadb.Database, config *params.ChainConfig, engine 
 	hc.currentHeader.Store(hc.genesisHeader)
 	if head := GetHeadBlockHash(chainDb); head != (common.Hash{}) {
 		if chead := hc.GetHeaderByHash(head); chead != nil {
+			chead.Version = hc.Config().GetBlockVersion(chead.Number)
 			hc.currentHeader.Store(chead)
 		}
 	}

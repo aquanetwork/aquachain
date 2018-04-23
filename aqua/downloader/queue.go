@@ -698,9 +698,10 @@ func (q *queue) DeliverHeaders(id string, headers []*types.Header, headerProcCh 
 	delete(q.headerPendPool, id)
 
 	// Ensure headers can be mapped onto the skeleton chain
-	q.headerVersionRule(q.headerTaskPool[request.From].Number)
 	target := q.headerTaskPool[request.From].SetVersion(byte(q.headerVersionRule(q.headerTaskPool[request.From].Number)))
-
+	for i := range headers {
+		headers[i].Version = q.headerVersionRule(headers[i].Number)
+	}
 	accepted := len(headers) == MaxHeaderFetch
 	if accepted {
 		if headers[0].Number.Uint64() != request.From {
@@ -713,13 +714,13 @@ func (q *queue) DeliverHeaders(id string, headers []*types.Header, headerProcCh 
 	}
 	if accepted {
 		for i, header := range headers[1:] {
-			hash := header.SetVersion(byte(q.headerVersionRule(header.Number)))
+			hash := header.Hash()
 			if want := request.From + 1 + uint64(i); header.Number.Uint64() != want {
 				log.Warn("Header broke chain ordering", "peer", id, "number", header.Number, "hash", hash, "expected", want)
 				accepted = false
 				break
 			}
-			if headers[i].SetVersion(byte(q.headerVersionRule(headers[i].Number))) != header.ParentHash {
+			if headers[i].Hash() != header.ParentHash {
 				log.Warn("Header broke chain ancestry", "peer", id, "number", header.Number, "hash", hash)
 				accepted = false
 				break
