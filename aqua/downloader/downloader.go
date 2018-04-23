@@ -1229,7 +1229,7 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 				// R: Nothing to give
 				if d.mode != LightSync {
 					head := d.blockchain.CurrentBlock()
-					if !gotHeaders && td.Cmp(d.blockchain.GetTd(head.SetVersion(d.blockchain.RetrieveHeaderVersion(head.Number())), head.NumberU64())) > 0 {
+					if !gotHeaders && td.Cmp(d.blockchain.GetTd(head.Hash(), head.NumberU64())) > 0 {
 						return errStallingPeer
 					}
 				}

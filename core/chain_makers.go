@@ -217,9 +217,8 @@ func GenerateChain(config *params.ChainConfig, parent *types.Block, engine conse
 
 func makeHeader(chain consensus.ChainReader, parent *types.Block, state *state.StateDB, engine consensus.Engine) *types.Header {
 	if parent.Version() == 0 {
-		panic("generate chain: parent header version not set")
+		parent.SetVersion(chain.Config().GetBlockVersion(parent.Number()))
 	}
-	parent.SetVersion(chain.Config().GetBlockVersion(parent.Number()))
 	var time *big.Int
 	if parent.Time() == nil {
 		time = big.NewInt(240)

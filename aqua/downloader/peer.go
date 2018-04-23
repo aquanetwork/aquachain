@@ -505,7 +505,7 @@ func (ps *peerSet) ReceiptIdlePeers() ([]*peerConnection, int) {
 		defer p.lock.RUnlock()
 		return p.receiptThroughput
 	}
-	return ps.idlePeers(63, 64, idle, throughput)
+	return ps.idlePeers(63, 65, idle, throughput)
 }
 
 // NodeDataIdlePeers retrieves a flat list of all the currently node-data-idle
@@ -519,7 +519,7 @@ func (ps *peerSet) NodeDataIdlePeers() ([]*peerConnection, int) {
 		defer p.lock.RUnlock()
 		return p.stateThroughput
 	}
-	return ps.idlePeers(63, 64, idle, throughput)
+	return ps.idlePeers(63, 65, idle, throughput)
 }
 
 // idlePeers retrieves a flat list of all currently idle peers satisfying the

@@ -203,6 +203,7 @@ func TestPartialBlockStorage(t *testing.T) {
 		UncleHash:   types.EmptyUncleHash,
 		TxHash:      types.EmptyRootHash,
 		ReceiptHash: types.EmptyRootHash,
+		Version:     1,
 	})
 	// Store a header and check that it's not recognized as a block
 	if err := WriteHeader(db, block.Header()); err != nil {
@@ -290,9 +291,9 @@ func TestCanonicalMappingStorage(t *testing.T) {
 func TestHeadStorage(t *testing.T) {
 	db, _ := aquadb.NewMemDatabase()
 
-	blockHead := types.NewBlockWithHeader(&types.Header{Extra: []byte("test block header")})
-	blockFull := types.NewBlockWithHeader(&types.Header{Extra: []byte("test block full")})
-	blockFast := types.NewBlockWithHeader(&types.Header{Extra: []byte("test block fast")})
+	blockHead := types.NewBlockWithHeader(&types.Header{Extra: []byte("test block header"), Version: 1})
+	blockFull := types.NewBlockWithHeader(&types.Header{Extra: []byte("test block full"), Version: 1})
+	blockFast := types.NewBlockWithHeader(&types.Header{Extra: []byte("test block fast"), Version: 1})
 
 	// Check that no head entries are in a pristine database
 	if entry := GetHeadHeaderHash(db); entry != (common.Hash{}) {

@@ -105,7 +105,7 @@ func printChain(bc *BlockChain) {
 func testBlockChainImport(chain types.Blocks, blockchain *BlockChain) error {
 	for _, block := range chain {
 		// Try and process the block
-		block.SetVersion(blockchain.RetrieveHeaderVersion(block.Number()))
+		//block.SetVersion(blockchain.RetrieveHeaderVersion(block.Number()))
 		err := blockchain.engine.VerifyHeader(blockchain, block.Header(), true)
 		if err == nil {
 			err = blockchain.validator.ValidateBody(block)
