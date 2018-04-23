@@ -40,7 +40,6 @@ import (
 	"github.com/aquanetwork/aquachain/common/metrics"
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
-	"github.com/aquanetwork/aquachain/consensus/clique"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/state"
 	"github.com/aquanetwork/aquachain/core/vm"
@@ -116,6 +115,10 @@ var (
 	JsonFlag = cli.BoolFlag{
 		Name:  "json",
 		Usage: "Print paper keypair as json",
+	}
+	VanityFlag = cli.StringFlag{
+		Name:  "vanity",
+		Usage: "Prefix for generating a vanity address",
 	}
 	// General settings
 	DataDirFlag = DirectoryFlag{
@@ -1227,22 +1230,20 @@ func MakeChain(ctx *cli.Context, stack *node.Node) (chain *core.BlockChain, chai
 	if err != nil {
 		Fatalf("%v", err)
 	}
-	var engine consensus.Engine
-	if config.Clique != nil {
-		engine = clique.New(config.Clique, chainDb)
-	} else {
-		engine = aquahash.NewFaker()
-		if !ctx.GlobalBool(FakePoWFlag.Name) {
-			engine = aquahash.New(aquahash.Config{
-				CacheDir:       stack.ResolvePath(aqua.DefaultConfig.Aquahash.CacheDir),
-				CachesInMem:    aqua.DefaultConfig.Aquahash.CachesInMem,
-				CachesOnDisk:   aqua.DefaultConfig.Aquahash.CachesOnDisk,
-				DatasetDir:     stack.ResolvePath(aqua.DefaultConfig.Aquahash.DatasetDir),
-				DatasetsInMem:  aqua.DefaultConfig.Aquahash.DatasetsInMem,
-				DatasetsOnDisk: aqua.DefaultConfig.Aquahash.DatasetsOnDisk,
-			})
-		}
+
+	var engine consensus.Engine = aquahash.NewFaker()
+
+	if !ctx.GlobalBool(FakePoWFlag.Name) {
+		engine = aquahash.New(aquahash.Config{
+			CacheDir:       stack.ResolvePath(aqua.DefaultConfig.Aquahash.CacheDir),
+			CachesInMem:    aqua.DefaultConfig.Aquahash.CachesInMem,
+			CachesOnDisk:   aqua.DefaultConfig.Aquahash.CachesOnDisk,
+			DatasetDir:     stack.ResolvePath(aqua.DefaultConfig.Aquahash.DatasetDir),
+			DatasetsInMem:  aqua.DefaultConfig.Aquahash.DatasetsInMem,
+			DatasetsOnDisk: aqua.DefaultConfig.Aquahash.DatasetsOnDisk,
+		})
 	}
+
 	if gcmode := ctx.GlobalString(GCModeFlag.Name); gcmode != "full" && gcmode != "archive" {
 		Fatalf("--%s must be either 'full' or 'archive'", GCModeFlag.Name)
 	}

@@ -36,7 +36,6 @@ import (
 	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/aquanetwork/aquachain/consensus"
 	"github.com/aquanetwork/aquachain/consensus/aquahash"
-	"github.com/aquanetwork/aquachain/consensus/clique"
 	"github.com/aquanetwork/aquachain/core"
 	"github.com/aquanetwork/aquachain/core/bloombits"
 	"github.com/aquanetwork/aquachain/core/types"
@@ -212,11 +211,6 @@ func CreateDB(ctx *node.ServiceContext, config *Config, name string) (aquadb.Dat
 
 // CreateConsensusEngine creates the required type of consensus engine instance for an AquaChain service
 func CreateConsensusEngine(ctx *node.ServiceContext, config *aquahash.Config, chainConfig *params.ChainConfig, db aquadb.Database) consensus.Engine {
-	// If proof-of-authority is requested, set it up
-	if chainConfig.Clique != nil {
-		return clique.New(chainConfig.Clique, db)
-	}
-	// Otherwise assume proof-of-work
 	switch {
 	case config.PowMode == aquahash.ModeFake:
 		log.Warn("Aquahash used in fake mode")
@@ -339,14 +333,6 @@ func (s *AquaChain) StartMining(local bool) error {
 	if err != nil {
 		log.Error("Cannot start mining without aquabase", "err", err)
 		return fmt.Errorf("aquabase missing: %v", err)
-	}
-	if clique, ok := s.engine.(*clique.Clique); ok {
-		wallet, err := s.accountManager.Find(accounts.Account{Address: eb})
-		if wallet == nil || err != nil {
-			log.Error("Aquabase account unavailable locally", "err", err)
-			return fmt.Errorf("signer missing: %v", err)
-		}
-		clique.Authorize(eb, wallet.SignHash)
 	}
 	if local {
 		// If local (CPU) mining is started, we can disable the transaction rejection
