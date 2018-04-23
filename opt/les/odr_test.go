@@ -93,7 +93,7 @@ func odrAccounts(ctx context.Context, db aquadb.Database, config *params.ChainCo
 			st, err = state.New(header.Root, state.NewDatabase(db))
 		} else {
 			header := lc.GetHeaderByHash(bhash)
-			st = light.NewState(ctx, header, config.GetBlockVersion(header.Number), lc.Odr())
+			st = light.NewState(ctx, header, params.TestChainConfig.GetBlockVersion(header.Number), lc.Odr())
 		}
 		if err == nil {
 			bal := st.GetBalance(addr)
