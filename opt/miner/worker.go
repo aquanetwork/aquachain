@@ -292,7 +292,7 @@ func (self *worker) wait() {
 			}
 			block := result.Block
 			work := result.Work
-			hash := block.SetVersion(self.config.GetBlockVersion(block.Number()))
+			hash := block.Hash()
 			// Update the block hash in all logs since it is now available and not when the
 			// receipt/log of individual transactions were created.
 			for _, r := range work.receipts {
