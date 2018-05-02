@@ -181,6 +181,10 @@ func parseRequest(incomingMsg json.RawMessage) ([]rpcRequest, bool, Error) {
 		return nil, false, &invalidMessageError{err.Error()}
 	}
 
+	if strings.HasPrefix(in.Method, "eth_") {
+		in.Method = "aqua_" + strings.TrimPrefix(in.Method, "eth_")
+	}
+
 	// subscribe are special, they will always use `subscribeMethod` as first param in the payload
 	if strings.HasSuffix(in.Method, subscribeMethodSuffix) {
 		reqs := []rpcRequest{{id: &in.Id, isPubSub: true}}
@@ -197,10 +201,6 @@ func parseRequest(incomingMsg json.RawMessage) ([]rpcRequest, bool, Error) {
 			return reqs, false, nil
 		}
 		return nil, false, &invalidRequestError{"Unable to parse subscription request"}
-	}
-
-	if strings.HasPrefix(in.Method, "eth_") {
-		in.Method = "aqua_" + strings.TrimPrefix(in.Method, "eth_")
 	}
 
 	if strings.HasSuffix(in.Method, unsubscribeMethodSuffix) {
