@@ -234,6 +234,17 @@ func (api *PrivateAdminAPI) ExportState(file string) (bool, error) {
 	return true, nil
 }
 
+// GetDistribution returns a map of address->balance
+func (api *PrivateAdminAPI) GetDistribution() (map[string]state.DumpAccount, error) {
+	statedb, err := api.aqua.BlockChain().State()
+	if err != nil {
+		return nil, err
+	}
+	// Export the state
+	dump := statedb.RawDump()
+	return dump.Accounts, nil
+}
+
 // ExportState exports the current state database into a simplified json file.
 func (api *PrivateAdminAPI) ExportRealloc(file string) (bool, error) {
 	// Make sure we can create the file to export into
@@ -413,7 +424,7 @@ func (api *PrivateDebugAPI) Preimage(ctx context.Context, hash common.Hash) (hex
 	return db.Get(hash.Bytes())
 }
 
-// GetBadBLocks returns a list of the last 'bad blocks' that the client has seen on the network
+// GetBadBlocks returns a list of the last 'bad blocks' that the client has seen on the network
 // and returns them as a JSON list of block-hashes
 func (api *PrivateDebugAPI) GetBadBlocks(ctx context.Context) ([]core.BadBlockArgs, error) {
 	return api.aqua.BlockChain().BadBlocks()
