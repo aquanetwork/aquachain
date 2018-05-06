@@ -48,6 +48,10 @@ aquachain daemon
 
 Wiki - https://github.com/aquanetwork/aquachain/wiki
 
+Website - https://aquachain.github.io
+
+ANN - https://bitcointalk.org/index.php?topic=3138231.0
+
 Explorer - http://explorer.aquanetwork.co/
 
 Downloads - http://explorer.aquanetwork.co/dl/
