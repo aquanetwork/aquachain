@@ -4,7 +4,10 @@
 
 package argon2
 
-var useSSE4 bool
+var (
+	useSSE4 bool
+	useAVX2 bool
+)
 
 func processBlockGeneric(out, in1, in2 *block, xor bool) {
 	var t block

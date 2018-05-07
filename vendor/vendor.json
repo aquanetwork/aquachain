@@ -484,10 +484,10 @@
 			"revisionTime": "2017-07-25T06:48:36Z"
 		},
 		{
-			"checksumSHA1": "a25Kbna+fLQPeKt0z+hcreYzXdU=",
+			"checksumSHA1": "ztY9PNfrqc0/o6k9fPG+tvTcMkE=",
 			"path": "golang.org/x/crypto/argon2",
-			"revision": "f70185d77e8278766928032ee1355e3da47e7181",
-			"revisionTime": "2018-04-10T17:26:10Z"
+			"revision": "90f17fddd34633a4b4bd974fd05d2aafd1534dca",
+			"revisionTime": "2018-03-24T20:21:20Z"
 		},
 		{
 			"checksumSHA1": "7bRAi6c5cMYkcyby84u/Gpt9rcs=",
