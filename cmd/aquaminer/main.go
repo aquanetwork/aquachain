@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	crand "crypto/rand"
 	"encoding/binary"
 	"flag"
 	"fmt"
@@ -67,10 +68,16 @@ func main() {
 
 	runtime.GOMAXPROCS(*maxproc)
 	runtime.GOMAXPROCS(*maxproc)
-	if *nonceseed == 0 {
-		mrand.Seed(time.Now().UTC().Unix())
-		*nonceseed = mrand.Int63()
+	if *nonceseed == 1 {
+		seed, err := crand.Int(crand.Reader, big.NewInt(math.MaxInt64))
+		if err != nil {
+			if err != nil {
+				utils.Fatalf("rand err: %v", err)
+			}
+		}
+		*nonceseed = seed.Int64()
 	}
+	fmt.Println("rand seed:", *nonceseed)
 	mrand.Seed(time.Now().UTC().Unix() * *nonceseed)
 	var (
 		workers    = []*worker{}
@@ -134,7 +141,7 @@ func refreshWork(ctx context.Context, client *aquaclient.Client, benchmarking bo
 	}
 	work, err := client.GetWork(ctx)
 	if err != nil {
-		return common.Hash{}, benchdiff, fmt.Errorf("getwork err: %v", err)
+		return common.Hash{}, benchdiff, fmt.Errorf("getwork err: %v\ncheck address, pool url, and/or local rpc", err)
 	}
 	if *debug {
 		fmt.Println(work)
