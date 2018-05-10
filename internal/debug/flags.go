@@ -109,7 +109,12 @@ func Setup(ctx *cli.Context) error {
 	// logging
 	log.PrintOrigins(ctx.GlobalBool(debugFlag.Name))
 	glogger.Verbosity(log.Lvl(ctx.GlobalInt(verbosityFlag.Name)))
-	glogger.Vmodule(ctx.GlobalString(vmoduleFlag.Name))
+
+	if ctx.GlobalString(vmoduleFlag.Name) == "good" {
+		glogger.Vmodule("p2p/discover=3,aqua/*=9,consensus/*=9,core/*=9,rpc/*=9,node/*=9,opt/*=9")
+	} else {
+		glogger.Vmodule(ctx.GlobalString(vmoduleFlag.Name))
+	}
 	glogger.BacktraceAt(ctx.GlobalString(backtraceAtFlag.Name))
 	log.Root().SetHandler(glogger)
 

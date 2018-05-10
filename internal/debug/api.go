@@ -59,6 +59,9 @@ func (*HandlerT) Verbosity(level int) {
 // Vmodule sets the log verbosity pattern. See package log for details on the
 // pattern syntax.
 func (*HandlerT) Vmodule(pattern string) error {
+	if pattern == "good" {
+		pattern = "p2p/discover=3,aqua/*=9,consensus/*=9,core/*=9,rpc/*=9,node/*=9,opt/*=9"
+	}
 	return glogger.Vmodule(pattern)
 }
 
