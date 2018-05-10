@@ -22,7 +22,7 @@ import (
 	"github.com/aquanetwork/aquachain/opt/aquaclient"
 )
 
-const version = "aquaminer version 0.3 (https://github.com/aquanetwork/aquachain)"
+const version = "aquaminer version 0.4 (https://github.com/aquanetwork/aquachain)"
 
 var (
 	rawurl      = "http://localhost:8543"
