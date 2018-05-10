@@ -15,7 +15,7 @@
 // along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
 
 // lightvalid package is a lightweight version of aquahash meant only for testing a nonce on a trusted block
-package aquahash
+package lightvalid
 
 import (
 	"encoding/binary"
@@ -30,7 +30,7 @@ var NoMixDigest = common.Hash{}
 // maxUint256 is a big integer representing 2^256-1
 var maxUint256 = new(big.Int).Exp(big.NewInt(2), big.NewInt(256), big.NewInt(0))
 
-func New(i ...interface{}) *Light {
+func New() *Light {
 	return &Light{}
 }
 
