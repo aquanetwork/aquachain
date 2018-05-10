@@ -312,6 +312,21 @@ func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, str
 // Welcome show summary of current AquaChain instance and some metadata about the
 // console's available modules.
 func (c *Console) Welcome() {
+	// friendly balance
+	c.jsre.Run(`
+function balance() {
+			var totalBal = 0;
+			for (var acctNum in aqua.accounts) {
+								var acct = aqua.accounts[acctNum];
+								var acctBal = web3.fromWei(aqua.getBalance(acct), "aqua");
+								totalBal += parseFloat(acctBal);
+								console.log("  aqua.accounts[" + acctNum + "]: \t" + acct + " \tbalance: " + acctBal + " AQUA");
+						}
+			console.log("  Total balance: " + totalBal + " AQUA");
+			return totalBal;
+};
+	`)
+
 	// Print some generic AquaChain metadata
 	fmt.Fprintf(c.printer, "\nWelcome to the AquaChain JavaScript console!\n")
 	fmt.Fprintf(c.printer, logo)
@@ -322,6 +337,7 @@ func (c *Console) Welcome() {
 		console.log("at block: " + aqua.blockNumber + " (" + new Date(1000 * aqua.getBlock(aqua.blockNumber).timestamp) + ")");
 		console.log(" datadir: " + admin.datadir);
 	`)
+
 	// List all the supported modules for the user to call
 	if apis, err := c.client.SupportedModules(); err == nil {
 		modules := make([]string, 0, len(apis))
