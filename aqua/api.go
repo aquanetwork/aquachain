@@ -245,6 +245,37 @@ func (api *PrivateAdminAPI) GetDistribution() (map[string]state.DumpAccount, err
 	return dump.Accounts, nil
 }
 
+// GetDistribution returns a map of address->balance
+func (api *PrivateAdminAPI) Supply() (*big.Int, error) {
+	statedb, err := api.aqua.BlockChain().State()
+	if err != nil {
+		return nil, err
+	}
+	// Export the state
+	dump := statedb.RawDump()
+	total := new(big.Int)
+
+	if len(dump.Accounts) > 100000 {
+		return nil, fmt.Errorf("number of accounts over 100000, bailing")
+	}
+
+	bal := make([]string, len(dump.Accounts))
+	n := 0
+	for i := range dump.Accounts {
+		bal[n] = dump.Accounts[i].Balance
+		n++
+	}
+
+	for i := range bal {
+		if bal[i] == "" || bal[i] == "0" {
+			continue
+		}
+		balance, _ := new(big.Int).SetString(bal[i], 10)
+		total.Add(total, balance)
+	}
+	return total, nil
+}
+
 // ExportState exports the current state database into a simplified json file.
 func (api *PrivateAdminAPI) ExportRealloc(file string) (bool, error) {
 	// Make sure we can create the file to export into

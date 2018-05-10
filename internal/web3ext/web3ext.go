@@ -131,6 +131,11 @@ web3._extend({
 			getter: 'admin_nodeInfo'
 		}),
 		new web3._extend.Property({
+			name: 'supply',
+			getter: 'admin_supply',
+		  outputFormatter: web3._extend.utils.fromWei
+		}),
+		new web3._extend.Property({
 			name: 'peers',
 			getter: 'admin_peers'
 		}),
