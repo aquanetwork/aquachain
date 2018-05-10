@@ -32,6 +32,7 @@ import (
 
 	"strings"
 
+	"github.com/aquanetwork/aquachain/common/log"
 	"github.com/rs/cors"
 )
 
@@ -157,12 +158,21 @@ func NewHTTPServer(cors []string, vhosts []string, srv *Server) *http.Server {
 	return &http.Server{Handler: handler}
 }
 
+func getip(r *http.Request) string {
+	if ip := r.Header.Get("X-FORWARDED-FOR"); ip != "" {
+		return ip
+	}
+	return r.RemoteAddr
+}
+
 // ServeHTTP serves JSON-RPC requests over HTTP.
 func (srv *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Permit dumb empty requests for remote health-checks (AWS)
 	if r.Method == http.MethodGet && r.ContentLength == 0 && r.URL.RawQuery == "" {
 		return
 	}
+	uip := getip(r)
+	log.Debug("handling http request", "from", uip, "path", r.URL.Path, "ua", r.UserAgent(), "http", r.Method, "host", r.Host, "size", r.ContentLength)
 	if code, err := validateRequest(r); err != nil {
 		http.Error(w, err.Error(), code)
 		return
