@@ -24,7 +24,6 @@ var MainnetBootnodes = []string{
 	"enode://6227ff2948ff51ee4f09e5f1df2c1270c47b753718d406605787326341de6ff8e7cb6a5f01a4deed5437dcdd7b9fb8e656f0ad6a08c1f677c2ca5d0e666a92fc@168.235.78.103:21000", // aquachain-2
 	"enode://1a6b78cf626540d1eecfeba1f364e72bf92847561b9344403ac7010b2be184cfc760b5bcd21402b19713deebef256dcdfc5af67487554650bf07807737a36203@23.94.123.137:21303",  // aerthnode
 	"enode://a341920437d7141e4355ed1f298fd2415cbec781c8b4fedd943eac37fd0c835375718085b1a65208c0a06af10c388d452a4148b8430da93bd0b75100b2315f3c@107.161.24.142:21303", // aerthpool
-	"enode://d4a7783e9aa10bc0bcf2ccde9e8d4a7e1972aaacb6fd875179f55a60b9430a9924bccfa230601d191e3b6d8e1680779075fba2a34cbc64db5ff7832bca99dc39@89.216.28.92:21000",   // sa-node
 }
 
 // DiscoveryV5Bootnodes are the enode URLs of the P2P bootstrap nodes for the
@@ -32,7 +31,6 @@ var MainnetBootnodes = []string{
 var DiscoveryV5Bootnodes = []string{
 	"enode://7f636b8198a41abb10c1a571992335b8cb760d6ef973efc5f3ff613dda7acbe9e6d6b27254e076ef7b684ac7ea09a27bd05a37844cd8ad242199593bdd8cec21@107.161.24.142:21001", // aquachain-1 new protocol
 	"enode://6227ff2948ff51ee4f09e5f1df2c1270c47b753718d406605787326341de6ff8e7cb6a5f01a4deed5437dcdd7b9fb8e656f0ad6a08c1f677c2ca5d0e666a92fc@168.235.78.103:21001", // aquachain-2 new protocol
-	"enode://d4a7783e9aa10bc0bcf2ccde9e8d4a7e1972aaacb6fd875179f55a60b9430a9924bccfa230601d191e3b6d8e1680779075fba2a34cbc64db5ff7832bca99dc39@89.216.28.92:21001",   // sa-node new protocol
 }
 
 // TestnetBootnodes are the enode URLs of the P2P bootstrap nodes running on the
