@@ -1027,6 +1027,12 @@ func (bc *BlockChain) InsertChain(chain types.Blocks) (int, error) {
 func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*types.Log, error) {
 	// Do a sanity check that the provided chain is actually ordered and linked
 	for i := 1; i < len(chain); i++ {
+		if chain[i-1].Version() == 0 {
+			chain[i-1].SetVersion(bc.Config().GetBlockVersion(chain[i-1].Number()))
+		}
+		if chain[i].Version() == 0 {
+			chain[i].SetVersion(bc.Config().GetBlockVersion(chain[i].Number()))
+		}
 		if chain[i].NumberU64() != chain[i-1].NumberU64()+1 || chain[i].ParentHash() != chain[i-1].Hash() {
 			// Chain broke ancestry, log a messge (programming error) and skip insertion
 			log.Error("Non contiguous block insert", "number", chain[i].Number(), "hash", chain[i].Hash(),
@@ -1059,7 +1065,8 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	for i, block := range chain {
 		headers[i] = block.Header()
 		if headers[i].Version == 0 {
-			panic("version not set")
+			log.Warn("header version not set", "number", headers[i].Number)
+			return 0, nil, nil, fmt.Errorf("invalid chain: header %s version not set", headers[i].Number)
 		}
 		seals[i] = true
 	}
@@ -1068,7 +1075,6 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
-		//block.SetVersion(bc.Config().GetBlockVersion(block.Number()))
 		// If the chain is terminating, stop processing blocks
 		if atomic.LoadInt32(&bc.procInterrupt) == 1 {
 			log.Debug("Premature abort during blocks processing")
