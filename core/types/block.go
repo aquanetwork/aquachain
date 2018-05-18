@@ -120,7 +120,7 @@ func (h *Header) SetVersion(version byte) common.Hash {
 func (h *Header) Hash() common.Hash {
 	if h.Version == H_UNSET {
 		// fatal error to hash a header with no version
-		fmt.Println("header:", h.Number)
+		common.Report(fmt.Sprintf("Hash algorithm not set, please report this error to developers. Number: %v, Version: %v", h.Number, h.Version))
 		panic("hash algorithm not set")
 	}
 	switch h.Version {
@@ -129,8 +129,8 @@ func (h *Header) Hash() common.Hash {
 	case H_ARGON2ID:
 		return rlpHashArgon2id(h)
 	default:
-		common.Report(fmt.Sprintf("Number: %v, Version: %v", h.Number, h.Version))
-		return rlpHash(h)
+		common.Report(fmt.Sprintf("Hash algorithm not set, please report this error to developers. Number: %v, Version: %v", h.Number, h.Version))
+		panic("hash algorithm not set")
 	}
 }
 
