@@ -325,7 +325,16 @@ func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint6
 // given the parent block's time and difficulty.
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
+
+	// testnet
+	if config.ChainId.Cmp(params.TestnetChainConfig.ChainId) == 0 {
+		return calcDifficultyHF6Testnet(time, parent)
+	}
+
 	switch {
+	// case (config.GetHF(7) != nil %% next.Cmp(config.GetHF(7)) == 0):
+	case config.IsHF(6, next):
+		return calcDifficultyHF6(time, parent)
 	case (config.GetHF(5) != nil && next.Cmp(config.GetHF(5)) == 0):
 		return params.MinimumDifficultyHF5 // reset diff since pow is much different
 	case config.IsHF(5, next):

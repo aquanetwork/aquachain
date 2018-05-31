@@ -86,7 +86,9 @@ var (
 	MinimumDifficultyHF1      = big.NewInt(100001792)       // The minimum that the difficulty may ever be (changed to a nice multiple of 2048).
 	MinimumDifficultyHF3      = big.NewInt(3095918580 * 10) // GPU Announcement
 	MinimumDifficultyHF5      = big.NewInt(46039386)        // Argon2id Announcement
+	MinimumDifficultyTestnet  = big.NewInt(4096)            // Argon2id Testnet
 	DifficultyBoundDivisorHF5 = big.NewInt(16)              // The bound divisor of the difficulty, used in the update calculations.
+	DifficultyBoundDivisorHF6 = big.NewInt(64)              // The bound divisor of the difficulty, used in the update calculations.
 	DurationLimit             = big.NewInt(240)             // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
 	MaxMoney                  = big.NewInt(42000000)        // At block 42mil rewards will be fees-only
 )

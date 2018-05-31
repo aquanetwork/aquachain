@@ -268,3 +268,49 @@ func calcDifficultyFrontier(time uint64, parent *types.Header) *big.Int {
 	}
 	return diff
 }
+
+// calcDifficultyHF6 - higher divisor
+func calcDifficultyHF6(time uint64, parent *types.Header) *big.Int {
+	diff := new(big.Int)
+	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF6)
+	bigTime := new(big.Int)
+	bigParentTime := new(big.Int)
+
+	bigTime.SetUint64(time)
+	bigParentTime.Set(parent.Time)
+
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+		diff.Add(parent.Difficulty, adjust)
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
+
+	if diff.Cmp(params.MinimumDifficultyHF5) < 0 {
+		diff.Set(params.MinimumDifficultyHF5)
+	}
+
+	return diff
+}
+
+// calcDifficultyHF6Testnet - higher divisor and lower minimum difficulty
+func calcDifficultyHF6Testnet(time uint64, parent *types.Header) *big.Int {
+	diff := new(big.Int)
+	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF6)
+	bigTime := new(big.Int)
+	bigParentTime := new(big.Int)
+
+	bigTime.SetUint64(time)
+	bigParentTime.Set(parent.Time)
+
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+		diff.Add(parent.Difficulty, adjust)
+	} else {
+		diff.Sub(parent.Difficulty, adjust)
+	}
+
+	if diff.Cmp(params.MinimumDifficultyTestnet) < 0 {
+		diff.Set(params.MinimumDifficultyTestnet)
+	}
+
+	return diff
+}
