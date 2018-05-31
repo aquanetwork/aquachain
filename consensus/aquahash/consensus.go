@@ -326,8 +326,7 @@ func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint6
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
 	next := new(big.Int).Add(parent.Number, big1)
 
-	// testnet
-	if config.ChainId.Cmp(params.TestnetChainConfig.ChainId) == 0 {
+	if config.ChainId != nil && config.ChainId.Cmp(params.TestnetChainConfig.ChainId) == 0 {
 		return calcDifficultyHF6Testnet(time, parent)
 	}
 

@@ -30,12 +30,13 @@ var (
 )
 var (
 	AquachainHF = ForkMap{
-		0: big.NewInt(3000),  //  hf0 had no changes
+		0: big.NewInt(3000),  // HF0
 		1: big.NewInt(3600),  // increase min difficulty to the next multiple of 2048
 		2: big.NewInt(7200),  // use simple difficulty algo (240 seconds)
 		3: big.NewInt(13026), // increase min difficulty for anticipation of gpu mining
 		4: big.NewInt(21800), // HF4
-		5: big.NewInt(22800), // HF5
+		5: big.NewInt(22800), // HF5 argonated (argon2id)
+		6: big.NewInt(40001), // HF6 divisor increase
 	}
 	TestnetHF = ForkMap{
 		0: big.NewInt(0), //  hf0 had no changes
