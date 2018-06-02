@@ -36,8 +36,10 @@ var (
 		3: big.NewInt(13026), // increase min difficulty for anticipation of gpu mining
 		4: big.NewInt(21800), // HF4
 		5: big.NewInt(22800), // HF5 argonated (argon2id)
-		6: big.NewInt(40001), // HF6 divisor increase
+		6: big.NewInt(36000), // HF6 divisor increase
 	}
+
+	// Testnet now is HF6, avoiding the block #3 (HF3) difficulty bomb
 	TestnetHF = ForkMap{
 		0: big.NewInt(0), //  hf0 had no changes
 		1: big.NewInt(1), // increase min difficulty to the next multiple of 2048
@@ -45,6 +47,7 @@ var (
 		3: big.NewInt(3), // increase min difficulty for anticipation of gpu mining
 		4: big.NewInt(4), // HF4
 		5: big.NewInt(5), // HF5
+		6: big.NewInt(6), // noop in testnet
 	}
 )
 var (

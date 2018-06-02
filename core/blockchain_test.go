@@ -335,7 +335,7 @@ func TestReorgLongHeaders(t *testing.T) { testReorgLong(t, false) }
 func TestReorgLongBlocks(t *testing.T)  { testReorgLong(t, true) }
 
 func testReorgLong(t *testing.T, full bool) {
-	testReorg(t, []int64{0, 0, -9}, []int64{0, 0, 0, -9}, 62133491973, full)
+	testReorg(t, []int64{0, 0, -9}, []int64{0, 0, 0, -9}, 62233491972-(params.GenesisDifficulty.Int64()*2), full)
 }
 
 // Tests that reorganising a short difficult chain after a long easy one
@@ -349,13 +349,13 @@ func testReorgShort(t *testing.T, full bool) {
 	// one to become heavyer than a long one. The 96 is an empirical value.
 	easy := make([]int64, 96)
 	for i := 0; i < len(easy); i++ {
-		easy[i] = 60
+		easy[i] = 240
 	}
 	diff := make([]int64, len(easy)-1)
 	for i := 0; i < len(diff); i++ {
 		diff[i] = -9
 	}
-	testReorg(t, easy, diff, 244705518129, full)
+	testReorg(t, easy, diff, 68205033694-(params.GenesisDifficulty.Int64()), full)
 }
 
 func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
@@ -413,15 +413,17 @@ func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
 		}
 	}
 	// Make sure the chain total difficulty is the correct one
-	//want := new(big.Int).Add(blockchain.genesisBlock.Difficulty(), big.NewInt(td))
-	want := big.NewInt(td)
+	want := new(big.Int).Add(blockchain.genesisBlock.Difficulty(), big.NewInt(td))
+	// want := big.NewInt(td)
 	if full {
 		if have := blockchain.GetTdByHash(blockchain.CurrentBlock().Hash()); have.Cmp(want) != 0 {
-			t.Errorf("total difficulty %s mismatch: have %v, want %v", blockchain.CurrentBlock().Number(), have, want)
+			diff := new(big.Int).Sub(want, have)
+			t.Errorf("total difficulty %s mismatch: have %v, want %v, d %v", blockchain.CurrentBlock().Number(), have, want, diff)
 		}
 	} else {
 		if have := blockchain.GetTdByHash(blockchain.CurrentHeader().Hash()); have.Cmp(want) != 0 {
-			t.Errorf("total difficulty %s mismatch: have %v, want %v", blockchain.CurrentHeader().Number, have, want)
+			diff := new(big.Int).Sub(want, have)
+			t.Errorf("total difficulty %s mismatch: have %v, want %v, d %v", blockchain.CurrentHeader().Number, have, want, diff)
 		}
 	}
 }
