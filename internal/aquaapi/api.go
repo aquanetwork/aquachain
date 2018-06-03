@@ -45,7 +45,7 @@ import (
 )
 
 const (
-	defaultGasPrice = 50 * params.Shannon
+	defaultGasPrice = 10000000
 )
 
 // PublicAquaChainAPI provides an API to access AquaChain related information.
