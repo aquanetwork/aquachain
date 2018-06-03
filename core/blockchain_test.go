@@ -355,7 +355,7 @@ func testReorgShort(t *testing.T, full bool) {
 	for i := 0; i < len(diff); i++ {
 		diff[i] = -9
 	}
-	testReorg(t, easy, diff, 68205033694-(params.GenesisDifficulty.Int64()), full)
+	testReorg(t, easy, diff, 66353998696-(params.GenesisDifficulty.Int64()), full)
 }
 
 func testReorg(t *testing.T, first, second []int64, td int64, full bool) {

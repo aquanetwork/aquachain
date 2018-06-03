@@ -90,5 +90,7 @@ var (
 	DifficultyBoundDivisorHF5 = big.NewInt(16)              // The bound divisor of the difficulty, used in the update calculations.
 	DifficultyBoundDivisorHF6 = big.NewInt(128)             // The bound divisor of the difficulty, used in the update calculations.
 	DurationLimit             = big.NewInt(240)             // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
-	MaxMoney                  = big.NewInt(42000000)        // At block 42mil rewards will be fees-only
+	// DurationLimitHF6 lowers the duration limit, keeping 240 second target
+	DurationLimitHF6 = big.NewInt(180)      // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	MaxMoney         = big.NewInt(42000000) // At block 42mil rewards will be fees-only
 )

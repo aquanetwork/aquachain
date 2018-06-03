@@ -279,7 +279,7 @@ func calcDifficultyHF6(time uint64, parent *types.Header) *big.Int {
 	bigTime.SetUint64(time)
 	bigParentTime.Set(parent.Time)
 
-	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimitHF6) < 0 {
 		diff.Add(parent.Difficulty, adjust)
 	} else {
 		diff.Sub(parent.Difficulty, adjust)
@@ -302,7 +302,7 @@ func calcDifficultyHF6Testnet(time uint64, parent *types.Header) *big.Int {
 	bigTime.SetUint64(time)
 	bigParentTime.Set(parent.Time)
 
-	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimitHF6) < 0 {
 		diff.Add(parent.Difficulty, adjust)
 	} else {
 		diff.Sub(parent.Difficulty, adjust)
