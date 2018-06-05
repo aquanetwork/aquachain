@@ -37,17 +37,19 @@ var (
 		4: big.NewInt(21800), // HF4
 		5: big.NewInt(22800), // HF5 argonated (argon2id)
 		6: big.NewInt(36000), // HF6 divisor increase
+		7: big.NewInt(36050), // eip 155, 158
 	}
 
 	// Testnet now is HF6, avoiding the block #3 (HF3) difficulty bomb
 	TestnetHF = ForkMap{
-		0: big.NewInt(0), //  hf0 had no changes
-		1: big.NewInt(1), // increase min difficulty to the next multiple of 2048
-		2: big.NewInt(2), // use simple difficulty algo (240 seconds)
-		3: big.NewInt(3), // increase min difficulty for anticipation of gpu mining
-		4: big.NewInt(4), // HF4
-		5: big.NewInt(5), // HF5
-		6: big.NewInt(6), // noop in testnet
+		0: big.NewInt(0),  //  hf0 had no changes
+		1: big.NewInt(1),  // increase min difficulty to the next multiple of 2048
+		2: big.NewInt(2),  // use simple difficulty algo (240 seconds)
+		3: big.NewInt(3),  // increase min difficulty for anticipation of gpu mining
+		4: big.NewInt(4),  // HF4
+		5: big.NewInt(5),  // HF5
+		6: big.NewInt(6),  // noop in testnet
+		7: big.NewInt(25), // eip 155, 158
 	}
 )
 var (
@@ -56,15 +58,21 @@ var (
 		ChainId:        big.NewInt(61717561),
 		HomesteadBlock: big.NewInt(0),
 		EIP150Block:    big.NewInt(0),
+		EIP155Block:    AquachainHF[7],
+		EIP158Block:    AquachainHF[7],
+		ByzantiumBlock: AquachainHF[7],
 		Aquahash:       new(AquahashConfig),
 		HF:             AquachainHF,
 	}
 
-	// TestnetChainConfig contains the chain parameters to run a node on the Ropsten test network.
+	// TestnetChainConfig contains the chain parameters to run a node on the Aquachain test network.
 	TestnetChainConfig = &ChainConfig{
 		ChainId:        big.NewInt(3),
 		HomesteadBlock: big.NewInt(0),
 		EIP150Block:    big.NewInt(0),
+		EIP155Block:    TestnetHF[7],
+		EIP158Block:    TestnetHF[7],
+		ByzantiumBlock: TestnetHF[7],
 		Aquahash:       new(AquahashConfig),
 		HF:             TestnetHF,
 	}
