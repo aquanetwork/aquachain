@@ -28,7 +28,7 @@ func (f ForkMap) String() (s string) {
 	for i := 0; i < len(f); i++ {
 		s = fmt.Sprintf("%s %v:%v", s, i, f[i].Int64())
 	}
-	return "HF-Ready: " + strings.TrimSpace(s)
+	return strings.TrimSpace(s)
 }
 
 type HeaderVersion byte
