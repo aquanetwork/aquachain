@@ -50,6 +50,7 @@ test: all
 
 clean:
 	rm -fr build/_workspace/pkg/ $(GOBIN)/*
+	rm -fr build/_workspace/src/ $(GOBIN)/*
 
 # The devtools target installs tools required for 'go generate'.
 # You need to put $GOBIN (or $GOPATH/bin) in your PATH to use 'go generate'.
