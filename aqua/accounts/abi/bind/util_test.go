@@ -22,12 +22,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind/backends"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi/bind"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi/bind/backends"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/crypto"
 )
 
 var testKey, _ = crypto.HexToECDSA("b71c71a67e1177ad4e901695e1b4b9ee17ae16c6668d313eac2f96dbcda3f291")

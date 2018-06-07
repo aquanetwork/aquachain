@@ -17,9 +17,9 @@
 package runtime
 
 import (
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/core/vm"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core"
+	"gitlab.com/aquachain/aquachain/core/vm"
 )
 
 func NewEnv(cfg *Config) *vm.EVM {

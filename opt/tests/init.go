@@ -19,7 +19,7 @@ package tests
 import (
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 // // This table defines supported forks and their chain config.

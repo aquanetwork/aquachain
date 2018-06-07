@@ -37,7 +37,7 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
-	"github.com/aquanetwork/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/crypto"
 	"math/big"
 	"testing"
 )

@@ -28,10 +28,10 @@ import (
 	mrand "math/rand"
 	"strconv"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/crypto/ecies"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/crypto/ecies"
 )
 
 // MessageParams specifies the exact way a message should be wrapped

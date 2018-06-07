@@ -23,7 +23,7 @@ import (
 	"os"
 	"runtime/trace"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // StartGoTrace turns on tracing, writing to the given file.

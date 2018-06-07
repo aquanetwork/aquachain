@@ -23,9 +23,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aquadb"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/aquadb"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/crypto"
 )
 
 func init() {

@@ -19,7 +19,7 @@ package tests
 import (
 	"testing"
 
-	"github.com/aquanetwork/aquachain/core/vm"
+	"gitlab.com/aquachain/aquachain/core/vm"
 )
 
 func TestVM(t *testing.T) {

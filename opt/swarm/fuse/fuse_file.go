@@ -26,8 +26,8 @@ import (
 
 	"bazil.org/fuse"
 	"bazil.org/fuse/fs"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/opt/swarm/storage"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
 	"golang.org/x/net/context"
 )
 

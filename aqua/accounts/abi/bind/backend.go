@@ -21,9 +21,9 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 var (

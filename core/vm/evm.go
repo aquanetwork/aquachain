@@ -21,9 +21,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 // emptyCodeHash is used by create to ensure deployment is disallowed to already

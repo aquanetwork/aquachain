@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/aquanetwork/aquachain/common/metrics"
+	"gitlab.com/aquachain/aquachain/common/metrics"
 )
 
 type exp struct {

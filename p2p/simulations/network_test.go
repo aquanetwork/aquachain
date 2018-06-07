@@ -22,8 +22,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/p2p/discover"
-	"github.com/aquanetwork/aquachain/p2p/simulations/adapters"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/p2p/simulations/adapters"
 )
 
 // TestNetworkSimulation creates a multi-node simulation network with each node

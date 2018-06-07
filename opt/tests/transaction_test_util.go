@@ -22,12 +22,12 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/hexutil"
-	"github.com/aquanetwork/aquachain/common/math"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/params"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/hexutil"
+	"gitlab.com/aquachain/aquachain/common/math"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/params"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 // TransactionTest checks RLP decoding and sender derivation of transactions.

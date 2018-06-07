@@ -20,8 +20,8 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/aquadb"
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/aquadb"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 // Tests that the node iterator indeed walks over the entire database contents.

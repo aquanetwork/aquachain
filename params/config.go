@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 var (

@@ -26,10 +26,10 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/cmd/internal/browser"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/cmd/internal/browser"
+	"gitlab.com/aquachain/aquachain/params"
 
-	"github.com/aquanetwork/aquachain/cmd/utils"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
 	cli "gopkg.in/urfave/cli.v1"
 )
 
@@ -41,7 +41,7 @@ var bugCommand = cli.Command{
 	Category:  "MISCELLANEOUS COMMANDS",
 }
 
-const issueUrl = "https://github.com/aquanetwork/aquachain/issues/new"
+const issueUrl = "https://gitlab.com/aquachain/aquachain/issues/new"
 
 // reportBug reports a bug by opening a new URL to the aquachain GH issue
 // tracker and setting default values as the issue body.

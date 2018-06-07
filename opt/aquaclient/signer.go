@@ -20,8 +20,8 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 // senderFromServer is a types.Signer that remembers the sender address returned by the RPC

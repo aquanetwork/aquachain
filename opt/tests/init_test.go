@@ -29,7 +29,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 var (

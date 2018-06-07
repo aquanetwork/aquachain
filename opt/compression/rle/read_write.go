@@ -21,7 +21,7 @@ import (
 	"bytes"
 	"errors"
 
-	"github.com/aquanetwork/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/crypto"
 )
 
 const (

@@ -21,10 +21,10 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/aquadb"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/trie"
+	"gitlab.com/aquachain/aquachain/aquadb"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/trie"
 )
 
 // testAccount is the data associated with an account used by the state tests.

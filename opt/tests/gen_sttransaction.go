@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common/hexutil"
-	"github.com/aquanetwork/aquachain/common/math"
+	"gitlab.com/aquachain/aquachain/common/hexutil"
+	"gitlab.com/aquachain/aquachain/common/math"
 )
 
 var _ = (*stTransactionMarshaling)(nil)

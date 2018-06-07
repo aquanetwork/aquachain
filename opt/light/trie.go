@@ -21,13 +21,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/aquadb"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/state"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/params"
-	"github.com/aquanetwork/aquachain/trie"
+	"gitlab.com/aquachain/aquachain/aquadb"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/state"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/params"
+	"gitlab.com/aquachain/aquachain/trie"
 )
 
 func NewState(ctx context.Context, head *types.Header, headVersion params.HeaderVersion, odr OdrBackend) *state.StateDB {

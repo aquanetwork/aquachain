@@ -26,7 +26,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 	"golang.org/x/tools/imports"
 )
 

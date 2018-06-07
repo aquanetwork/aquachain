@@ -27,9 +27,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/errors"
 	"github.com/syndtr/goleveldb/leveldb/iterator"

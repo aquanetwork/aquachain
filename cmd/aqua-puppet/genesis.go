@@ -21,11 +21,11 @@ import (
 	"errors"
 	"math"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/hexutil"
-	"github.com/aquanetwork/aquachain/consensus/aquahash"
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/hexutil"
+	"gitlab.com/aquachain/aquachain/consensus/aquahash"
+	"gitlab.com/aquachain/aquachain/core"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 // cppAquaChainGenesisSpec represents the genesis specification format used by the

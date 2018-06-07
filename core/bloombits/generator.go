@@ -19,7 +19,7 @@ package bloombits
 import (
 	"errors"
 
-	"github.com/aquanetwork/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 // errSectionOutOfBounds is returned if the user tried to add more bloom filters

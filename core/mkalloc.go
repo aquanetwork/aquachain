@@ -34,8 +34,8 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/core"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 type allocItem struct{ Addr, Balance *big.Int }

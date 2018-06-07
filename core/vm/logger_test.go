@@ -20,8 +20,8 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 type dummyContractRef struct {

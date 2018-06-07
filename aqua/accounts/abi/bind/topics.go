@@ -22,9 +22,9 @@ import (
 	"math/big"
 	"reflect"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/crypto"
 )
 
 // makeTopics converts a filter query argument list into a filter topic set.

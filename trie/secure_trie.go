@@ -19,8 +19,8 @@ package trie
 import (
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // SecureTrie wraps a trie with key hashing. In a secure trie, all

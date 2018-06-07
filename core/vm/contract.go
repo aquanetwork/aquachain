@@ -19,7 +19,7 @@ package vm
 import (
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 // ContractRef is a reference to the contract's backing object

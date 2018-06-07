@@ -22,7 +22,7 @@ package aquachain
 import (
 	"errors"
 
-	"github.com/aquanetwork/aquachain/p2p/discv5"
+	"gitlab.com/aquachain/aquachain/p2p/discv5"
 )
 
 // Enode represents a host on the network.

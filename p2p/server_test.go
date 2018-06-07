@@ -25,10 +25,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/crypto/sha3"
-	"github.com/aquanetwork/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/crypto/sha3"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
 )
 
 func init() {

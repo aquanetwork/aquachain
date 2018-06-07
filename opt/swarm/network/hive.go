@@ -22,13 +22,13 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/common/metrics"
-	"github.com/aquanetwork/aquachain/opt/swarm/network/kademlia"
-	"github.com/aquanetwork/aquachain/opt/swarm/storage"
-	"github.com/aquanetwork/aquachain/p2p/discover"
-	"github.com/aquanetwork/aquachain/p2p/netutil"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/metrics"
+	"gitlab.com/aquachain/aquachain/opt/swarm/network/kademlia"
+	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/p2p/netutil"
 )
 
 // Hive is the logistic manager of the swarm

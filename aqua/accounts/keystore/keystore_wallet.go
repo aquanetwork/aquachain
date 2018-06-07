@@ -19,9 +19,9 @@ package keystore
 import (
 	"math/big"
 
-	aquachain "github.com/aquanetwork/aquachain"
-	"github.com/aquanetwork/aquachain/aqua/accounts"
-	"github.com/aquanetwork/aquachain/core/types"
+	aquachain "gitlab.com/aquachain/aquachain"
+	"gitlab.com/aquachain/aquachain/aqua/accounts"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 // keystoreWallet implements the accounts.Wallet interface for the original

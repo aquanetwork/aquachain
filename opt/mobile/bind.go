@@ -22,10 +22,10 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi"
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi/bind"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 // Signer is an interaface defining the callback when a contract requires a

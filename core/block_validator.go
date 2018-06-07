@@ -19,10 +19,10 @@ package core
 import (
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/consensus"
-	"github.com/aquanetwork/aquachain/core/state"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/consensus"
+	"gitlab.com/aquachain/aquachain/core/state"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 // BlockValidator is responsible for validating block headers, uncles and

@@ -20,7 +20,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/aquanetwork/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
 )
 
 // Simulation provides a framework for running actions in a simulated network

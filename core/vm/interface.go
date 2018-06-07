@@ -19,8 +19,8 @@ package vm
 import (
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 // StateDB is an EVM database for full state querying.

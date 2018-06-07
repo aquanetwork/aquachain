@@ -25,7 +25,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // walletDockerfile is the Dockerfile required to run a web wallet.

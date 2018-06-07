@@ -22,8 +22,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/common/metrics"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/metrics"
 )
 
 //metrics variables

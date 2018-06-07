@@ -21,8 +21,8 @@ import (
 
 	"sync/atomic"
 
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/consensus"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/consensus"
 )
 
 type CpuAgent struct {

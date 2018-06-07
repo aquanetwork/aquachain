@@ -21,11 +21,11 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/aqua/event"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/aqua/event"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 // Constants to match up protocol versions and messages

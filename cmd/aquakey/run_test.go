@@ -21,7 +21,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/internal/cmdtest"
+	"gitlab.com/aquachain/aquachain/internal/cmdtest"
 	"github.com/docker/docker/pkg/reexec"
 )
 

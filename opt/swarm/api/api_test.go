@@ -24,9 +24,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/opt/swarm/storage"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
 )
 
 func testApi(t *testing.T, f func(*Api)) {

@@ -22,7 +22,7 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 // Interface represents a wrapped version of Go's interface{}, with the capacity

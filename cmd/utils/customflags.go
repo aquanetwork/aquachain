@@ -27,7 +27,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/common/math"
+	"gitlab.com/aquachain/aquachain/common/math"
 	"gopkg.in/urfave/cli.v1"
 )
 

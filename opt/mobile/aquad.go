@@ -24,17 +24,17 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/aquanetwork/aquachain/aqua"
-	"github.com/aquanetwork/aquachain/aqua/downloader"
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/node"
-	"github.com/aquanetwork/aquachain/opt/aquaclient"
-	"github.com/aquanetwork/aquachain/opt/aquastats"
-	"github.com/aquanetwork/aquachain/opt/les"
-	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"
-	"github.com/aquanetwork/aquachain/p2p"
-	"github.com/aquanetwork/aquachain/p2p/nat"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/aqua"
+	"gitlab.com/aquachain/aquachain/aqua/downloader"
+	"gitlab.com/aquachain/aquachain/core"
+	"gitlab.com/aquachain/aquachain/node"
+	"gitlab.com/aquachain/aquachain/opt/aquaclient"
+	"gitlab.com/aquachain/aquachain/opt/aquastats"
+	"gitlab.com/aquachain/aquachain/opt/les"
+	whisper "gitlab.com/aquachain/aquachain/opt/whisper/whisperv6"
+	"gitlab.com/aquachain/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/p2p/nat"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 // NodeConfig represents the collection of configuration values to fine tune the AquaChain

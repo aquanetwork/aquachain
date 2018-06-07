@@ -17,7 +17,7 @@
 // Package bind generates AquaChain contract Go bindings.
 //
 // Detailed usage document and tutorial available on the aquachain Wiki page:
-// https://github.com/aquanetwork/aquachain/wiki/Native-DApps:-Go-bindings-to-AquaChain-contracts
+// https://gitlab.com/aquachain/aquachain/wiki/Native-DApps:-Go-bindings-to-AquaChain-contracts
 package bind
 
 import (
@@ -28,7 +28,7 @@ import (
 	"text/template"
 	"unicode"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi"
 	"golang.org/x/tools/imports"
 )
 

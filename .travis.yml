@@ -1,5 +1,5 @@
 language: go
-go_import_path: github.com/aquanetwork/aquachain
+go_import_path: gitlab.com/aquachain/aquachain
 sudo: false
 matrix:
   include:

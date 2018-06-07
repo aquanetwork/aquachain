@@ -27,8 +27,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/opt/swarm/api"
-	"github.com/aquanetwork/aquachain/opt/swarm/storage"
+	"gitlab.com/aquachain/aquachain/opt/swarm/api"
+	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
 )
 
 type fileInfo struct {

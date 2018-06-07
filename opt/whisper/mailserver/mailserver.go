@@ -21,12 +21,12 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/crypto"
-	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/crypto"
+	whisper "gitlab.com/aquachain/aquachain/opt/whisper/whisperv6"
+	"gitlab.com/aquachain/aquachain/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/util"
 )

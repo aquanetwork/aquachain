@@ -23,10 +23,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/aqua"
-	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/consensus/aquahash"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/aqua"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
+	"gitlab.com/aquachain/aquachain/consensus/aquahash"
+	"gitlab.com/aquachain/aquachain/params"
 	"gopkg.in/urfave/cli.v1"
 )
 

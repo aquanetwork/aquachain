@@ -19,10 +19,10 @@ package misc
 import (
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/state"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/state"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 func VerifyHFHeaderExtraData(config *params.ChainConfig, header *types.Header) error {

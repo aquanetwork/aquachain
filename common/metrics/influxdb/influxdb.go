@@ -6,7 +6,7 @@ import (
 	uurl "net/url"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/metrics"
+	"gitlab.com/aquachain/aquachain/common/metrics"
 	"github.com/influxdata/influxdb/client"
 )
 

@@ -28,7 +28,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/crypto/sha3"
+	"gitlab.com/aquachain/aquachain/crypto/sha3"
 )
 
 const (

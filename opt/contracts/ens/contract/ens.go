@@ -6,12 +6,12 @@ package contract
 import (
 	"strings"
 
-	ethereum "github.com/aquanetwork/aquachain"
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi"
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
-	"github.com/aquanetwork/aquachain/aqua/event"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/types"
+	ethereum "gitlab.com/aquachain/aquachain"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi/bind"
+	"gitlab.com/aquachain/aquachain/aqua/event"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 // ENSABI is the input ABI used to generate the binding from.

@@ -15,14 +15,14 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/opt/aquaclient"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/opt/aquaclient"
 )
 
-const version = "aquaminer version 0.4 (https://github.com/aquanetwork/aquachain)"
+const version = "aquaminer version 0.4 (https://gitlab.com/aquachain/aquachain)"
 
 var (
 	rawurl      = "http://localhost:8543"

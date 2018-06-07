@@ -19,8 +19,8 @@
 package whisperv6
 
 import (
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/hexutil"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/hexutil"
 )
 
 // TopicType represents a cryptographically secure, probabilistic partial

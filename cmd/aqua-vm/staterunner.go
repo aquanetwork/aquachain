@@ -23,10 +23,10 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/core/state"
-	"github.com/aquanetwork/aquachain/core/vm"
-	"github.com/aquanetwork/aquachain/opt/tests"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/core/state"
+	"gitlab.com/aquachain/aquachain/core/vm"
+	"gitlab.com/aquachain/aquachain/opt/tests"
 
 	cli "gopkg.in/urfave/cli.v1"
 )

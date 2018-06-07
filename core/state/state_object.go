@@ -22,9 +22,9 @@ import (
 	"io"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 var emptyCodeHash = crypto.Keccak256(nil)

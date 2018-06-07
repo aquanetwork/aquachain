@@ -21,9 +21,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 // WaitMined waits for tx to be mined on the blockchain.

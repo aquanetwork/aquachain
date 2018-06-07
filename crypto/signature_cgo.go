@@ -23,8 +23,8 @@ import (
 	"crypto/elliptic"
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/common/math"
-	"github.com/aquanetwork/aquachain/crypto/secp256k1"
+	"gitlab.com/aquachain/aquachain/common/math"
+	"gitlab.com/aquachain/aquachain/crypto/secp256k1"
 )
 
 // Ecrecover returns the uncompressed public key that created the given signature.

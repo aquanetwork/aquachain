@@ -22,9 +22,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts"
-	"github.com/aquanetwork/aquachain/aqua/event"
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/aqua/accounts"
+	"gitlab.com/aquachain/aquachain/aqua/event"
+	"gitlab.com/aquachain/aquachain/common/log"
 	"github.com/karalabe/hid"
 )
 

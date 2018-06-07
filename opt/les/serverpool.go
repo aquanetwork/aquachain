@@ -27,13 +27,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aquadb"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/common/mclock"
-	"github.com/aquanetwork/aquachain/p2p"
-	"github.com/aquanetwork/aquachain/p2p/discover"
-	"github.com/aquanetwork/aquachain/p2p/discv5"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/aquadb"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/mclock"
+	"gitlab.com/aquachain/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/p2p/discv5"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 const (

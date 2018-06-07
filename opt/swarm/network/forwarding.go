@@ -21,8 +21,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/opt/swarm/storage"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
 )
 
 const requesterCount = 3

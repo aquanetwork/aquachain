@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 // Hash represents the 32 byte Keccak256 hash of arbitrary data.

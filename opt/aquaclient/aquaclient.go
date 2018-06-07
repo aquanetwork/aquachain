@@ -24,12 +24,12 @@ import (
 	"fmt"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/hexutil"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/rlp"
-	"github.com/aquanetwork/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/hexutil"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
 // Client defines typed wrappers for the AquaChain RPC API.

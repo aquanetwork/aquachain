@@ -17,7 +17,7 @@
 package api
 
 import (
-	"github.com/aquanetwork/aquachain/opt/swarm/network"
+	"gitlab.com/aquachain/aquachain/opt/swarm/network"
 )
 
 type Control struct {

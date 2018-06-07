@@ -20,9 +20,9 @@ import (
 	"context"
 	"sync"
 
-	aquachain "github.com/aquanetwork/aquachain"
-	"github.com/aquanetwork/aquachain/aqua/event"
-	"github.com/aquanetwork/aquachain/rpc"
+	aquachain "gitlab.com/aquachain/aquachain"
+	"gitlab.com/aquachain/aquachain/aqua/event"
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
 // PublicDownloaderAPI provides an API which gives information about the current synchronisation status.

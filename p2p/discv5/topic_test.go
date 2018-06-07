@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/mclock"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/mclock"
 )
 
 func TestTopicRadius(t *testing.T) {

@@ -24,9 +24,9 @@ import (
 	"net"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/p2p/discover"
-	"github.com/aquanetwork/aquachain/p2p/netutil"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/p2p/netutil"
 )
 
 const (

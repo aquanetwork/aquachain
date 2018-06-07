@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/aquanetwork/aquachain/node"
-	"github.com/aquanetwork/aquachain/p2p"
-	"github.com/aquanetwork/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/node"
+	"gitlab.com/aquachain/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
 // SampleService is a trivial network service that can be attached to a node for

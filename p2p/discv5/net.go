@@ -24,13 +24,13 @@ import (
 	"net"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/common/mclock"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/crypto/sha3"
-	"github.com/aquanetwork/aquachain/p2p/netutil"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/mclock"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/crypto/sha3"
+	"gitlab.com/aquachain/aquachain/p2p/netutil"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 var (

@@ -25,17 +25,17 @@ import (
 	"os"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/hexutil"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/core/state"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/opt/miner"
-	"github.com/aquanetwork/aquachain/params"
-	"github.com/aquanetwork/aquachain/rlp"
-	"github.com/aquanetwork/aquachain/rpc"
-	"github.com/aquanetwork/aquachain/trie"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/hexutil"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/core"
+	"gitlab.com/aquachain/aquachain/core/state"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/opt/miner"
+	"gitlab.com/aquachain/aquachain/params"
+	"gitlab.com/aquachain/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/trie"
 )
 
 // PublicAquaChainAPI provides an API to access AquaChain full node-related

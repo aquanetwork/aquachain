@@ -20,7 +20,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 /*

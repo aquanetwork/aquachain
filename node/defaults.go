@@ -22,8 +22,8 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/aquanetwork/aquachain/p2p"
-	"github.com/aquanetwork/aquachain/p2p/nat"
+	"gitlab.com/aquachain/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/p2p/nat"
 )
 
 const (

@@ -7,10 +7,10 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/hexutil"
-	"github.com/aquanetwork/aquachain/common/math"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/hexutil"
+	"gitlab.com/aquachain/aquachain/common/math"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 var _ = (*genesisSpecMarshaling)(nil)

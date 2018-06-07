@@ -26,13 +26,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/opt/les/flowcontrol"
-	"github.com/aquanetwork/aquachain/opt/light"
-	"github.com/aquanetwork/aquachain/p2p"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/aqua"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/opt/les/flowcontrol"
+	"gitlab.com/aquachain/aquachain/opt/light"
+	"gitlab.com/aquachain/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 var (

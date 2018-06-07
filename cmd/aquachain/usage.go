@@ -24,8 +24,8 @@ import (
 
 	"strings"
 
-	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/internal/debug"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
+	"gitlab.com/aquachain/aquachain/internal/debug"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -34,7 +34,7 @@ const logo = `                              _           _
  / _ '|/ _' | | | |/ _' |/ __| '_ \ / _' | | '_ \
 | (_| | (_| | |_| | (_| | (__| | | | (_| | | | | |
  \__,_|\__, |\__,_|\__,_|\___|_| |_|\__,_|_|_| |_|
-          |_|` + "Update Often! https://github.com/aquanetwork/aquachain\n\n"
+          |_|` + "Update Often! https://gitlab.com/aquachain/aquachain\n\n"
 
 // AppHelpTemplate is the test template for the default, global app help topic.
 var AppHelpTemplate = logo + `NAME:

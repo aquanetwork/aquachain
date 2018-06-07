@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // deployAquastats queries the user for various input on deploying an aquastats

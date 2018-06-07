@@ -21,7 +21,7 @@ package aquachain
 import (
 	"errors"
 
-	"github.com/aquanetwork/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/p2p"
 )
 
 // NodeInfo represents pi short summary of the information known about the host.

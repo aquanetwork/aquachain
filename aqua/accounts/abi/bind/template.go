@@ -16,7 +16,7 @@
 
 package bind
 
-import "github.com/aquanetwork/aquachain/aqua/accounts/abi"
+import "gitlab.com/aquachain/aquachain/aqua/accounts/abi"
 
 // tmplData is the data structure required to fill the binding template.
 type tmplData struct {

@@ -21,7 +21,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/mclock"
+	"gitlab.com/aquachain/aquachain/common/mclock"
 )
 
 const fcTimeConst = time.Millisecond

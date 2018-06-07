@@ -21,7 +21,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/aquanetwork/aquachain/aqua/tracers/internal/tracers"
+	"gitlab.com/aquachain/aquachain/aqua/tracers/internal/tracers"
 )
 
 // all contains all the built in JavaScript tracers by name.

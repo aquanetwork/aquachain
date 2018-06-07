@@ -5,8 +5,8 @@ Maintainer: {{.Author}}
 Build-Depends: debhelper (>= 8.0.0), golang-1.9
 Standards-Version: 3.9.5
 Homepage: https://aquachain.org
-Vcs-Git: git://github.com/aquanetwork/aquachain.git
-Vcs-Browser: https://github.com/aquanetwork/aquachain
+Vcs-Git: git://gitlab.com/aquachain/aquachain.git
+Vcs-Browser: https://gitlab.com/aquachain/aquachain
 
 Package: {{.Name}}
 Architecture: any

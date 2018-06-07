@@ -281,7 +281,7 @@
 		},
 		{
 			"checksumSHA1": "A6nZdZ1/lTOVINhIndyw2ZWN9JU=",
-			"origin": "github.com/aquanetwork/aquachain/vendor/github.com/naoina/go-stringutil",
+			"origin": "gitlab.com/aquachain/aquachain/vendor/github.com/naoina/go-stringutil",
 			"path": "github.com/naoina/go-stringutil",
 			"revision": "6b638e95a32d0c1131db0e7fe83775cbea4a0d0b",
 			"revisionTime": "2015-11-18T23:44:43Z"
@@ -821,5 +821,5 @@
 			"revisionTime": "2017-08-11T01:42:03Z"
 		}
 	],
-	"rootPath": "github.com/aquanetwork/aquachain"
+	"rootPath": "gitlab.com/aquachain/aquachain"
 }

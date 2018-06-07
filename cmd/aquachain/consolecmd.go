@@ -24,10 +24,10 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/node"
-	"github.com/aquanetwork/aquachain/opt/console"
-	"github.com/aquanetwork/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
+	"gitlab.com/aquachain/aquachain/node"
+	"gitlab.com/aquachain/aquachain/opt/console"
+	"gitlab.com/aquachain/aquachain/rpc"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -43,7 +43,7 @@ var (
 		Description: `
 The AquaChain console is an interactive shell for the JavaScript runtime environment
 which exposes a node admin interface as well as the Ðapp JavaScript API.
-See https://github.com/aquanetwork/aquachain/wiki/JavaScript-Console.`,
+See https://gitlab.com/aquachain/aquachain/wiki/JavaScript-Console.`,
 	}
 
 	daemonCommand = cli.Command{
@@ -64,7 +64,7 @@ See https://github.com/aquanetwork/aquachain/wiki/JavaScript-Console.`,
 		Description: `
 The AquaChain console is an interactive shell for the JavaScript runtime environment
 which exposes a node admin interface as well as the Ðapp JavaScript API.
-See https://github.com/aquanetwork/aquachain/wiki/JavaScript-Console.
+See https://gitlab.com/aquachain/aquachain/wiki/JavaScript-Console.
 This command allows to open a console on a running aquachain node.`,
 	}
 
@@ -77,7 +77,7 @@ This command allows to open a console on a running aquachain node.`,
 		Category:  "CONSOLE COMMANDS",
 		Description: `
 The JavaScript VM exposes a node admin interface as well as the Ðapp
-JavaScript API. See https://github.com/aquanetwork/aquachain/wiki/JavaScript-Console`,
+JavaScript API. See https://gitlab.com/aquachain/aquachain/wiki/JavaScript-Console`,
 	}
 )
 

@@ -21,7 +21,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 	"github.com/davecgh/go-spew/spew"
 )
 

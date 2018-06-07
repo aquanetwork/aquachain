@@ -20,7 +20,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/core/asm"
+	"gitlab.com/aquachain/aquachain/core/asm"
 )
 
 func Compile(fn string, src []byte, debug bool) (string, error) {

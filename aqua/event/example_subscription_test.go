@@ -19,7 +19,7 @@ package event_test
 import (
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/aqua/event"
+	"gitlab.com/aquachain/aquachain/aqua/event"
 )
 
 func ExampleNewSubscription() {

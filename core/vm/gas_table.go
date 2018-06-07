@@ -17,9 +17,9 @@
 package vm
 
 import (
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/math"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/math"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 // memoryGasCosts calculates the quadratic gas for memory expansion. It does so

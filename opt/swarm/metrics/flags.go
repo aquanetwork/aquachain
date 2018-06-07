@@ -19,10 +19,10 @@ package metrics
 import (
 	"time"
 
-	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/common/log"
-	gethmetrics "github.com/aquanetwork/aquachain/common/metrics"
-	"github.com/aquanetwork/aquachain/common/metrics/influxdb"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
+	"gitlab.com/aquachain/aquachain/common/log"
+	gethmetrics "gitlab.com/aquachain/aquachain/common/metrics"
+	"gitlab.com/aquachain/aquachain/common/metrics/influxdb"
 	"gopkg.in/urfave/cli.v1"
 )
 

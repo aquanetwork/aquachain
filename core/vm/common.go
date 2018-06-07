@@ -19,8 +19,8 @@ package vm
 import (
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/math"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/math"
 )
 
 // calculates the memory size required for a step

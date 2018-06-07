@@ -19,7 +19,7 @@ package state
 import (
 	"sync"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 type account struct {

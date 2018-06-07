@@ -22,7 +22,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/core/vm"
+	"gitlab.com/aquachain/aquachain/core/vm"
 )
 
 func TestState(t *testing.T) {

@@ -23,10 +23,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/p2p"
-	"github.com/aquanetwork/aquachain/p2p/discover"
-	"github.com/aquanetwork/aquachain/p2p/simulations/adapters"
-	p2ptest "github.com/aquanetwork/aquachain/p2p/testing"
+	"gitlab.com/aquachain/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/p2p/simulations/adapters"
+	p2ptest "gitlab.com/aquachain/aquachain/p2p/testing"
 )
 
 // handshake message type

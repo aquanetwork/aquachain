@@ -19,8 +19,8 @@ package les
 import (
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/bitutil"
-	"github.com/aquanetwork/aquachain/opt/light"
+	"gitlab.com/aquachain/aquachain/common/bitutil"
+	"gitlab.com/aquachain/aquachain/opt/light"
 )
 
 const (

@@ -21,8 +21,8 @@ package aquachain
 import (
 	"errors"
 
-	aquachain "github.com/aquanetwork/aquachain"
-	"github.com/aquanetwork/aquachain/common"
+	aquachain "gitlab.com/aquachain/aquachain"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 // Subscription represents an event subscription where events are

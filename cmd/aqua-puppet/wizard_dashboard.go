@@ -19,7 +19,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // deployDashboard queries the user for various input on deploying a web-service

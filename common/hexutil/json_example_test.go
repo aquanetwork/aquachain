@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/common/hexutil"
+	"gitlab.com/aquachain/aquachain/common/hexutil"
 )
 
 type MyType [5]byte

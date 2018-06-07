@@ -27,7 +27,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
 )
 
 func TestMocker(t *testing.T) {

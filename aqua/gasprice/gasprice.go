@@ -22,11 +22,11 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/internal/aquaapi"
-	"github.com/aquanetwork/aquachain/params"
-	"github.com/aquanetwork/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/internal/aquaapi"
+	"gitlab.com/aquachain/aquachain/params"
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
 var maxPrice = big.NewInt(500 * params.Shannon)

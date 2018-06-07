@@ -24,8 +24,8 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common/math"
-	"github.com/aquanetwork/aquachain/crypto/randentropy"
+	"gitlab.com/aquachain/aquachain/common/math"
+	"gitlab.com/aquachain/aquachain/crypto/randentropy"
 )
 
 const TestCount = 1000

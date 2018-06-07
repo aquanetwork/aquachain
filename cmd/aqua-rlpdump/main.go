@@ -26,7 +26,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 var (

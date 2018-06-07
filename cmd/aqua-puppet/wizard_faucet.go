@@ -20,8 +20,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/keystore"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // deployFaucet queries the user for various input on deploying a faucet, after

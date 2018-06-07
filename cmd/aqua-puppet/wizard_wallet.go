@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // deployWallet creates a new web wallet based on some user input.

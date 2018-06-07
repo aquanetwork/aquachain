@@ -26,8 +26,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/bitutil"
-	"github.com/aquanetwork/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/common/bitutil"
+	"gitlab.com/aquachain/aquachain/crypto"
 )
 
 // bloomIndexes represents the bit indexes inside the bloom filter that belong

@@ -29,10 +29,10 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/math"
-	"github.com/aquanetwork/aquachain/crypto/sha3"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/math"
+	"gitlab.com/aquachain/aquachain/crypto/sha3"
+	"gitlab.com/aquachain/aquachain/rlp"
 	"golang.org/x/crypto/argon2"
 )
 

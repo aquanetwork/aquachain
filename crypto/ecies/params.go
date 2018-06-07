@@ -42,7 +42,7 @@ import (
 	"fmt"
 	"hash"
 
-	ethcrypto "github.com/aquanetwork/aquachain/crypto"
+	ethcrypto "gitlab.com/aquachain/aquachain/crypto"
 )
 
 var (

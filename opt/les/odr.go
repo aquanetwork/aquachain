@@ -20,11 +20,11 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/aquadb"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/opt/light"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/aquadb"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/core"
+	"gitlab.com/aquachain/aquachain/opt/light"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 // LesOdr implements light.OdrBackend

@@ -23,17 +23,17 @@ import (
 	"math"
 	"sync"
 
-	"github.com/aquanetwork/aquachain/aqua"
-	"github.com/aquanetwork/aquachain/aquadb"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/opt/les/flowcontrol"
-	"github.com/aquanetwork/aquachain/opt/light"
-	"github.com/aquanetwork/aquachain/p2p"
-	"github.com/aquanetwork/aquachain/p2p/discv5"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/aqua"
+	"gitlab.com/aquachain/aquachain/aquadb"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/core"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/opt/les/flowcontrol"
+	"gitlab.com/aquachain/aquachain/opt/light"
+	"gitlab.com/aquachain/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/p2p/discv5"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 type LesServer struct {

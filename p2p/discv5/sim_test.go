@@ -28,7 +28,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 // In this test, nodes try to randomly resolve each other.

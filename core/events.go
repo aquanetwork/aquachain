@@ -17,8 +17,8 @@
 package core
 
 import (
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 // TxPreEvent is posted when a transaction enters the transaction pool.

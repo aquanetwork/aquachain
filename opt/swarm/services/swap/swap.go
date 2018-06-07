@@ -26,14 +26,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/opt/contracts/chequebook"
-	"github.com/aquanetwork/aquachain/opt/contracts/chequebook/contract"
-	"github.com/aquanetwork/aquachain/opt/swarm/services/swap/swap"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi/bind"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/opt/contracts/chequebook"
+	"gitlab.com/aquachain/aquachain/opt/contracts/chequebook/contract"
+	"gitlab.com/aquachain/aquachain/opt/swarm/services/swap/swap"
 )
 
 // SwAP       Swarm Accounting Protocol with

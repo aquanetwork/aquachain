@@ -23,7 +23,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/aquanetwork/aquachain/common/hexutil"
+	"gitlab.com/aquachain/aquachain/common/hexutil"
 	"gopkg.in/fatih/set.v0"
 )
 

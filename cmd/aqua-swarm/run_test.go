@@ -26,13 +26,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts"
-	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
-	"github.com/aquanetwork/aquachain/internal/cmdtest"
-	"github.com/aquanetwork/aquachain/node"
-	"github.com/aquanetwork/aquachain/opt/swarm"
-	"github.com/aquanetwork/aquachain/p2p"
-	"github.com/aquanetwork/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/aqua/accounts"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/keystore"
+	"gitlab.com/aquachain/aquachain/internal/cmdtest"
+	"gitlab.com/aquachain/aquachain/node"
+	"gitlab.com/aquachain/aquachain/opt/swarm"
+	"gitlab.com/aquachain/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/rpc"
 	"github.com/docker/docker/pkg/reexec"
 )
 

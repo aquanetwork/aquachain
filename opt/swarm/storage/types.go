@@ -24,9 +24,9 @@ import (
 	"io"
 	"sync"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/crypto/sha3"
-	"github.com/aquanetwork/aquachain/opt/bmt"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/crypto/sha3"
+	"gitlab.com/aquachain/aquachain/opt/bmt"
 )
 
 type Hasher func() hash.Hash

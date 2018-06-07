@@ -19,7 +19,7 @@ package vm
 import (
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 const (

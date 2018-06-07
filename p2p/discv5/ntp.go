@@ -26,7 +26,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 const (

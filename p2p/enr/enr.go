@@ -35,9 +35,9 @@ import (
 	"io"
 	"sort"
 
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/crypto/sha3"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/crypto/sha3"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 const SizeLimit = 300 // maximum encoded size of a node record in bytes

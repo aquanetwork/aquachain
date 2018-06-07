@@ -19,7 +19,7 @@ package aquaapi
 import (
 	"sync"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 type AddrLocker struct {

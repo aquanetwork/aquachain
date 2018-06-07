@@ -5,7 +5,7 @@ package whisperv6
 import (
 	"encoding/json"
 
-	"github.com/aquanetwork/aquachain/common/hexutil"
+	"gitlab.com/aquachain/aquachain/common/hexutil"
 )
 
 var _ = (*messageOverride)(nil)

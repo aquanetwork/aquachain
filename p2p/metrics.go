@@ -21,7 +21,7 @@ package p2p
 import (
 	"net"
 
-	"github.com/aquanetwork/aquachain/common/metrics"
+	"gitlab.com/aquachain/aquachain/common/metrics"
 )
 
 var (

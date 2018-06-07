@@ -22,7 +22,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 func TestHexOrDecimal256(t *testing.T) {

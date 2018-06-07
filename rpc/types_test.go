@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common/math"
+	"gitlab.com/aquachain/aquachain/common/math"
 )
 
 func TestBlockNumberJSONUnmarshal(t *testing.T) {

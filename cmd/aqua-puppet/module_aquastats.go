@@ -25,7 +25,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // ethstatsDockerfile is the Dockerfile required to build an aquastats backend

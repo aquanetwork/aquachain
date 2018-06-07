@@ -19,7 +19,7 @@
 package fetcher
 
 import (
-	"github.com/aquanetwork/aquachain/common/metrics"
+	"gitlab.com/aquachain/aquachain/common/metrics"
 )
 
 var (

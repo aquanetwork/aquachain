@@ -23,11 +23,11 @@ package ens
 import (
 	"strings"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/opt/contracts/ens/contract"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi/bind"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/opt/contracts/ens/contract"
 )
 
 var (

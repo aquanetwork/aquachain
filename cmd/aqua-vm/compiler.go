@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/aquanetwork/aquachain/cmd/aqua-vm/internal/compiler"
+	"gitlab.com/aquachain/aquachain/cmd/aqua-vm/internal/compiler"
 
 	cli "gopkg.in/urfave/cli.v1"
 )

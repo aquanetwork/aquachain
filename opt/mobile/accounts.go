@@ -23,10 +23,10 @@ import (
 	"errors"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts"
-	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/aqua/accounts"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/keystore"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/crypto"
 )
 
 const (

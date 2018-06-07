@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/opt/swarm/api"
+	"gitlab.com/aquachain/aquachain/opt/swarm/api"
 )
 
 const (

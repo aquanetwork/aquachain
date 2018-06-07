@@ -20,9 +20,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/aquadb"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/state"
+	"gitlab.com/aquachain/aquachain/aquadb"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/state"
 	"github.com/davecgh/go-spew/spew"
 )
 

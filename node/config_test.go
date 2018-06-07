@@ -24,8 +24,8 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/p2p"
 )
 
 // Tests that datadirs can be successfully created, be them manually configured

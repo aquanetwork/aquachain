@@ -24,8 +24,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi/bind"
-	"github.com/aquanetwork/aquachain/common/compiler"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi/bind"
+	"gitlab.com/aquachain/aquachain/common/compiler"
 )
 
 var (

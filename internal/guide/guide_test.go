@@ -30,8 +30,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts/keystore"
-	"github.com/aquanetwork/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/keystore"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 // Tests that the account management snippets work correctly.

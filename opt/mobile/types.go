@@ -23,9 +23,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 // A Nonce is a 64-bit hash which proves (combined with the mix-hash) that

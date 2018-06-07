@@ -37,13 +37,13 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/common/metrics"
-	"github.com/aquanetwork/aquachain/opt/contracts/chequebook"
-	bzzswap "github.com/aquanetwork/aquachain/opt/swarm/services/swap"
-	"github.com/aquanetwork/aquachain/opt/swarm/services/swap/swap"
-	"github.com/aquanetwork/aquachain/opt/swarm/storage"
-	"github.com/aquanetwork/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/metrics"
+	"gitlab.com/aquachain/aquachain/opt/contracts/chequebook"
+	bzzswap "gitlab.com/aquachain/aquachain/opt/swarm/services/swap"
+	"gitlab.com/aquachain/aquachain/opt/swarm/services/swap/swap"
+	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
+	"gitlab.com/aquachain/aquachain/p2p"
 )
 
 //metrics variables

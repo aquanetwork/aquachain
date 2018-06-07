@@ -19,7 +19,7 @@ package vm
 import (
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common/math"
+	"gitlab.com/aquachain/aquachain/common/math"
 )
 
 func memorySha3(stack *Stack) *big.Int {

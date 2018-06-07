@@ -22,9 +22,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/opt/swarm/api"
-	httpapi "github.com/aquanetwork/aquachain/opt/swarm/api/http"
-	"github.com/aquanetwork/aquachain/opt/swarm/storage"
+	"gitlab.com/aquachain/aquachain/opt/swarm/api"
+	httpapi "gitlab.com/aquachain/aquachain/opt/swarm/api/http"
+	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
 )
 
 func NewTestSwarmServer(t *testing.T) *TestSwarmServer {

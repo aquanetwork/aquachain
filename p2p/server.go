@@ -25,14 +25,14 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua/event"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/common/mclock"
-	"github.com/aquanetwork/aquachain/p2p/discover"
-	"github.com/aquanetwork/aquachain/p2p/discv5"
-	"github.com/aquanetwork/aquachain/p2p/nat"
-	"github.com/aquanetwork/aquachain/p2p/netutil"
+	"gitlab.com/aquachain/aquachain/aqua/event"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/mclock"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/p2p/discv5"
+	"gitlab.com/aquachain/aquachain/p2p/nat"
+	"gitlab.com/aquachain/aquachain/p2p/netutil"
 )
 
 const (

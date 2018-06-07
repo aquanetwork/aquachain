@@ -21,7 +21,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 // precompiledTest defines the input/output pairs for precompiled contract tests.

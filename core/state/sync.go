@@ -19,9 +19,9 @@ package state
 import (
 	"bytes"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/rlp"
-	"github.com/aquanetwork/aquachain/trie"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/trie"
 )
 
 // NewStateSync create a new state trie download scheduler.

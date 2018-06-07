@@ -22,7 +22,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // SwAP Swarm Accounting Protocol with

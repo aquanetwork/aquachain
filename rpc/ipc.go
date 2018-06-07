@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // CreateIPCListener creates an listener, on Unix platforms this is a unix socket, on

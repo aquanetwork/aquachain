@@ -26,8 +26,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // nodeDockerfile is the Dockerfile required to run an AquaChain node.

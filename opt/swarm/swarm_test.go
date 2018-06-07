@@ -19,7 +19,7 @@ package swarm
 import (
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 func TestParseEnsAPIAddress(t *testing.T) {

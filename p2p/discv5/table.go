@@ -29,7 +29,7 @@ import (
 	"net"
 	"sort"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 const (

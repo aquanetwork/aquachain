@@ -25,7 +25,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/internal/build"
+	"gitlab.com/aquachain/aquachain/internal/build"
 )
 
 // androidTestClass is a Java class to do some lightweight tests against the Android
@@ -207,7 +207,7 @@ func TestAndroid(t *testing.T) {
 		}
 	}
 	// Generate the mobile bindings for AquaChain and add the tester class
-	gobind := exec.Command("gomobile", "bind", "-javapkg", "org.aquachain", "github.com/aquanetwork/aquachain/opt/mobile")
+	gobind := exec.Command("gomobile", "bind", "-javapkg", "org.aquachain", "gitlab.com/aquachain/aquachain/opt/mobile")
 	if output, err := gobind.CombinedOutput(); err != nil {
 		t.Logf("%s", output)
 		t.Fatalf("failed to run gomobile bind: %v", err)

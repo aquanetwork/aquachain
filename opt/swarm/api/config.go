@@ -22,14 +22,14 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/node"
-	"github.com/aquanetwork/aquachain/opt/contracts/ens"
-	"github.com/aquanetwork/aquachain/opt/swarm/network"
-	"github.com/aquanetwork/aquachain/opt/swarm/services/swap"
-	"github.com/aquanetwork/aquachain/opt/swarm/storage"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/node"
+	"gitlab.com/aquachain/aquachain/opt/contracts/ens"
+	"gitlab.com/aquachain/aquachain/opt/swarm/network"
+	"gitlab.com/aquachain/aquachain/opt/swarm/services/swap"
+	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
 )
 
 const (

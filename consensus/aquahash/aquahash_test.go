@@ -24,8 +24,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 // Tests that aquahash works correctly in test mode.
@@ -45,7 +45,7 @@ func TestTestMode(t *testing.T) {
 }
 
 // This test checks that cache lru logic doesn't crash under load.
-// It reproduces https://github.com/aquanetwork/aquachain/issues/14943
+// It reproduces https://gitlab.com/aquachain/aquachain/issues/14943
 func TestCacheFileEvict(t *testing.T) {
 	tmpdir, err := ioutil.TempDir("", "aquahash-test")
 	if err != nil {

@@ -21,7 +21,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/core/vm"
+	"gitlab.com/aquachain/aquachain/core/vm"
 )
 
 // Iterator for disassembled EVM instructions

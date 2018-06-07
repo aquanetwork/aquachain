@@ -21,9 +21,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua/downloader"
-	"github.com/aquanetwork/aquachain/p2p"
-	"github.com/aquanetwork/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/aqua/downloader"
+	"gitlab.com/aquachain/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
 )
 
 // Tests that fast sync gets disabled as soon as a real block is successfully

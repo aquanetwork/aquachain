@@ -16,7 +16,7 @@
 
 package core
 
-import "github.com/aquanetwork/aquachain/common"
+import "gitlab.com/aquachain/aquachain/common"
 
 // BadHashes represent a set of manually tracked bad hashes (usually hard forks)
 var BadHashes = map[common.Hash]bool{

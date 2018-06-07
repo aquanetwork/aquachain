@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/crypto"
 )
 
 // Method represents a callable given a `Name` and whether the method is a constant.

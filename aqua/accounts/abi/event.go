@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/crypto"
 )
 
 // Event is an event potentially triggered by the EVM's LOG mechanism. The Event

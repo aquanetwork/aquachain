@@ -22,8 +22,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 // from bcValidBlockTest.json, "SimpleTx"

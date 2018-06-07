@@ -20,9 +20,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua/downloader"
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/opt/light"
+	"gitlab.com/aquachain/aquachain/aqua/downloader"
+	"gitlab.com/aquachain/aquachain/core"
+	"gitlab.com/aquachain/aquachain/opt/light"
 )
 
 const (

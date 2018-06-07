@@ -54,7 +54,7 @@ func TestBloom(t *testing.T) {
 import (
 	"testing"
 
-	"github.com/aquanetwork/aquachain/core/state"
+	"gitlab.com/aquachain/aquachain/core/state"
 )
 
 func TestBloom9(t *testing.T) {

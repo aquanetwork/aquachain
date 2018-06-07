@@ -20,7 +20,7 @@ import (
 	"errors"
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 const Version = "1.0"

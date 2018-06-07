@@ -24,13 +24,13 @@ import (
 	"net"
 	"os"
 
-	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/p2p/discover"
-	"github.com/aquanetwork/aquachain/p2p/discv5"
-	"github.com/aquanetwork/aquachain/p2p/nat"
-	"github.com/aquanetwork/aquachain/p2p/netutil"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/p2p/discv5"
+	"gitlab.com/aquachain/aquachain/p2p/nat"
+	"gitlab.com/aquachain/aquachain/p2p/netutil"
 )
 
 func main() {

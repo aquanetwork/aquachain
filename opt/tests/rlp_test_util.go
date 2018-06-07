@@ -24,7 +24,7 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 // RLPTest is the JSON structure of a single RLP test.

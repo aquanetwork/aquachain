@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // deployNode creates a new node configuration based on some user input.

@@ -25,8 +25,8 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/aquanetwork/aquachain/cmd/internal/browser"
-	"github.com/aquanetwork/aquachain/cmd/internal/maw"
+	"gitlab.com/aquachain/aquachain/cmd/internal/browser"
+	"gitlab.com/aquachain/aquachain/cmd/internal/maw"
 )
 
 func main() {

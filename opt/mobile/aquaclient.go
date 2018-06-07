@@ -21,8 +21,8 @@ package aquachain
 import (
 	"math/big"
 
-	"github.com/aquanetwork/aquachain/core/types"
-	"github.com/aquanetwork/aquachain/opt/aquaclient"
+	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/opt/aquaclient"
 )
 
 // AquaChainClient provides access to the AquaChain APIs.

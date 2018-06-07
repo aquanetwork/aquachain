@@ -30,8 +30,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/cmd/utils"
-	swarm "github.com/aquanetwork/aquachain/opt/swarm/api/client"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
+	swarm "gitlab.com/aquachain/aquachain/opt/swarm/api/client"
 	"gopkg.in/urfave/cli.v1"
 )
 

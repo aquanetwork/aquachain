@@ -22,8 +22,8 @@ import (
 	"bytes"
 	"math/big"
 
-	cloudflare "github.com/aquanetwork/aquachain/crypto/bn256/cloudflare"
-	google "github.com/aquanetwork/aquachain/crypto/bn256/google"
+	cloudflare "gitlab.com/aquachain/aquachain/crypto/bn256/cloudflare"
+	google "gitlab.com/aquachain/aquachain/crypto/bn256/google"
 )
 
 // FuzzAdd fuzzez bn256 addition between the Google and Cloudflare libraries.

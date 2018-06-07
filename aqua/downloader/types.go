@@ -19,7 +19,7 @@ package downloader
 import (
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 // peerDropFn is a callback type for dropping a peer detected as malicious.

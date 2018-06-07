@@ -26,7 +26,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // makeWizard creates and returns a new puppeth wizard.

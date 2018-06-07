@@ -2,12 +2,12 @@ Pod::Spec.new do |spec|
   spec.name         = 'AquaChain'
   spec.version      = '{{.Version}}'
   spec.license      = { :type => 'GNU Lesser General Public License, Version 3.0' }
-  spec.homepage     = 'https://github.com/aquanetwork/aquachain'
+  spec.homepage     = 'https://gitlab.com/aquachain/aquachain'
   spec.authors      = { {{range .Contributors}}
 		'{{.Name}}' => '{{.Email}}',{{end}}
 	}
   spec.summary      = 'iOS AquaChain Client'
-  spec.source       = { :git => 'https://github.com/aquanetwork/aquachain.git', :commit => '{{.Commit}}' }
+  spec.source       = { :git => 'https://gitlab.com/aquachain/aquachain.git', :commit => '{{.Commit}}' }
 
 	spec.platform = :ios
   spec.ios.deployment_target  = '9.0'

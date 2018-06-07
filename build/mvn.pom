@@ -11,7 +11,7 @@
 
   <name>Android AquaChain Client</name>
   <description>Android port of the aquachain libraries and node</description>
-  <url>https://github.com/aquanetwork/aquachain</url>
+  <url>https://gitlab.com/aquachain/aquachain</url>
   <inceptionYear>2015</inceptionYear>
 
   <licenses>
@@ -48,10 +48,10 @@
 
   <issueManagement>
     <system>GitHub Issues</system>
-    <url>https://github.com/aquanetwork/aquachain/issues/</url>
+    <url>https://gitlab.com/aquachain/aquachain/issues/</url>
   </issueManagement>
 
   <scm>
-    <url>https://github.com/aquanetwork/aquachain</url>
+    <url>https://gitlab.com/aquachain/aquachain</url>
   </scm>
 </project>

@@ -20,7 +20,7 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 func TestTransaction(t *testing.T) {

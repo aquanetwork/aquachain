@@ -34,7 +34,7 @@ import (
 	"reflect"
 	"sync"
 
-	"github.com/aquanetwork/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/p2p"
 )
 
 // error codes used by this  protocol scheme

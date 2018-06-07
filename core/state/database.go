@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/aquanetwork/aquachain/aquadb"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/trie"
+	"gitlab.com/aquachain/aquachain/aquadb"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/trie"
 	lru "github.com/hashicorp/golang-lru"
 )
 

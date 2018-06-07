@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/cmd/internal/browser"
-	"github.com/aquanetwork/aquachain/cmd/internal/maw"
-	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/cmd/internal/browser"
+	"gitlab.com/aquachain/aquachain/cmd/internal/maw"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
+	"gitlab.com/aquachain/aquachain/crypto"
 	cli "gopkg.in/urfave/cli.v1"
 )
 

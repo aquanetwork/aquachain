@@ -24,9 +24,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/crypto"
-	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/crypto"
+	whisper "gitlab.com/aquachain/aquachain/opt/whisper/whisperv6"
 )
 
 const powRequirement = 0.00001

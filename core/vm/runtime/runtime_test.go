@@ -21,11 +21,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts/abi"
-	"github.com/aquanetwork/aquachain/aquadb"
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/core/state"
-	"github.com/aquanetwork/aquachain/core/vm"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/abi"
+	"gitlab.com/aquachain/aquachain/aquadb"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/core/state"
+	"gitlab.com/aquachain/aquachain/core/vm"
 )
 
 func TestDefaults(t *testing.T) {

@@ -19,7 +19,7 @@ package p2p
 import (
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
 )
 
 // Protocol represents a P2P subprotocol implementation.

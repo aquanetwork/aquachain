@@ -24,7 +24,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 type brokenLimitedReader struct {

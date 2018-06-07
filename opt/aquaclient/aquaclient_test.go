@@ -16,7 +16,7 @@
 
 package aquaclient
 
-import "github.com/aquanetwork/aquachain"
+import "gitlab.com/aquachain/aquachain"
 
 // Verify that Client implements the aquachain interfaces.
 var (

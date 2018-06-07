@@ -23,9 +23,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts/usbwallet"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/aqua/accounts/usbwallet"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/rpc"
 	"github.com/robertkrimen/otto"
 )
 

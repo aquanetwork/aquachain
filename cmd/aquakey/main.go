@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/aquanetwork/aquachain/cmd/utils"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
 	"gopkg.in/urfave/cli.v1"
 )
 

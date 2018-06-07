@@ -20,17 +20,17 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 /*
 http roundtripper to register for bzz url scheme
-see https://github.com/aquanetwork/aquachain/issues/2040
+see https://gitlab.com/aquachain/aquachain/issues/2040
 Usage:
 
 import (
- "github.com/aquanetwork/aquachain/common/httpclient"
- "github.com/aquanetwork/aquachain/opt/swarm/api/http"
+ "gitlab.com/aquachain/aquachain/common/httpclient"
+ "gitlab.com/aquachain/aquachain/opt/swarm/api/http"
 )
 client := httpclient.New()
 // for (private) swarm proxy running locally

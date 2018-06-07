@@ -24,7 +24,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 	set "gopkg.in/fatih/set.v0"
 )
 

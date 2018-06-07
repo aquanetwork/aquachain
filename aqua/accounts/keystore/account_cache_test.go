@@ -27,8 +27,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/aqua/accounts"
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/aqua/accounts"
+	"gitlab.com/aquachain/aquachain/common"
 	"github.com/cespare/cp"
 	"github.com/davecgh/go-spew/spew"
 )

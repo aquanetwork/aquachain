@@ -25,7 +25,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/aquadb"
+	"gitlab.com/aquachain/aquachain/aquadb"
 )
 
 func newTestLDB() (*aquadb.LDBDatabase, func()) {

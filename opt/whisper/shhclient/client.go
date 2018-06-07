@@ -19,10 +19,10 @@ package shhclient
 import (
 	"context"
 
-	"github.com/aquanetwork/aquachain"
-	"github.com/aquanetwork/aquachain/common/hexutil"
-	whisper "github.com/aquanetwork/aquachain/opt/whisper/whisperv6"
-	"github.com/aquanetwork/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain"
+	"gitlab.com/aquachain/aquachain/common/hexutil"
+	whisper "gitlab.com/aquachain/aquachain/opt/whisper/whisperv6"
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
 // Client defines typed wrappers for the Whisper v6 RPC API.

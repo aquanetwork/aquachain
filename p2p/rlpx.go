@@ -35,12 +35,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/aquanetwork/aquachain/crypto"
-	"github.com/aquanetwork/aquachain/crypto/ecies"
-	"github.com/aquanetwork/aquachain/crypto/secp256k1"
-	"github.com/aquanetwork/aquachain/crypto/sha3"
-	"github.com/aquanetwork/aquachain/p2p/discover"
-	"github.com/aquanetwork/aquachain/rlp"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/crypto/ecies"
+	"gitlab.com/aquachain/aquachain/crypto/secp256k1"
+	"gitlab.com/aquachain/aquachain/crypto/sha3"
+	"gitlab.com/aquachain/aquachain/p2p/discover"
+	"gitlab.com/aquachain/aquachain/rlp"
 	"github.com/golang/snappy"
 )
 

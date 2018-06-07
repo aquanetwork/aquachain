@@ -17,8 +17,8 @@
 package aqua
 
 import (
-	"github.com/aquanetwork/aquachain/common/metrics"
-	"github.com/aquanetwork/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/common/metrics"
+	"gitlab.com/aquachain/aquachain/p2p"
 )
 
 var (

@@ -24,7 +24,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common"
 	"golang.org/x/crypto/pbkdf2"
 )
 

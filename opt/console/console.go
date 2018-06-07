@@ -28,9 +28,9 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/aquanetwork/aquachain/internal/jsre"
-	"github.com/aquanetwork/aquachain/internal/web3ext"
-	"github.com/aquanetwork/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/internal/jsre"
+	"gitlab.com/aquachain/aquachain/internal/web3ext"
+	"gitlab.com/aquachain/aquachain/rpc"
 	"github.com/mattn/go-colorable"
 	"github.com/peterh/liner"
 	"github.com/robertkrimen/otto"
@@ -54,7 +54,7 @@ const helpText = `
 Web links:
 
 	Explorer: http://explorer.aquanetwork.co
-	Wiki: http://github.com/aquanetwork/aquachain/wiki/Basics
+	Wiki: http://gitlab.com/aquachain/aquachain/wiki/Basics
 	Chat: https://t.me/AquaCrypto
 
 Common commands:
@@ -86,7 +86,7 @@ const logo = `                              _           _
  / _ '|/ _' | | | |/ _' |/ __| '_ \ / _' | | '_ \
 | (_| | (_| | |_| | (_| | (__| | | | (_| | | | | |
  \__,_|\__, |\__,_|\__,_|\___|_| |_|\__,_|_|_| |_|
-          |_|` + "\nUpdate Often! https://github.com/aquanetwork/aquachain\n\n"
+          |_|` + "\nUpdate Often! https://gitlab.com/aquachain/aquachain\n\n"
 
 // Config is the collection of configurations to fine tune the behavior of the
 // JavaScript console.

@@ -22,7 +22,7 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/core/asm"
+	"gitlab.com/aquachain/aquachain/core/asm"
 	cli "gopkg.in/urfave/cli.v1"
 )
 

@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/aquanetwork/aquachain/aqua/event"
+	"gitlab.com/aquachain/aquachain/aqua/event"
 )
 
 // This example demonstrates how SubscriptionScope can be used to control the lifetime of

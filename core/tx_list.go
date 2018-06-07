@@ -22,9 +22,9 @@ import (
 	"math/big"
 	"sort"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/core/types"
 )
 
 // nonceHeap is a heap.Interface implementation over 64bit unsigned integers for

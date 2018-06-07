@@ -33,7 +33,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/aquanetwork/aquachain/opt/swarm/api"
+	"gitlab.com/aquachain/aquachain/opt/swarm/api"
 )
 
 var (

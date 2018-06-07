@@ -26,8 +26,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/internal/jsre/deps"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/internal/jsre/deps"
 	"github.com/robertkrimen/otto"
 )
 

@@ -22,8 +22,8 @@ package node
 import (
 	"reflect"
 
-	"github.com/aquanetwork/aquachain/p2p"
-	"github.com/aquanetwork/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/p2p"
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
 // NoopService is a trivial implementation of the Service interface.

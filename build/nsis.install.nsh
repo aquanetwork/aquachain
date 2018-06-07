@@ -3,9 +3,9 @@ InstallDir "$InstDir"
 OutFile "${OUTPUTFILE}" # set through command line arguments
 
 # Links for "Add/Remove Programs"
-!define HELPURL "https://github.com/aquanetwork/aquachain/issues"
-!define UPDATEURL "https://github.com/aquanetwork/aquachain/releases"
-!define ABOUTURL "https://github.com/aquanetwork/aquachain#aquachain-go"
+!define HELPURL "https://gitlab.com/aquachain/aquachain/issues"
+!define UPDATEURL "https://gitlab.com/aquachain/aquachain/releases"
+!define ABOUTURL "https://gitlab.com/aquachain/aquachain#aquachain-go"
 !define /date NOW "%Y%m%d"
 
 PageEx license

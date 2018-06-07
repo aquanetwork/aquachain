@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/aquanetwork/aquachain/common"
-	"github.com/aquanetwork/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
 func TestUnmarshalJSONNewFilterArgs(t *testing.T) {

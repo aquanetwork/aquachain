@@ -21,9 +21,9 @@ package aquachain
 import (
 	"encoding/json"
 
-	"github.com/aquanetwork/aquachain/core"
-	"github.com/aquanetwork/aquachain/p2p/discv5"
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/core"
+	"gitlab.com/aquachain/aquachain/p2p/discv5"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 // MainnetGenesis returns the JSON spec to use for the main AquaChain network. It

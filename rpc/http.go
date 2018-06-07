@@ -32,7 +32,7 @@ import (
 
 	"strings"
 
-	"github.com/aquanetwork/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/log"
 	"github.com/rs/cors"
 )
 

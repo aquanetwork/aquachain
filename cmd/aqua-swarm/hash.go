@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/aquanetwork/aquachain/cmd/utils"
-	"github.com/aquanetwork/aquachain/opt/swarm/storage"
+	"gitlab.com/aquachain/aquachain/cmd/utils"
+	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
 	"gopkg.in/urfave/cli.v1"
 )
 

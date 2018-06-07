@@ -14,9 +14,9 @@ HF5: 22800
 
 To begin, you must have the aquachain command installed. The `aquachain` command is a portable program that doesn't really need an 'installer', you can run it from anywhere.
 
-To build latest with go, use `go get -v github.com/aquanetwork/aquachain/cmd/aquachain`
+To build latest with go, use `go get -v gitlab.com/aquachain/aquachain/cmd/aquachain`
 
-To download binary release, see [Releases](https://github.com/aquanetwork/aquachain/releases/latest)
+To download binary release, see [Releases](https://gitlab.com/aquachain/aquachain/releases/latest)
 
 Apple/Linux Install: (Apple users, replace linux-amd64 with darwin-amd64)
 
@@ -28,7 +28,7 @@ Create account inside the console: `personal.newAccount()`
 
 Your new wallet private key is located inside `datadir` by default is `~/.aquachain/` or `%appdata%\Roaming\AquaChain` (windows)
 
-See more commands: [Wiki](https://github.com/aquanetwork/aquachain/wiki/Basics)
+See more commands: [Wiki](https://gitlab.com/aquachain/aquachain/wiki/Basics)
 
 ### New Default Console Mode
 
@@ -46,7 +46,7 @@ aquachain daemon
 
 ## Resources
 
-Wiki - https://github.com/aquanetwork/aquachain/wiki
+Wiki - https://gitlab.com/aquachain/aquachain/wiki
 
 Website - https://aquachain.github.io
 
@@ -58,15 +58,15 @@ Downloads - http://explorer.aquanetwork.co/dl/
 
 Github - http://github.com/aquachain
 
-Github - http://github.com/aquanetwork/aquachain
+Github - http://gitlab.com/aquachain/aquachain
 
 Telegram Chat: https://t.me/AquaCrypto
 
 Telegram News: https://t.me/Aquachain
 
-Godoc - https://godoc.org/github.com/aquanetwork/aquachain#pkg-subdirectories
+Godoc - https://godoc.org/gitlab.com/aquachain/aquachain#pkg-subdirectories
 
-Report bugs - https://github.com/aquanetwork/aquachain/issues
+Report bugs - https://gitlab.com/aquachain/aquachain/issues
 
 Discord: https://discordapp.com/invite/J7jBhZf
 

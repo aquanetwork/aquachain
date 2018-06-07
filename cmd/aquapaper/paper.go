@@ -10,7 +10,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/aquanetwork/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/crypto"
 )
 
 const usage = `This 'paper' command generates aquachain wallets.
@@ -35,7 +35,7 @@ func main() {
        / _ '|/ _' | | | |/ _' |/ __| '_ \ / _' | | '_ \
       | (_| | (_| | |_| | (_| | (__| | | | (_| | | | | |
        \__,_|\__, |\__,_|\__,_|\___|_| |_|\__,_|_|_| |_|
-                |_|` + " https://github.com/aquanetwork/aquachain\n\n")
+                |_|` + " https://gitlab.com/aquachain/aquachain\n\n")
 
 		fmt.Println(usage)
 	}

@@ -19,7 +19,7 @@ package vm
 import (
 	"fmt"
 
-	"github.com/aquanetwork/aquachain/params"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 func makeStackFunc(pop, push int) stackValidationFunc {

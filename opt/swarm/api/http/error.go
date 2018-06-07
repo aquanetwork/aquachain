@@ -28,9 +28,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aquanetwork/aquachain/common/log"
-	"github.com/aquanetwork/aquachain/common/metrics"
-	"github.com/aquanetwork/aquachain/opt/swarm/api"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/metrics"
+	"gitlab.com/aquachain/aquachain/opt/swarm/api"
 )
 
 //templateMap holds a mapping of an HTTP error code to a template

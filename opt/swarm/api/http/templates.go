@@ -20,7 +20,7 @@ import (
 	"html/template"
 	"path"
 
-	"github.com/aquanetwork/aquachain/opt/swarm/api"
+	"gitlab.com/aquachain/aquachain/opt/swarm/api"
 )
 
 type htmlListData struct {
