@@ -22,8 +22,8 @@ import (
 	"os"
 	"testing"
 
-	"gitlab.com/aquachain/aquachain/internal/cmdtest"
 	"github.com/docker/docker/pkg/reexec"
+	"gitlab.com/aquachain/aquachain/internal/cmdtest"
 )
 
 func tmpdir(t *testing.T) string {

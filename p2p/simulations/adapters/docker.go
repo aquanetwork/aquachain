@@ -27,10 +27,10 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/docker/docker/pkg/reexec"
 	"gitlab.com/aquachain/aquachain/common/log"
 	"gitlab.com/aquachain/aquachain/node"
 	"gitlab.com/aquachain/aquachain/p2p/discover"
-	"github.com/docker/docker/pkg/reexec"
 )
 
 // DockerAdapter is a NodeAdapter which runs simulation nodes inside Docker

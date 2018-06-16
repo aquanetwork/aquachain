@@ -20,10 +20,10 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"gitlab.com/aquachain/aquachain/common/log"
-	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/iterator"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
 )
 
 const counterKeyPrefix = 0x01

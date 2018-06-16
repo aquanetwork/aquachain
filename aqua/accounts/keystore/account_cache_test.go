@@ -27,10 +27,10 @@ import (
 	"testing"
 	"time"
 
-	"gitlab.com/aquachain/aquachain/aqua/accounts"
-	"gitlab.com/aquachain/aquachain/common"
 	"github.com/cespare/cp"
 	"github.com/davecgh/go-spew/spew"
+	"gitlab.com/aquachain/aquachain/aqua/accounts"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 var (

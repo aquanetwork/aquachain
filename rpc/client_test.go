@@ -30,8 +30,8 @@ import (
 	"testing"
 	"time"
 
-	"gitlab.com/aquachain/aquachain/common/log"
 	"github.com/davecgh/go-spew/spew"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 func TestClientRequest(t *testing.T) {

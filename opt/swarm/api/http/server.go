@@ -35,12 +35,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/rs/cors"
 	"gitlab.com/aquachain/aquachain/common"
 	"gitlab.com/aquachain/aquachain/common/log"
 	"gitlab.com/aquachain/aquachain/common/metrics"
 	"gitlab.com/aquachain/aquachain/opt/swarm/api"
 	"gitlab.com/aquachain/aquachain/opt/swarm/storage"
-	"github.com/rs/cors"
 )
 
 //setup metrics

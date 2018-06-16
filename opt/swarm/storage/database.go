@@ -22,10 +22,10 @@ package storage
 import (
 	"fmt"
 
-	"gitlab.com/aquachain/aquachain/opt/compression/rle"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/iterator"
 	"github.com/syndtr/goleveldb/leveldb/opt"
+	"gitlab.com/aquachain/aquachain/opt/compression/rle"
 )
 
 const openFileLimit = 128

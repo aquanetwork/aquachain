@@ -32,8 +32,8 @@ import (
 
 	"strings"
 
-	"gitlab.com/aquachain/aquachain/common/log"
 	"github.com/rs/cors"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 const (

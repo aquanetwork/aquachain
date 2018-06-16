@@ -26,8 +26,8 @@ import (
 	"strings"
 	"testing"
 
-	"gitlab.com/aquachain/aquachain/common"
 	"github.com/stretchr/testify/require"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 type unpackTest struct {

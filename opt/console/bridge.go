@@ -23,10 +23,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/robertkrimen/otto"
 	"gitlab.com/aquachain/aquachain/aqua/accounts/usbwallet"
 	"gitlab.com/aquachain/aquachain/common/log"
 	"gitlab.com/aquachain/aquachain/rpc"
-	"github.com/robertkrimen/otto"
 )
 
 // bridge is a collection of JavaScript utility methods to bride the .js runtime

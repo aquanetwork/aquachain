@@ -21,8 +21,8 @@ package keystore
 import (
 	"time"
 
-	"gitlab.com/aquachain/aquachain/common/log"
 	"github.com/rjeczalik/notify"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 type watcher struct {

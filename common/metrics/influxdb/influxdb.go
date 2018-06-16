@@ -6,8 +6,8 @@ import (
 	uurl "net/url"
 	"time"
 
-	"gitlab.com/aquachain/aquachain/common/metrics"
 	"github.com/influxdata/influxdb/client"
+	"gitlab.com/aquachain/aquachain/common/metrics"
 )
 
 type reporter struct {

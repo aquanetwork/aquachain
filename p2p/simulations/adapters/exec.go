@@ -35,12 +35,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/docker/docker/pkg/reexec"
 	"gitlab.com/aquachain/aquachain/common/log"
 	"gitlab.com/aquachain/aquachain/node"
 	"gitlab.com/aquachain/aquachain/p2p"
 	"gitlab.com/aquachain/aquachain/p2p/discover"
 	"gitlab.com/aquachain/aquachain/rpc"
-	"github.com/docker/docker/pkg/reexec"
 	"golang.org/x/net/websocket"
 )
 

@@ -27,13 +27,13 @@ import (
 
 	"sync/atomic"
 
+	"github.com/hashicorp/golang-lru"
 	"gitlab.com/aquachain/aquachain/aquadb"
 	"gitlab.com/aquachain/aquachain/common"
 	"gitlab.com/aquachain/aquachain/common/log"
 	"gitlab.com/aquachain/aquachain/consensus"
 	"gitlab.com/aquachain/aquachain/core/types"
 	"gitlab.com/aquachain/aquachain/params"
-	"github.com/hashicorp/golang-lru"
 )
 
 const (

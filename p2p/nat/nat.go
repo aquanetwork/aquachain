@@ -25,8 +25,8 @@ import (
 	"sync"
 	"time"
 
-	"gitlab.com/aquachain/aquachain/common/log"
 	"github.com/jackpal/go-nat-pmp"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // An implementation of nat.Interface can map local ports to ports

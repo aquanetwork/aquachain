@@ -28,15 +28,15 @@ import (
 	"sync"
 	"time"
 
-	"gitlab.com/aquachain/aquachain/common/log"
-	"gitlab.com/aquachain/aquachain/crypto"
-	"gitlab.com/aquachain/aquachain/rlp"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/errors"
 	"github.com/syndtr/goleveldb/leveldb/iterator"
 	"github.com/syndtr/goleveldb/leveldb/opt"
 	"github.com/syndtr/goleveldb/leveldb/storage"
 	"github.com/syndtr/goleveldb/leveldb/util"
+	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 var (

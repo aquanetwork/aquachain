@@ -21,8 +21,8 @@ import (
 	"reflect"
 	"testing"
 
-	"gitlab.com/aquachain/aquachain/common"
 	"github.com/davecgh/go-spew/spew"
+	"gitlab.com/aquachain/aquachain/common"
 )
 
 // typeWithoutStringer is a alias for the Type type which simply doesn't implement

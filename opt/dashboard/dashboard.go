@@ -34,12 +34,12 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/elastic/gosigar"
 	"gitlab.com/aquachain/aquachain/common/log"
 	"gitlab.com/aquachain/aquachain/common/metrics"
 	"gitlab.com/aquachain/aquachain/p2p"
 	"gitlab.com/aquachain/aquachain/params"
 	"gitlab.com/aquachain/aquachain/rpc"
-	"github.com/elastic/gosigar"
 	"golang.org/x/net/websocket"
 )
 

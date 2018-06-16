@@ -24,10 +24,10 @@ import (
 	"testing"
 	"time"
 
-	"gitlab.com/aquachain/aquachain/crypto"
-	"gitlab.com/aquachain/aquachain/rlp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 var (

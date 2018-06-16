@@ -23,9 +23,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"gitlab.com/aquachain/aquachain/p2p/discover"
 	"gitlab.com/aquachain/aquachain/p2p/netutil"
-	"github.com/davecgh/go-spew/spew"
 )
 
 func init() {

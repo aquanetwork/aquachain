@@ -25,10 +25,10 @@ import (
 	"strings"
 	"testing"
 
-	"gitlab.com/aquachain/aquachain/common"
-	"gitlab.com/aquachain/aquachain/crypto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/crypto"
 )
 
 var jsonEventTransfer = []byte(`{

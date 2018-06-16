@@ -28,12 +28,12 @@ import (
 	"strings"
 	"syscall"
 
-	"gitlab.com/aquachain/aquachain/internal/jsre"
-	"gitlab.com/aquachain/aquachain/internal/web3ext"
-	"gitlab.com/aquachain/aquachain/rpc"
 	"github.com/mattn/go-colorable"
 	"github.com/peterh/liner"
 	"github.com/robertkrimen/otto"
+	"gitlab.com/aquachain/aquachain/internal/jsre"
+	"gitlab.com/aquachain/aquachain/internal/web3ext"
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
 var (
