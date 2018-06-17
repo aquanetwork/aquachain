@@ -156,6 +156,10 @@ aquachain-windows-amd64:
 	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/amd64 -v ./cmd/aquachain
 	@echo "Windows amd64 cross compilation done:"
 	@ls -ld $(GOBIN)/aquachain-windows-* | grep amd64
+aquaminer-windows-amd64:
+	build/env.sh go run build/ci.go xgo -- --go=$(GO) --targets=windows/amd64 -v ./cmd/aquaminer
+	@echo "Windows amd64 cross compilation done:"
+	@ls -ld $(GOBIN)/aquaminer-windows-* | grep amd64
 
 race:
 	build/env.sh go run build/ci.go install -- -race ./cmd/aquachain/

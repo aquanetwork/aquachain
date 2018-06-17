@@ -15,14 +15,16 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/aerth/tgun"
 	"gitlab.com/aquachain/aquachain/cmd/utils"
 	"gitlab.com/aquachain/aquachain/common"
 	"gitlab.com/aquachain/aquachain/core/types"
 	"gitlab.com/aquachain/aquachain/crypto"
 	"gitlab.com/aquachain/aquachain/opt/aquaclient"
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
-const version = "aquaminer version 0.4 (https://gitlab.com/aquachain/aquachain)"
+const version = "aquaminer version 0.4x (https://gitlab.com/aquachain/aquachain)"
 
 var (
 	rawurl      = "http://localhost:8543"
@@ -35,6 +37,7 @@ var (
 	debug       = flag.Bool("d", false, "debug mode")
 	nonceseed   = flag.Int64("seed", 1, "nonce seed multiplier")
 	refresh     = flag.Duration("r", time.Second*3, "seconds to wait between asking for more work")
+	proxypath   = flag.String("prx", "", "example: socks5://192.168.1.3:1080 or 'tor' for localhost:9050")
 )
 
 // big numbers
@@ -83,15 +86,27 @@ func main() {
 		workers    = []*worker{}
 		getnewwork = time.Tick(*refresh)
 		maxProc    = *maxproc
-		err        error
 		client     = &aquaclient.Client{}
 	)
 
 	if !*benching {
-		client, err = aquaclient.Dial(*farm)
+		tgunner := &tgun.Client{
+			UserAgent: "Aquadiver v0.4x",
+			Proxy:     *proxypath,
+		}
+		httpClient, err := tgunner.HTTPClient()
 		if err != nil {
 			utils.Fatalf("dial err: %v", err)
 		}
+		rpcclient, err := rpc.DialHTTPWithClient(*farm, httpClient)
+		if err != nil {
+			utils.Fatalf("dial err: %v", err)
+		}
+		client = aquaclient.NewClient(rpcclient)
+		// client, err = aquaclient.DialProxy(*farm, *proxy)
+		// if err != nil {
+		// 	utils.Fatalf("dial err: %v", err)
+		// }
 	} else {
 		fmt.Println("OFFLINE MODE")
 		<-time.After(time.Second)
