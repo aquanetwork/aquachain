@@ -63,16 +63,16 @@
 			"revisionTime": "2016-05-12T03:30:02Z"
 		},
 		{
-			"checksumSHA1": "Fc8BCxCoQ7ZmghDT6X1cASR10Ec=",
+			"checksumSHA1": "jElNoLEe7m/iaoF1vYIHyNaS2SE=",
 			"path": "github.com/elastic/gosigar",
-			"revision": "a3814ce5008e612a0c6d027608b54e1d0d9a5613",
-			"revisionTime": "2018-01-22T22:25:45Z"
+			"revision": "37f05ff46ffa7a825d1b24cf2b62d4a4c1a9d2e8",
+			"revisionTime": "2018-03-30T10:04:40Z"
 		},
 		{
 			"checksumSHA1": "qDsgp2kAeI9nhj565HUScaUyjU4=",
 			"path": "github.com/elastic/gosigar/sys/windows",
-			"revision": "a3814ce5008e612a0c6d027608b54e1d0d9a5613",
-			"revisionTime": "2018-01-22T22:25:45Z"
+			"revision": "37f05ff46ffa7a825d1b24cf2b62d4a4c1a9d2e8",
+			"revisionTime": "2018-03-30T10:04:40Z"
 		},
 		{
 			"checksumSHA1": "7oFpbmDfGobwKsFLIf6wMUvVoKw=",
@@ -760,10 +760,10 @@
 			"revisionTime": "2016-06-21T03:49:01Z"
 		},
 		{
-			"checksumSHA1": "YvuEbc0a032zr+BTp/YbBQojiuY=",
+			"checksumSHA1": "vndxs5Tv09/8S+Dr2PBAiM557lI=",
 			"path": "gopkg.in/olebedev/go-duktape.v3",
-			"revision": "9af39127cb024b355a6a0221769f6ddfe3f542e7",
-			"revisionTime": "2017-12-20T12:19:14Z"
+			"revision": "abf0ba0be5d5d36b1f9266463cc320b9a5ab224e",
+			"revisionTime": "2018-03-02T12:15:09Z"
 		},
 		{
 			"checksumSHA1": "4BwmmgQUhWtizsR2soXND0nqZ1I=",

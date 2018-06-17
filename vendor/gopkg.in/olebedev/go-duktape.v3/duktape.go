@@ -5,6 +5,7 @@ package duktape
 #cgo windows CFLAGS: -O3 -Wall -fomit-frame-pointer -fstrict-aliasing
 #cgo linux LDFLAGS: -lm
 #cgo freebsd LDFLAGS: -lm
+#cgo openbsd LDFLAGS: -lm
 
 #include "duktape.h"
 #include "duk_logging.h"
@@ -290,7 +291,7 @@ func (i *functionIndex) delete(ptr unsafe.Pointer) {
 func (i *functionIndex) destroy() {
 	i.Lock()
 
-	for ptr := range i.functions {
+	for ptr, _ := range i.functions {
 		delete(i.functions, ptr)
 		C.free(ptr)
 	}
