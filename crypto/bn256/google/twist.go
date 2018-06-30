@@ -16,19 +16,19 @@ type twistPoint struct {
 }
 
 var twistB = &gfP2{
-	bigFromBase10("6500054969564660373279643874235990574282535810762300357187714502686418407178"),
-	bigFromBase10("45500384786952622612957507119651934019977750675336102500314001518804928850249"),
+	bigFromBase10("266929791119991161246907387137283842545076965332900288569378510910307636690"),
+	bigFromBase10("19485874751759354771024239261021720505790618469301721065564631296452457478373"),
 }
 
 // twistGen is the generator of group G₂.
 var twistGen = &twistPoint{
 	&gfP2{
-		bigFromBase10("21167961636542580255011770066570541300993051739349375019639421053990175267184"),
-		bigFromBase10("64746500191241794695844075326670126197795977525365406531717464316923369116492"),
+		bigFromBase10("11559732032986387107991004021392285783925812861821192530917403151452391805634"),
+		bigFromBase10("10857046999023057135944570762232829481370756359578518086990519993285655852781"),
 	},
 	&gfP2{
-		bigFromBase10("20666913350058776956210519119118544732556678129809273996262322366050359951122"),
-		bigFromBase10("17778617556404439934652658462602675281523610326338642107814333856843981424549"),
+		bigFromBase10("4082367875863433681332203403145435568316851327593401208105741076214120093531"),
+		bigFromBase10("8495653923123431417604973247489272438418190587263600148770280649306958101930"),
 	},
 	&gfP2{
 		bigFromBase10("0"),
@@ -76,7 +76,13 @@ func (c *twistPoint) IsOnCurve() bool {
 	yy.Sub(yy, xxx)
 	yy.Sub(yy, twistB)
 	yy.Minimal()
-	return yy.x.Sign() == 0 && yy.y.Sign() == 0
+
+	if yy.x.Sign() != 0 || yy.y.Sign() != 0 {
+		return false
+	}
+	cneg := newTwistPoint(pool)
+	cneg.Mul(c, Order, pool)
+	return cneg.z.IsZero()
 }
 
 func (c *twistPoint) SetInfinity() {
@@ -165,12 +171,12 @@ func (c *twistPoint) Double(a *twistPoint, pool *bnPool) {
 	// See http://hyperelliptic.org/EFD/g1p/auto-code/shortw/jacobian-0/doubling/dbl-2009-l.op3
 	A := newGFp2(pool).Square(a.x, pool)
 	B := newGFp2(pool).Square(a.y, pool)
-	C := newGFp2(pool).Square(B, pool)
+	C_ := newGFp2(pool).Square(B, pool)
 
 	t := newGFp2(pool).Add(a.x, B)
 	t2 := newGFp2(pool).Square(t, pool)
 	t.Sub(t2, A)
-	t2.Sub(t, C)
+	t2.Sub(t, C_)
 	d := newGFp2(pool).Add(t2, t2)
 	t.Add(A, A)
 	e := newGFp2(pool).Add(t, A)
@@ -179,7 +185,7 @@ func (c *twistPoint) Double(a *twistPoint, pool *bnPool) {
 	t.Add(d, d)
 	c.x.Sub(f, t)
 
-	t.Add(C, C)
+	t.Add(C_, C_)
 	t2.Add(t, t)
 	t.Add(t2, t2)
 	c.y.Sub(d, c.x)
@@ -191,7 +197,7 @@ func (c *twistPoint) Double(a *twistPoint, pool *bnPool) {
 
 	A.Put(pool)
 	B.Put(pool)
-	C.Put(pool)
+	C_.Put(pool)
 	t.Put(pool)
 	t2.Put(pool)
 	d.Put(pool)
@@ -219,17 +225,8 @@ func (c *twistPoint) Mul(a *twistPoint, scalar *big.Int, pool *bnPool) *twistPoi
 	return c
 }
 
-// MakeAffine converts c to affine form and returns c. If c is ∞, then it sets
-// c to 0 : 1 : 0.
 func (c *twistPoint) MakeAffine(pool *bnPool) *twistPoint {
 	if c.z.IsOne() {
-		return c
-	}
-	if c.IsInfinity() {
-		c.x.SetZero()
-		c.y.SetOne()
-		c.z.SetZero()
-		c.t.SetZero()
 		return c
 	}
 

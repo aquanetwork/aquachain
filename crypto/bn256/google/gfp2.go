@@ -23,8 +23,8 @@ func newGFp2(pool *bnPool) *gfP2 {
 }
 
 func (e *gfP2) String() string {
-	x := new(big.Int).Mod(e.x, p)
-	y := new(big.Int).Mod(e.y, p)
+	x := new(big.Int).Mod(e.x, P)
+	y := new(big.Int).Mod(e.y, P)
 	return "(" + x.String() + "," + y.String() + ")"
 }
 
@@ -52,11 +52,11 @@ func (e *gfP2) SetOne() *gfP2 {
 }
 
 func (e *gfP2) Minimal() {
-	if e.x.Sign() < 0 || e.x.Cmp(p) >= 0 {
-		e.x.Mod(e.x, p)
+	if e.x.Sign() < 0 || e.x.Cmp(P) >= 0 {
+		e.x.Mod(e.x, P)
 	}
-	if e.y.Sign() < 0 || e.y.Cmp(p) >= 0 {
-		e.y.Mod(e.y, p)
+	if e.y.Sign() < 0 || e.y.Cmp(P) >= 0 {
+		e.y.Mod(e.y, P)
 	}
 }
 
@@ -130,12 +130,12 @@ func (e *gfP2) Mul(a, b *gfP2, pool *bnPool) *gfP2 {
 	tx := pool.Get().Mul(a.x, b.y)
 	t := pool.Get().Mul(b.x, a.y)
 	tx.Add(tx, t)
-	tx.Mod(tx, p)
+	tx.Mod(tx, P)
 
 	ty := pool.Get().Mul(a.y, b.y)
 	t.Mul(a.x, b.x)
 	ty.Sub(ty, t)
-	e.y.Mod(ty, p)
+	e.y.Mod(ty, P)
 	e.x.Set(tx)
 
 	pool.Put(tx)
@@ -151,14 +151,14 @@ func (e *gfP2) MulScalar(a *gfP2, b *big.Int) *gfP2 {
 	return e
 }
 
-// MulXi sets e=ξa where ξ=i+3 and then returns e.
+// MulXi sets e=ξa where ξ=i+9 and then returns e.
 func (e *gfP2) MulXi(a *gfP2, pool *bnPool) *gfP2 {
-	// (xi+y)(i+3) = (3x+y)i+(3y-x)
-	tx := pool.Get().Lsh(a.x, 1)
+	// (xi+y)(i+3) = (9x+y)i+(9y-x)
+	tx := pool.Get().Lsh(a.x, 3)
 	tx.Add(tx, a.x)
 	tx.Add(tx, a.y)
 
-	ty := pool.Get().Lsh(a.y, 1)
+	ty := pool.Get().Lsh(a.y, 3)
 	ty.Add(ty, a.y)
 	ty.Sub(ty, a.x)
 
@@ -177,12 +177,12 @@ func (e *gfP2) Square(a *gfP2, pool *bnPool) *gfP2 {
 	t1 := pool.Get().Sub(a.y, a.x)
 	t2 := pool.Get().Add(a.x, a.y)
 	ty := pool.Get().Mul(t1, t2)
-	ty.Mod(ty, p)
+	ty.Mod(ty, P)
 
 	t1.Mul(a.x, a.y)
 	t1.Lsh(t1, 1)
 
-	e.x.Mod(t1, p)
+	e.x.Mod(t1, P)
 	e.y.Set(ty)
 
 	pool.Put(t1)
@@ -202,18 +202,26 @@ func (e *gfP2) Invert(a *gfP2, pool *bnPool) *gfP2 {
 	t.Add(t, t2)
 
 	inv := pool.Get()
-	inv.ModInverse(t, p)
+	inv.ModInverse(t, P)
 
 	e.x.Neg(a.x)
 	e.x.Mul(e.x, inv)
-	e.x.Mod(e.x, p)
+	e.x.Mod(e.x, P)
 
 	e.y.Mul(a.y, inv)
-	e.y.Mod(e.y, p)
+	e.y.Mod(e.y, P)
 
 	pool.Put(t)
 	pool.Put(t2)
 	pool.Put(inv)
 
 	return e
+}
+
+func (e *gfP2) Real() *big.Int {
+	return e.x
+}
+
+func (e *gfP2) Imag() *big.Int {
+	return e.y
 }
