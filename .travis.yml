@@ -9,7 +9,7 @@ matrix:
       go: "1.10.3"
       script:
         - sudo modprobe fuse
-        - sudo chmod 666 /dev/fuse
+        - sudo chmod ugo+rw /dev/fuse
         - sudo chown root:$USER /etc/fuse.conf
         - go run build/ci.go install
         - go run build/ci.go test -coverage
