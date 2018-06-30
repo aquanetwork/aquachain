@@ -265,8 +265,8 @@ var (
 // returning it, or an error if the point is invalid.
 func newCurvePoint(blob []byte) (*bn256.G1, error) {
 	p := new(bn256.G1)
-	if _, ok := p.Unmarshal(blob); !ok {
-		return nil, errors.New("invalid bn256 point")
+	if _, err := p.Unmarshal(blob); err != nil {
+		return nil, err
 	}
 	return p, nil
 }
@@ -275,8 +275,8 @@ func newCurvePoint(blob []byte) (*bn256.G1, error) {
 // returning it, or an error if the point is invalid.
 func newTwistPoint(blob []byte) (*bn256.G2, error) {
 	p := new(bn256.G2)
-	if _, ok := p.Unmarshal(blob); !ok {
-		return nil, errors.New("invalid bn256 point")
+	if _, err := p.Unmarshal(blob); err != nil {
+		return nil, err
 	}
 	return p, nil
 }
