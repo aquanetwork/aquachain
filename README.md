@@ -2,31 +2,35 @@
 
 ## General Purpose Distributed Computing
 
+ETH compatible smart contract platform
+
 Target Block Time: 240 second blocks (4 minute)
 
-Block Reward: Ⱥ1.00
+Block Reward: 1 AQUA
 
 Max Supply: 42 million
 
-HF5: 22800
+Explorer: https://aquachain.github.io/explorer/
+
+Algorithm: argon2id (CPU minable)
+
+Use MyEtherWallet or Metamask to connect to an SSL aquachain node like `https://c.onical.org`
+
+(EIP 155) Chain ID: 61717561
 
 ## GET AQUACHAIN
 
 To begin, you must have the aquachain command installed. The `aquachain` command is a portable program that doesn't really need an 'installer', you can run it from anywhere.
 
-To build latest with go, use `go get -v gitlab.com/aquachain/aquachain/cmd/aquachain`
+To build latest with go (recommended), use 'go get':
 
-To download binary release, see [Releases](https://gitlab.com/aquachain/aquachain/releases/latest)
+`go get -v -u gitlab.com/aquachain/aquachain/cmd/aquachain` and for the miner `go get -v -u gitlab.com/aquachain/aquachain/cmd/aquaminer`
 
-Apple/Linux Install: (Apple users, replace linux-amd64 with darwin-amd64)
-
-	sudo mv aquachain /usr/local/bin/aquachain  # install
-	aquachain account new			    # create new private/public key pair
-	aquachain            			    # open console
+To download binary release, see [Releases](https://github.com/aquachain/aquachain/releases/latest) tab on github.
 
 Create account inside the console: `personal.newAccount()`
 
-Your new wallet private key is located inside `datadir` by default is `~/.aquachain/` or `%appdata%\Roaming\AquaChain` (windows)
+Your new wallet private key is located inside `datadir` by default is `~/.aquachain/keystore` or `%appdata%\Roaming\AquaChain` (windows), make backup(s) and don't forget the pass phrase!
 
 See more commands: [Wiki](https://gitlab.com/aquachain/aquachain/wiki/Basics)
 
@@ -36,12 +40,10 @@ Now double-clickable! Just unzip and run to enter the Aquachain Javascript Conso
 
 Type `help` at the `AQUA>` prompt for common commands.
 
-### Init scripts / No Console
-
 For automated scripts and whatnot, add 'daemon' argument for the previous default action:
 
 ```
-aquachain daemon
+aquachain -rpc -rpcapi 'aqua,eth,net,web3' daemon
 ```
 
 ## Resources
@@ -52,13 +54,11 @@ Website - https://aquachain.github.io
 
 ANN - https://bitcointalk.org/index.php?topic=3138231.0
 
-Explorer - http://explorer.aquanetwork.co/
-
-Downloads - http://explorer.aquanetwork.co/dl/
+Explorer - https://aquachain.github.io/explorer/
 
 Github - http://github.com/aquachain
 
-Github - http://gitlab.com/aquachain/aquachain
+Gitlab - http://gitlab.com/aquachain/aquachain
 
 Telegram Chat: https://t.me/AquaCrypto
 
@@ -66,7 +66,7 @@ Telegram News: https://t.me/Aquachain
 
 Godoc - https://godoc.org/gitlab.com/aquachain/aquachain#pkg-subdirectories
 
-Report bugs - https://gitlab.com/aquachain/aquachain/issues
+Report bugs - https://github.com/aquachain/aquachain/issues
 
 Discord: https://discordapp.com/invite/J7jBhZf
 
