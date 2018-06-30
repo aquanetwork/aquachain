@@ -502,6 +502,12 @@
 			"revisionTime": "2018-06-20T09:14:27Z"
 		},
 		{
+			"checksumSHA1": "/U7f2gaH6DnEmLguVLDbipU6kXU=",
+			"path": "golang.org/x/crypto/internal/subtle",
+			"revision": "a49355c7e3f8fe157a85be2f77e6e269a0f89602",
+			"revisionTime": "2018-06-20T09:14:27Z"
+		},
+		{
 			"checksumSHA1": "s3QB5GJJ50pH7iWMaus4765+mT4=",
 			"path": "golang.org/x/crypto/openpgp",
 			"revision": "a49355c7e3f8fe157a85be2f77e6e269a0f89602",
@@ -750,6 +756,12 @@
 		{
 			"checksumSHA1": "5SMcpEK2/2oDBWAZlNaDowkb6lE=",
 			"path": "golang.org/x/tools/imports",
+			"revision": "1c99e1239a0c8b0e59c34000995c4e319b7702ca",
+			"revisionTime": "2018-06-27T20:58:43Z"
+		},
+		{
+			"checksumSHA1": "raf03aN7Im1I492XC3DafXo0KsQ=",
+			"path": "golang.org/x/tools/internal/fastwalk",
 			"revision": "1c99e1239a0c8b0e59c34000995c4e319b7702ca",
 			"revisionTime": "2018-06-27T20:58:43Z"
 		},
