@@ -6,7 +6,7 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
-      go: "1.10.1"
+      go: "1.10.3"
       script:
         - sudo modprobe fuse
         - sudo chmod 666 /dev/fuse
@@ -16,7 +16,7 @@ matrix:
     # This builder only tests code linters on latest version of Go
     - os: linux
       dist: trusty
-      go: "1.10.1"
+      go: "1.10.3"
       env:
         - lint
       git:
