@@ -36,11 +36,11 @@ func TestGFp2Invert(t *testing.T) {
 }
 
 func isZero(n *big.Int) bool {
-	return new(big.Int).Mod(n, P).Int64() == 0
+	return new(big.Int).Mod(n, p).Int64() == 0
 }
 
 func isOne(n *big.Int) bool {
-	return new(big.Int).Mod(n, P).Int64() == 1
+	return new(big.Int).Mod(n, p).Int64() == 1
 }
 
 func TestGFp6Invert(t *testing.T) {
@@ -219,16 +219,15 @@ func TestBilinearity(t *testing.T) {
 func TestG1Marshal(t *testing.T) {
 	g := new(G1).ScalarBaseMult(new(big.Int).SetInt64(1))
 	form := g.Marshal()
-	_, err := new(G1).Unmarshal(form)
-	if err != nil {
+	_, ok := new(G1).Unmarshal(form)
+	if !ok {
 		t.Fatalf("failed to unmarshal")
 	}
 
 	g.ScalarBaseMult(Order)
 	form = g.Marshal()
-
-	g2 := new(G1)
-	if _, err = g2.Unmarshal(form); err != nil {
+	g2, ok := new(G1).Unmarshal(form)
+	if !ok {
 		t.Fatalf("failed to unmarshal ∞")
 	}
 	if !g2.p.IsInfinity() {
@@ -239,15 +238,15 @@ func TestG1Marshal(t *testing.T) {
 func TestG2Marshal(t *testing.T) {
 	g := new(G2).ScalarBaseMult(new(big.Int).SetInt64(1))
 	form := g.Marshal()
-	_, err := new(G2).Unmarshal(form)
-	if err != nil {
+	_, ok := new(G2).Unmarshal(form)
+	if !ok {
 		t.Fatalf("failed to unmarshal")
 	}
 
 	g.ScalarBaseMult(Order)
 	form = g.Marshal()
-	g2 := new(G2)
-	if _, err = g2.Unmarshal(form); err != nil {
+	g2, ok := new(G2).Unmarshal(form)
+	if !ok {
 		t.Fatalf("failed to unmarshal ∞")
 	}
 	if !g2.p.IsInfinity() {
@@ -274,18 +273,12 @@ func TestTripartiteDiffieHellman(t *testing.T) {
 	b, _ := rand.Int(rand.Reader, Order)
 	c, _ := rand.Int(rand.Reader, Order)
 
-	pa := new(G1)
-	pa.Unmarshal(new(G1).ScalarBaseMult(a).Marshal())
-	qa := new(G2)
-	qa.Unmarshal(new(G2).ScalarBaseMult(a).Marshal())
-	pb := new(G1)
-	pb.Unmarshal(new(G1).ScalarBaseMult(b).Marshal())
-	qb := new(G2)
-	qb.Unmarshal(new(G2).ScalarBaseMult(b).Marshal())
-	pc := new(G1)
-	pc.Unmarshal(new(G1).ScalarBaseMult(c).Marshal())
-	qc := new(G2)
-	qc.Unmarshal(new(G2).ScalarBaseMult(c).Marshal())
+	pa, _ := new(G1).Unmarshal(new(G1).ScalarBaseMult(a).Marshal())
+	qa, _ := new(G2).Unmarshal(new(G2).ScalarBaseMult(a).Marshal())
+	pb, _ := new(G1).Unmarshal(new(G1).ScalarBaseMult(b).Marshal())
+	qb, _ := new(G2).Unmarshal(new(G2).ScalarBaseMult(b).Marshal())
+	pc, _ := new(G1).Unmarshal(new(G1).ScalarBaseMult(c).Marshal())
+	qc, _ := new(G2).Unmarshal(new(G2).ScalarBaseMult(c).Marshal())
 
 	k1 := Pair(pb, qc)
 	k1.ScalarMult(k1, a)

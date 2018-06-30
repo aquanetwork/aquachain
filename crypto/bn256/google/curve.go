@@ -20,7 +20,7 @@ var curveB = new(big.Int).SetInt64(3)
 // curveGen is the generator of G₁.
 var curveGen = &curvePoint{
 	new(big.Int).SetInt64(1),
-	new(big.Int).SetInt64(2),
+	new(big.Int).SetInt64(-2),
 	new(big.Int).SetInt64(1),
 	new(big.Int).SetInt64(1),
 }
@@ -60,8 +60,8 @@ func (c *curvePoint) IsOnCurve() bool {
 	xxx.Mul(xxx, c.x)
 	yy.Sub(yy, xxx)
 	yy.Sub(yy, curveB)
-	if yy.Sign() < 0 || yy.Cmp(P) >= 0 {
-		yy.Mod(yy, P)
+	if yy.Sign() < 0 || yy.Cmp(p) >= 0 {
+		yy.Mod(yy, p)
 	}
 	return yy.Sign() == 0
 }
@@ -90,23 +90,23 @@ func (c *curvePoint) Add(a, b *curvePoint, pool *bnPool) {
 	// by [u1:s1:z1·z2] and [u2:s2:z1·z2]
 	// where u1 = x1·z2², s1 = y1·z2³ and u1 = x2·z1², s2 = y2·z1³
 	z1z1 := pool.Get().Mul(a.z, a.z)
-	z1z1.Mod(z1z1, P)
+	z1z1.Mod(z1z1, p)
 	z2z2 := pool.Get().Mul(b.z, b.z)
-	z2z2.Mod(z2z2, P)
+	z2z2.Mod(z2z2, p)
 	u1 := pool.Get().Mul(a.x, z2z2)
-	u1.Mod(u1, P)
+	u1.Mod(u1, p)
 	u2 := pool.Get().Mul(b.x, z1z1)
-	u2.Mod(u2, P)
+	u2.Mod(u2, p)
 
 	t := pool.Get().Mul(b.z, z2z2)
-	t.Mod(t, P)
+	t.Mod(t, p)
 	s1 := pool.Get().Mul(a.y, t)
-	s1.Mod(s1, P)
+	s1.Mod(s1, p)
 
 	t.Mul(a.z, z1z1)
-	t.Mod(t, P)
+	t.Mod(t, p)
 	s2 := pool.Get().Mul(b.y, t)
-	s2.Mod(s2, P)
+	s2.Mod(s2, p)
 
 	// Compute x = (2h)²(s²-u1-u2)
 	// where s = (s2-s1)/(u2-u1) is the slope of the line through
@@ -121,10 +121,10 @@ func (c *curvePoint) Add(a, b *curvePoint, pool *bnPool) {
 	t.Add(h, h)
 	// i = 4h²
 	i := pool.Get().Mul(t, t)
-	i.Mod(i, P)
+	i.Mod(i, p)
 	// j = 4h³
 	j := pool.Get().Mul(h, i)
-	j.Mod(j, P)
+	j.Mod(j, p)
 
 	t.Sub(s2, s1)
 	yEqual := t.Sign() == 0
@@ -135,11 +135,11 @@ func (c *curvePoint) Add(a, b *curvePoint, pool *bnPool) {
 	r := pool.Get().Add(t, t)
 
 	v := pool.Get().Mul(u1, i)
-	v.Mod(v, P)
+	v.Mod(v, p)
 
 	// t4 = 4(s2-s1)²
 	t4 := pool.Get().Mul(r, r)
-	t4.Mod(t4, P)
+	t4.Mod(t4, p)
 	t.Add(v, v)
 	t6 := pool.Get().Sub(t4, j)
 	c.x.Sub(t6, t)
@@ -149,20 +149,20 @@ func (c *curvePoint) Add(a, b *curvePoint, pool *bnPool) {
 	// y = - 2·s1·j - (s2-s1)(2x - 2i·u1) = r(v-x) - 2·s1·j
 	t.Sub(v, c.x) // t7
 	t4.Mul(s1, j) // t8
-	t4.Mod(t4, P)
+	t4.Mod(t4, p)
 	t6.Add(t4, t4) // t9
 	t4.Mul(r, t)   // t10
-	t4.Mod(t4, P)
+	t4.Mod(t4, p)
 	c.y.Sub(t4, t6)
 
 	// Set z = 2(u2-u1)·z1·z2 = 2h·z1·z2
 	t.Add(a.z, b.z) // t11
 	t4.Mul(t, t)    // t12
-	t4.Mod(t4, P)
+	t4.Mod(t4, p)
 	t.Sub(t4, z1z1) // t13
 	t4.Sub(t, z2z2) // t14
 	c.z.Mul(t4, h)
-	c.z.Mod(c.z, P)
+	c.z.Mod(c.z, p)
 
 	pool.Put(z1z1)
 	pool.Put(z2z2)
@@ -183,41 +183,41 @@ func (c *curvePoint) Add(a, b *curvePoint, pool *bnPool) {
 func (c *curvePoint) Double(a *curvePoint, pool *bnPool) {
 	// See http://hyperelliptic.org/EFD/g1p/auto-code/shortw/jacobian-0/doubling/dbl-2009-l.op3
 	A := pool.Get().Mul(a.x, a.x)
-	A.Mod(A, P)
+	A.Mod(A, p)
 	B := pool.Get().Mul(a.y, a.y)
-	B.Mod(B, P)
-	C_ := pool.Get().Mul(B, B)
-	C_.Mod(C_, P)
+	B.Mod(B, p)
+	C := pool.Get().Mul(B, B)
+	C.Mod(C, p)
 
 	t := pool.Get().Add(a.x, B)
 	t2 := pool.Get().Mul(t, t)
-	t2.Mod(t2, P)
+	t2.Mod(t2, p)
 	t.Sub(t2, A)
-	t2.Sub(t, C_)
+	t2.Sub(t, C)
 	d := pool.Get().Add(t2, t2)
 	t.Add(A, A)
 	e := pool.Get().Add(t, A)
 	f := pool.Get().Mul(e, e)
-	f.Mod(f, P)
+	f.Mod(f, p)
 
 	t.Add(d, d)
 	c.x.Sub(f, t)
 
-	t.Add(C_, C_)
+	t.Add(C, C)
 	t2.Add(t, t)
 	t.Add(t2, t2)
 	c.y.Sub(d, c.x)
 	t2.Mul(e, c.y)
-	t2.Mod(t2, P)
+	t2.Mod(t2, p)
 	c.y.Sub(t2, t)
 
 	t.Mul(a.y, a.z)
-	t.Mod(t, P)
+	t.Mod(t, p)
 	c.z.Add(t, t)
 
 	pool.Put(A)
 	pool.Put(B)
-	pool.Put(C_)
+	pool.Put(C)
 	pool.Put(t)
 	pool.Put(t2)
 	pool.Put(d)
@@ -245,20 +245,29 @@ func (c *curvePoint) Mul(a *curvePoint, scalar *big.Int, pool *bnPool) *curvePoi
 	return c
 }
 
+// MakeAffine converts c to affine form and returns c. If c is ∞, then it sets
+// c to 0 : 1 : 0.
 func (c *curvePoint) MakeAffine(pool *bnPool) *curvePoint {
 	if words := c.z.Bits(); len(words) == 1 && words[0] == 1 {
 		return c
 	}
+	if c.IsInfinity() {
+		c.x.SetInt64(0)
+		c.y.SetInt64(1)
+		c.z.SetInt64(0)
+		c.t.SetInt64(0)
+		return c
+	}
 
-	zInv := pool.Get().ModInverse(c.z, P)
+	zInv := pool.Get().ModInverse(c.z, p)
 	t := pool.Get().Mul(c.y, zInv)
-	t.Mod(t, P)
+	t.Mod(t, p)
 	zInv2 := pool.Get().Mul(zInv, zInv)
-	zInv2.Mod(zInv2, P)
+	zInv2.Mod(zInv2, p)
 	c.y.Mul(t, zInv2)
-	c.y.Mod(c.y, P)
+	c.y.Mod(c.y, p)
 	t.Mul(c.x, zInv2)
-	t.Mod(t, P)
+	t.Mod(t, p)
 	c.x.Set(t)
 	c.z.SetInt64(1)
 	c.t.SetInt64(1)

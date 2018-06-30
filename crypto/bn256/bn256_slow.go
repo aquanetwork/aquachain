@@ -14,22 +14,20 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// +build !amd64,!arm64
-
 // Package bn256 implements the Optimal Ate pairing over a 256-bit Barreto-Naehrig curve.
 package bn256
 
-import "gitlab.com/aquachain/aquachain/crypto/bn256/google"
+import bn2 "gitlab.com/aquachain/aquachain/crypto/bn256/google"
 
 // G1 is an abstract cyclic group. The zero value is suitable for use as the
 // output of an operation, but cannot be used as an input.
-type G1 = bn256.G1
+type G1 = bn2.G1
 
 // G2 is an abstract cyclic group. The zero value is suitable for use as the
 // output of an operation, but cannot be used as an input.
-type G2 = bn256.G2
+type G2 = bn2.G2
 
 // PairingCheck calculates the Optimal Ate pairing for a set of points.
 func PairingCheck(a []*G1, b []*G2) bool {
-	return bn256.PairingCheck(a, b)
+	return bn2.PairingCheck(a, b)
 }

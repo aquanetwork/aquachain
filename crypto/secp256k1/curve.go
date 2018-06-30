@@ -96,14 +96,15 @@ func (BitCurve *BitCurve) IsOnCurve(x, y *big.Int) bool {
 // affineFromJacobian reverses the Jacobian transform. See the comment at the
 // top of the file.
 func (BitCurve *BitCurve) affineFromJacobian(x, y, z *big.Int) (xOut, yOut *big.Int) {
-	zinv := new(big.Int).ModInverse(z, BitCurve.P)
-	zinvsq := new(big.Int).Mul(zinv, zinv)
+	if zinv := new(big.Int).ModInverse(z, BitCurve.P); zinv != nil {
+		zinvsq := new(big.Int).Mul(zinv, zinv)
 
-	xOut = new(big.Int).Mul(x, zinvsq)
-	xOut.Mod(xOut, BitCurve.P)
-	zinvsq.Mul(zinvsq, zinv)
-	yOut = new(big.Int).Mul(y, zinvsq)
-	yOut.Mod(yOut, BitCurve.P)
+		xOut = new(big.Int).Mul(x, zinvsq)
+		xOut.Mod(xOut, BitCurve.P)
+		zinvsq.Mul(zinvsq, zinv)
+		yOut = new(big.Int).Mul(y, zinvsq)
+		yOut.Mod(yOut, BitCurve.P)
+	}
 	return
 }
 
