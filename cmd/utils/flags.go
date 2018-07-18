@@ -47,7 +47,6 @@ import (
 	"gitlab.com/aquachain/aquachain/node"
 	"gitlab.com/aquachain/aquachain/opt/aquastats"
 	"gitlab.com/aquachain/aquachain/opt/dashboard"
-	"gitlab.com/aquachain/aquachain/opt/les"
 	whisper "gitlab.com/aquachain/aquachain/opt/whisper/whisperv6"
 	"gitlab.com/aquachain/aquachain/p2p"
 	"gitlab.com/aquachain/aquachain/p2p/discover"
@@ -1134,15 +1133,12 @@ func SetDashboardConfig(ctx *cli.Context, cfg *dashboard.Config) {
 func RegisterAquaService(stack *node.Node, cfg *aqua.Config) {
 	var err error
 	if cfg.SyncMode == downloader.LightSync {
-		err = stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
-			return les.New(ctx, cfg)
-		})
+		err = fmt.Errorf("no LES support")
 	} else {
 		err = stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
 			fullNode, err := aqua.New(ctx, cfg)
-			if fullNode != nil && cfg.LightServ > 0 {
-				ls, _ := les.NewLesServer(fullNode, cfg)
-				fullNode.AddLesServer(ls)
+			if cfg.LightServ > 0 {
+				return nil, fmt.Errorf("no LES support")
 			}
 			return fullNode, err
 		})
@@ -1176,10 +1172,7 @@ func RegisterAquaStatsService(stack *node.Node, url string) {
 		var ethServ *aqua.AquaChain
 		ctx.Service(&ethServ)
 
-		var lesServ *les.LightAquaChain
-		ctx.Service(&lesServ)
-
-		return aquastats.New(url, ethServ, lesServ)
+		return aquastats.New(url, ethServ)
 	}); err != nil {
 		Fatalf("Failed to register the AquaChain Stats service: %v", err)
 	}
