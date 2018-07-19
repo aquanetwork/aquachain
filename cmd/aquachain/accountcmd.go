@@ -74,7 +74,6 @@ Print a short summary of all accounts`,
 					utils.DataDirFlag,
 					utils.KeyStoreDirFlag,
 					utils.PasswordFileFlag,
-					utils.LightKDFFlag,
 				},
 				Description: `
     aquachain account new
@@ -99,7 +98,6 @@ password to file or expose in any other way.
 				Flags: []cli.Flag{
 					utils.DataDirFlag,
 					utils.KeyStoreDirFlag,
-					utils.LightKDFFlag,
 				},
 				Description: `
     aquachain account update <address>
@@ -128,7 +126,6 @@ changing your password is only possible interactively.
 					utils.DataDirFlag,
 					utils.KeyStoreDirFlag,
 					utils.PasswordFileFlag,
-					utils.LightKDFFlag,
 				},
 				ArgsUsage: "<keyFile>",
 				Description: `

@@ -18,7 +18,6 @@
 package aqua
 
 import (
-	"errors"
 	"fmt"
 	"math/big"
 	"runtime"
@@ -49,13 +48,6 @@ import (
 	"gitlab.com/aquachain/aquachain/rpc"
 )
 
-type LesServer interface {
-	Start(srvr *p2p.Server)
-	Stop()
-	Protocols() []p2p.Protocol
-	SetBloomBitsIndexer(bbIndexer *core.ChainIndexer)
-}
-
 // AquaChain implements the AquaChain full node service.
 type AquaChain struct {
 	config      *Config
@@ -69,7 +61,6 @@ type AquaChain struct {
 	txPool          *core.TxPool
 	blockchain      *core.BlockChain
 	protocolManager *ProtocolManager
-	lesServer       LesServer
 
 	// DB interfaces
 	chainDb aquadb.Database // Block chain database
@@ -93,17 +84,9 @@ type AquaChain struct {
 	lock sync.RWMutex // Protects the variadic fields (e.g. gas price and aquabase)
 }
 
-func (s *AquaChain) AddLesServer(ls LesServer) {
-	s.lesServer = ls
-	ls.SetBloomBitsIndexer(s.bloomIndexer)
-}
-
 // New creates a new AquaChain object (including the
 // initialisation of the common AquaChain object)
 func New(ctx *node.ServiceContext, config *Config) (*AquaChain, error) {
-	if config.SyncMode == downloader.LightSync {
-		return nil, errors.New("can't run aqua.AquaChain in light sync mode, use les.LightAquaChain")
-	}
 	if !config.SyncMode.IsValid() {
 		return nil, fmt.Errorf("invalid sync mode %d", config.SyncMode)
 	}
@@ -363,10 +346,7 @@ func (s *AquaChain) Downloader() *downloader.Downloader { return s.protocolManag
 // Protocols implements node.Service, returning all the currently configured
 // network protocols to start.
 func (s *AquaChain) Protocols() []p2p.Protocol {
-	if s.lesServer == nil {
-		return s.protocolManager.SubProtocols
-	}
-	return append(s.protocolManager.SubProtocols, s.lesServer.Protocols()...)
+	return s.protocolManager.SubProtocols
 }
 
 // Start implements node.Service, starting all internal goroutines needed by the
@@ -380,17 +360,9 @@ func (s *AquaChain) Start(srvr *p2p.Server) error {
 
 	// Figure out a max peers count based on the server limits
 	maxPeers := srvr.MaxPeers
-	if s.config.LightServ > 0 {
-		if s.config.LightPeers >= srvr.MaxPeers {
-			return fmt.Errorf("invalid peer config: light peer count (%d) >= total peer count (%d)", s.config.LightPeers, srvr.MaxPeers)
-		}
-		maxPeers -= s.config.LightPeers
-	}
-	// Start the networking layer and the light server if requested
+	// Start the networking layer
 	s.protocolManager.Start(maxPeers)
-	if s.lesServer != nil {
-		s.lesServer.Start(srvr)
-	}
+
 	return nil
 }
 
@@ -403,9 +375,6 @@ func (s *AquaChain) Stop() error {
 	s.bloomIndexer.Close()
 	s.blockchain.Stop()
 	s.protocolManager.Stop()
-	if s.lesServer != nil {
-		s.lesServer.Stop()
-	}
 	s.txPool.Stop()
 	s.miner.Stop()
 	s.eventMux.Stop()

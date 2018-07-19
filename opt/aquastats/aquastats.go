@@ -68,9 +68,9 @@ type blockChain interface {
 // Service implements an AquaChain netstats reporting daemon that pushes local
 // chain statistics up to a monitoring server.
 type Service struct {
-	server *p2p.Server         // Peer-to-peer server to retrieve networking infos
-	aqua   *aqua.AquaChain     // Full AquaChain service if monitoring a full node
-	engine consensus.Engine    // Consensus engine to retrieve variadic block fields
+	server *p2p.Server      // Peer-to-peer server to retrieve networking infos
+	aqua   *aqua.AquaChain  // Full AquaChain service if monitoring a full node
+	engine consensus.Engine // Consensus engine to retrieve variadic block fields
 
 	node string // Name of the node to display on the monitoring page
 	pass string // Password to authorize access to the monitoring page
@@ -542,13 +542,13 @@ func (s *Service) assembleBlockStats(block *types.Block) *blockStats {
 
 		panic("no LES")
 		// Light nodes would need on-demand lookups for transactions/uncles, skip
-//		if block != nil {
-//			header = block.Header()
-//		} else {
-//			header = s.les.BlockChain().CurrentHeader()
-//		}
-//		td = s.les.BlockChain().GetTd(header.Hash(), header.Number.Uint64())
-//		txs = []txStats{}
+		//		if block != nil {
+		//			header = block.Header()
+		//		} else {
+		//			header = s.les.BlockChain().CurrentHeader()
+		//		}
+		//		td = s.les.BlockChain().GetTd(header.Hash(), header.Number.Uint64())
+		//		txs = []txStats{}
 	}
 	// Assemble and return the block stats
 	author, _ := s.engine.Author(header)
@@ -602,7 +602,7 @@ func (s *Service) reportHistory(conn *websocket.Conn, list []uint64) error {
 		if s.aqua != nil {
 			block = s.aqua.BlockChain().GetBlockByNumber(number)
 		} else {
-			return ErrNoLes	
+			return ErrNoLes
 		}
 		// If we do have the block, add to the history and continue
 		if block != nil {
