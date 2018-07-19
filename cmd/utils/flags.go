@@ -1231,11 +1231,11 @@ func MakeConsolePreloads(ctx *cli.Context) []string {
 // This is a temporary function used for migrating old command/flags to the
 // new format.
 //
-// e.g. aquachain account new --keystore /tmp/mykeystore --lightkdf
+// e.g. aquachain account new --keystore /tmp/mykeystore
 //
 // is equivalent after calling this method with:
 //
-// aquachain --keystore /tmp/mykeystore --lightkdf account new
+// aquachain --keystore /tmp/mykeystore account new
 //
 // This allows the use of the existing configuration functionality.
 // When all flags are migrated this function can be removed and the existing
