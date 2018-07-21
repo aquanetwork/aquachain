@@ -5,7 +5,9 @@
 // Typically, use one of the New* functions to create clients for services.
 package internetgateway1
 
-// Generated file - do not edit by hand. See README.md
+// ***********************************************************
+// GENERATED FILE - DO NOT EDIT BY HAND. See README.md
+// ***********************************************************
 
 import (
 	"net/url"
@@ -32,7 +34,7 @@ const (
 	URN_WANCableLinkConfig_1       = "urn:schemas-upnp-org:service:WANCableLinkConfig:1"
 	URN_WANCommonInterfaceConfig_1 = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1"
 	URN_WANDSLLinkConfig_1         = "urn:schemas-upnp-org:service:WANDSLLinkConfig:1"
-	URN_WANAquaernetLinkConfig_1   = "urn:schemas-upnp-org:service:WANAquaernetLinkConfig:1"
+	URN_WANEthernetLinkConfig_1    = "urn:schemas-upnp-org:service:WANEthernetLinkConfig:1"
 	URN_WANIPConnection_1          = "urn:schemas-upnp-org:service:WANIPConnection:1"
 	URN_WANPOTSLinkConfig_1        = "urn:schemas-upnp-org:service:WANPOTSLinkConfig:1"
 	URN_WANPPPConnection_1         = "urn:schemas-upnp-org:service:WANPPPConnection:1"
@@ -388,7 +390,6 @@ func (client *LANHostConfigManagement1) SetAddressRange(NewMinAddress string, Ne
 	// Request structure.
 	request := &struct {
 		NewMinAddress string
-
 		NewMaxAddress string
 	}{}
 	// BEGIN Marshal arguments into request.
@@ -425,7 +426,6 @@ func (client *LANHostConfigManagement1) GetAddressRange() (NewMinAddress string,
 	// Response structure.
 	response := &struct {
 		NewMinAddress string
-
 		NewMaxAddress string
 	}{}
 
@@ -779,7 +779,7 @@ func newWANCableLinkConfig1ClientsFromGenericClients(genericClients []goupnp.Ser
 //
 // * NewCableLinkConfigState: allowed values: notReady, dsSyncComplete, usParamAcquired, rangingComplete, ipComplete, todEstablished, paramTransferComplete, registrationComplete, operational, accessDenied
 //
-// * NewLinkType: allowed values: Aquaernet
+// * NewLinkType: allowed values: Ethernet
 func (client *WANCableLinkConfig1) GetCableLinkConfigInfo() (NewCableLinkConfigState string, NewLinkType string, err error) {
 	// Request structure.
 	request := interface{}(nil)
@@ -790,8 +790,7 @@ func (client *WANCableLinkConfig1) GetCableLinkConfigInfo() (NewCableLinkConfigS
 	// Response structure.
 	response := &struct {
 		NewCableLinkConfigState string
-
-		NewLinkType string
+		NewLinkType             string
 	}{}
 
 	// Perform the SOAP call.
@@ -1168,7 +1167,7 @@ func (client *WANCommonInterfaceConfig1) GetEnabledForInternet() (NewEnabledForI
 //
 // Return values:
 //
-// * NewWANAccessType: allowed values: DSL, POTS, Cable, Aquaernet
+// * NewWANAccessType: allowed values: DSL, POTS, Cable, Ethernet
 //
 // * NewPhysicalLinkStatus: allowed values: Up, Down
 func (client *WANCommonInterfaceConfig1) GetCommonLinkProperties() (NewWANAccessType string, NewLayer1UpstreamMaxBitRate uint32, NewLayer1DownstreamMaxBitRate uint32, NewPhysicalLinkStatus string, err error) {
@@ -1180,13 +1179,10 @@ func (client *WANCommonInterfaceConfig1) GetCommonLinkProperties() (NewWANAccess
 
 	// Response structure.
 	response := &struct {
-		NewWANAccessType string
-
-		NewLayer1UpstreamMaxBitRate string
-
+		NewWANAccessType              string
+		NewLayer1UpstreamMaxBitRate   string
 		NewLayer1DownstreamMaxBitRate string
-
-		NewPhysicalLinkStatus string
+		NewPhysicalLinkStatus         string
 	}{}
 
 	// Perform the SOAP call.
@@ -1268,7 +1264,7 @@ func (client *WANCommonInterfaceConfig1) GetMaximumActiveConnections() (NewMaxim
 	return
 }
 
-func (client *WANCommonInterfaceConfig1) GetTotalBytesSent() (NewTotalBytesSent uint32, err error) {
+func (client *WANCommonInterfaceConfig1) GetTotalBytesSent() (NewTotalBytesSent uint64, err error) {
 	// Request structure.
 	request := interface{}(nil)
 	// BEGIN Marshal arguments into request.
@@ -1287,14 +1283,14 @@ func (client *WANCommonInterfaceConfig1) GetTotalBytesSent() (NewTotalBytesSent 
 
 	// BEGIN Unmarshal arguments from response.
 
-	if NewTotalBytesSent, err = soap.UnmarshalUi4(response.NewTotalBytesSent); err != nil {
+	if NewTotalBytesSent, err = soap.UnmarshalUi8(response.NewTotalBytesSent); err != nil {
 		return
 	}
 	// END Unmarshal arguments from response.
 	return
 }
 
-func (client *WANCommonInterfaceConfig1) GetTotalBytesReceived() (NewTotalBytesReceived uint32, err error) {
+func (client *WANCommonInterfaceConfig1) GetTotalBytesReceived() (NewTotalBytesReceived uint64, err error) {
 	// Request structure.
 	request := interface{}(nil)
 	// BEGIN Marshal arguments into request.
@@ -1313,7 +1309,7 @@ func (client *WANCommonInterfaceConfig1) GetTotalBytesReceived() (NewTotalBytesR
 
 	// BEGIN Unmarshal arguments from response.
 
-	if NewTotalBytesReceived, err = soap.UnmarshalUi4(response.NewTotalBytesReceived); err != nil {
+	if NewTotalBytesReceived, err = soap.UnmarshalUi8(response.NewTotalBytesReceived); err != nil {
 		return
 	}
 	// END Unmarshal arguments from response.
@@ -1387,7 +1383,6 @@ func (client *WANCommonInterfaceConfig1) GetActiveConnection(NewActiveConnection
 	// Response structure.
 	response := &struct {
 		NewActiveConnDeviceContainer string
-
 		NewActiveConnectionServiceID string
 	}{}
 
@@ -1507,8 +1502,7 @@ func (client *WANDSLLinkConfig1) GetDSLLinkInfo() (NewLinkType string, NewLinkSt
 
 	// Response structure.
 	response := &struct {
-		NewLinkType string
-
+		NewLinkType   string
 		NewLinkStatus string
 	}{}
 
@@ -1737,43 +1731,43 @@ func (client *WANDSLLinkConfig1) GetFCSPreserved() (NewFCSPreserved bool, err er
 	return
 }
 
-// WANAquaernetLinkConfig1 is a client for UPnP SOAP service with URN "urn:schemas-upnp-org:service:WANAquaernetLinkConfig:1". See
+// WANEthernetLinkConfig1 is a client for UPnP SOAP service with URN "urn:schemas-upnp-org:service:WANEthernetLinkConfig:1". See
 // goupnp.ServiceClient, which contains RootDevice and Service attributes which
 // are provided for informational value.
-type WANAquaernetLinkConfig1 struct {
+type WANEthernetLinkConfig1 struct {
 	goupnp.ServiceClient
 }
 
-// NewWANAquaernetLinkConfig1Clients discovers instances of the service on the network,
+// NewWANEthernetLinkConfig1Clients discovers instances of the service on the network,
 // and returns clients to any that are found. errors will contain an error for
 // any devices that replied but which could not be queried, and err will be set
 // if the discovery process failed outright.
 //
 // This is a typical entry calling point into this package.
-func NewWANAquaernetLinkConfig1Clients() (clients []*WANAquaernetLinkConfig1, errors []error, err error) {
+func NewWANEthernetLinkConfig1Clients() (clients []*WANEthernetLinkConfig1, errors []error, err error) {
 	var genericClients []goupnp.ServiceClient
-	if genericClients, errors, err = goupnp.NewServiceClients(URN_WANAquaernetLinkConfig_1); err != nil {
+	if genericClients, errors, err = goupnp.NewServiceClients(URN_WANEthernetLinkConfig_1); err != nil {
 		return
 	}
-	clients = newWANAquaernetLinkConfig1ClientsFromGenericClients(genericClients)
+	clients = newWANEthernetLinkConfig1ClientsFromGenericClients(genericClients)
 	return
 }
 
-// NewWANAquaernetLinkConfig1ClientsByURL discovers instances of the service at the given
+// NewWANEthernetLinkConfig1ClientsByURL discovers instances of the service at the given
 // URL, and returns clients to any that are found. An error is returned if
 // there was an error probing the service.
 //
 // This is a typical entry calling point into this package when reusing an
 // previously discovered service URL.
-func NewWANAquaernetLinkConfig1ClientsByURL(loc *url.URL) ([]*WANAquaernetLinkConfig1, error) {
-	genericClients, err := goupnp.NewServiceClientsByURL(loc, URN_WANAquaernetLinkConfig_1)
+func NewWANEthernetLinkConfig1ClientsByURL(loc *url.URL) ([]*WANEthernetLinkConfig1, error) {
+	genericClients, err := goupnp.NewServiceClientsByURL(loc, URN_WANEthernetLinkConfig_1)
 	if err != nil {
 		return nil, err
 	}
-	return newWANAquaernetLinkConfig1ClientsFromGenericClients(genericClients), nil
+	return newWANEthernetLinkConfig1ClientsFromGenericClients(genericClients), nil
 }
 
-// NewWANAquaernetLinkConfig1ClientsFromRootDevice discovers instances of the service in
+// NewWANEthernetLinkConfig1ClientsFromRootDevice discovers instances of the service in
 // a given root device, and returns clients to any that are found. An error is
 // returned if there was not at least one instance of the service within the
 // device. The location parameter is simply assigned to the Location attribute
@@ -1781,18 +1775,18 @@ func NewWANAquaernetLinkConfig1ClientsByURL(loc *url.URL) ([]*WANAquaernetLinkCo
 //
 // This is a typical entry calling point into this package when reusing an
 // previously discovered root device.
-func NewWANAquaernetLinkConfig1ClientsFromRootDevice(rootDevice *goupnp.RootDevice, loc *url.URL) ([]*WANAquaernetLinkConfig1, error) {
-	genericClients, err := goupnp.NewServiceClientsFromRootDevice(rootDevice, loc, URN_WANAquaernetLinkConfig_1)
+func NewWANEthernetLinkConfig1ClientsFromRootDevice(rootDevice *goupnp.RootDevice, loc *url.URL) ([]*WANEthernetLinkConfig1, error) {
+	genericClients, err := goupnp.NewServiceClientsFromRootDevice(rootDevice, loc, URN_WANEthernetLinkConfig_1)
 	if err != nil {
 		return nil, err
 	}
-	return newWANAquaernetLinkConfig1ClientsFromGenericClients(genericClients), nil
+	return newWANEthernetLinkConfig1ClientsFromGenericClients(genericClients), nil
 }
 
-func newWANAquaernetLinkConfig1ClientsFromGenericClients(genericClients []goupnp.ServiceClient) []*WANAquaernetLinkConfig1 {
-	clients := make([]*WANAquaernetLinkConfig1, len(genericClients))
+func newWANEthernetLinkConfig1ClientsFromGenericClients(genericClients []goupnp.ServiceClient) []*WANEthernetLinkConfig1 {
+	clients := make([]*WANEthernetLinkConfig1, len(genericClients))
 	for i := range genericClients {
-		clients[i] = &WANAquaernetLinkConfig1{genericClients[i]}
+		clients[i] = &WANEthernetLinkConfig1{genericClients[i]}
 	}
 	return clients
 }
@@ -1800,8 +1794,8 @@ func newWANAquaernetLinkConfig1ClientsFromGenericClients(genericClients []goupnp
 //
 // Return values:
 //
-// * NewAquaernetLinkStatus: allowed values: Up, Down
-func (client *WANAquaernetLinkConfig1) GetAquaernetLinkStatus() (NewAquaernetLinkStatus string, err error) {
+// * NewEthernetLinkStatus: allowed values: Up, Down
+func (client *WANEthernetLinkConfig1) GetEthernetLinkStatus() (NewEthernetLinkStatus string, err error) {
 	// Request structure.
 	request := interface{}(nil)
 	// BEGIN Marshal arguments into request.
@@ -1810,17 +1804,17 @@ func (client *WANAquaernetLinkConfig1) GetAquaernetLinkStatus() (NewAquaernetLin
 
 	// Response structure.
 	response := &struct {
-		NewAquaernetLinkStatus string
+		NewEthernetLinkStatus string
 	}{}
 
 	// Perform the SOAP call.
-	if err = client.SOAPClient.PerformAction(URN_WANAquaernetLinkConfig_1, "GetAquaernetLinkStatus", request, response); err != nil {
+	if err = client.SOAPClient.PerformAction(URN_WANEthernetLinkConfig_1, "GetEthernetLinkStatus", request, response); err != nil {
 		return
 	}
 
 	// BEGIN Unmarshal arguments from response.
 
-	if NewAquaernetLinkStatus, err = soap.UnmarshalString(response.NewAquaernetLinkStatus); err != nil {
+	if NewEthernetLinkStatus, err = soap.UnmarshalString(response.NewEthernetLinkStatus); err != nil {
 		return
 	}
 	// END Unmarshal arguments from response.
@@ -1926,8 +1920,7 @@ func (client *WANIPConnection1) GetConnectionTypeInfo() (NewConnectionType strin
 
 	// Response structure.
 	response := &struct {
-		NewConnectionType string
-
+		NewConnectionType          string
 		NewPossibleConnectionTypes string
 	}{}
 
@@ -2104,11 +2097,9 @@ func (client *WANIPConnection1) GetStatusInfo() (NewConnectionStatus string, New
 
 	// Response structure.
 	response := &struct {
-		NewConnectionStatus string
-
+		NewConnectionStatus    string
 		NewLastConnectionError string
-
-		NewUptime string
+		NewUptime              string
 	}{}
 
 	// Perform the SOAP call.
@@ -2219,8 +2210,7 @@ func (client *WANIPConnection1) GetNATRSIPStatus() (NewRSIPAvailable bool, NewNA
 	// Response structure.
 	response := &struct {
 		NewRSIPAvailable string
-
-		NewNATEnabled string
+		NewNATEnabled    string
 	}{}
 
 	// Perform the SOAP call.
@@ -2258,21 +2248,14 @@ func (client *WANIPConnection1) GetGenericPortMappingEntry(NewPortMappingIndex u
 
 	// Response structure.
 	response := &struct {
-		NewRemoteHost string
-
-		NewExternalPort string
-
-		NewProtocol string
-
-		NewInternalPort string
-
-		NewInternalClient string
-
-		NewEnabled string
-
+		NewRemoteHost             string
+		NewExternalPort           string
+		NewProtocol               string
+		NewInternalPort           string
+		NewInternalClient         string
+		NewEnabled                string
 		NewPortMappingDescription string
-
-		NewLeaseDuration string
+		NewLeaseDuration          string
 	}{}
 
 	// Perform the SOAP call.
@@ -2318,11 +2301,9 @@ func (client *WANIPConnection1) GetGenericPortMappingEntry(NewPortMappingIndex u
 func (client *WANIPConnection1) GetSpecificPortMappingEntry(NewRemoteHost string, NewExternalPort uint16, NewProtocol string) (NewInternalPort uint16, NewInternalClient string, NewEnabled bool, NewPortMappingDescription string, NewLeaseDuration uint32, err error) {
 	// Request structure.
 	request := &struct {
-		NewRemoteHost string
-
+		NewRemoteHost   string
 		NewExternalPort string
-
-		NewProtocol string
+		NewProtocol     string
 	}{}
 	// BEGIN Marshal arguments into request.
 
@@ -2339,15 +2320,11 @@ func (client *WANIPConnection1) GetSpecificPortMappingEntry(NewRemoteHost string
 
 	// Response structure.
 	response := &struct {
-		NewInternalPort string
-
-		NewInternalClient string
-
-		NewEnabled string
-
+		NewInternalPort           string
+		NewInternalClient         string
+		NewEnabled                string
 		NewPortMappingDescription string
-
-		NewLeaseDuration string
+		NewLeaseDuration          string
 	}{}
 
 	// Perform the SOAP call.
@@ -2384,21 +2361,14 @@ func (client *WANIPConnection1) GetSpecificPortMappingEntry(NewRemoteHost string
 func (client *WANIPConnection1) AddPortMapping(NewRemoteHost string, NewExternalPort uint16, NewProtocol string, NewInternalPort uint16, NewInternalClient string, NewEnabled bool, NewPortMappingDescription string, NewLeaseDuration uint32) (err error) {
 	// Request structure.
 	request := &struct {
-		NewRemoteHost string
-
-		NewExternalPort string
-
-		NewProtocol string
-
-		NewInternalPort string
-
-		NewInternalClient string
-
-		NewEnabled string
-
+		NewRemoteHost             string
+		NewExternalPort           string
+		NewProtocol               string
+		NewInternalPort           string
+		NewInternalClient         string
+		NewEnabled                string
 		NewPortMappingDescription string
-
-		NewLeaseDuration string
+		NewLeaseDuration          string
 	}{}
 	// BEGIN Marshal arguments into request.
 
@@ -2450,11 +2420,9 @@ func (client *WANIPConnection1) AddPortMapping(NewRemoteHost string, NewExternal
 func (client *WANIPConnection1) DeletePortMapping(NewRemoteHost string, NewExternalPort uint16, NewProtocol string) (err error) {
 	// Request structure.
 	request := &struct {
-		NewRemoteHost string
-
+		NewRemoteHost   string
 		NewExternalPort string
-
-		NewProtocol string
+		NewProtocol     string
 	}{}
 	// BEGIN Marshal arguments into request.
 
@@ -2578,10 +2546,8 @@ func (client *WANPOTSLinkConfig1) SetISPInfo(NewISPPhoneNumber string, NewISPInf
 	// Request structure.
 	request := &struct {
 		NewISPPhoneNumber string
-
-		NewISPInfo string
-
-		NewLinkType string
+		NewISPInfo        string
+		NewLinkType       string
 	}{}
 	// BEGIN Marshal arguments into request.
 
@@ -2613,8 +2579,7 @@ func (client *WANPOTSLinkConfig1) SetISPInfo(NewISPPhoneNumber string, NewISPInf
 func (client *WANPOTSLinkConfig1) SetCallRetryInfo(NewNumberOfRetries uint32, NewDelayBetweenRetries uint32) (err error) {
 	// Request structure.
 	request := &struct {
-		NewNumberOfRetries string
-
+		NewNumberOfRetries     string
 		NewDelayBetweenRetries string
 	}{}
 	// BEGIN Marshal arguments into request.
@@ -2655,10 +2620,8 @@ func (client *WANPOTSLinkConfig1) GetISPInfo() (NewISPPhoneNumber string, NewISP
 	// Response structure.
 	response := &struct {
 		NewISPPhoneNumber string
-
-		NewISPInfo string
-
-		NewLinkType string
+		NewISPInfo        string
+		NewLinkType       string
 	}{}
 
 	// Perform the SOAP call.
@@ -2690,8 +2653,7 @@ func (client *WANPOTSLinkConfig1) GetCallRetryInfo() (NewNumberOfRetries uint32,
 
 	// Response structure.
 	response := &struct {
-		NewNumberOfRetries string
-
+		NewNumberOfRetries     string
 		NewDelayBetweenRetries string
 	}{}
 
@@ -2941,8 +2903,7 @@ func (client *WANPPPConnection1) GetConnectionTypeInfo() (NewConnectionType stri
 
 	// Response structure.
 	response := &struct {
-		NewConnectionType string
-
+		NewConnectionType          string
 		NewPossibleConnectionTypes string
 	}{}
 
@@ -2967,7 +2928,6 @@ func (client *WANPPPConnection1) ConfigureConnection(NewUserName string, NewPass
 	// Request structure.
 	request := &struct {
 		NewUserName string
-
 		NewPassword string
 	}{}
 	// BEGIN Marshal arguments into request.
@@ -3150,11 +3110,9 @@ func (client *WANPPPConnection1) GetStatusInfo() (NewConnectionStatus string, Ne
 
 	// Response structure.
 	response := &struct {
-		NewConnectionStatus string
-
+		NewConnectionStatus    string
 		NewLastConnectionError string
-
-		NewUptime string
+		NewUptime              string
 	}{}
 
 	// Perform the SOAP call.
@@ -3186,8 +3144,7 @@ func (client *WANPPPConnection1) GetLinkLayerMaxBitRates() (NewUpstreamMaxBitRat
 
 	// Response structure.
 	response := &struct {
-		NewUpstreamMaxBitRate string
-
+		NewUpstreamMaxBitRate   string
 		NewDownstreamMaxBitRate string
 	}{}
 
@@ -3426,8 +3383,7 @@ func (client *WANPPPConnection1) GetNATRSIPStatus() (NewRSIPAvailable bool, NewN
 	// Response structure.
 	response := &struct {
 		NewRSIPAvailable string
-
-		NewNATEnabled string
+		NewNATEnabled    string
 	}{}
 
 	// Perform the SOAP call.
@@ -3465,21 +3421,14 @@ func (client *WANPPPConnection1) GetGenericPortMappingEntry(NewPortMappingIndex 
 
 	// Response structure.
 	response := &struct {
-		NewRemoteHost string
-
-		NewExternalPort string
-
-		NewProtocol string
-
-		NewInternalPort string
-
-		NewInternalClient string
-
-		NewEnabled string
-
+		NewRemoteHost             string
+		NewExternalPort           string
+		NewProtocol               string
+		NewInternalPort           string
+		NewInternalClient         string
+		NewEnabled                string
 		NewPortMappingDescription string
-
-		NewLeaseDuration string
+		NewLeaseDuration          string
 	}{}
 
 	// Perform the SOAP call.
@@ -3525,11 +3474,9 @@ func (client *WANPPPConnection1) GetGenericPortMappingEntry(NewPortMappingIndex 
 func (client *WANPPPConnection1) GetSpecificPortMappingEntry(NewRemoteHost string, NewExternalPort uint16, NewProtocol string) (NewInternalPort uint16, NewInternalClient string, NewEnabled bool, NewPortMappingDescription string, NewLeaseDuration uint32, err error) {
 	// Request structure.
 	request := &struct {
-		NewRemoteHost string
-
+		NewRemoteHost   string
 		NewExternalPort string
-
-		NewProtocol string
+		NewProtocol     string
 	}{}
 	// BEGIN Marshal arguments into request.
 
@@ -3546,15 +3493,11 @@ func (client *WANPPPConnection1) GetSpecificPortMappingEntry(NewRemoteHost strin
 
 	// Response structure.
 	response := &struct {
-		NewInternalPort string
-
-		NewInternalClient string
-
-		NewEnabled string
-
+		NewInternalPort           string
+		NewInternalClient         string
+		NewEnabled                string
 		NewPortMappingDescription string
-
-		NewLeaseDuration string
+		NewLeaseDuration          string
 	}{}
 
 	// Perform the SOAP call.
@@ -3591,21 +3534,14 @@ func (client *WANPPPConnection1) GetSpecificPortMappingEntry(NewRemoteHost strin
 func (client *WANPPPConnection1) AddPortMapping(NewRemoteHost string, NewExternalPort uint16, NewProtocol string, NewInternalPort uint16, NewInternalClient string, NewEnabled bool, NewPortMappingDescription string, NewLeaseDuration uint32) (err error) {
 	// Request structure.
 	request := &struct {
-		NewRemoteHost string
-
-		NewExternalPort string
-
-		NewProtocol string
-
-		NewInternalPort string
-
-		NewInternalClient string
-
-		NewEnabled string
-
+		NewRemoteHost             string
+		NewExternalPort           string
+		NewProtocol               string
+		NewInternalPort           string
+		NewInternalClient         string
+		NewEnabled                string
 		NewPortMappingDescription string
-
-		NewLeaseDuration string
+		NewLeaseDuration          string
 	}{}
 	// BEGIN Marshal arguments into request.
 
@@ -3657,11 +3593,9 @@ func (client *WANPPPConnection1) AddPortMapping(NewRemoteHost string, NewExterna
 func (client *WANPPPConnection1) DeletePortMapping(NewRemoteHost string, NewExternalPort uint16, NewProtocol string) (err error) {
 	// Request structure.
 	request := &struct {
-		NewRemoteHost string
-
+		NewRemoteHost   string
 		NewExternalPort string
-
-		NewProtocol string
+		NewProtocol     string
 	}{}
 	// BEGIN Marshal arguments into request.
 

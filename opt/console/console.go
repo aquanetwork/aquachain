@@ -53,11 +53,11 @@ const DefaultPrompt = "AQUA> "
 const helpText = `
 Web links:
 
-	Explorer: http://explorer.aquanetwork.co
-	Wiki: http://gitlab.com/aquachain/aquachain/wiki/Basics
+	Explorer: https://aquachain.github.io/explorer/
+	Wiki: http://github.com/aquanetwork/aquachain/wiki/Basics
 	Chat: https://t.me/AquaCrypto
 
-Common commands:
+Common AQUA commands::
 
 	New address:              personal.newAccount()
 	Import private key:       personal.importRawKey('the private key')

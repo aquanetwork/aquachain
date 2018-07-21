@@ -14,10 +14,12 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
-// +build amd64 arm64
+// +build ignore
 
 // Package bn256 implements the Optimal Ate pairing over a 256-bit Barreto-Naehrig curve.
 package bn256
+
+// WAS: +build amd64 arm64
 
 import "gitlab.com/aquachain/aquachain/crypto/bn256/cloudflare"
 

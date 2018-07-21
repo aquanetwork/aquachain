@@ -1,5 +1,9 @@
 # Aquachain
 
+Latest Source: https://gitlab.com/aquachain/aquachain
+
+See bottom of this document for more useful links.
+
 ## General Purpose Distributed Computing
 
 ETH compatible smart contract platform

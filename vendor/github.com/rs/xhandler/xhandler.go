@@ -14,7 +14,7 @@ package xhandler // import "github.com/rs/xhandler"
 import (
 	"net/http"
 
-	"golang.org/x/net/context"
+	"context"
 )
 
 // HandlerC is a net/context aware http.Handler
@@ -30,13 +30,4 @@ type HandlerFuncC func(context.Context, http.ResponseWriter, *http.Request)
 // ServeHTTPC calls f(ctx, w, r).
 func (f HandlerFuncC) ServeHTTPC(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 	f(ctx, w, r)
-}
-
-// New creates a conventional http.Handler injecting the provided root
-// context to sub handlers. This handler is used as a bridge between conventional
-// http.Handler and context aware handlers.
-func New(ctx context.Context, h HandlerC) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		h.ServeHTTPC(ctx, w, r)
-	})
 }

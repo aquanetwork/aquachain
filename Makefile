@@ -22,6 +22,10 @@ aquaminer:
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/aquaminer\" to start mining to localhost:8543 rpc-server."
 
+browsermine:
+	GOARCH=wasm GOOS=js go1.11beta1 build -o app.wasm ./cmd/aquaminer
+	@echo "Done building."
+	
 swarm:
 	build/env.sh go run build/ci.go install ./cmd/swarm
 	@echo "Done building."
