@@ -541,7 +541,7 @@ func MakeDataDir(ctx *cli.Context) string {
 			return filepath.Join(path, "testnet")
 		}
 		if ctx.GlobalBool(RinkebyFlag.Name) {
-			return filepath.Join(path, "rinkeby")
+			return filepath.Join(path, "testnet2")
 		}
 		return path
 	}
@@ -840,6 +840,11 @@ func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config) {
 		cfg.NoDiscovery = true
 		cfg.DiscoveryV5 = false
 	}
+
+	if ctx.GlobalBool(TestnetFlag.Name) && !ctx.GlobalIsSet(ListenPortFlag.Name) {
+		cfg.ListenAddr = ":21304"
+	}
+
 }
 
 // SetNodeConfig applies node-related command line flags to the config.
