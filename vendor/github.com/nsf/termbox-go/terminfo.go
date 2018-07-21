@@ -69,6 +69,12 @@ func load_terminfo() ([]byte, error) {
 		}
 	}
 
+	// next, /lib/terminfo
+	data, err = ti_try_path("/lib/terminfo")
+	if err == nil {
+		return data, nil
+	}
+
 	// fall back to /usr/share/terminfo
 	return ti_try_path("/usr/share/terminfo")
 }
@@ -151,15 +157,20 @@ func setup_term() (err error) {
 		return
 	}
 
+	number_sec_len := int16(2)
+	if header[0] == 542 { // doc says it should be octal 0542, but what I see it terminfo files is 542, learn to program please... thank you..
+		number_sec_len = 4
+	}
+
 	if (header[1]+header[2])%2 != 0 {
 		// old quirk to align everything on word boundaries
 		header[2] += 1
 	}
-	str_offset = ti_header_length + header[1] + header[2] + 2*header[3]
+	str_offset = ti_header_length + header[1] + header[2] + number_sec_len*header[3]
 	table_offset = str_offset + 2*header[4]
 
 	keys = make([]string, 0xFFFF-key_min)
-	for i := range keys {
+	for i, _ := range keys {
 		keys[i], err = ti_read_string(rd, str_offset+2*ti_keys[i], table_offset)
 		if err != nil {
 			return
@@ -168,7 +179,7 @@ func setup_term() (err error) {
 	funcs = make([]string, t_max_funcs)
 	// the last two entries are reserved for mouse. because the table offset is
 	// not there, the two entries have to fill in manually
-	for i := range funcs[:len(funcs)-2] {
+	for i, _ := range funcs[:len(funcs)-2] {
 		funcs[i], err = ti_read_string(rd, str_offset+2*ti_funcs[i], table_offset)
 		if err != nil {
 			return
