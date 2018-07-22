@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
 	"gitlab.com/aquachain/aquachain/common/math"
 	"gitlab.com/aquachain/aquachain/consensus"
 	"gitlab.com/aquachain/aquachain/core/state"
@@ -331,28 +332,47 @@ func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Heade
 	}
 
 	switch {
-	// case (config.GetHF(7) != nil %% next.Cmp(config.GetHF(7)) == 0):
+
+	// hardfork 6
+	case (config.GetHF(6) != nil && next.Cmp(config.GetHF(6)) == 0):
+		log.Info("Activating Hardfork", "HF", 6, "BlockNumber", config.GetHF(6))
+		return calcDifficultyHF6(time, parent)
 	case config.IsHF(6, next):
 		return calcDifficultyHF6(time, parent)
+
+	// hardfork 5
 	case (config.GetHF(5) != nil && next.Cmp(config.GetHF(5)) == 0):
+		log.Info("Activating Hardfork", "HF", 5, "BlockNumber", config.GetHF(5))
 		return params.MinimumDifficultyHF5 // reset diff since pow is much different
 	case config.IsHF(5, next):
-		//fmt.Println("calcdiff hf5:", next)
 		return calcDifficultyHF5(time, parent)
-	case config.IsHF(3, next):
-		//fmt.Println("calcdiff hf3:", next)
+
+	// hardfork 3
+	case (config.GetHF(3) != nil && next.Cmp(config.GetHF(3)) == 0):
+		log.Info("Activating Hardfork", "HF", 3, "BlockNumber", config.GetHF(3))
 		return calcDifficultyHF3(time, parent)
-	case config.IsHF(2, next):
-		//fmt.Println("calcdiff hf2:", next)
+	case config.IsHF(3, next):
+		return calcDifficultyHF3(time, parent)
+
+	// hardfork 2
+	case (config.GetHF(2) != nil && next.Cmp(config.GetHF(2)) == 0):
+		log.Info("Activating Hardfork", "HF", 2, "BlockNumber", config.GetHF(2))
 		return calcDifficultyHF2(time, parent)
-	case config.IsHF(1, next):
-		//fmt.Println("calcdiff hf1:", next)
+	case config.IsHF(2, next):
+		return calcDifficultyHF2(time, parent)
+
+	// hardfork 1
+	case (config.GetHF(1) != nil && next.Cmp(config.GetHF(1)) == 0):
+		log.Info("Activating Hardfork", "HF", 1, "BlockNumber", config.GetHF(1))
 		return calcDifficultyHF1(time, parent)
+
+	case config.IsHF(1, next):
+		return calcDifficultyHF1(time, parent)
+
+	// genesis mining
 	case config.IsHomestead(next):
-		//fmt.Println("calcdiff IsHomestead:", next)
 		return calcDifficultyHomestead(time, parent)
 	default:
-		//fmt.Println("calcdiff default:", next)
 		return calcDifficultyHomestead(time, parent)
 	}
 }
