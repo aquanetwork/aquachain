@@ -898,6 +898,9 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 	defer bc.mu.Unlock()
 
 	currentBlock := bc.CurrentBlock()
+	if hf7 := bc.Config().GetHF(7); hf7 != nil && hf7.Cmp(currentBlock.Number()) == 0 {
+		log.Info("Activating Hardfork", "HF", 7, "BlockNumber", hf7)
+	}
 	localTd := bc.GetTd(currentBlock.Hash(), currentBlock.NumberU64())
 	externTd := new(big.Int).Add(block.Difficulty(), ptd)
 
@@ -930,7 +933,9 @@ func (bc *BlockChain) WriteBlockWithState(block *types.Block, receipts []*types.
 			// Find the next state trie we need to commit
 			header := bc.GetHeaderByNumber(current - triesInMemory)
 			chosen := header.Number.Uint64()
-
+			if hf7 := bc.Config().GetHF(7); hf7 != nil && hf7.Cmp(header.Number) == 0 {
+				log.Info("Activating Hardfork", "HF", 7, "BlockNumber", hf7)
+			}
 			// Only write to disk if we exceeded our memory allowance *and* also have at
 			// least a given number of tries gapped.
 			var (
