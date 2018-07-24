@@ -2,6 +2,8 @@
 
 Latest Source: https://gitlab.com/aquachain/aquachain
 
+How to build: https://github.com/aquanetwork/aquachain/wiki/Compiling
+
 See bottom of this document for more useful links.
 
 ## General Purpose Distributed Computing
