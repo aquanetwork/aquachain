@@ -2,6 +2,8 @@
 
 Latest Source: https://gitlab.com/aquachain/aquachain
 
+How to build: https://github.com/aquanetwork/aquachain/wiki/Compiling
+
 See bottom of this document for more useful links.
 
 ## General Purpose Distributed Computing
@@ -30,13 +32,13 @@ To build latest with go (recommended), use 'go get':
 
 `go get -v -u gitlab.com/aquachain/aquachain/cmd/aquachain` and for the miner `go get -v -u gitlab.com/aquachain/aquachain/cmd/aquaminer`
 
-To download binary release, see [Releases](https://github.com/aquachain/aquachain/releases/latest) tab on github.
+To download binary release, see [Releases](https://github.com/aquanetwork/aquachain/releases/latest) tab on github.
 
 Create account inside the console: `personal.newAccount()`
 
 Your new wallet private key is located inside `datadir` by default is `~/.aquachain/keystore` or `%appdata%\Roaming\AquaChain` (windows), make backup(s) and don't forget the pass phrase!
 
-See more commands: [Wiki](https://gitlab.com/aquachain/aquachain/wiki/Basics)
+See more commands: [Wiki](https://github.com/aquanetwork/aquachain/wiki/Basics)
 
 ### New Default Console Mode
 
@@ -52,7 +54,7 @@ aquachain -rpc -rpcapi 'aqua,eth,net,web3' daemon
 
 ## Resources
 
-Wiki - https://gitlab.com/aquachain/aquachain/wiki
+Wiki - https://github.com/aquanetwork/aquachain/wiki
 
 Website - https://aquachain.github.io
 

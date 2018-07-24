@@ -18,6 +18,7 @@ package core
 
 import (
 	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/common/log"
 	"gitlab.com/aquachain/aquachain/consensus"
 	"gitlab.com/aquachain/aquachain/consensus/misc"
 	"gitlab.com/aquachain/aquachain/core/state"
@@ -66,6 +67,7 @@ func (p *StateProcessor) Process(block *types.Block, statedb *state.StateDB, cfg
 
 	// Mutate the the block and state according to any hard-fork specs
 	if hf4 := p.config.GetHF(4); hf4 != nil && hf4.Cmp(header.Number) == 0 {
+		log.Info("Activating Hardfork", "HF", 4, "BlockNumber", p.config.GetHF(4))
 		misc.ApplyHardFork4(statedb)
 	}
 
