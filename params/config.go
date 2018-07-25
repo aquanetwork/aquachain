@@ -135,7 +135,7 @@ type ChainConfig struct {
 	Aquahash *AquahashConfig `json:"aquahash,omitempty"`
 
 	// HF Scheduled Maintenance Hardforks
-	HF       ForkMap         `json:"hf,omitempty"`
+	HF ForkMap `json:"hf,omitempty"`
 }
 
 // AquahashConfig is the consensus engine configs for proof-of-work based sealing.
