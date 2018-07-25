@@ -99,7 +99,7 @@ func New(ctx *node.ServiceContext, config *Config) (*AquaChain, error) {
 	if _, ok := genesisErr.(*params.ConfigCompatError); genesisErr != nil && !ok {
 		return nil, genesisErr
 	}
-	log.Info("Initialised chain configuration", "config", chainConfig)
+	log.Info("Initialised chain configuration", "HF-Ready", chainConfig.HF, "config", chainConfig)
 
 	aqua := &AquaChain{
 		config:         config,

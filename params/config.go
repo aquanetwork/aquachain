@@ -156,23 +156,14 @@ func (c *ChainConfig) String() string {
 	default:
 		engine = "unknown"
 	}
-	return fmt.Sprintf("{ChainID: %v, Engine: %v, HF-Ready: %s}",
+	return fmt.Sprintf("{ChainID: %v EIP150: %v EIP155: %v EIP158: %v Byzantium: %v Engine: %v}",
 		c.ChainId,
+		c.EIP150Block,
+		c.EIP155Block,
+		c.EIP158Block,
+		c.ByzantiumBlock,
 		engine,
-		c.HF,
 	)
-	// return fmt.Sprintf("{ChainID: %v Homestead: %v DAO: %v DAOSupport: %v EIP150: %v EIP155: %v EIP158: %v Byzantium: %v Constantinople: %v Engine: %v}",
-	// 	c.ChainId,
-	// 	c.HomesteadBlock,
-	// 	c.DAOForkBlock,
-	// 	c.DAOForkSupport,
-	// 	c.EIP150Block,
-	// 	c.EIP155Block,
-	// 	c.EIP158Block,
-	// 	c.ByzantiumBlock,
-	// 	c.ConstantinopleBlock,
-	// 	engine,
-	// )
 }
 
 // IsHF returns whether num is either equal to the hf block or greater.
