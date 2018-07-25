@@ -101,8 +101,6 @@ var (
 		utils.Testnet2Flag,
 		utils.VMEnableDebugFlag,
 		utils.NetworkIdFlag,
-		utils.RPCCORSDomainFlag,
-		utils.RPCVirtualHostsFlag,
 		utils.AquaStatsURLFlag,
 		utils.MetricsEnabledFlag,
 		utils.FakePoWFlag,
@@ -115,6 +113,9 @@ var (
 
 	rpcFlags = []cli.Flag{
 		utils.RPCEnabledFlag,
+		utils.RPCUnlockFlag,
+		utils.RPCCORSDomainFlag,
+		utils.RPCVirtualHostsFlag,
 		utils.RPCListenAddrFlag,
 		utils.RPCPortFlag,
 		utils.RPCApiFlag,
