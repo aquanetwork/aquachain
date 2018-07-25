@@ -330,6 +330,9 @@ func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Heade
 	if config.ChainId != nil && config.ChainId.Cmp(params.TestnetChainConfig.ChainId) == 0 {
 		return calcDifficultyHF6Testnet(time, parent)
 	}
+	if config.ChainId != nil && config.ChainId.Cmp(params.Testnet2ChainConfig.ChainId) == 0 {
+		return calcDifficultyHF6Testnet(time, parent)
+	}
 
 	switch {
 
