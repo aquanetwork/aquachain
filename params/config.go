@@ -51,6 +51,13 @@ var (
 		6: big.NewInt(6),  // noop in testnet
 		7: big.NewInt(25), // eip 155, 158
 	}
+
+	Testnet2HF = ForkMap{
+		4: big.NewInt(0),
+		5: big.NewInt(0),
+		6: big.NewInt(0),
+		7: big.NewInt(0),
+	}
 )
 var (
 	// MainnetChainConfig is the chain parameters to run a node on the main network.
@@ -77,13 +84,16 @@ var (
 		HF:             TestnetHF,
 	}
 
-	// RinkebyChainConfig contains the chain parameters to run a node on the Rinkeby test network.
-	RinkebyChainConfig = &ChainConfig{
-		ChainId:        big.NewInt(4),
-		HomesteadBlock: big.NewInt(1),
+	// Testnet2ChainConfig contains the chain parameters to run a node on the Testnet2 test network.
+	Testnet2ChainConfig = &ChainConfig{
+		ChainId:        big.NewInt(4096),
+		HomesteadBlock: big.NewInt(0),
 		EIP150Block:    big.NewInt(0),
+		EIP155Block:    Testnet2HF[7],
+		EIP158Block:    Testnet2HF[7],
+		ByzantiumBlock: Testnet2HF[7],
 		Aquahash:       new(AquahashConfig),
-		HF:             TestnetHF,
+		HF:             Testnet2HF,
 	}
 
 	// AllAquahashProtocolChanges contains every protocol change (EIPs) introduced

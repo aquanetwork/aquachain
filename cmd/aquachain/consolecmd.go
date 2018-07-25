@@ -132,8 +132,8 @@ func remoteConsole(ctx *cli.Context) error {
 		if path != "" {
 			if ctx.GlobalBool(utils.TestnetFlag.Name) {
 				path = filepath.Join(path, "testnet")
-			} else if ctx.GlobalBool(utils.RinkebyFlag.Name) {
-				path = filepath.Join(path, "rinkeby")
+			} else if ctx.GlobalBool(utils.Testnet2Flag.Name) {
+				path = filepath.Join(path, "testnet2")
 			}
 		}
 		endpoint = fmt.Sprintf("%s/aquachain.ipc", path)

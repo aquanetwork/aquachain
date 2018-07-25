@@ -134,14 +134,14 @@ var (
 	}
 	NetworkIdFlag = cli.Uint64Flag{
 		Name:  "networkid",
-		Usage: "Network identifier (integer, 1=Frontier, 2=Morden (disused), 3=Ropsten, 4=Rinkeby)",
+		Usage: "Network identifier (integer, 1=Frontier, 2=Morden (disused), 3=Ropsten, 4=Testnet2)",
 		Value: aqua.DefaultConfig.NetworkId,
 	}
 	TestnetFlag = cli.BoolFlag{
 		Name:  "testnet",
 		Usage: "Testnet: pre-configured proof-of-work test network",
 	}
-	RinkebyFlag = cli.BoolFlag{
+	Testnet2Flag = cli.BoolFlag{
 		Name:  "testnet2",
 		Usage: "Testnet2: pre-configured proof-of-authority test network",
 	}
@@ -166,14 +166,10 @@ var (
 		Name:  "fast",
 		Usage: "Enable fast syncing through state downloads",
 	}
-	LightModeFlag = cli.BoolFlag{
-		Name:  "light",
-		Usage: "Enable light client mode",
-	}
 	defaultSyncMode = aqua.DefaultConfig.SyncMode
 	SyncModeFlag    = TextMarshalerFlag{
 		Name:  "syncmode",
-		Usage: `Blockchain sync mode ("fast", "full", or "light")`,
+		Usage: `Blockchain sync mode ("fast", "full")`,
 		Value: &defaultSyncMode,
 	}
 	GCModeFlag = cli.StringFlag{
@@ -514,7 +510,7 @@ func MakeDataDir(ctx *cli.Context) string {
 		if ctx.GlobalBool(TestnetFlag.Name) {
 			return filepath.Join(path, "testnet")
 		}
-		if ctx.GlobalBool(RinkebyFlag.Name) {
+		if ctx.GlobalBool(Testnet2Flag.Name) {
 			return filepath.Join(path, "testnet2")
 		}
 		return path
@@ -569,8 +565,8 @@ func setBootstrapNodes(ctx *cli.Context, cfg *p2p.Config) {
 		}
 	case ctx.GlobalBool(TestnetFlag.Name):
 		urls = params.TestnetBootnodes
-	case ctx.GlobalBool(RinkebyFlag.Name):
-		urls = params.RinkebyBootnodes
+	case ctx.GlobalBool(Testnet2Flag.Name):
+		urls = params.Testnet2Bootnodes
 	case cfg.BootstrapNodes != nil:
 		return // already set, don't apply defaults.
 	}
@@ -597,8 +593,8 @@ func setBootstrapNodesV5(ctx *cli.Context, cfg *p2p.Config) {
 		} else {
 			urls = strings.Split(ctx.GlobalString(BootnodesFlag.Name), ",")
 		}
-	case ctx.GlobalBool(RinkebyFlag.Name):
-		urls = params.RinkebyBootnodes
+	case ctx.GlobalBool(Testnet2Flag.Name):
+		urls = params.Testnet2Bootnodes
 	case cfg.BootstrapNodesV5 != nil:
 		return // already set, don't apply defaults.
 	}
@@ -648,6 +644,9 @@ func splitAndTrim(input string) []string {
 func setHTTP(ctx *cli.Context, cfg *node.Config) {
 	if ctx.GlobalBool(RPCEnabledFlag.Name) && cfg.HTTPHost == "" {
 		cfg.HTTPHost = "127.0.0.1"
+		if ctx.GlobalIsSet(RPCListenAddrFlag.Name) && ctx.GlobalIsSet(UnlockedAccountFlag.Name) {
+			Fatalf("Can not use --rpcaddr with --unlocked flag")
+		}
 		if ctx.GlobalIsSet(RPCListenAddrFlag.Name) {
 			cfg.HTTPHost = ctx.GlobalString(RPCListenAddrFlag.Name)
 		}
@@ -836,7 +835,7 @@ func SetNodeConfig(ctx *cli.Context, cfg *node.Config) {
 		cfg.DataDir = "" // unless explicitly requested, use memory databases
 	case ctx.GlobalBool(TestnetFlag.Name):
 		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet")
-	case ctx.GlobalBool(RinkebyFlag.Name):
+	case ctx.GlobalBool(Testnet2Flag.Name):
 		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "rinkeby")
 	}
 
@@ -962,7 +961,7 @@ func SetShhConfig(ctx *cli.Context, stack *node.Node, cfg *whisper.Config) {
 // SetAquaConfig applies aqua-related command line flags to the config.
 func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 	// Avoid conflicting network flags
-	checkExclusive(ctx, DeveloperFlag, TestnetFlag, RinkebyFlag)
+	checkExclusive(ctx, DeveloperFlag, TestnetFlag, Testnet2Flag)
 	checkExclusive(ctx, FastSyncFlag, SyncModeFlag)
 	// checkExclusive(ctx, LightServFlag, LightModeFlag)
 	// checkExclusive(ctx, LightServFlag, SyncModeFlag, "light")
@@ -978,8 +977,6 @@ func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 		cfg.SyncMode = *GlobalTextMarshaler(ctx, SyncModeFlag.Name).(*downloader.SyncMode)
 	case ctx.GlobalBool(FastSyncFlag.Name):
 		cfg.SyncMode = downloader.FastSync
-	case ctx.GlobalBool(LightModeFlag.Name):
-		cfg.SyncMode = downloader.LightSync
 	}
 
 	if ctx.GlobalIsSet(NetworkIdFlag.Name) {
@@ -1023,11 +1020,11 @@ func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 			cfg.NetworkId = 3
 		}
 		cfg.Genesis = core.DefaultTestnetGenesisBlock()
-	case ctx.GlobalBool(RinkebyFlag.Name):
+	case ctx.GlobalBool(Testnet2Flag.Name):
 		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
 			cfg.NetworkId = 4
 		}
-		cfg.Genesis = core.DefaultRinkebyGenesisBlock()
+		cfg.Genesis = core.DefaultTestnet2GenesisBlock()
 	case ctx.GlobalBool(DeveloperFlag.Name):
 		// Create new developer account or reuse existing one
 		var (
@@ -1060,14 +1057,9 @@ func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 
 // RegisterAquaService adds an AquaChain client to the stack.
 func RegisterAquaService(stack *node.Node, cfg *aqua.Config) {
-	var err error
-	if cfg.SyncMode == downloader.LightSync {
-		err = fmt.Errorf("no LES support")
-	} else {
-		err = stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
-			return aqua.New(ctx, cfg)
-		})
-	}
+	err := stack.Register(func(ctx *node.ServiceContext) (node.Service, error) {
+		return aqua.New(ctx, cfg)
+	})
 	if err != nil {
 		Fatalf("Failed to register the AquaChain service: %v", err)
 	}
@@ -1109,9 +1101,6 @@ func MakeChainDatabase(ctx *cli.Context, stack *node.Node) aquadb.Database {
 		handles = makeDatabaseHandles()
 	)
 	name := "chaindata"
-	if ctx.GlobalBool(LightModeFlag.Name) {
-		name = "lightchaindata"
-	}
 	chainDb, err := stack.OpenDatabase(name, cache, handles)
 	if err != nil {
 		Fatalf("Could not open database: %v", err)
@@ -1124,8 +1113,8 @@ func MakeGenesis(ctx *cli.Context) *core.Genesis {
 	switch {
 	case ctx.GlobalBool(TestnetFlag.Name):
 		genesis = core.DefaultTestnetGenesisBlock()
-	case ctx.GlobalBool(RinkebyFlag.Name):
-		genesis = core.DefaultRinkebyGenesisBlock()
+	case ctx.GlobalBool(Testnet2Flag.Name):
+		genesis = core.DefaultTestnet2GenesisBlock()
 	case ctx.GlobalBool(DeveloperFlag.Name):
 		Fatalf("Developer chains are ephemeral")
 	}

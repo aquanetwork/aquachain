@@ -48,7 +48,6 @@ var (
 		ArgsUsage: "<genesisPath>",
 		Flags: []cli.Flag{
 			utils.DataDirFlag,
-			utils.LightModeFlag,
 		},
 		Category: "BLOCKCHAIN COMMANDS",
 		Description: `
@@ -66,7 +65,6 @@ It expects the genesis file as argument.`,
 		Flags: []cli.Flag{
 			utils.DataDirFlag,
 			utils.CacheFlag,
-			utils.LightModeFlag,
 			utils.GCModeFlag,
 			utils.CacheDatabaseFlag,
 			utils.CacheGCFlag,
@@ -87,7 +85,6 @@ processing will proceed even if an individual RLP-file import failure occurs.`,
 		Flags: []cli.Flag{
 			utils.DataDirFlag,
 			utils.CacheFlag,
-			utils.LightModeFlag,
 		},
 		Category: "BLOCKCHAIN COMMANDS",
 		Description: `
@@ -107,7 +104,7 @@ if already existing.`,
 			utils.SyncModeFlag,
 			utils.FakePoWFlag,
 			utils.TestnetFlag,
-			utils.RinkebyFlag,
+			utils.Testnet2Flag,
 		},
 		Category: "BLOCKCHAIN COMMANDS",
 		Description: `
@@ -120,7 +117,6 @@ The first argument must be the directory containing the blockchain to download f
 		ArgsUsage: " ",
 		Flags: []cli.Flag{
 			utils.DataDirFlag,
-			utils.LightModeFlag,
 		},
 		Category: "BLOCKCHAIN COMMANDS",
 		Description: `
@@ -134,7 +130,6 @@ Remove blockchain and state databases`,
 		Flags: []cli.Flag{
 			utils.DataDirFlag,
 			utils.CacheFlag,
-			utils.LightModeFlag,
 		},
 		Category: "BLOCKCHAIN COMMANDS",
 		Description: `
@@ -161,9 +156,9 @@ func initGenesis(ctx *cli.Context) error {
 	if err := json.NewDecoder(file).Decode(genesis); err != nil {
 		utils.Fatalf("invalid genesis file: %v", err)
 	}
-	// Open an initialise both full and light databases
+	// Open an initialise db
 	stack := makeFullNode(ctx)
-	for _, name := range []string{"chaindata", "lightchaindata"} {
+	for _, name := range []string{"chaindata"} {
 		chaindb, err := stack.OpenDatabase(name, 0, 0)
 		if err != nil {
 			utils.Fatalf("Failed to open database: %v", err)
@@ -341,29 +336,29 @@ func copyDb(ctx *cli.Context) error {
 func removeDB(ctx *cli.Context) error {
 	stack, _ := makeConfigNode(ctx)
 
-	for _, name := range []string{"chaindata", "lightchaindata"} {
-		// Ensure the database exists in the first place
-		logger := log.New("database", name)
+	name := "chaindata"
+	// Ensure the database exists in the first place
+	logger := log.New("database", name)
 
-		dbdir := stack.ResolvePath(name)
-		if !common.FileExist(dbdir) {
-			logger.Info("Database doesn't exist, skipping", "path", dbdir)
-			continue
-		}
-		// Confirm removal and execute
-		fmt.Println(dbdir)
-		confirm, err := console.Stdin.PromptConfirm("Remove this database?")
-		switch {
-		case err != nil:
-			utils.Fatalf("%v", err)
-		case !confirm:
-			logger.Warn("Database deletion aborted")
-		default:
-			start := time.Now()
-			os.RemoveAll(dbdir)
-			logger.Info("Database successfully deleted", "elapsed", common.PrettyDuration(time.Since(start)))
-		}
+	dbdir := stack.ResolvePath(name)
+	if !common.FileExist(dbdir) {
+		logger.Info("Database doesn't exist, skipping", "path", dbdir)
+		return nil
 	}
+	// Confirm removal and execute
+	fmt.Println(dbdir)
+	confirm, err := console.Stdin.PromptConfirm("Remove this database?")
+	switch {
+	case err != nil:
+		utils.Fatalf("%v", err)
+	case !confirm:
+		logger.Warn("Database deletion aborted")
+	default:
+		start := time.Now()
+		os.RemoveAll(dbdir)
+		logger.Info("Database successfully deleted", "elapsed", common.PrettyDuration(time.Since(start)))
+	}
+
 	return nil
 }
 

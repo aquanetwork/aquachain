@@ -81,7 +81,7 @@ var AppHelpFlagGroups = []flagGroup{
 			utils.NoUSBFlag,
 			utils.NetworkIdFlag,
 			utils.TestnetFlag,
-			utils.RinkebyFlag,
+			utils.Testnet2Flag,
 			utils.SyncModeFlag,
 			utils.GCModeFlag,
 			utils.AquaStatsURLFlag,
@@ -105,16 +105,6 @@ var AppHelpFlagGroups = []flagGroup{
 			utils.AquahashDatasetsOnDiskFlag,
 		},
 	},
-	//{
-	//	Name: "DASHBOARD",
-	//	Flags: []cli.Flag{
-	//		utils.DashboardEnabledFlag,
-	//		utils.DashboardAddrFlag,
-	//		utils.DashboardPortFlag,
-	//		utils.DashboardRefreshFlag,
-	//		utils.DashboardAssetsFlag,
-	//	},
-	//},
 	{
 		Name: "TRANSACTION POOL",
 		Flags: []cli.Flag{
@@ -222,13 +212,10 @@ var AppHelpFlagGroups = []flagGroup{
 	},
 	{
 		Name: "DEPRECATED",
-		Flags: []cli.Flag{
-			utils.FastSyncFlag,
-			utils.LightModeFlag,
-		},
 	},
 	{
-		Name: "MISC",
+		Name:  "MISC",
+		Flags: []cli.Flag{utils.FastSyncFlag},
 	},
 }
 
