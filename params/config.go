@@ -117,9 +117,6 @@ type ChainConfig struct {
 
 	HomesteadBlock *big.Int `json:"homesteadBlock,omitempty"` // Homestead switch block (nil = no fork, 0 = already homestead)
 
-	// HF Scheduled Maintenance Hardforks
-	//HF map[int]*big.Int `json:"hfmap,omitempty"` // map of HF block numbers
-
 	// et junk to remove
 	DAOForkBlock   *big.Int `json:"daoForkBlock,omitempty"`   // TheDAO hard-fork switch block (nil = no fork)
 	DAOForkSupport bool     `json:"daoForkSupport,omitempty"` // Whether the nodes supports or opposes the DAO hard-fork
@@ -136,6 +133,8 @@ type ChainConfig struct {
 
 	// Various consensus engines
 	Aquahash *AquahashConfig `json:"aquahash,omitempty"`
+
+	// HF Scheduled Maintenance Hardforks
 	HF       ForkMap         `json:"hf,omitempty"`
 }
 
