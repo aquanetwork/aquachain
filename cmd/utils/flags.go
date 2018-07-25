@@ -650,9 +650,9 @@ func setHTTP(ctx *cli.Context, cfg *node.Config) {
 		cfg.HTTPHost = "127.0.0.1"
 		if ctx.GlobalIsSet(RPCEnabledFlag.Name) && ctx.GlobalIsSet(UnlockedAccountFlag.Name) && !ctx.GlobalIsSet(RPCUnlockFlag.Name) {
 			Fatalf("Woah there! By default, using -rpc and -unlock is safe.\n" +
-				 			"But you shouldn't use --rpcaddr with --unlock flag.\n" +
-							"If you really know what you are doing and would like to unlock a wallet while" +
-							"hosting an HTTP RPC node, use the -UNSAFE_RPC_UNLOCK flag.")
+				"But you shouldn't use --rpcaddr with --unlock flag.\n" +
+				"If you really know what you are doing and would like to unlock a wallet while" +
+				"hosting an HTTP RPC node, use the -UNSAFE_RPC_UNLOCK flag.")
 		}
 		if ctx.GlobalIsSet(RPCListenAddrFlag.Name) {
 			cfg.HTTPHost = ctx.GlobalString(RPCListenAddrFlag.Name)
