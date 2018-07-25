@@ -790,7 +790,9 @@ func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config) {
 	if ctx.GlobalIsSet(NoDiscoverFlag.Name) {
 		cfg.NoDiscovery = true
 	}
-
+	if ctx.GlobalBool(Testnet2Flag.Name) {
+		cfg.NoDiscovery = true
+	}
 	// if we're running a light client or server, force enable the v5 peer discovery
 	// unless it is explicitly disabled with --nodiscover note that explicitly specifying
 	// --v5disc overrides --nodiscover, in which case the later only disables v4 discovery
@@ -836,7 +838,7 @@ func SetNodeConfig(ctx *cli.Context, cfg *node.Config) {
 	case ctx.GlobalBool(TestnetFlag.Name):
 		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet")
 	case ctx.GlobalBool(Testnet2Flag.Name):
-		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "rinkeby")
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet2")
 	}
 
 	if ctx.GlobalIsSet(KeyStoreDirFlag.Name) {
