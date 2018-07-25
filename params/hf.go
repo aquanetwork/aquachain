@@ -1,4 +1,4 @@
-// Copyright 2016 The aquachain Authors
+// Copyright 2018 The aquachain Authors
 // This file is part of the aquachain library.
 //
 // The aquachain library is free software: you can redistribute it and/or modify
@@ -25,7 +25,10 @@ import (
 type ForkMap map[int]*big.Int
 
 func (f ForkMap) String() (s string) {
-	for i := 0; i < len(f); i++ {
+	for i := 0; i < 10; i++ {
+		if f[i] == nil {
+			continue
+		}
 		s = fmt.Sprintf("%s %v:%v", s, i, f[i].Int64())
 	}
 	return strings.TrimSpace(s)
