@@ -319,7 +319,7 @@ func DefaultGenesisBlock() *Genesis {
 		Nonce:      42,
 		GasLimit:   4200000,
 		Difficulty: big.NewInt(99999999),
-		Alloc:      decodePrealloc(mainnetAllocData), // fixed in HF4
+		Alloc:      decodePrealloc(mainnetAllocData), // all of ethereum presale, "fixed" in HF4
 	}
 }
 
@@ -328,10 +328,8 @@ func DefaultTestnetGenesisBlock() *Genesis {
 	return &Genesis{
 		Config:     params.TestnetChainConfig,
 		Nonce:      66,
-		ExtraData:  hexutil.MustDecode("0x3535353535353535353535353535353535353535353535353535353535353535"),
 		GasLimit:   16777216,
 		Difficulty: big.NewInt(1048576),
-		//	Alloc:      decodePrealloc(mainnetAllocData), // fixed in HF4
 	}
 }
 
@@ -340,10 +338,8 @@ func DefaultTestnet2GenesisBlock() *Genesis {
 	return &Genesis{
 		Config:     params.Testnet2ChainConfig,
 		Timestamp:  1492009146,
-		ExtraData:  hexutil.MustDecode("0x52657370656374206d7920617574686f7269746168207e452e436172746d616e42eb768f2244c8811c63729a21a3569731535f067ffc57839b00206d1ad20c69a1981b489f772031b279182d99e65703f0076e4812653aab85fca0f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"),
 		GasLimit:   4700000,
 		Difficulty: big.NewInt(1),
-		//Alloc:      decodePrealloc(rinkebyAllocData),
 	}
 }
 
@@ -368,7 +364,7 @@ func DeveloperGenesisBlock(period uint64, faucet common.Address) *Genesis {
 			common.BytesToAddress([]byte{6}): {Balance: big.NewInt(1)}, // ECAdd
 			common.BytesToAddress([]byte{7}): {Balance: big.NewInt(1)}, // ECScalarMul
 			common.BytesToAddress([]byte{8}): {Balance: big.NewInt(1)}, // ECPairing
-			faucet:                           {Balance: new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 256), big.NewInt(9))},
+			faucet: {Balance: new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 256), big.NewInt(9))},
 		},
 	}
 }
