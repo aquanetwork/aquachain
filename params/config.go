@@ -26,7 +26,7 @@ import (
 var (
 	MainnetGenesisHash = common.HexToHash("0x381c8d2c3e3bc702533ee504d7621d510339cafd830028337a4b532ff27cd505") // Mainnet genesis hash to enforce below configs on
 	//MainnetGenesisHash = common.HexToHash("0x2461b9b2e5b57ed037fe99f470511c6dbef8e0ed976b3f3197ae689f5b100a9b") // Mainnet genesis hash to enforce below configs on
-	TestnetGenesisHash = common.HexToHash("0x817df985008bb2178975203c512c19f97d8e7a04389b5fea4968a4359534d6b2") // Testnet genesis hash to enforce below configs on
+	TestnetGenesisHash = common.HexToHash("0xa8773cb7d32b8f7e1b32b0c2c8b735c293b8936dd3760c15afc291a23eb0cf88") // Testnet genesis hash to enforce below configs on
 )
 var (
 	AquachainHF = ForkMap{
@@ -50,6 +50,13 @@ var (
 		5: big.NewInt(5),  // HF5
 		6: big.NewInt(6),  // noop in testnet
 		7: big.NewInt(25), // eip 155, 158
+	}
+
+	Testnet2HF = ForkMap{
+		4: big.NewInt(0),
+		5: big.NewInt(0),
+		6: big.NewInt(0),
+		7: big.NewInt(0),
 	}
 )
 var (
@@ -77,13 +84,16 @@ var (
 		HF:             TestnetHF,
 	}
 
-	// RinkebyChainConfig contains the chain parameters to run a node on the Rinkeby test network.
-	RinkebyChainConfig = &ChainConfig{
-		ChainId:        big.NewInt(4),
-		HomesteadBlock: big.NewInt(1),
+	// Testnet2ChainConfig contains the chain parameters to run a node on the Testnet2 test network.
+	Testnet2ChainConfig = &ChainConfig{
+		ChainId:        big.NewInt(4096),
+		HomesteadBlock: big.NewInt(0),
 		EIP150Block:    big.NewInt(0),
+		EIP155Block:    Testnet2HF[7],
+		EIP158Block:    Testnet2HF[7],
+		ByzantiumBlock: Testnet2HF[7],
 		Aquahash:       new(AquahashConfig),
-		HF:             TestnetHF,
+		HF:             Testnet2HF,
 	}
 
 	// AllAquahashProtocolChanges contains every protocol change (EIPs) introduced
@@ -146,23 +156,14 @@ func (c *ChainConfig) String() string {
 	default:
 		engine = "unknown"
 	}
-	return fmt.Sprintf("{ChainID: %v, Engine: %v, HF-Ready: %s}",
+	return fmt.Sprintf("{ChainID: %v EIP150: %v EIP155: %v EIP158: %v Byzantium: %v Engine: %v}",
 		c.ChainId,
+		c.EIP150Block,
+		c.EIP155Block,
+		c.EIP158Block,
+		c.ByzantiumBlock,
 		engine,
-		c.HF,
 	)
-	// return fmt.Sprintf("{ChainID: %v Homestead: %v DAO: %v DAOSupport: %v EIP150: %v EIP155: %v EIP158: %v Byzantium: %v Constantinople: %v Engine: %v}",
-	// 	c.ChainId,
-	// 	c.HomesteadBlock,
-	// 	c.DAOForkBlock,
-	// 	c.DAOForkSupport,
-	// 	c.EIP150Block,
-	// 	c.EIP155Block,
-	// 	c.EIP158Block,
-	// 	c.ByzantiumBlock,
-	// 	c.ConstantinopleBlock,
-	// 	engine,
-	// )
 }
 
 // IsHF returns whether num is either equal to the hf block or greater.

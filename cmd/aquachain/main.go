@@ -98,11 +98,9 @@ var (
 		utils.DeveloperFlag,
 		utils.DeveloperPeriodFlag,
 		utils.TestnetFlag,
-		utils.RinkebyFlag,
+		utils.Testnet2Flag,
 		utils.VMEnableDebugFlag,
 		utils.NetworkIdFlag,
-		utils.RPCCORSDomainFlag,
-		utils.RPCVirtualHostsFlag,
 		utils.AquaStatsURLFlag,
 		utils.MetricsEnabledFlag,
 		utils.FakePoWFlag,
@@ -115,6 +113,9 @@ var (
 
 	rpcFlags = []cli.Flag{
 		utils.RPCEnabledFlag,
+		utils.RPCUnlockFlag,
+		utils.RPCCORSDomainFlag,
+		utils.RPCVirtualHostsFlag,
 		utils.RPCListenAddrFlag,
 		utils.RPCPortFlag,
 		utils.RPCApiFlag,
@@ -274,13 +275,9 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 	}()
 	// Start auxiliary services if enabled
 	if ctx.GlobalBool(utils.MiningEnabledFlag.Name) || ctx.GlobalBool(utils.DeveloperFlag.Name) {
-		// Mining only makes sense if a full AquaChain node is running
-		if ctx.GlobalBool(utils.LightModeFlag.Name) || ctx.GlobalString(utils.SyncModeFlag.Name) == "light" {
-			utils.Fatalf("Light clients do not support mining")
-		}
 		var aquachain *aqua.AquaChain
 		if err := stack.Service(&aquachain); err != nil {
-			utils.Fatalf("AquaChain service not running: %v", err)
+			utils.Fatalf("Aquachain service not running: %v", err)
 		}
 		// Use a reduced number of threads if requested
 		if threads := ctx.GlobalInt(utils.MinerThreadsFlag.Name); threads > 0 {

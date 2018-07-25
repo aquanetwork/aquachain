@@ -39,8 +39,6 @@ var TestnetBootnodes = []string{
 	"enode://6227ff2948ff51ee4f09e5f1df2c1270c47b753718d406605787326341de6ff8e7cb6a5f01a4deed5437dcdd7b9fb8e656f0ad6a08c1f677c2ca5d0e666a92fc@168.235.78.103:21002", // aquachain-2 testnet new protocol
 }
 
-// RinkebyBootnodes are the enode URLs of the P2P bootstrap nodes running on the
-// Rinkeby test network.
-var RinkebyBootnodes = []string{
-	"enode://6227ff2948ff51ee4f09e5f1df2c1270c47b753718d406605787326341de6ff8e7cb6a5f01a4deed5437dcdd7b9fb8e656f0ad6a08c1f677c2ca5d0e666a92fc@168.235.78.103:21003", // aquachain-2 testnet new protocol
-}
+// Testnet2Bootnodes are the enode URLs of the P2P bootstrap nodes running on the
+// Testnet2 test network.
+var Testnet2Bootnodes = []string{}

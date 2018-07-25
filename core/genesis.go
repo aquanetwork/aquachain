@@ -319,7 +319,7 @@ func DefaultGenesisBlock() *Genesis {
 		Nonce:      42,
 		GasLimit:   4200000,
 		Difficulty: big.NewInt(99999999),
-		Alloc:      decodePrealloc(mainnetAllocData), // fixed in HF4
+		Alloc:      decodePrealloc(mainnetAllocData), // all of ethereum presale, "fixed" in HF4
 	}
 }
 
@@ -328,22 +328,18 @@ func DefaultTestnetGenesisBlock() *Genesis {
 	return &Genesis{
 		Config:     params.TestnetChainConfig,
 		Nonce:      66,
-		ExtraData:  hexutil.MustDecode("0x3535353535353535353535353535353535353535353535353535353535353535"),
 		GasLimit:   16777216,
 		Difficulty: big.NewInt(1048576),
-		//	Alloc:      decodePrealloc(mainnetAllocData), // fixed in HF4
 	}
 }
 
-// DefaultRinkebyGenesisBlock returns the Rinkeby network genesis block.
-func DefaultRinkebyGenesisBlock() *Genesis {
+// DefaultTestnet2GenesisBlock returns the Testnet2 network genesis block.
+func DefaultTestnet2GenesisBlock() *Genesis {
 	return &Genesis{
-		Config:     params.RinkebyChainConfig,
+		Config:     params.Testnet2ChainConfig,
 		Timestamp:  1492009146,
-		ExtraData:  hexutil.MustDecode("0x52657370656374206d7920617574686f7269746168207e452e436172746d616e42eb768f2244c8811c63729a21a3569731535f067ffc57839b00206d1ad20c69a1981b489f772031b279182d99e65703f0076e4812653aab85fca0f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"),
 		GasLimit:   4700000,
 		Difficulty: big.NewInt(1),
-		//Alloc:      decodePrealloc(rinkebyAllocData),
 	}
 }
 

@@ -37,9 +37,10 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
-	"gitlab.com/aquachain/aquachain/crypto"
 	"math/big"
 	"testing"
+
+	"gitlab.com/aquachain/aquachain/crypto"
 )
 
 var dumpEnc bool
