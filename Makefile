@@ -17,6 +17,11 @@ aquachain:
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/aquachain\" to launch aquachain."
 
+static: aquachain-static
+
+aquachain-static:
+	build/env.sh go run build/ci.go install -static ./cmd/aquachain
+
 aquaminer:
 	build/env.sh go run build/ci.go install ./cmd/aquaminer
 	@echo "Done building."
@@ -33,6 +38,9 @@ swarm:
 
 all:
 	build/env.sh go run build/ci.go install
+
+all-static:
+	build/env.sh go run build/ci.go install -static
 
 release: aquachain-windows-amd64 aquachain-darwin-amd64 aquachain-linux-amd64
 
