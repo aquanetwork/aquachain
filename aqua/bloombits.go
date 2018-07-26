@@ -95,9 +95,8 @@ type BloomIndexer struct {
 
 	db      aquadb.Database      // database instance to write index data and metadata into
 	gen     *bloombits.Generator // generator to rotate the bloom bits crating the bloom index
-	cfg     *params.ChainConfig
-	section uint64      // Section is the section number being processed currently
-	head    common.Hash // Head is the hash of the last header processed
+	section uint64               // Section is the section number being processed currently
+	head    common.Hash          // Head is the hash of the last header processed
 }
 
 // NewBloomIndexer returns a chain indexer that generates bloom bits data for the

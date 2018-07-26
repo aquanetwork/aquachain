@@ -467,12 +467,12 @@ type downloadTesterPeer struct {
 }
 
 // setDelay is a thread safe setter for the network delay value.
-func (dlp *downloadTesterPeer) setDelay(delay time.Duration) {
-	dlp.lock.Lock()
-	defer dlp.lock.Unlock()
-
-	dlp.delay = delay
-}
+//func (dlp *downloadTesterPeer) setDelay(delay time.Duration) {
+//	dlp.lock.Lock()
+//	defer dlp.lock.Unlock()
+//
+//	dlp.delay = delay
+//}
 
 // waitDelay is a thread safe way to sleep for the configured time.
 func (dlp *downloadTesterPeer) waitDelay() {
