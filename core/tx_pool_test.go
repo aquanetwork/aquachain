@@ -175,7 +175,7 @@ func TestStateChangeDuringTransactionPoolReset(t *testing.T) {
 	t.Parallel()
 
 	var (
-		db      = aquadb.NewMemDatabase()
+		db         = aquadb.NewMemDatabase()
 		key, _     = crypto.GenerateKey()
 		address    = crypto.PubkeyToAddress(key.PublicKey)
 		statedb, _ = state.New(common.Hash{}, state.NewDatabase(db))

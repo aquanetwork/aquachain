@@ -334,7 +334,7 @@ func (test *snapshotTest) String() string {
 func (test *snapshotTest) run() bool {
 	// Run all actions and create snapshots.
 	var (
-		db        = aquadb.NewMemDatabase()
+		db           = aquadb.NewMemDatabase()
 		state, _     = New(common.Hash{}, NewDatabase(db))
 		snapshotRevs = make([]int, len(test.snapshots))
 		sindex       = 0
