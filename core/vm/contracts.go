@@ -252,13 +252,13 @@ func (c *bigModExp) Run(input []byte) ([]byte, error) {
 }
 
 var (
-	// errNotOnCurve is returned if a point being unmarshalled as a bn256 elliptic
-	// curve point is not on the curve.
-	errNotOnCurve = errors.New("point not on elliptic curve")
+// errNotOnCurve is returned if a point being unmarshalled as a bn256 elliptic
+// curve point is not on the curve.
+//errNotOnCurve = errors.New("point not on elliptic curve")
 
-	// errInvalidCurvePoint is returned if a point being unmarshalled as a bn256
-	// elliptic curve point is invalid.
-	errInvalidCurvePoint = errors.New("invalid elliptic curve point")
+// errInvalidCurvePoint is returned if a point being unmarshalled as a bn256
+// elliptic curve point is invalid.
+//errInvalidCurvePoint = errors.New("invalid elliptic curve point")
 )
 
 // newCurvePoint unmarshals a binary blob into a bn256 elliptic curve point,
