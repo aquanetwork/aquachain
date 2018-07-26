@@ -227,9 +227,8 @@ func DefaultWSEndpoint() string {
 // NodeName returns the devp2p node identifier.
 func (c *Config) NodeName() string {
 	name := c.name()
-	// Backwards compatibility: previous versions used title-cased "AquaChain", keep that.
-	if name == "aquachain" || name == "aquachain-testnet" {
-		name = "AquaChain"
+	if name == "aquachain" {
+		name = "Aquachain"
 	}
 	if c.UserIdent != "" {
 		name += "/" + c.UserIdent
