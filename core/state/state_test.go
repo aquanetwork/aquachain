@@ -87,7 +87,7 @@ func (s *StateSuite) TestDump(c *checker.C) {
 }
 
 func (s *StateSuite) SetUpTest(c *checker.C) {
-	s.db, _ = aquadb.NewMemDatabase()
+	s.db = aquadb.NewMemDatabase()
 	s.state, _ = New(common.Hash{}, NewDatabase(s.db))
 }
 
@@ -133,7 +133,7 @@ func (s *StateSuite) TestSnapshotEmpty(c *checker.C) {
 // use testing instead of checker because checker does not support
 // printing/logging in tests (-check.vv does not work)
 func TestSnapshot2(t *testing.T) {
-	db, _ := aquadb.NewMemDatabase()
+	db := aquadb.NewMemDatabase()
 	state, _ := New(common.Hash{}, NewDatabase(db))
 
 	stateobjaddr0 := toAddr([]byte("so0"))

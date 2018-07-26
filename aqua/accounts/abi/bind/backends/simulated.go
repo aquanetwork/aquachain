@@ -65,7 +65,7 @@ type SimulatedBackend struct {
 // NewSimulatedBackend creates a new binding backend using a simulated blockchain
 // for testing purposes.
 func NewSimulatedBackend(alloc core.GenesisAlloc) *SimulatedBackend {
-	database, _ := aquadb.NewMemDatabase()
+	database := aquadb.NewMemDatabase()
 	genesis := core.Genesis{Config: params.AllAquahashProtocolChanges, Alloc: alloc}
 	genesis.MustCommit(database)
 	blockchain, _ := core.NewBlockChain(database, nil, genesis.Config, aquahash.NewFaker(), vm.Config{})

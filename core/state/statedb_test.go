@@ -39,7 +39,7 @@ import (
 // actually committing the state.
 func TestUpdateLeaks(t *testing.T) {
 	// Create an empty state database
-	db, _ := aquadb.NewMemDatabase()
+	db := aquadb.NewMemDatabase()
 	state, _ := New(common.Hash{}, NewDatabase(db))
 
 	// Update it with some accounts
@@ -66,8 +66,8 @@ func TestUpdateLeaks(t *testing.T) {
 // only the one right before the commit.
 func TestIntermediateLeaks(t *testing.T) {
 	// Create two state databases, one transitioning to the final state, the other final from the beginning
-	transDb, _ := aquadb.NewMemDatabase()
-	finalDb, _ := aquadb.NewMemDatabase()
+	transDb := aquadb.NewMemDatabase()
+	finalDb := aquadb.NewMemDatabase()
 	transState, _ := New(common.Hash{}, NewDatabase(transDb))
 	finalState, _ := New(common.Hash{}, NewDatabase(finalDb))
 
@@ -122,7 +122,7 @@ func TestIntermediateLeaks(t *testing.T) {
 // https://gitlab.com/aquachain/aquachain/pull/15549.
 func TestCopy(t *testing.T) {
 	// Create a random state test to copy and modify "independently"
-	db, _ := aquadb.NewMemDatabase()
+	db := aquadb.NewMemDatabase()
 	orig, _ := New(common.Hash{}, NewDatabase(db))
 
 	for i := byte(0); i < 255; i++ {
@@ -334,7 +334,7 @@ func (test *snapshotTest) String() string {
 func (test *snapshotTest) run() bool {
 	// Run all actions and create snapshots.
 	var (
-		db, _        = aquadb.NewMemDatabase()
+		db        = aquadb.NewMemDatabase()
 		state, _     = New(common.Hash{}, NewDatabase(db))
 		snapshotRevs = make([]int, len(test.snapshots))
 		sindex       = 0
