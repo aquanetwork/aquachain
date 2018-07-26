@@ -27,8 +27,6 @@ import (
 const version = "aquaminer version 0.4x (https://gitlab.com/aquachain/aquachain)"
 
 var (
-	rawurl      = "http://localhost:8543"
-	max         = new(big.Int).SetUint64(math.MaxUint64)
 	digest      = common.BytesToHash(make([]byte, common.HashLength))
 	maxproc     = flag.Int("t", runtime.NumCPU(), "number of miners to spawn")
 	farm        = flag.String("F", "http://localhost:8543", "rpc server to mine to")

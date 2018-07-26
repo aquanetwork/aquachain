@@ -36,7 +36,6 @@ import (
 var (
 	errInvalidEvent = errors.New("invalid in current state")
 	errNoQuery      = errors.New("no pending query")
-	errWrongAddress = errors.New("unknown sender address")
 )
 
 const (
@@ -78,14 +77,6 @@ type Network struct {
 	nursery       []*Node
 	nodes         map[NodeID]*Node // tracks active nodes with state != known
 	timeoutTimers map[timeoutEvent]*time.Timer
-
-	// Revalidation queues.
-	// Nodes put on these queues will be pinged eventually.
-	slowRevalidateQueue []*Node
-	fastRevalidateQueue []*Node
-
-	// Buffers for state transition.
-	sendBuf []*ingressPacket
 }
 
 // transport is implemented by the UDP transport.
@@ -105,10 +96,9 @@ type transport interface {
 }
 
 type findnodeQuery struct {
-	remote   *Node
-	target   common.Hash
-	reply    chan<- []*Node
-	nresults int // counter for received nodes
+	remote *Node
+	target common.Hash
+	reply  chan<- []*Node
 }
 
 type topicRegisterReq struct {
@@ -828,8 +818,7 @@ type nodeEvent uint
 //go:generate stringer -type=nodeEvent
 
 const (
-	invalidEvent nodeEvent = iota // zero is reserved
-
+	_ nodeEvent = iota
 	// Packet type events.
 	// These correspond to packet types in the UDP protocol.
 	pingPacket

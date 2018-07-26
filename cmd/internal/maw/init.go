@@ -3,7 +3,6 @@
 package maw
 
 import (
-	"encoding/json"
 	"log"
 	"net"
 	"net/http"
@@ -53,9 +52,4 @@ func (ws *walletserver) Exit() {
 
 func (ws *walletserver) String() string {
 	return "Aquachain Webwallet"
-}
-
-func marshal(i interface{}) []byte {
-	b, _ := json.Marshal(i)
-	return b
 }

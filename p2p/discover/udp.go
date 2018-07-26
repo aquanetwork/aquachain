@@ -27,7 +27,6 @@ import (
 
 	"gitlab.com/aquachain/aquachain/common/log"
 	"gitlab.com/aquachain/aquachain/crypto"
-	"gitlab.com/aquachain/aquachain/p2p/nat"
 	"gitlab.com/aquachain/aquachain/p2p/netutil"
 	"gitlab.com/aquachain/aquachain/rlp"
 )
@@ -36,7 +35,6 @@ const Version = 4
 
 // Errors
 var (
-	errNotAqua          = errors.New("not aqua")
 	errPacketTooSmall   = errors.New("too small")
 	errBadHash          = errors.New("bad hash")
 	errExpired          = errors.New("expired")
@@ -50,7 +48,6 @@ var (
 // Timeouts
 const (
 	respTimeout = 500 * time.Millisecond
-	sendTimeout = 500 * time.Millisecond
 	expiration  = 20 * time.Second
 
 	ntpFailureThreshold = 32               // Continuous timeouts after which to check NTP
@@ -173,7 +170,6 @@ type udp struct {
 	gotreply   chan reply
 
 	closing chan struct{}
-	nat     nat.Interface
 
 	*Table
 }

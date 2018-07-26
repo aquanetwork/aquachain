@@ -15,16 +15,6 @@ import (
 )
 
 var (
-	mawCommand = cli.Command{
-		Name:     "maw",
-		Usage:    `Launch MyAquaWallet, an offline wallet that connects to this aquachain program via JSON-RPC/HTTP`,
-		Category: "ACCOUNT COMMANDS",
-		Action:   launchmaw,
-		Description: `
-	aquachain maw
-
-will launch browser MAW`,
-	}
 	walletCommand = cli.Command{
 		Name:     "wallet",
 		Usage:    `Launch MyAquaWallet, an offline wallet that connects to this aquachain program via JSON-RPC/HTTP`,
