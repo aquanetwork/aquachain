@@ -381,11 +381,11 @@ func decodePrealloc(data string) GenesisAlloc {
 	return ga
 }
 
-func listPrealloc(g GenesisAlloc) []common.Address {
-	list := []common.Address{}
-	for k := range g {
-		list = append(list, k)
-
-	}
-	return list
-}
+//func listPrealloc(g GenesisAlloc) []common.Address {
+//	list := []common.Address{}
+//	for k := range g {
+//		list = append(list, k)
+//
+//	}
+//	return list
+//}
