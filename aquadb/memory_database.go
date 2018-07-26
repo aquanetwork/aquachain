@@ -1,18 +1,18 @@
-// Copyright 2014 The aquachain Authors
-// This file is part of the aquachain library.
+// Copyright 2014 The go-ethereum Authors
+// This file is part of the go-ethereum library.
 //
-// The aquachain library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The aquachain library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
 package aquadb
 
@@ -31,16 +31,16 @@ type MemDatabase struct {
 	lock sync.RWMutex
 }
 
-func NewMemDatabase() (*MemDatabase, error) {
+func NewMemDatabase() *MemDatabase {
 	return &MemDatabase{
 		db: make(map[string][]byte),
-	}, nil
+	}
 }
 
-func NewMemDatabaseWithCap(size int) (*MemDatabase, error) {
+func NewMemDatabaseWithCap(size int) *MemDatabase {
 	return &MemDatabase{
 		db: make(map[string][]byte, size),
-	}, nil
+	}
 }
 
 func (db *MemDatabase) Put(key []byte, value []byte) error {
@@ -96,7 +96,10 @@ func (db *MemDatabase) NewBatch() Batch {
 
 func (db *MemDatabase) Len() int { return len(db.db) }
 
-type kv struct{ k, v []byte }
+type kv struct {
+	k, v []byte
+	del  bool
+}
 
 type memBatch struct {
 	db     *MemDatabase
@@ -105,8 +108,14 @@ type memBatch struct {
 }
 
 func (b *memBatch) Put(key, value []byte) error {
-	b.writes = append(b.writes, kv{common.CopyBytes(key), common.CopyBytes(value)})
+	b.writes = append(b.writes, kv{common.CopyBytes(key), common.CopyBytes(value), false})
 	b.size += len(value)
+	return nil
+}
+
+func (b *memBatch) Delete(key []byte) error {
+	b.writes = append(b.writes, kv{common.CopyBytes(key), nil, true})
+	b.size += 1
 	return nil
 }
 
@@ -115,6 +124,10 @@ func (b *memBatch) Write() error {
 	defer b.db.lock.Unlock()
 
 	for _, kv := range b.writes {
+		if kv.del {
+			delete(b.db.db, string(kv.k))
+			continue
+		}
 		b.db.db[string(kv.k)] = kv.v
 	}
 	return nil

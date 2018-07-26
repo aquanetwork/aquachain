@@ -1,18 +1,18 @@
-// Copyright 2014 The aquachain Authors
-// This file is part of the aquachain library.
+// Copyright 2014 The go-ethereum Authors
+// This file is part of the go-ethereum library.
 //
-// The aquachain library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The aquachain library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
 package aquadb_test
 
@@ -29,7 +29,7 @@ import (
 )
 
 func newTestLDB() (*aquadb.LDBDatabase, func()) {
-	dirname, err := ioutil.TempDir(os.TempDir(), "ethdb_test_")
+	dirname, err := ioutil.TempDir(os.TempDir(), "aquadb_test_")
 	if err != nil {
 		panic("failed to create test file: " + err.Error())
 	}
@@ -53,12 +53,33 @@ func TestLDB_PutGet(t *testing.T) {
 }
 
 func TestMemoryDB_PutGet(t *testing.T) {
-	db, _ := aquadb.NewMemDatabase()
-	testPutGet(db, t)
+	testPutGet(aquadb.NewMemDatabase(), t)
 }
 
 func testPutGet(db aquadb.Database, t *testing.T) {
 	t.Parallel()
+
+	for _, k := range test_values {
+		err := db.Put([]byte(k), nil)
+		if err != nil {
+			t.Fatalf("put failed: %v", err)
+		}
+	}
+
+	for _, k := range test_values {
+		data, err := db.Get([]byte(k))
+		if err != nil {
+			t.Fatalf("get failed: %v", err)
+		}
+		if len(data) != 0 {
+			t.Fatalf("get returned wrong result, got %q expected nil", string(data))
+		}
+	}
+
+	_, err := db.Get([]byte("non-exist-key"))
+	if err == nil {
+		t.Fatalf("expect to return a not found error")
+	}
 
 	for _, v := range test_values {
 		err := db.Put([]byte(v), []byte(v))
@@ -131,8 +152,7 @@ func TestLDB_ParallelPutGet(t *testing.T) {
 }
 
 func TestMemoryDB_ParallelPutGet(t *testing.T) {
-	db, _ := aquadb.NewMemDatabase()
-	testParallelPutGet(db, t)
+	testParallelPutGet(aquadb.NewMemDatabase(), t)
 }
 
 func testParallelPutGet(db aquadb.Database, t *testing.T) {
