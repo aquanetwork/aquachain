@@ -21,17 +21,13 @@ import (
 	"math/big"
 	"math/rand"
 	"testing"
-	"time"
 
 	"gitlab.com/aquachain/aquachain/aqua/downloader"
-	"gitlab.com/aquachain/aquachain/aqua/event"
 	"gitlab.com/aquachain/aquachain/aquadb"
 	"gitlab.com/aquachain/aquachain/common"
-	"gitlab.com/aquachain/aquachain/consensus/aquahash"
 	"gitlab.com/aquachain/aquachain/core"
 	"gitlab.com/aquachain/aquachain/core/state"
 	"gitlab.com/aquachain/aquachain/core/types"
-	"gitlab.com/aquachain/aquachain/core/vm"
 	"gitlab.com/aquachain/aquachain/crypto"
 	"gitlab.com/aquachain/aquachain/p2p"
 	"gitlab.com/aquachain/aquachain/params"
@@ -366,7 +362,7 @@ func testGetNodeData(t *testing.T, protocol int) {
 			t.Errorf("data hash mismatch: have %x, want %x", hash, want)
 		}
 	}
-	statedb, _ := aquadb.NewMemDatabase()
+	statedb := aquadb.NewMemDatabase()
 	for i := 0; i < len(data); i++ {
 		statedb.Put(hashes[i].Bytes(), data[i])
 	}
@@ -445,79 +441,5 @@ func testGetReceipt(t *testing.T, protocol int) {
 	p2p.Send(peer.app, 0x0f, hashes)
 	if err := p2p.ExpectMsg(peer.app, 0x10, receipts); err != nil {
 		t.Errorf("receipts mismatch: %v", err)
-	}
-}
-
-// Tests that post aqua protocol handshake, DAO fork-enabled clients also execute
-// a DAO "challenge" verifying each others' DAO fork headers to ensure they're on
-// compatible chains.
-/*
-func TestDAOChallengeNoVsNo(t *testing.T)       { testDAOChallenge(t, false, false, false) }
-func TestDAOChallengeNoVsPro(t *testing.T)      { testDAOChallenge(t, false, true, false) }
-func TestDAOChallengeProVsNo(t *testing.T)      { testDAOChallenge(t, true, false, false) }
-func TestDAOChallengeProVsPro(t *testing.T)     { testDAOChallenge(t, true, true, false) }
-func TestDAOChallengeNoVsTimeout(t *testing.T)  { testDAOChallenge(t, false, false, true) }
-func TestDAOChallengeProVsTimeout(t *testing.T) { testDAOChallenge(t, true, true, true) }
-*/
-func testDAOChallenge(t *testing.T, localForked, remoteForked bool, timeout bool) {
-	// Reduce the DAO handshake challenge timeout
-	if timeout {
-		defer func(old time.Duration) { daoChallengeTimeout = old }(daoChallengeTimeout)
-		daoChallengeTimeout = 500 * time.Millisecond
-	}
-	// Create a DAO aware protocol manager
-	var (
-		evmux         = new(event.TypeMux)
-		pow           = aquahash.NewFaker()
-		db, _         = aquadb.NewMemDatabase()
-		config        = &params.ChainConfig{DAOForkBlock: big.NewInt(1), DAOForkSupport: localForked}
-		gspec         = &core.Genesis{Config: config}
-		genesis       = gspec.MustCommit(db)
-		blockchain, _ = core.NewBlockChain(db, nil, config, pow, vm.Config{})
-	)
-	pm, err := NewProtocolManager(config, downloader.FullSync, DefaultConfig.NetworkId, evmux, new(testTxPool), pow, blockchain, db)
-	if err != nil {
-		t.Fatalf("failed to start test protocol manager: %v", err)
-	}
-	pm.Start(1000)
-	defer pm.Stop()
-
-	// Connect a new peer and check that we receive the HF challenge
-	peer, _ := newTestPeer("peer", aqua64, pm, true)
-	defer peer.close()
-
-	challenge := &getBlockHeadersData{
-		Origin:  hashOrNumber{Number: config.DAOForkBlock.Uint64()},
-		Amount:  1,
-		Skip:    0,
-		Reverse: false,
-	}
-	if err := p2p.ExpectMsg(peer.app, GetBlockHeadersMsg, challenge); err != nil {
-		t.Fatalf("challenge mismatch: %v", err)
-	}
-	// Create a block to reply to the challenge if no timeout is simulated
-	if !timeout {
-		blocks, _ := core.GenerateChain(&params.ChainConfig{}, genesis, aquahash.NewFaker(), db, 1, func(i int, block *core.BlockGen) {
-			if remoteForked {
-				//		block.SetExtra(params.DAOForkBlockExtra)
-			}
-		})
-		if err := p2p.Send(peer.app, BlockHeadersMsg, []*types.Header{blocks[0].Header()}); err != nil {
-			t.Fatalf("failed to answer challenge: %v", err)
-		}
-		time.Sleep(100 * time.Millisecond) // Sleep to avoid the verification racing with the drops
-	} else {
-		// Otherwise wait until the test timeout passes
-		time.Sleep(daoChallengeTimeout + 500*time.Millisecond)
-	}
-	// Verify that depending on fork side, the remote peer is maintained or dropped
-	if localForked == remoteForked && !timeout {
-		if peers := pm.peers.Len(); peers != 1 {
-			t.Fatalf("peer count mismatch: have %d, want %d", peers, 1)
-		}
-	} else {
-		if peers := pm.peers.Len(); peers != 0 {
-			t.Fatalf("peer count mismatch: have %d, want %d", peers, 0)
-		}
 	}
 }

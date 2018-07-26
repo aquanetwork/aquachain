@@ -48,7 +48,7 @@ func TestChainIndexerWithChildren(t *testing.T) {
 // multiple backends. The section size and required confirmation count parameters
 // are randomized.
 func testChainIndexer(t *testing.T, count int) {
-	db, _ := aquadb.NewMemDatabase()
+	db := aquadb.NewMemDatabase()
 	defer db.Close()
 
 	// Create a chain of indexers and ensure they all report empty

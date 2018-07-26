@@ -54,7 +54,6 @@ type filter struct {
 type PublicFilterAPI struct {
 	backend   Backend
 	mux       *event.TypeMux
-	quit      chan struct{}
 	chainDb   aquadb.Database
 	events    *EventSystem
 	filtersMu sync.Mutex

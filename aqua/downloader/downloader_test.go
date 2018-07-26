@@ -75,7 +75,7 @@ type downloadTester struct {
 
 // newTester creates a new downloader test mocker.
 func newTester() *downloadTester {
-	testdb, _ := aquadb.NewMemDatabase()
+	testdb := aquadb.NewMemDatabase()
 	genesis := core.GenesisBlockForTesting(testdb, testAddress, big.NewInt(1000000000))
 
 	tester := &downloadTester{
@@ -93,7 +93,7 @@ func newTester() *downloadTester {
 		peerChainTds:      make(map[string]map[common.Hash]*big.Int),
 		peerMissingStates: make(map[string]map[common.Hash]bool),
 	}
-	tester.stateDb, _ = aquadb.NewMemDatabase()
+	tester.stateDb = aquadb.NewMemDatabase()
 	tester.stateDb.Put(genesis.Root().Bytes(), []byte{0x00})
 
 	tester.downloader = New(FullSync, tester.stateDb, new(event.TypeMux), tester, nil, tester.dropPeer)
@@ -467,12 +467,12 @@ type downloadTesterPeer struct {
 }
 
 // setDelay is a thread safe setter for the network delay value.
-func (dlp *downloadTesterPeer) setDelay(delay time.Duration) {
-	dlp.lock.Lock()
-	defer dlp.lock.Unlock()
-
-	dlp.delay = delay
-}
+//func (dlp *downloadTesterPeer) setDelay(delay time.Duration) {
+//	dlp.lock.Lock()
+//	defer dlp.lock.Unlock()
+//
+//	dlp.delay = delay
+//}
 
 // waitDelay is a thread safe way to sleep for the configured time.
 func (dlp *downloadTesterPeer) waitDelay() {

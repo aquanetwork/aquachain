@@ -223,7 +223,7 @@ func (g *Genesis) configOrDefault(ghash common.Hash) *params.ChainConfig {
 // to the given database (or discards it if nil).
 func (g *Genesis) ToBlock(db aquadb.Database) *types.Block {
 	if db == nil {
-		db, _ = aquadb.NewMemDatabase()
+		db = aquadb.NewMemDatabase()
 	}
 	statedb, _ := state.New(common.Hash{}, state.NewDatabase(db))
 	for addr, account := range g.Alloc {
@@ -381,11 +381,11 @@ func decodePrealloc(data string) GenesisAlloc {
 	return ga
 }
 
-func listPrealloc(g GenesisAlloc) []common.Address {
-	list := []common.Address{}
-	for k := range g {
-		list = append(list, k)
-
-	}
-	return list
-}
+//func listPrealloc(g GenesisAlloc) []common.Address {
+//	list := []common.Address{}
+//	for k := range g {
+//		list = append(list, k)
+//
+//	}
+//	return list
+//}

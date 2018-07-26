@@ -1,18 +1,18 @@
-// Copyright 2017 The aquachain Authors
-// This file is part of the aquachain library.
+// Copyright 2017 The go-ethereum Authors
+// This file is part of the go-ethereum library.
 //
-// The aquachain library is free software: you can redistribute it and/or modify
+// The go-ethereum library is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// The aquachain library is distributed in the hope that it will be useful,
+// The go-ethereum library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
+// along with the go-ethereum library. If not, see <http://www.gnu.org/licenses/>.
 
 package tracers
 
@@ -37,15 +37,15 @@ import (
 )
 
 // To generate a new callTracer test, copy paste the makeTest method below into
-// a AquaChain console and call it with a transaction hash you which to export.
+// a Geth console and call it with a transaction hash you which to export.
 
 /*
 // makeTest generates a callTracer test by running a prestate reassembled and a
 // call trace run, assembling all the gathered information into a test case.
 var makeTest = function(tx, rewind) {
   // Generate the genesis block from the block, transaction and prestate data
-  var block   = aqua.getBlock(aqua.getTransaction(tx).blockHash);
-  var genesis = aqua.getBlock(block.parentHash);
+  var block   = eth.getBlock(eth.getTransaction(tx).blockHash);
+  var genesis = eth.getBlock(block.parentHash);
 
   delete genesis.gasUsed;
   delete genesis.logsBloom;
@@ -65,7 +65,7 @@ var makeTest = function(tx, rewind) {
   for (var key in genesis.alloc) {
     genesis.alloc[key].nonce = genesis.alloc[key].nonce.toString();
   }
-  genesis.config = admin.nodeInfo.protocols.aqua.config;
+  genesis.config = admin.nodeInfo.protocols.eth.config;
 
   // Generate the call trace and produce the test input
   var result = debug.traceTransaction(tx, {tracer: "callTracer", rewind: rewind});
@@ -80,7 +80,7 @@ var makeTest = function(tx, rewind) {
       gasLimit:   block.gasLimit.toString(),
       miner:      block.miner,
     },
-    input:  aqua.getRawTransaction(tx),
+    input:  eth.getRawTransaction(tx),
     result: result,
   }, null, 2));
 }
@@ -159,8 +159,7 @@ func TestCallTracer(t *testing.T) {
 				GasLimit:    uint64(test.Context.GasLimit),
 				GasPrice:    tx.GasPrice(),
 			}
-			db, _ := aquadb.NewMemDatabase()
-			statedb := tests.MakePreState(db, test.Genesis.Alloc)
+			statedb := tests.MakePreState(aquadb.NewMemDatabase(), test.Genesis.Alloc)
 
 			// Create the tracer, the EVM environment and run it
 			tracer, err := New("callTracer")
@@ -187,7 +186,7 @@ func TestCallTracer(t *testing.T) {
 				t.Fatalf("failed to unmarshal trace result: %v", err)
 			}
 			if !reflect.DeepEqual(ret, test.Result) {
-				t.Fatalf("trace mismatch: \nhave %+v, \nwant %+v", ret, test.Result)
+				t.Fatalf("trace mismatch: have %+v, want %+v", ret, test.Result)
 			}
 		})
 	}

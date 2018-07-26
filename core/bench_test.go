@@ -148,7 +148,7 @@ func benchInsertChain(b *testing.B, disk bool, gen func(int, *BlockGen)) {
 	// Create the database in memory or in a temporary directory.
 	var db aquadb.Database
 	if !disk {
-		db, _ = aquadb.NewMemDatabase()
+		db = aquadb.NewMemDatabase()
 	} else {
 		dir, err := ioutil.TempDir("", "aqua-core-bench")
 		if err != nil {

@@ -85,6 +85,9 @@ JavaScript API. See https://gitlab.com/aquachain/aquachain/wiki/JavaScript-Conso
 // same time.
 func localConsole(ctx *cli.Context) error {
 	// Create and start the node based on the CLI flags
+	if args := ctx.Args(); len(args) != 0 && args[0] != "console" {
+		return fmt.Errorf("invalid command: %q", args[0])
+	}
 	node := makeFullNode(ctx)
 	startNode(ctx, node)
 	defer node.Stop()

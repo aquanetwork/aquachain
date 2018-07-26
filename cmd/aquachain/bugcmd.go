@@ -41,7 +41,7 @@ var bugCommand = cli.Command{
 	Category:  "MISCELLANEOUS COMMANDS",
 }
 
-const issueUrl = "https://gitlab.com/aquachain/aquachain/issues/new"
+const issueUrl = "https://github.com/aquanetwork/aquachain/issues/new"
 
 // reportBug reports a bug by opening a new URL to the aquachain GH issue
 // tracker and setting default values as the issue body.

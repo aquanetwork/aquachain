@@ -471,7 +471,7 @@ func (self *worker) commitNewWork() {
 		unclehead := uncle.Header()
 		unclehead.Version = self.chain.Config().GetBlockVersion(unclehead.Number)
 		if err := self.commitUncle(work, unclehead); err != nil {
-			log.Trace("Bad uncle found and will be removed", "hash", hash)
+			log.Error("Bad uncle found and will be removed", "hash", hash, "err", err)
 			log.Trace(fmt.Sprint(uncle))
 
 			badUncles = append(badUncles, hash)
@@ -498,9 +498,9 @@ func (self *worker) commitNewWork() {
 	// We only care about logging if we're actually mining.
 	if atomic.LoadInt32(&self.mining) == 1 {
 		log.Info("Commit new mining work", "number", work.Block.Number(),
-			"txs", work.tcount, "uncles", len(uncles),
+			"txs", work.tcount, "uncles", len(uncles), "fees", header.GasUsed,
 			"bench", common.PrettyDuration(time.Since(tstart)),
-			"algo", header.Version)
+			"algo", header.Version, "diff", header.Difficulty)
 		self.unconfirmed.Shift(work.Block.NumberU64() - 1)
 	}
 	self.push(work)

@@ -696,7 +696,7 @@ func ExampleDecode() {
 
 	type example struct {
 		A, B    uint
-		private uint // private fields are ignored
+		private uint // ignored
 		String  string
 	}
 

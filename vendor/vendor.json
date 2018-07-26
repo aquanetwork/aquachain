@@ -21,12 +21,6 @@
 			"revisionTime": "2018-04-21T15:31:58Z"
 		},
 		{
-			"checksumSHA1": "st4vb0GmDeoKbsfxdpNZ2MPl76M=",
-			"path": "github.com/StackExchange/wmi",
-			"revision": "cdffdb33acae0e14efff2628f9bae377b597840e",
-			"revisionTime": "2018-04-12T20:51:11Z"
-		},
-		{
 			"checksumSHA1": "6+sywuQeV+Dvo0iB258po7ztg4I=",
 			"path": "github.com/aerth/tgun",
 			"revision": "e7f5fb06edc01a24f4a486ef87a99a7d1a71dc6d",
@@ -69,18 +63,6 @@
 			"revisionTime": "2017-03-18T15:58:57Z"
 		},
 		{
-			"checksumSHA1": "SM8q5rGdTWz62IpU8yW0fnl0Eho=",
-			"path": "github.com/elastic/gosigar",
-			"revision": "56cb7e1f604b2748b231d8e0236e1e4782a20ad3",
-			"revisionTime": "2018-07-18T08:18:56Z"
-		},
-		{
-			"checksumSHA1": "qDsgp2kAeI9nhj565HUScaUyjU4=",
-			"path": "github.com/elastic/gosigar/sys/windows",
-			"revision": "56cb7e1f604b2748b231d8e0236e1e4782a20ad3",
-			"revisionTime": "2018-07-18T08:18:56Z"
-		},
-		{
 			"checksumSHA1": "HbOJxa+FsQ1TTsF+BkHAvzqqZv4=",
 			"path": "github.com/fatih/color",
 			"revision": "2d684516a8861da43017284349b7e303e809ac21",
@@ -91,18 +73,6 @@
 			"path": "github.com/gizak/termui",
 			"revision": "19bab32e9cf411e1c0f629693759b6405f22e143",
 			"revisionTime": "2018-06-14T09:51:57Z"
-		},
-		{
-			"checksumSHA1": "Kqv7bA4oJG0nPwQvGWDwGGaKONo=",
-			"path": "github.com/go-ole/go-ole",
-			"revision": "7a0fa49edf48165190530c675167e2f319a05268",
-			"revisionTime": "2018-06-25T08:58:08Z"
-		},
-		{
-			"checksumSHA1": "PArleDBtadu2qO4hJwHR8a3IOTA=",
-			"path": "github.com/go-ole/go-ole/oleutil",
-			"revision": "7a0fa49edf48165190530c675167e2f319a05268",
-			"revisionTime": "2018-06-25T08:58:08Z"
 		},
 		{
 			"checksumSHA1": "luu+ud4XYZhlCoNnSAwCJlbh0Bg=",
@@ -304,12 +274,6 @@
 			"revisionTime": "2018-06-19T02:16:14Z"
 		},
 		{
-			"checksumSHA1": "ljd3FhYRJ91cLZz3wsH9BQQ2JbA=",
-			"path": "github.com/pkg/errors",
-			"revision": "816c9085562cd7ee03e7f8188a1cfd942858cded",
-			"revisionTime": "2018-03-11T21:45:15Z"
-		},
-		{
 			"checksumSHA1": "LuFv4/jlrmFNnDb/5SCSEPAM9vU=",
 			"path": "github.com/pmezard/go-difflib/difflib",
 			"revision": "792786c7400a136282c1664665ae0a8db921c6c2",
@@ -374,12 +338,6 @@
 			"path": "github.com/rs/cors",
 			"revision": "694cf2ad010fcf91ee35161f5bfdad8f42ed1b9a",
 			"revisionTime": "2018-05-24T07:14:09Z"
-		},
-		{
-			"checksumSHA1": "VzOKmzMOkn5Ef8zasnHgdj0U4k0=",
-			"path": "github.com/rs/xhandler",
-			"revision": "1eb70cf1520d43c307a89c5dabb7a7efd132fccd",
-			"revisionTime": "2017-07-07T05:25:32Z"
 		},
 		{
 			"checksumSHA1": "dCvuKKbrgIk4OXLelrA6O9Ey4Og=",

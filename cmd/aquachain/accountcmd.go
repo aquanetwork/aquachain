@@ -18,7 +18,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 
 	"gitlab.com/aquachain/aquachain/aqua/accounts"
 	"gitlab.com/aquachain/aquachain/aqua/accounts/keystore"
@@ -294,28 +293,6 @@ func accountUpdate(ctx *cli.Context) error {
 			utils.Fatalf("Could not update the account: %v", err)
 		}
 	}
-	return nil
-}
-
-func importWallet(ctx *cli.Context) error {
-	keyfile := ctx.Args().First()
-	if len(keyfile) == 0 {
-		utils.Fatalf("keyfile must be given as argument")
-	}
-	keyJson, err := ioutil.ReadFile(keyfile)
-	if err != nil {
-		utils.Fatalf("Could not read wallet file: %v", err)
-	}
-
-	stack, _ := makeConfigNode(ctx)
-	passphrase := getPassPhrase("", false, 0, utils.MakePasswordList(ctx))
-
-	ks := stack.AccountManager().Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
-	acct, err := ks.ImportPreSaleKey(keyJson, passphrase)
-	if err != nil {
-		utils.Fatalf("%v", err)
-	}
-	fmt.Printf("Address: {%x}\n", acct.Address)
 	return nil
 }
 

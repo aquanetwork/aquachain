@@ -36,11 +36,6 @@ func InitSingleTest() {
 	mrand.Seed(seed)
 }
 
-func InitDebugTest(i int64) {
-	seed = i
-	mrand.Seed(seed)
-}
-
 type FilterTestCase struct {
 	f      *Filter
 	id     string

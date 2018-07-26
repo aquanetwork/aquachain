@@ -643,7 +643,7 @@ func (n *Node) EventMux() *event.TypeMux {
 // ephemeral, a memory database is returned.
 func (n *Node) OpenDatabase(name string, cache, handles int) (aquadb.Database, error) {
 	if n.config.DataDir == "" {
-		return aquadb.NewMemDatabase()
+		return aquadb.NewMemDatabase(), nil
 	}
 	return aquadb.NewLDBDatabase(n.config.resolvePath(name), cache, handles)
 }
