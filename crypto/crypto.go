@@ -59,7 +59,7 @@ func argon2idA(data ...[]byte) []byte {
 	for i := range data {
 		buf.Write(data[i])
 	}
-	return argon2.IDKey(buf.Bytes(), nil, 1, argonMem, argonThreads, common.HashLength)
+	return argon2.IDKey(buf.Bytes(), nil, argonTime, argonMem, argonThreads, common.HashLength)
 }
 
 // Argon2id calculates and returns the Argon2id hash of the input data.
@@ -80,16 +80,6 @@ func argon2idC(data ...[]byte) []byte {
 		buf.Write(data[i])
 	}
 	return argon2.IDKey(buf.Bytes(), nil, 3, argonMem, argonThreads, common.HashLength)
-}
-
-// Argon2id calculates and returns the Argon2id hash of the input data.
-func argon2idLowMemory(data ...[]byte) []byte {
-	//fmt.Printf(".")
-	buf := &bytes.Buffer{}
-	for i := range data {
-		buf.Write(data[i])
-	}
-	return argon2.IDKey(buf.Bytes(), nil, argonTime, 1024*1, argonThreads, common.HashLength)
 }
 
 // Argon2id calculates and returns the Argon2id hash of the input data.
