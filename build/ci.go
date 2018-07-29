@@ -251,7 +251,6 @@ func buildFlags(env build.Environment) (flags []string) {
 	if env.Config["musl"] {
 		flags = append(flags, "-installsuffix", "musl")
 		os.Setenv("CC", "musl-gcc")
-		env.Config["static"] = env.Config["musl"]
 	}
 
 	if env.Config["static"] {
