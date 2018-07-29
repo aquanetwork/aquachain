@@ -16,28 +16,6 @@
 
 // +build none
 
-/*
-The ci command is called from Continuous Integration scripts.
-
-Usage: go run build/ci.go <command> <command flags/arguments>
-
-Available commands are:
-
-   install    [ -arch architecture ] [ -cc compiler ] [ packages... ]                          -- builds packages and executables
-   test       [ -coverage ] [ packages... ]                                                    -- runs the tests
-   lint                                                                                        -- runs certain pre-selected linters
-   archive    [ -arch architecture ] [ -type zip|tar ] [ -signer key-envvar ] [ -upload dest ] -- archives build artefacts
-   importkeys                                                                                  -- imports signing keys from env
-   debsrc     [ -signer key-id ] [ -upload dest ]                                              -- creates a debian source package
-   nsis                                                                                        -- creates a Windows NSIS installer
-   aar        [ -local ] [ -sign key-id ] [-deploy repo] [ -upload dest ]                      -- creates an Android archive
-   xcode      [ -local ] [ -sign key-id ] [-deploy repo] [ -upload dest ]                      -- creates an iOS XCode framework
-   xgo        [ -alltools ] [ options ]                                                        -- cross builds according to options
-   purge      [ -store blobstore ] [ -days threshold ]                                         -- purges old archives from the blobstore
-
-For all commands, -n prevents execution of external programs (dry run mode).
-
-*/
 package main
 
 import (
@@ -60,6 +38,28 @@ import (
 
 	"gitlab.com/aquachain/aquachain/internal/build"
 )
+
+const usage = `
+The ci command is called from Continuous Integration scripts.
+
+Usage: go run build/ci.go <command> <command flags/arguments>
+
+Available commands are:
+
+   install    [ -arch architecture ] [ -cc compiler ] [ -musl ] [-race] [ packages... ]        -- builds packages and executables
+   test       [ -coverage ] [ packages... ]                                                    -- runs the tests
+   lint                                                                                        -- runs certain pre-selected linters
+   archive    [ -arch architecture ] [ -type zip|tar ] [ -signer key-envvar ] [ -upload dest ] -- archives build artefacts
+   importkeys                                                                                  -- imports signing keys from env
+   nsis                                                                                        -- creates a Windows NSIS installer
+   aar        [ -local ] [ -sign key-id ] [-deploy repo] [ -upload dest ]                      -- creates an Android archive
+   xcode      [ -local ] [ -sign key-id ] [-deploy repo] [ -upload dest ]                      -- creates an iOS XCode framework
+   xgo        [ -alltools ] [ options ]                                                        -- cross builds according to options
+   purge      [ -store blobstore ] [ -days threshold ]                                         -- purges old archives from the blobstore
+
+For all commands, -n prevents execution of external programs (dry run mode).
+
+`
 
 var (
 	// Files that end up in the aquachain*.zip archive.
@@ -121,7 +121,7 @@ var (
 	// Note: wily is unsupported because it was officially deprecated on lanchpad.
 	// Note: yakkety is unsupported because it was officially deprecated on lanchpad.
 	// Note: zesty is unsupported because it was officially deprecated on lanchpad.
-	debDistros = []string{"trusty", "xenial", "artful", "bionic"}
+	debDistros = []string{"stretch"}
 )
 
 var GOBIN, _ = filepath.Abs(filepath.Join("build", "bin"))
@@ -137,10 +137,10 @@ func main() {
 	log.SetFlags(log.Lshortfile)
 
 	if _, err := os.Stat(filepath.Join("build", "ci.go")); os.IsNotExist(err) {
-		log.Fatal("this script must be run from the root of the repository")
+		log.Fatal(usage + "this script must be run from the root of the repository")
 	}
 	if len(os.Args) < 2 {
-		log.Fatal("need subcommand as first argument")
+		log.Fatal(usage + "need subcommand as first argument")
 	}
 	switch os.Args[1] {
 	case "install":
@@ -165,7 +165,7 @@ func main() {
 		panic("unused")
 		// doPurge(os.Args[2:])
 	default:
-		log.Fatal("unknown command ", os.Args[1])
+		log.Fatal(usage+"unknown command ", os.Args[1])
 	}
 }
 
@@ -245,24 +245,33 @@ func buildFlags(env build.Environment) (flags []string) {
 	if env.Commit != "" {
 		ld = append(ld, "-X", "main.gitCommit="+env.Commit)
 	}
+
+	// make smaller binary
 	ld = append(ld, "-s")
 	ld = append(ld, "-w")
 
+	// use go if possible (net, os/user)
+	tags = append(tags, "netgo", "osusergo")
+
+	// musl-gcc for cgo
 	if env.Config["musl"] {
 		flags = append(flags, "-installsuffix", "musl")
 		os.Setenv("CC", "musl-gcc")
 	}
 
+	// try to produce a static binary
 	if env.Config["static"] {
 		ld = append(ld, "-linkmode external")
 		ld = append(ld, "-extldflags -static")
-		tags = append(tags, "netgo", "static", "osusergo")
+		tags = append(tags, "static")
 	}
 
+	// usb support for hardware wallets
 	if env.Config["usb"] {
 		tags = append(tags, "usb")
 	}
 
+	// race detecting binary (SLOW runtime)
 	if env.Config["race"] {
 		flags = append(flags, "-race")
 	}
@@ -561,7 +570,7 @@ type debExecutable struct {
 func newDebMetadata(distro, author string, env build.Environment, t time.Time) debMetadata {
 	if author == "" {
 		// No signing key, use default author.
-		author = "AquaChain Builds <fjl@aquachain.org>"
+		author = "AquaChain Builds <none@example.org>"
 	}
 	return debMetadata{
 		Env:         env,
