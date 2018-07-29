@@ -15,6 +15,9 @@
 // along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
 
 // Package usbwallet implements support for USB hardware wallets.
+
+// +build !nousb
+
 package usbwallet
 
 import (

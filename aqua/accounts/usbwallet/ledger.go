@@ -18,6 +18,8 @@
 // wallets. The wire protocol spec can be found in the Ledger Blue GitHub repo:
 // https://raw.githubusercontent.com/LedgerHQ/blue-app-aqua/master/doc/ethapp.asc
 
+// +build !nousb
+
 package usbwallet
 
 import (

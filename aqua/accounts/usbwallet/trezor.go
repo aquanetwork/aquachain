@@ -18,6 +18,8 @@
 // wallets. The wire protocol spec can be found on the SatoshiLabs website:
 // https://doc.satoshilabs.com/trezor-tech/api-protobuf.html
 
+// +build !nousb
+
 package usbwallet
 
 import (

@@ -173,13 +173,11 @@ func main() {
 
 func doInstall(cmdline []string) {
 	var (
-		arch   = flag.String("arch", "", "Architecture to cross build for")
-		cc     = flag.String("cc", "", "C compiler to cross build with")
-		static = flag.Bool("static", false, "Build a static linked binary")
+		arch = flag.String("arch", "", "Architecture to cross build for")
+		cc   = flag.String("cc", "", "C compiler to cross build with")
 	)
 	flag.CommandLine.Parse(cmdline)
 	env := build.Env()
-	env.Static = *static
 	// Check Go version. People regularly open issues about compilation
 	// failure with outdated Go. This should save them the trouble.
 	if !strings.Contains(runtime.Version(), "devel") {
@@ -243,17 +241,31 @@ func doInstall(cmdline []string) {
 }
 
 func buildFlags(env build.Environment) (flags []string) {
-	var ld []string
+	var ld, gc []string
 	if env.Commit != "" {
 		ld = append(ld, "-X", "main.gitCommit="+env.Commit)
 	}
 	ld = append(ld, "-s")
 	ld = append(ld, "-w")
 
-	if env.Static {
+	if env.Config["static"] {
+		ld = append(ld, "-linkmode external")
 		ld = append(ld, "-extldflags -static")
 	}
 
+	if env.Config["musl"] {
+		flags = append(flags, "-tags", "nousb")
+		flags = append(flags, "-installsuffix", "musl")
+		os.Setenv("CC", "musl-gcc")
+	}
+
+	if env.Config["race"] {
+		flags = append(flags, "-race")
+	}
+
+	if len(gc) > 1 {
+		flags = append(flags, "-gcflags", strings.Join(gc, " "))
+	}
 	flags = append(flags, "-ldflags", strings.Join(ld, " "))
 	return flags
 }
@@ -264,16 +276,6 @@ func goTool(subcmd string, args ...string) *exec.Cmd {
 
 func goToolArch(arch string, cc string, subcmd string, args ...string) *exec.Cmd {
 	cmd := build.GoTool(subcmd, args...)
-	if subcmd == "build" || subcmd == "install" || subcmd == "test" {
-		// Go CGO has a Windows linker error prior to 1.8 (https://github.com/golang/go/issues/8756).
-		// Work around issue by allowing multiple definitions for <1.8 builds.
-		var minor int
-		fmt.Sscanf(strings.TrimPrefix(runtime.Version(), "go1."), "%d", &minor)
-
-		if runtime.GOOS == "windows" && minor < 8 {
-			cmd.Args = append(cmd.Args, []string{"-ldflags", "-extldflags -Wl,--allow-multiple-definition"}...)
-		}
-	}
 	cmd.Env = []string{"GOPATH=" + build.GOPATH()}
 	if arch == "" || arch == runtime.GOARCH {
 		cmd.Env = append(cmd.Env, "GOBIN="+GOBIN)

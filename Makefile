@@ -19,6 +19,9 @@ aquachain:
 
 static: aquachain-static
 
+musl: 
+	build/env.sh go run build/ci.go install -musl -static
+
 aquachain-static:
 	build/env.sh go run build/ci.go install -static ./cmd/aquachain
 

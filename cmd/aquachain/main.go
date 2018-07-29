@@ -57,7 +57,7 @@ var (
 		utils.BootnodesV5Flag,
 		utils.DataDirFlag,
 		utils.KeyStoreDirFlag,
-		utils.NoUSBFlag,
+		utils.UseUSBFlag,
 		utils.AquahashCacheDirFlag,
 		utils.AquahashCachesInMemoryFlag,
 		utils.AquahashCachesOnDiskFlag,

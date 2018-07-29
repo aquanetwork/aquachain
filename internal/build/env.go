@@ -31,6 +31,9 @@ var (
 	BuildnumFlag    = flag.String("buildnum", "", `Overrides CI build number`)
 	PullRequestFlag = flag.Bool("pull-request", false, `Overrides pull request status of the build`)
 	CronJobFlag     = flag.Bool("cron-job", false, `Overrides cron job status of the build`)
+	StaticFlag      = flag.Bool("static", false, `Use static linking`)
+	MuslFlag        = flag.Bool("musl", false, `Use musl c library`)
+	RaceFlag        = flag.Bool("race", false, `Use race detector (slow runtime!)`)
 )
 
 // Environment contains metadata provided by the build environment.
@@ -41,12 +44,12 @@ type Environment struct {
 	Buildnum            string
 	IsPullRequest       bool
 	IsCronJob           bool
-	Static              bool
+	Config              map[string]bool
 }
 
 func (env Environment) String() string {
 	return fmt.Sprintf("%s env (commit:%s branch:%s tag:%s buildnum:%s pr:%t static:%t)",
-		env.Name, env.Commit, env.Branch, env.Tag, env.Buildnum, env.IsPullRequest, env.Static)
+		env.Name, env.Commit, env.Branch, env.Tag, env.Buildnum, env.IsPullRequest, env.Config)
 }
 
 // Env returns metadata about the current CI environment, falling back to LocalEnv
@@ -63,17 +66,7 @@ func Env() Environment {
 			Buildnum:      os.Getenv("TRAVIS_BUILD_NUMBER"),
 			IsPullRequest: os.Getenv("TRAVIS_PULL_REQUEST") != "false",
 			IsCronJob:     os.Getenv("TRAVIS_EVENT_TYPE") == "cron",
-		}
-	case os.Getenv("CI") == "True" && os.Getenv("APPVEYOR") == "True":
-		return Environment{
-			Name:          "appveyor",
-			Repo:          os.Getenv("APPVEYOR_REPO_NAME"),
-			Commit:        os.Getenv("APPVEYOR_REPO_COMMIT"),
-			Branch:        os.Getenv("APPVEYOR_REPO_BRANCH"),
-			Tag:           os.Getenv("APPVEYOR_REPO_TAG_NAME"),
-			Buildnum:      os.Getenv("APPVEYOR_BUILD_NUMBER"),
-			IsPullRequest: os.Getenv("APPVEYOR_PULL_REQUEST_NUMBER") != "",
-			IsCronJob:     os.Getenv("APPVEYOR_SCHEDULED_BUILD") == "True",
+			Config:        map[string]bool{},
 		}
 	default:
 		return LocalEnv()
@@ -130,5 +123,20 @@ func applyEnvFlags(env Environment) Environment {
 	if *CronJobFlag {
 		env.IsCronJob = true
 	}
+
+	env.Config = map[string]bool{}
+
+	if *StaticFlag {
+		env.Config["static"] = *StaticFlag
+	}
+
+	if *MuslFlag {
+		env.Config["musl"] = *MuslFlag
+	}
+
+	if *RaceFlag {
+		env.Config["race"] = *RaceFlag // uh-oh
+	}
+
 	return env
 }
