@@ -48,7 +48,7 @@ type Environment struct {
 }
 
 func (env Environment) String() string {
-	return fmt.Sprintf("%s env (commit:%s branch:%s tag:%s buildnum:%s pr:%t static:%t)",
+	return fmt.Sprintf("%s env (commit:%s branch:%s tag:%s buildnum:%s pr:%t config:%v)",
 		env.Name, env.Commit, env.Branch, env.Tag, env.Buildnum, env.IsPullRequest, env.Config)
 }
 
