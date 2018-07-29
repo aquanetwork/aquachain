@@ -34,6 +34,7 @@ var (
 	StaticFlag      = flag.Bool("static", false, `Use static linking`)
 	MuslFlag        = flag.Bool("musl", false, `Use musl c library`)
 	RaceFlag        = flag.Bool("race", false, `Use race detector (slow runtime!)`)
+	UseUSBFlag      = flag.Bool("usb", false, `Use usb (trezor/ledger)`)
 )
 
 // Environment contains metadata provided by the build environment.
@@ -124,7 +125,9 @@ func applyEnvFlags(env Environment) Environment {
 		env.IsCronJob = true
 	}
 
-	env.Config = map[string]bool{}
+	if env.Config == nil {
+		env.Config = map[string]bool{}
+	}
 
 	if *StaticFlag {
 		env.Config["static"] = *StaticFlag
@@ -136,6 +139,10 @@ func applyEnvFlags(env Environment) Environment {
 
 	if *RaceFlag {
 		env.Config["race"] = *RaceFlag // uh-oh
+	}
+
+	if *UseUSBFlag {
+		env.Config["usb"] = *UseUSBFlag
 	}
 
 	return env

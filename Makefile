@@ -61,7 +61,10 @@ ios:
 	@echo "Import \"$(GOBIN)/AquaChain.framework\" to use the library."
 
 test: all
-	build/env.sh go run build/ci.go test
+	build/env.sh go run build/ci.go test 
+
+musl-test: musl
+	build/env.sh go run build/ci.go test -musl 
 
 clean:
 	rm -fr build/_workspace/pkg/ $(GOBIN)/*

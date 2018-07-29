@@ -241,29 +241,37 @@ func doInstall(cmdline []string) {
 }
 
 func buildFlags(env build.Environment) (flags []string) {
-	var ld, gc []string
+	var ld, gc, tags []string
 	if env.Commit != "" {
 		ld = append(ld, "-X", "main.gitCommit="+env.Commit)
 	}
 	ld = append(ld, "-s")
 	ld = append(ld, "-w")
 
+	if env.Config["musl"] {
+		flags = append(flags, "-installsuffix", "musl")
+		os.Setenv("CC", "musl-gcc")
+		env.Config["static"] = env.Config["musl"]
+	}
+
 	if env.Config["static"] {
 		ld = append(ld, "-linkmode external")
 		ld = append(ld, "-extldflags -static")
+		tags = append(tags, "netgo", "static", "osusergo")
 	}
 
-	if env.Config["musl"] {
-		flags = append(flags, "-tags", "nousb")
-		flags = append(flags, "-installsuffix", "musl")
-		os.Setenv("CC", "musl-gcc")
+	if env.Config["usb"] {
+		tags = append(tags, "usb")
 	}
 
 	if env.Config["race"] {
 		flags = append(flags, "-race")
 	}
 
-	if len(gc) > 1 {
+	if len(tags) > 0 {
+		flags = append(flags, "-tags", strings.Join(tags, " "))
+	}
+	if len(gc) > 0 {
 		flags = append(flags, "-gcflags", strings.Join(gc, " "))
 	}
 	flags = append(flags, "-ldflags", strings.Join(ld, " "))
