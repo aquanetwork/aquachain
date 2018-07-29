@@ -1,11 +1,11 @@
-// +build nousb
+// +build !usb
 
 package usbwallet
 
 import (
 	"errors"
 	"gitlab.com/aquachain/aquachain/aqua/accounts"
-  	"gitlab.com/aquachain/aquachain/aqua/event"
+	"gitlab.com/aquachain/aquachain/aqua/event"
 )
 
 // Hub is a accounts.Backend that can find and handle generic USB hardware wallets.
@@ -26,15 +26,14 @@ func NewTrezorHub() (*Hub, error) {
 	return nil, accounts.ErrNotSupported
 }
 
-
 // Wallets implements accounts.Backend, returning all the currently tracked USB
 // devices that appear to be hardware wallets.
 func (hub *Hub) Wallets() []accounts.Wallet {
-  return nil
+	return nil
 }
 
 // Subscribe implements accounts.Backend, creating an async subscription to
 // receive notifications on the addition or removal of USB wallets.
 func (hub *Hub) Subscribe(sink chan<- accounts.WalletEvent) event.Subscription {
-  return nil
+	return nil
 }

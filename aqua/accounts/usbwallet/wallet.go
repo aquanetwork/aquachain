@@ -16,7 +16,7 @@
 
 // Package usbwallet implements support for USB hardware wallets.
 
-// +build !nousb
+// +build usb
 
 package usbwallet
 
