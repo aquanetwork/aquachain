@@ -13,11 +13,16 @@ GOBIN = $(shell pwd)/build/bin
 GO ?= latest
 
 aquachain:
+	@echo "Building aquachain with no usb support"
+	@echo "Consider \"${MAKE} musl\""
 	build/env.sh go run build/ci.go install ./cmd/aquachain
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/aquachain\" to launch aquachain."
 
 static: aquachain-static
+
+musl: 
+	build/env.sh go run build/ci.go install -musl -static
 
 aquachain-static:
 	build/env.sh go run build/ci.go install -static ./cmd/aquachain
@@ -58,11 +63,16 @@ ios:
 	@echo "Import \"$(GOBIN)/AquaChain.framework\" to use the library."
 
 test: all
-	build/env.sh go run build/ci.go test
+	build/env.sh go run build/ci.go test 
+
+musl-test: musl
+	build/env.sh go run build/ci.go test -musl 
 
 clean:
 	rm -fr build/_workspace/pkg/ $(GOBIN)/*
 	rm -fr build/_workspace/src/ $(GOBIN)/*
+	rm -fr /tmp/aqua/_workspace/pkg/ $(GOBIN)/*
+	rm -fr /tmp/aqua/_workspace/src/ $(GOBIN)/*
 
 # The devtools target installs tools required for 'go generate'.
 # You need to put $GOBIN (or $GOPATH/bin) in your PATH to use 'go generate'.

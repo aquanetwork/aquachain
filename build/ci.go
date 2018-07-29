@@ -16,28 +16,6 @@
 
 // +build none
 
-/*
-The ci command is called from Continuous Integration scripts.
-
-Usage: go run build/ci.go <command> <command flags/arguments>
-
-Available commands are:
-
-   install    [ -arch architecture ] [ -cc compiler ] [ packages... ]                          -- builds packages and executables
-   test       [ -coverage ] [ packages... ]                                                    -- runs the tests
-   lint                                                                                        -- runs certain pre-selected linters
-   archive    [ -arch architecture ] [ -type zip|tar ] [ -signer key-envvar ] [ -upload dest ] -- archives build artefacts
-   importkeys                                                                                  -- imports signing keys from env
-   debsrc     [ -signer key-id ] [ -upload dest ]                                              -- creates a debian source package
-   nsis                                                                                        -- creates a Windows NSIS installer
-   aar        [ -local ] [ -sign key-id ] [-deploy repo] [ -upload dest ]                      -- creates an Android archive
-   xcode      [ -local ] [ -sign key-id ] [-deploy repo] [ -upload dest ]                      -- creates an iOS XCode framework
-   xgo        [ -alltools ] [ options ]                                                        -- cross builds according to options
-   purge      [ -store blobstore ] [ -days threshold ]                                         -- purges old archives from the blobstore
-
-For all commands, -n prevents execution of external programs (dry run mode).
-
-*/
 package main
 
 import (
@@ -60,6 +38,28 @@ import (
 
 	"gitlab.com/aquachain/aquachain/internal/build"
 )
+
+const usage = `
+The ci command is called from Continuous Integration scripts.
+
+Usage: go run build/ci.go <command> <command flags/arguments>
+
+Available commands are:
+
+   install    [ -arch architecture ] [ -cc compiler ] [ -musl ] [-race] [ packages... ]        -- builds packages and executables
+   test       [ -coverage ] [ packages... ]                                                    -- runs the tests
+   lint                                                                                        -- runs certain pre-selected linters
+   archive    [ -arch architecture ] [ -type zip|tar ] [ -signer key-envvar ] [ -upload dest ] -- archives build artefacts
+   importkeys                                                                                  -- imports signing keys from env
+   nsis                                                                                        -- creates a Windows NSIS installer
+   aar        [ -local ] [ -sign key-id ] [-deploy repo] [ -upload dest ]                      -- creates an Android archive
+   xcode      [ -local ] [ -sign key-id ] [-deploy repo] [ -upload dest ]                      -- creates an iOS XCode framework
+   xgo        [ -alltools ] [ options ]                                                        -- cross builds according to options
+   purge      [ -store blobstore ] [ -days threshold ]                                         -- purges old archives from the blobstore
+
+For all commands, -n prevents execution of external programs (dry run mode).
+
+`
 
 var (
 	// Files that end up in the aquachain*.zip archive.
@@ -121,7 +121,7 @@ var (
 	// Note: wily is unsupported because it was officially deprecated on lanchpad.
 	// Note: yakkety is unsupported because it was officially deprecated on lanchpad.
 	// Note: zesty is unsupported because it was officially deprecated on lanchpad.
-	debDistros = []string{"trusty", "xenial", "artful", "bionic"}
+	debDistros = []string{"stretch"}
 )
 
 var GOBIN, _ = filepath.Abs(filepath.Join("build", "bin"))
@@ -137,10 +137,10 @@ func main() {
 	log.SetFlags(log.Lshortfile)
 
 	if _, err := os.Stat(filepath.Join("build", "ci.go")); os.IsNotExist(err) {
-		log.Fatal("this script must be run from the root of the repository")
+		log.Fatal(usage + "this script must be run from the root of the repository")
 	}
 	if len(os.Args) < 2 {
-		log.Fatal("need subcommand as first argument")
+		log.Fatal(usage + "need subcommand as first argument")
 	}
 	switch os.Args[1] {
 	case "install":
@@ -165,7 +165,7 @@ func main() {
 		panic("unused")
 		// doPurge(os.Args[2:])
 	default:
-		log.Fatal("unknown command ", os.Args[1])
+		log.Fatal(usage+"unknown command ", os.Args[1])
 	}
 }
 
@@ -173,13 +173,11 @@ func main() {
 
 func doInstall(cmdline []string) {
 	var (
-		arch   = flag.String("arch", "", "Architecture to cross build for")
-		cc     = flag.String("cc", "", "C compiler to cross build with")
-		static = flag.Bool("static", false, "Build a static linked binary")
+		arch = flag.String("arch", "", "Architecture to cross build for")
+		cc   = flag.String("cc", "", "C compiler to cross build with")
 	)
 	flag.CommandLine.Parse(cmdline)
 	env := build.Env()
-	env.Static = *static
 	// Check Go version. People regularly open issues about compilation
 	// failure with outdated Go. This should save them the trouble.
 	if !strings.Contains(runtime.Version(), "devel") {
@@ -243,17 +241,47 @@ func doInstall(cmdline []string) {
 }
 
 func buildFlags(env build.Environment) (flags []string) {
-	var ld []string
+	var ld, gc, tags []string
 	if env.Commit != "" {
 		ld = append(ld, "-X", "main.gitCommit="+env.Commit)
 	}
+
+	// make smaller binary
 	ld = append(ld, "-s")
 	ld = append(ld, "-w")
 
-	if env.Static {
-		ld = append(ld, "-extldflags -static")
+	// use go if possible (net, os/user)
+	tags = append(tags, "netgo", "osusergo")
+
+	// musl-gcc for cgo
+	if env.Config["musl"] {
+		flags = append(flags, "-installsuffix", "musl")
+		os.Setenv("CC", "musl-gcc")
 	}
 
+	// try to produce a static binary
+	if env.Config["static"] {
+		ld = append(ld, "-linkmode external")
+		ld = append(ld, "-extldflags -static")
+		tags = append(tags, "static")
+	}
+
+	// usb support for hardware wallets
+	if env.Config["usb"] {
+		tags = append(tags, "usb")
+	}
+
+	// race detecting binary (SLOW runtime)
+	if env.Config["race"] {
+		flags = append(flags, "-race")
+	}
+
+	if len(tags) > 0 {
+		flags = append(flags, "-tags", strings.Join(tags, " "))
+	}
+	if len(gc) > 0 {
+		flags = append(flags, "-gcflags", strings.Join(gc, " "))
+	}
 	flags = append(flags, "-ldflags", strings.Join(ld, " "))
 	return flags
 }
@@ -264,16 +292,6 @@ func goTool(subcmd string, args ...string) *exec.Cmd {
 
 func goToolArch(arch string, cc string, subcmd string, args ...string) *exec.Cmd {
 	cmd := build.GoTool(subcmd, args...)
-	if subcmd == "build" || subcmd == "install" || subcmd == "test" {
-		// Go CGO has a Windows linker error prior to 1.8 (https://github.com/golang/go/issues/8756).
-		// Work around issue by allowing multiple definitions for <1.8 builds.
-		var minor int
-		fmt.Sscanf(strings.TrimPrefix(runtime.Version(), "go1."), "%d", &minor)
-
-		if runtime.GOOS == "windows" && minor < 8 {
-			cmd.Args = append(cmd.Args, []string{"-ldflags", "-extldflags -Wl,--allow-multiple-definition"}...)
-		}
-	}
 	cmd.Env = []string{"GOPATH=" + build.GOPATH()}
 	if arch == "" || arch == runtime.GOARCH {
 		cmd.Env = append(cmd.Env, "GOBIN="+GOBIN)
@@ -552,7 +570,7 @@ type debExecutable struct {
 func newDebMetadata(distro, author string, env build.Environment, t time.Time) debMetadata {
 	if author == "" {
 		// No signing key, use default author.
-		author = "AquaChain Builds <fjl@aquachain.org>"
+		author = "AquaChain Builds <none@example.org>"
 	}
 	return debMetadata{
 		Env:         env,
