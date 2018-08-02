@@ -13,16 +13,17 @@ GOBIN = $(shell pwd)/build/bin
 GO ?= latest
 
 aquachain:
-	@echo "Building aquachain with no usb support"
-	@echo "Consider \"${MAKE} musl\""
+	@echo "Building aquachain with no usb support. Consider \"${MAKE} usb\""
+	@echo "Building default aquachain. Consider \"${MAKE} musl\""
 	build/env.sh go run build/ci.go install ./cmd/aquachain
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/aquachain\" to launch aquachain."
 
-static: aquachain-static
-
 musl: 
 	build/env.sh go run build/ci.go install -musl -static
+
+usb:
+	build/env.sh go run build/ci.go install -usb ./cmd/aquachain 
 
 aquachain-static:
 	build/env.sh go run build/ci.go install -static ./cmd/aquachain
@@ -68,6 +69,8 @@ test: all
 musl-test: musl
 	build/env.sh go run build/ci.go test -musl 
 
+lint: 
+	build/env.sh go run build/ci.go lint
 clean:
 	rm -fr build/_workspace/pkg/ $(GOBIN)/*
 	rm -fr build/_workspace/src/ $(GOBIN)/*

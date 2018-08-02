@@ -13,7 +13,16 @@ matrix:
         - sudo chown root:$USER /etc/fuse.conf
         - go run build/ci.go install
         - go run build/ci.go test -coverage
-    # This builder only tests code linters on latest version of Go
+    - os: linux
+      dist: alpine
+      sudo: required
+      go: "1.10.3"
+      script:
+        - sudo modprobe fuse
+        - sudo chmod ugo+rw /dev/fuse
+        - sudo chown root:$USER /etc/fuse.conf
+        - go run build/ci.go install -musl
+
     - os: linux
       dist: trusty
       go: "1.10.3"

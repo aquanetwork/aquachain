@@ -81,34 +81,26 @@ var (
 		executablePath("aqua-vm"),
 		executablePath("aqua-wnode"),
 		executablePath("aquabootnode"),
-		executablePath("aquachain"),
 		executablePath("aquakey"),
-		executablePath("aquaminer"),
 		executablePath("aquap2psim"),
 		executablePath("aquapaper"),
+		executablePath("aquachain"),
+		executablePath("aquaminer"),
 	}
 
 	// A debian package is created for all executables listed here.
 	debExecutables = []debExecutable{
-		{
-			Name:        "aqua-abigen",
-			Description: "Source code generator to convert AquaChain contract definitions into easy to use, compile-time type-safe Go packages.",
-		},
 		{
 			Name:        "aqua-bootnode",
 			Description: "AquaChain bootnode (discovery-only)",
 		},
 		{
 			Name:        "aqua-vm",
-			Description: "Developer utility version of the AVM (AquaChain Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode.",
+			Description: "Developer utility version of the AVM (AquaChain Virtual Machine) that is capable of running bytecode snippets within a configurable environment and execution mode",
 		},
 		{
 			Name:        "aqua-rlpdump",
-			Description: "Developer utility tool that prints RLP structures.",
-		},
-		{
-			Name:        "aqua-swarm",
-			Description: "AquaChain Swarm daemon and tools",
+			Description: "Developer utility tool that prints RLP structures",
 		},
 		{
 			Name:        "aquachain",
@@ -117,10 +109,6 @@ var (
 	}
 
 	// Distros for which packages are created.
-	// Note: vivid is unsupported because there is no golang-1.6 package for it.
-	// Note: wily is unsupported because it was officially deprecated on lanchpad.
-	// Note: yakkety is unsupported because it was officially deprecated on lanchpad.
-	// Note: zesty is unsupported because it was officially deprecated on lanchpad.
 	debDistros = []string{"stretch"}
 )
 
@@ -161,9 +149,6 @@ func main() {
 		doXCodeFramework(os.Args[2:])
 	case "xgo":
 		doXgo(os.Args[2:])
-	case "purge":
-		panic("unused")
-		// doPurge(os.Args[2:])
 	default:
 		log.Fatal(usage+"unknown command ", os.Args[1])
 	}
@@ -369,7 +354,7 @@ func doLint(cmdline []string) {
 	build.MustRunCommand(filepath.Join(GOBIN, "gometalinter.v2"), append(configs, packages...)...)
 
 	// Run slow linters one by one
-	for _, linter := range []string{"unconvert", "gosimple"} {
+	for _, linter := range []string{"unconvert", "gosimple", "unused"} {
 		configs = []string{"--vendor", "--deadline=10m", "--disable-all", "--enable=" + linter}
 		build.MustRunCommand(filepath.Join(GOBIN, "gometalinter.v2"), append(configs, packages...)...)
 	}
@@ -380,9 +365,7 @@ func doArchive(cmdline []string) {
 	var (
 		arch  = flag.String("arch", runtime.GOARCH, "Architecture cross packaging")
 		atype = flag.String("type", "zip", "Type of archive to write (zip|tar)")
-		// signer = flag.String("signer", "", `Environment variable holding the signing key (e.g. LINUX_SIGNING_KEY)`)
-		// upload = flag.String("upload", "", `Destination to upload the archives (usually "aquastore/builds")`)
-		ext string
+		ext   string
 	)
 	flag.CommandLine.Parse(cmdline)
 	switch *atype {
@@ -407,11 +390,6 @@ func doArchive(cmdline []string) {
 	if err := build.WriteArchive(alltools, allToolsArchiveFiles); err != nil {
 		log.Fatal(err)
 	}
-	// for _, archive := range []string{aquachain, alltools} {
-	// 	if err := archiveUpload(archive, *upload, *signer); err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// }
 }
 
 func archiveBasename(arch string, env build.Environment) string {
@@ -438,37 +416,6 @@ func archiveVersion(env build.Environment) string {
 	}
 	return version
 }
-
-//
-// func archiveUpload(archive string, blobstore string, signer string) error {
-// 	// If signing was requested, generate the signature files
-// 	if signer != "" {
-// 		pgpkey, err := base64.StdEncoding.DecodeString(os.Getenv(signer))
-// 		if err != nil {
-// 			return fmt.Errorf("invalid base64 %s", signer)
-// 		}
-// 		if err := build.PGPSignFile(archive, archive+".asc", string(pgpkey)); err != nil {
-// 			return err
-// 		}
-// 	}
-// 	// If uploading to Azure was requested, push the archive possibly with its signature
-// 	if blobstore != "" {
-// 		auth := build.AzureBlobstoreConfig{
-// 			Account:   strings.Split(blobstore, "/")[0],
-// 			Token:     os.Getenv("AZURE_BLOBSTORE_TOKEN"),
-// 			Container: strings.SplitN(blobstore, "/", 2)[1],
-// 		}
-// 		if err := build.AzureBlobstoreUpload(archive, filepath.Base(archive), auth); err != nil {
-// 			return err
-// 		}
-// 		if signer != "" {
-// 			if err := build.AzureBlobstoreUpload(archive+".asc", filepath.Base(archive+".asc"), auth); err != nil {
-// 				return err
-// 			}
-// 		}
-// 	}
-// 	return nil
-// }
 
 // skips archiving for some build configurations.
 func maybeSkipArchive(env build.Environment) {
@@ -729,11 +676,6 @@ func doWindowsInstaller(cmdline []string) {
 		"/DARCH="+*arch,
 		filepath.Join(*workdir, "aquachain.nsi"),
 	)
-
-	// // Sign and publish installer.
-	// if err := archiveUpload(installer, *upload, *signer); err != nil {
-	// 	log.Fatal(err)
-	// }
 }
 
 // Android archives
@@ -741,9 +683,6 @@ func doWindowsInstaller(cmdline []string) {
 func doAndroidArchive(cmdline []string) {
 	var (
 		local = flag.Bool("local", false, `Flag whether we're only doing a local build (skip Maven artifacts)`)
-		// signer = flag.String("signer", "", `Environment variable holding the signing key (e.g. ANDROID_SIGNING_KEY)`)
-		// deploy = flag.String("deploy", "", `Destination to deploy the archive (usually "https://oss.sonatype.org")`)
-		// upload = flag.String("upload", "", `Destination to upload the archive (usually "aquastore/builds")`)
 	)
 	flag.CommandLine.Parse(cmdline)
 	env := build.Env()
@@ -774,32 +713,6 @@ func doAndroidArchive(cmdline []string) {
 	// Sign and upload the archive to Azure
 	archive := "aquachain-" + archiveBasename("android", env) + ".aar"
 	os.Rename("aquachain.aar", archive)
-	//
-	// if err := archiveUpload(archive, *upload, *signer); err != nil {
-	// 	log.Fatal(err)
-	// }
-	// Sign and upload all the artifacts to Maven Central
-	// os.Rename(archive, meta.Package+".aar")
-	// if *signer != "" && *deploy != "" {
-	// 	// Import the signing key into the local GPG instance
-	// 	if b64key := os.Getenv(*signer); b64key != "" {
-	// 		key, err := base64.StdEncoding.DecodeString(b64key)
-	// 		if err != nil {
-	// 			log.Fatalf("invalid base64 %s", *signer)
-	// 		}
-	// 		gpg := exec.Command("gpg", "--import")
-	// 		gpg.Stdin = bytes.NewReader(key)
-	// 		build.MustRun(gpg)
-	// 	}
-	// 	// Upload the artifacts to Sonatype and/or Maven Central
-	// 	repo := *deploy + "/service/local/staging/deploy/maven2"
-	// 	if meta.Develop {
-	// 		repo = *deploy + "/content/repositories/snapshots"
-	// 	}
-	// 	build.MustRunCommand("mvn", "gpg:sign-and-deploy-file",
-	// 		"-settings=build/mvn.settings", "-Durl="+repo, "-DrepositoryId=ossrh",
-	// 		"-DpomFile="+meta.Package+".pom", "-Dfile="+meta.Package+".aar")
-	// }
 }
 
 func gomobileTool(subcmd string, args ...string) *exec.Cmd {
@@ -897,16 +810,6 @@ func doXCodeFramework(cmdline []string) {
 	// Skip CocoaPods deploy and Azure upload for PR builds
 	maybeSkipArchive(env)
 
-	// // Sign and upload the framework to Azure
-	// if err := archiveUpload(archive+".tar.gz", *upload, *signer); err != nil {
-	// 	log.Fatal(err)
-	// }
-	// Prepare and upload a PodSpec to CocoaPods
-	// if *deploy != "" {
-	// 	meta := newPodMetadata(env, archive)
-	// 	build.Render("build/pod.podspec", "AquaChain.podspec", 0755, meta)
-	// 	build.MustRunCommand("pod", *deploy, "push", "AquaChain.podspec", "--allow-warnings", "--verbose")
-	// }
 }
 
 type podMetadata struct {
@@ -1005,62 +908,3 @@ func xgoTool(args []string) *exec.Cmd {
 	}
 	return cmd
 }
-
-// // Binary distribution cleanups
-//
-// func doPurge(cmdline []string) {
-// 	var (
-// 		store = flag.String("store", "", `Destination from where to purge archives (usually "aquastore/builds")`)
-// 		limit = flag.Int("days", 30, `Age threshold above which to delete unstalbe archives`)
-// 	)
-// 	flag.CommandLine.Parse(cmdline)
-//
-// 	if env := build.Env(); !env.IsCronJob {
-// 		log.Printf("skipping because not a cron job")
-// 		os.Exit(0)
-// 	}
-// 	// Create the azure authentication and list the current archives
-// 	auth := build.AzureBlobstoreConfig{
-// 		Account:   strings.Split(*store, "/")[0],
-// 		Token:     os.Getenv("AZURE_BLOBSTORE_TOKEN"),
-// 		Container: strings.SplitN(*store, "/", 2)[1],
-// 	}
-// 	blobs, err := build.AzureBlobstoreList(auth)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	// Iterate over the blobs, collect and sort all unstable builds
-// 	for i := 0; i < len(blobs); i++ {
-// 		if !strings.Contains(blobs[i].Name, "unstable") {
-// 			blobs = append(blobs[:i], blobs[i+1:]...)
-// 			i--
-// 		}
-// 	}
-// 	for i := 0; i < len(blobs); i++ {
-// 		for j := i + 1; j < len(blobs); j++ {
-// 			iTime, err := time.Parse(time.RFC1123, blobs[i].Properties.LastModified)
-// 			if err != nil {
-// 				log.Fatal(err)
-// 			}
-// 			jTime, err := time.Parse(time.RFC1123, blobs[j].Properties.LastModified)
-// 			if err != nil {
-// 				log.Fatal(err)
-// 			}
-// 			if iTime.After(jTime) {
-// 				blobs[i], blobs[j] = blobs[j], blobs[i]
-// 			}
-// 		}
-// 	}
-// 	// Filter out all archives more recent that the given threshold
-// 	for i, blob := range blobs {
-// 		timestamp, _ := time.Parse(time.RFC1123, blob.Properties.LastModified)
-// 		if time.Since(timestamp) < time.Duration(*limit)*24*time.Hour {
-// 			blobs = blobs[:i]
-// 			break
-// 		}
-// 	}
-// 	// Delete all marked as such and return
-// 	if err := build.AzureBlobstoreDelete(auth, blobs); err != nil {
-// 		log.Fatal(err)
-// 	}
-// }

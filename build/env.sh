@@ -10,12 +10,12 @@ fi
 # Create fake Go workspace if it doesn't exist yet.
 workspace="/tmp/aqua/_workspace"
 root="$PWD"
-ethdir="$workspace/src/gitlab.com/aquachain"
-mkdir -p $ethdir
-if [ ! -L "$ethdir/aquachain" ]; then
-    echo "creating workspace: $ethdir/aquachain"
-    mkdir -p "$ethdir"
-    cd "$ethdir"
+aquasrc="$workspace/src/gitlab.com/aquachain"
+mkdir -p $aquasrc
+if [ ! -L "$aquasrc/aquachain" ]; then
+    echo "creating workspace: $aquasrc/aquachain"
+    mkdir -p "$aquasrc"
+    cd "$aquasrc"
     ln -s $root aquachain
     cd "$root"
 fi
@@ -25,8 +25,8 @@ GOPATH="$workspace"
 export GOPATH
 
 # Run the command inside the workspace.
-cd "$ethdir/aquachain"
-PWD="$ethdir/aquachain"
+cd "$aquasrc/aquachain"
+PWD="$aquasrc/aquachain"
 
 # Launch the arguments with the configured environment.
 exec "$@"
