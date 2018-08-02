@@ -18,13 +18,9 @@ package discv5
 
 import (
 	"encoding/hex"
-	"errors"
-	"io"
 	"net"
 	"reflect"
-	"sync"
 	"testing"
-	"time"
 
 	"github.com/davecgh/go-spew/spew"
 	"gitlab.com/aquachain/aquachain/common"
@@ -38,11 +34,11 @@ func init() {
 
 // shared test variables
 var (
-	futureExp          = uint64(time.Now().Add(10 * time.Hour).Unix())
-	testTarget         = NodeID{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1}
-	testRemote         = rpcEndpoint{IP: net.ParseIP("1.1.1.1").To4(), UDP: 1, TCP: 2}
-	testLocalAnnounced = rpcEndpoint{IP: net.ParseIP("2.2.2.2").To4(), UDP: 3, TCP: 4}
-	testLocal          = rpcEndpoint{IP: net.ParseIP("3.3.3.3").To4(), UDP: 5, TCP: 6}
+// futureExp          = uint64(time.Now().Add(10 * time.Hour).Unix())
+// testTarget         = NodeID{0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1}
+// testRemote         = rpcEndpoint{IP: net.ParseIP("1.1.1.1").To4(), UDP: 1, TCP: 2}
+// testLocalAnnounced = rpcEndpoint{IP: net.ParseIP("2.2.2.2").To4(), UDP: 3, TCP: 4}
+// testLocal          = rpcEndpoint{IP: net.ParseIP("3.3.3.3").To4(), UDP: 5, TCP: 6}
 )
 
 // type udpTest struct {
@@ -390,6 +386,7 @@ func TestForwardCompatibility(t *testing.T) {
 	}
 }
 
+/*
 // dgramPipe is a fake UDP socket. It queues all sent datagrams.
 type dgramPipe struct {
 	mu      *sync.Mutex
@@ -452,4 +449,4 @@ func (c *dgramPipe) waitPacketOut() []byte {
 	copy(c.queue, c.queue[1:])
 	c.queue = c.queue[:len(c.queue)-1]
 	return p
-}
+} */
