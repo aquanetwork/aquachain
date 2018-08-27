@@ -1030,9 +1030,11 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	for i := 1; i < len(chain); i++ {
 		if chain[i-1].Version() == 0 {
 			chain[i-1].SetVersion(bc.Config().GetBlockVersion(chain[i-1].Number()))
+			log.Trace("setting header version", "version", chain[i-1].Version(), "number", chain[i-1].Number())
 		}
 		if chain[i].Version() == 0 {
 			chain[i].SetVersion(bc.Config().GetBlockVersion(chain[i].Number()))
+			log.Trace("setting header version", "version", chain[i].Version(), "number", chain[i].Number())
 		}
 		if chain[i].NumberU64() != chain[i-1].NumberU64()+1 || chain[i].ParentHash() != chain[i-1].Hash() {
 			// Chain broke ancestry, log a messge (programming error) and skip insertion
@@ -1066,7 +1068,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	for i, block := range chain {
 		headers[i] = block.Header()
 		if headers[i].Version == 0 {
-			log.Warn("header version not set", "number", headers[i].Number)
+			log.Error("header version not set", "number", headers[i].Number)
 			return 0, nil, nil, fmt.Errorf("invalid chain: header %s version not set", headers[i].Number)
 		}
 		seals[i] = true
@@ -1081,6 +1083,12 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 			log.Debug("Premature abort during blocks processing")
 			break
 		}
+
+		if block.Version() == 0 {
+			panic("bad block.")
+		}
+
+		log.Debug("inserting block", "number", block.Number(), "version", block.Version())
 		// If the header is a banned one, straight out abort
 		if BadHashes[block.Hash()] {
 			bc.reportBlock(block, nil, ErrBlacklistedHash)
@@ -1090,6 +1098,9 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		bstart := time.Now()
 
 		err := <-results
+		if err != nil {
+			log.Error("error", "err", err, "block", block.Number(), "version", block.Version())
+		}
 		if err == nil {
 			block.Hash()
 			err = bc.Validator().ValidateBody(block)
@@ -1189,7 +1200,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 		}
 		switch status {
 		case CanonStatTy:
-			log.Debug("Inserted new block", "number", block.Number(), "hash", block.Hash(), "uncles", len(block.Uncles()),
+			log.Debug("Inserted new block", "number", block.Number(), "version", block.Version(), "hash", block.Hash(), "uncles", len(block.Uncles()),
 				"txs", len(block.Transactions()), "gas", block.GasUsed(), "elapsed", common.PrettyDuration(time.Since(bstart)))
 
 			coalescedLogs = append(coalescedLogs, logs...)
@@ -1247,7 +1258,7 @@ func (st *insertStats) report(chain []*types.Block, index int, cache common.Stor
 		context := []interface{}{
 			"blocks", st.processed, "txs", txs, "mgas", float64(st.usedGas) / 1000000,
 			"elapsed", common.PrettyDuration(elapsed), "mgasps", float64(st.usedGas) * 1000 / float64(elapsed),
-			"number", end.Number(), "hash", end.Hash(), "cache", cache,
+			"number", end.Number(), "hash", end.Hash(), "version", end.Version(), "cache", cache,
 		}
 		if st.queued > 0 {
 			context = append(context, []interface{}{"queued", st.queued}...)
@@ -1341,10 +1352,10 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 	// Ensure the user sees large reorgs
 	if len(oldChain) > 0 && len(newChain) > 0 {
 		logFn := log.Debug
-		if len(oldChain) > 63 {
+		if len(oldChain) > 5 {
 			logFn = log.Warn
 		}
-		logFn("Chain split detected", "number", commonBlock.Number(), "hash", commonBlock.Hash(),
+		logFn("Chain reorg", "number", commonBlock.Number(), "hash", commonBlock.Hash(),
 			"drop", len(oldChain), "dropfrom", oldChain[0].Hash(), "add", len(newChain), "addfrom", newChain[0].Hash())
 	} else {
 		log.Error("Impossible reorg, please file an issue", "oldnum", oldBlock.Number(), "oldhash", oldBlock.Hash(), "newnum", newBlock.Number(), "newhash", newBlock.Hash())
@@ -1458,6 +1469,9 @@ Hash: 0x%x
 Error: %v
 ##############################
 `, bc.chainConfig, block.Number(), block.Hash(), receiptString, err))
+	if bc.chainConfig.ChainId.Cmp(params.MainnetChainConfig.ChainId) != 0 {
+		//	panic("bad block on import")
+	}
 }
 
 // InsertHeaderChain attempts to insert the given header chain in to the local

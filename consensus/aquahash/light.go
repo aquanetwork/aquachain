@@ -32,7 +32,7 @@ func (l *Light) Verify(block LightBlock) bool {
 	// TODO: do aquahash_quick_verify before getCache in order
 	// to prevent DOS attacks.
 
-	if block.Version() != 2 {
+	if block.Version() < 2 {
 		return false
 	}
 
@@ -61,7 +61,7 @@ func (l *Light) Verify(block LightBlock) bool {
 	seed := make([]byte, 40)
 	copy(seed, block.HashNoNonce().Bytes())
 	binary.LittleEndian.PutUint64(seed[32:], block.Nonce())
-	result := crypto.Argon2id(seed)
+	result := crypto.VersionHash(block.Version(), seed)
 
 	// The actual check.
 	target := new(big.Int).Div(maxUint256, difficulty)

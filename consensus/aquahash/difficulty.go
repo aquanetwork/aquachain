@@ -14,13 +14,15 @@ var (
 	big1          = big.NewInt(1)
 	big2          = big.NewInt(2)
 	big10         = big.NewInt(10)
+	big240        = big.NewInt(240)
 	bigMinus99    = big.NewInt(-99)
+	big10000      = big.NewInt(10000)
 )
 
 // calcDifficultyHomestead is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time given the
 // parent block's time and difficulty. The calculation uses the Homestead rules.
-func calcDifficultyHomestead(time uint64, parent *types.Header) *big.Int {
+func calcDifficultyHomestead(time uint64, parent *types.Header, chainID uint64) *big.Int {
 	// https://github.com/aquanetwork/EIPs/blob/master/EIPS/eip-2.md
 	// algorithm:
 	// diff = (parent_diff +
@@ -47,20 +49,9 @@ func calcDifficultyHomestead(time uint64, parent *types.Header) *big.Int {
 	x.Mul(y, x)
 	x.Add(parent.Difficulty, x)
 
-	// minimum difficulty can ever be (before exponential factor)
-	x = math.BigMax(x, params.MinimumDifficultyGenesis)
-
-	periodCount := new(big.Int).Add(parent.Number, big1)
-
-	// for the exponential factor
-	periodCount.Div(periodCount, expDiffPeriod)
-
-	// the exponential factor, commonly referred to as "the bomb"
-	// diff = diff + 2^(periodCount - 2)
-	if periodCount.Cmp(big1) > 0 {
-		y.Sub(periodCount, big2)
-		y.Exp(big2, y, nil)
-		x.Add(x, y)
+	// testnet no minimum
+	if chainID == params.MainnetChainConfig.ChainId.Uint64() {
+		x = math.BigMax(x, params.MinimumDifficultyGenesis)
 	}
 	return x
 }
@@ -68,7 +59,8 @@ func calcDifficultyHomestead(time uint64, parent *types.Header) *big.Int {
 // calcDifficultyHF1 is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time given the
 // parent block's time and difficulty. The calculation uses modified Homestead rules.
-func calcDifficultyHF1(time uint64, parent *types.Header) *big.Int {
+// It is flawed, target 10 seconds
+func calcDifficultyHF1(time uint64, parent *types.Header, chainID uint64) *big.Int {
 	bigTime := new(big.Int).SetUint64(time)
 	bigParentTime := new(big.Int).Set(parent.Time)
 
@@ -91,132 +83,118 @@ func calcDifficultyHF1(time uint64, parent *types.Header) *big.Int {
 	x.Add(parent.Difficulty, x)
 
 	// minimum difficulty can ever be (before exponential factor)
-	x = math.BigMax(x, params.MinimumDifficultyHF1)
-
-	// for the exponential factor
-	periodCount := new(big.Int).Add(parent.Number, big1)
-	periodCount.Div(periodCount, expDiffPeriod)
-
-	// the exponential factor, commonly referred to as "the bomb"
-	// diff = diff + 2^(periodCount - 2)
-	if periodCount.Cmp(big1) > 0 {
-		y.Sub(periodCount, big2)
-		y.Exp(big2, y, nil)
-		x.Add(x, y)
+	if chainID == params.MainnetChainConfig.ChainId.Uint64() {
+		x = math.BigMax(x, params.MinimumDifficultyHF1)
 	}
 	return x
 }
 
-// calcDifficultyHF2
-func calcDifficultyHF2(time uint64, parent *types.Header) *big.Int {
-	diff := new(big.Int)
-	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
-	bigTime := new(big.Int)
-	bigParentTime := new(big.Int)
+// calcDifficultyX is the difficulty adjustment algorithm. It returns
+// the difficulty that a new block should have when created at time given the
+// parent block's time and difficulty. The calculation uses modified Homestead rules.
+// It is flawed, target 10 seconds
+func calcDifficultyGrandparent(time uint64, parent, grandparent *types.Header, hf int, chainID uint64) *big.Int {
+	bigGrandparentTime := new(big.Int).Set(grandparent.Time)
+	bigParentTime := new(big.Int).Set(parent.Time)
+	if bigParentTime.Cmp(bigGrandparentTime) <= 0 {
+		panic("invalid code")
+	}
+	// holds intermediate values to make the algo easier to read & audit
+	x := new(big.Int)
+	y := new(big.Int)
 
-	bigTime.SetUint64(time)
-	bigParentTime.Set(parent.Time)
+	divisor := params.DifficultyBoundDivisorHF5
 
-	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
-		diff.Add(parent.Difficulty, adjust)
+	// 1 - (block_timestamp - parent_timestamp) // 240
+	x.Sub(bigParentTime, bigGrandparentTime)
+	x.Div(x, big240)
+	x.Sub(big1, x)
+
+	// max(1 - (block_timestamp - parent_timestamp) // 240, -99)
+	if x.Cmp(bigMinus99) < 0 {
+		x.Set(bigMinus99)
+	}
+
+	if grandparent.Difficulty.Cmp(big10000) < 0 {
+		divisor = params.DifficultyBoundDivisorHF5
 	} else {
-		diff.Sub(parent.Difficulty, adjust)
+		divisor = params.DifficultyBoundDivisorHF8
 	}
+	// (parent_diff + parent_diff // 2048 * max(1 - (block_timestamp - parent_timestamp) // 10, -99))
+	y.Div(grandparent.Difficulty, divisor)
+	x.Mul(y, x)
+	x.Add(grandparent.Difficulty, x)
 
-	if diff.Cmp(params.MinimumDifficultyHF1) < 0 {
-		diff.Set(params.MinimumDifficultyHF1)
+	// minimum difficulty can ever be (before exponential factor)
+	if chainID == params.MainnetChainConfig.ChainId.Uint64() {
+		x = math.BigMax(x, params.MinimumDifficultyHF5)
+	} else {
+		x = math.BigMax(x, params.MinimumDifficultyHF5Testnet)
 	}
+	return x
 
-	return diff
+}
+func calcDifficultyHF6(time uint64, parent *types.Header, hf int, chainID uint64) *big.Int {
+	return calcDifficultyHFX(time, nil, parent, hf, chainID)
 }
 
-// calcDifficultyHF3
-func calcDifficultyHF3(time uint64, parent *types.Header) *big.Int {
-	diff := new(big.Int)
-	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
-	bigTime := new(big.Int)
-	bigParentTime := new(big.Int)
-
-	bigTime.SetUint64(time)
-	bigParentTime.Set(parent.Time)
-
-	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
-		diff.Add(parent.Difficulty, adjust)
-	} else {
-		diff.Sub(parent.Difficulty, adjust)
-	}
-
-	if diff.Cmp(params.MinimumDifficultyHF3) < 0 {
-		diff.Set(params.MinimumDifficultyHF3)
-	}
-
-	return diff
+func calcDifficultyHF10(time uint64, grandparent, parent *types.Header, hf int, chainID uint64) *big.Int {
+	return calcDifficultyGrandparent(time, grandparent, parent, hf, chainID)
 }
-
-// calcDifficultyHF5
-func calcDifficultyHF5(time uint64, parent *types.Header) *big.Int {
-	diff := new(big.Int)
-	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF5)
-	bigTime := new(big.Int)
-	bigParentTime := new(big.Int)
+func calcDifficultyHFX(time uint64, grandparent, parent *types.Header, hf int, chainID uint64) *big.Int {
+	var (
+		diff          = new(big.Int)
+		adjust        *big.Int
+		bigTime       = new(big.Int)
+		bigParentTime = new(big.Int)
+		limit         = params.DurationLimitHF6 // target 240 seconds
+		min           = params.MinimumDifficultyHF5
+		mainnet       = params.MainnetChainConfig.ChainId.Uint64() == chainID // bool
+	)
+	switch hf {
+	case 10:
+		panic("hf 10 not implemented")
+	case 9:
+		return calcDifficultyGrandparent(time, grandparent, parent, hf, chainID)
+	case 8:
+		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF8)
+	case 6, 7:
+		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF6)
+	case 5:
+		limit = params.DurationLimit // not accurate, fixed in hf6
+		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF5)
+	case 3:
+		limit = params.DurationLimit // not accurate, fixed in hf6
+		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
+		min = params.MinimumDifficultyHF3
+	case 2:
+		limit = params.DurationLimit // not accurate, fixed in hf6
+		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
+		min = params.MinimumDifficultyHF1
+	case 1:
+		return calcDifficultyHF1(time, parent, chainID)
+	case 0:
+		return calcDifficultyHomestead(time, parent, chainID)
+	default:
+		panic("calculating difficulty fail")
+	}
 
 	bigTime.SetUint64(time)
 	bigParentTime.Set(parent.Time)
 
-	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimit) < 0 {
+	if !mainnet {
+		min = params.MinimumDifficultyHF5Testnet
+	}
+
+	// calculate difficulty
+	if bigTime.Sub(bigTime, bigParentTime).Cmp(limit) < 0 {
 		diff.Add(parent.Difficulty, adjust)
 	} else {
 		diff.Sub(parent.Difficulty, adjust)
 	}
 
-	if diff.Cmp(params.MinimumDifficultyHF5) < 0 {
-		diff.Set(params.MinimumDifficultyHF5)
-	}
-
-	return diff
-}
-
-// calcDifficultyHF6 - higher divisor
-func calcDifficultyHF6(time uint64, parent *types.Header) *big.Int {
-	diff := new(big.Int)
-	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF6)
-	bigTime := new(big.Int)
-	bigParentTime := new(big.Int)
-
-	bigTime.SetUint64(time)
-	bigParentTime.Set(parent.Time)
-
-	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimitHF6) < 0 {
-		diff.Add(parent.Difficulty, adjust)
-	} else {
-		diff.Sub(parent.Difficulty, adjust)
-	}
-
-	if diff.Cmp(params.MinimumDifficultyHF5) < 0 {
-		diff.Set(params.MinimumDifficultyHF5)
-	}
-
-	return diff
-}
-
-// calcDifficultyHF6Testnet - higher divisor and lower minimum difficulty
-func calcDifficultyHF6Testnet(time uint64, parent *types.Header) *big.Int {
-	diff := new(big.Int)
-	adjust := new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF6)
-	bigTime := new(big.Int)
-	bigParentTime := new(big.Int)
-
-	bigTime.SetUint64(time)
-	bigParentTime.Set(parent.Time)
-
-	if bigTime.Sub(bigTime, bigParentTime).Cmp(params.DurationLimitHF6) < 0 {
-		diff.Add(parent.Difficulty, adjust)
-	} else {
-		diff.Sub(parent.Difficulty, adjust)
-	}
-
-	if diff.Cmp(params.MinimumDifficultyTestnet) < 0 {
-		diff.Set(params.MinimumDifficultyTestnet)
+	if diff.Cmp(min) < 0 {
+		diff.Set(min)
 	}
 
 	return diff

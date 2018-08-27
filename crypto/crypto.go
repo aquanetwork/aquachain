@@ -48,8 +48,34 @@ const (
 )
 
 // Argon2id calculates and returns the Argon2id hash of the input data.
-func Argon2id(data ...[]byte) []byte {
+func VersionHash(v byte, data ...[]byte) []byte {
+	switch v {
+	case 1:
+		return Keccak256(data...)
+	case 2:
+		return argon2idA(data...)
+	case 3:
+		return argon2idB(data...)
+	case 4:
+		return argon2idC(data...)
+	default:
+		panic("invalid block version")
+	}
+}
+
+// Argon2id calculates and returns the Argon2id hash of the input data.
+func Argon2idA(data ...[]byte) []byte {
 	return argon2idA(data...)
+}
+
+// Argon2id calculates and returns the Argon2id hash of the input data.
+func Argon2idB(data ...[]byte) []byte {
+	return argon2idB(data...)
+}
+
+// Argon2id calculates and returns the Argon2id hash of the input data.
+func Argon2idC(data ...[]byte) []byte {
+	return argon2idC(data...)
 }
 
 // Argon2id calculates and returns the Argon2id hash of the input data.
@@ -69,7 +95,7 @@ func argon2idB(data ...[]byte) []byte {
 	for i := range data {
 		buf.Write(data[i])
 	}
-	return argon2.IDKey(buf.Bytes(), nil, 2, argonMem, argonThreads, common.HashLength)
+	return argon2.IDKey(buf.Bytes(), nil, argonTime, 1024*256, argonThreads, common.HashLength)
 }
 
 // Argon2id calculates and returns the Argon2id hash of the input data.
@@ -79,12 +105,22 @@ func argon2idC(data ...[]byte) []byte {
 	for i := range data {
 		buf.Write(data[i])
 	}
-	return argon2.IDKey(buf.Bytes(), nil, 3, argonMem, argonThreads, common.HashLength)
+	return argon2.IDKey(buf.Bytes(), nil, argonTime, 1024*512, argonThreads, common.HashLength)
 }
 
 // Argon2id calculates and returns the Argon2id hash of the input data.
-func Argon2idHash(data ...[]byte) (h common.Hash) {
-	return common.BytesToHash(Argon2id(data...))
+func Argon2idAHash(data ...[]byte) (h common.Hash) {
+	return common.BytesToHash(Argon2idA(data...))
+}
+
+// Argon2id calculates and returns the Argon2id hash of the input data.
+func Argon2idBHash(data ...[]byte) (h common.Hash) {
+	return common.BytesToHash(Argon2idB(data...))
+}
+
+// Argon2id calculates and returns the Argon2id hash of the input data.
+func Argon2idCHash(data ...[]byte) (h common.Hash) {
+	return common.BytesToHash(Argon2idC(data...))
 }
 
 // Keccak256 calculates and returns the Keccak256 hash of the input data.

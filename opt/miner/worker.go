@@ -369,7 +369,7 @@ func (self *worker) makeCurrent(parent *types.Block, header *types.Header) error
 	// when 08 is processed ancestors contain 07 (quick block)
 	for _, ancestor := range self.chain.GetBlocksFromHash(parent.Hash(), 7) {
 		for _, uncle := range ancestor.Uncles() {
-			work.family.Add(uncle.SetVersion(byte(self.config.GetBlockVersion(uncle.Number))))
+			work.family.Add(uncle.Hash())
 		}
 		work.family.Add(ancestor.Hash())
 		work.ancestors.Add(ancestor.Hash())
@@ -413,6 +413,7 @@ func (self *worker) commitNewWork() {
 		Time:       big.NewInt(tstamp),
 		Version:    self.chain.Config().GetBlockVersion(numnew),
 	}
+
 	// Only set the coinbase if we are mining (avoid spurious block rewards)
 	if atomic.LoadInt32(&self.mining) == 1 {
 		header.Coinbase = self.coinbase
@@ -421,19 +422,7 @@ func (self *worker) commitNewWork() {
 		log.Error("Failed to prepare header for mining", "err", err)
 		return
 	}
-	// // If we are care about TheDAO hard-fork check whether to override the extra-data or not
-	// if daoBlock := self.config.DAOForkBlock; daoBlock != nil {
-	// 	// Check whether the block is among the fork extra-override range
-	// 	limit := new(big.Int).Add(daoBlock, params.DAOForkExtraRange)
-	// 	if header.Number.Cmp(daoBlock) >= 0 && header.Number.Cmp(limit) < 0 {
-	// 		// Depending whether we support or oppose the fork, override differently
-	// 		if self.config.DAOForkSupport {
-	// 			header.Extra = common.CopyBytes(params.DAOForkBlockExtra)
-	// 		} else if bytes.Equal(header.Extra, params.DAOForkBlockExtra) {
-	// 			header.Extra = []byte{} // If miner opposes, don't let it use the reserved extra-data
-	// 		}
-	// 	}
-	// }
+
 	// Could potentially happen if starting to mine in an odd state.
 	err := self.makeCurrent(parent, header)
 	if err != nil {
@@ -468,9 +457,7 @@ func (self *worker) commitNewWork() {
 		if len(uncles) == 1 {
 			break
 		}
-		unclehead := uncle.Header()
-		unclehead.Version = self.chain.Config().GetBlockVersion(unclehead.Number)
-		if err := self.commitUncle(work, unclehead); err != nil {
+		if err := self.commitUncle(work, uncle.Header()); err != nil {
 			log.Error("Bad uncle found and will be removed", "hash", hash, "err", err)
 			log.Trace(fmt.Sprint(uncle))
 
@@ -481,6 +468,7 @@ func (self *worker) commitNewWork() {
 		// 	log.Trace("Empty uncle found and will be removed", "hash", hash)
 		// 	log.Trace(fmt.Sprint(uncle))
 		// 	badUncles = append(badUncles, hash)
+		//	continue
 		// }
 
 		log.Debug("Committing new uncle to block", "hash", hash)

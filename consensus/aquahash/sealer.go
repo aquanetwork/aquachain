@@ -49,6 +49,7 @@ func (aquahash *Aquahash) Seal(chain consensus.ChainReader, block *types.Block, 
 	}
 	// If we're running a shared PoW, delegate sealing to it
 	if aquahash.shared != nil {
+		log.Debug("delegating work", "block", block.Number(), "version", block.Version())
 		return aquahash.shared.Seal(chain, block, stop)
 	}
 	// Create a runner and the multiple search threads it directs
@@ -146,14 +147,14 @@ search:
 			switch header.Version {
 			case 1:
 				digest, result = hashimotoFull(dataset.dataset, hash, nonce)
-			case 2:
+			case 2, 3, 4:
 				seed := make([]byte, 40)
 				copy(seed, hash)
 				binary.LittleEndian.PutUint64(seed[32:], nonce)
-				result = crypto.Argon2id(seed)
+				result = crypto.VersionHash(byte(header.Version), seed)
 				digest = make([]byte, common.HashLength)
 			default:
-				common.Report("Mining incorrect version")
+				logger.Error("Mining incorrect version", "block", number, "version", version)
 				break search
 			}
 

@@ -114,10 +114,23 @@ func (a *RemoteAgent) GetWork() ([3]string, error) {
 
 	if a.currentWork != nil {
 		block := a.currentWork.Block
-
+		version := block.Version()
+		if version == 0 {
+			panic("remote getwork not set")
+		}
 		res[0] = block.HashNoNonce().Hex()
-		seedHash := aquahash.SeedHash(block.NumberU64())
-		res[1] = common.BytesToHash(seedHash).Hex()
+		switch {
+		case version < 2:
+			seedHash := aquahash.SeedHash(block.NumberU64())
+			res[1] = common.BytesToHash(seedHash).Hex()
+		case version == 2:
+			res[1] = common.Hash{}.Hex()
+		case version > 2:
+			res[1] = common.BytesToHash([]byte{byte(version)}).Hex()
+		default:
+			log.Error("header", "version", version)
+			panic("remote version not implemented")
+		}
 		// Calculate the "target" to be returned to the external miner
 		n := big.NewInt(1)
 		n.Lsh(n, 255)
@@ -149,7 +162,8 @@ func (a *RemoteAgent) SubmitWork(nonce types.BlockNonce, mixDigest, hash common.
 	result.Nonce = nonce
 	result.MixDigest = mixDigest
 	if result.Version == 0 {
-		log.Info("Not real work", "version", result.Version)
+		log.Warn("Not real work", "version", result.Version)
+		return false
 	}
 	if err := a.engine.VerifySeal(a.chain, result); err != nil {
 		log.Warn("Invalid proof-of-work submitted", "hash", hash, "err", err)
