@@ -49,7 +49,7 @@ type LightBlock interface {
 func (l *Light) Verify(block LightBlock) bool {
 	algo := block.Version()
 	// check version is set and valid
-	if algo == 0 || algo > 4{
+	if algo == 0 || algo > 4 {
 		return false
 	}
 

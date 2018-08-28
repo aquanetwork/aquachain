@@ -27,16 +27,16 @@ import (
 const version = "aquaminer version 0.9x (https://gitlab.com/aquachain/aquachain)"
 
 var (
-	EmptyMixDigest      = common.BytesToHash(make([]byte, common.HashLength))
-	maxproc      = flag.Int("t", runtime.NumCPU(), "number of miners to spawn")
-	farm         = flag.String("F", "http://localhost:8543", "rpc server to mine to")
-	showVersion  = flag.Bool("version", false, "show version and exit")
-	benching     = flag.Bool("B", false, "offline benchmark mode")
-	debug        = flag.Bool("d", false, "debug mode")
-	benchversion = flag.Uint64("v", 4, "hash version (benchmarking only)")
-	nonceseed    = flag.Int64("seed", 1, "nonce seed multiplier")
-	refresh      = flag.Duration("r", time.Second*3, "seconds to wait between asking for more work")
-	proxypath    = flag.String("prx", "", "example: socks5://192.168.1.3:1080 or 'tor' for localhost:9050")
+	EmptyMixDigest = common.BytesToHash(make([]byte, common.HashLength))
+	maxproc        = flag.Int("t", runtime.NumCPU(), "number of miners to spawn")
+	farm           = flag.String("F", "http://localhost:8543", "rpc server to mine to")
+	showVersion    = flag.Bool("version", false, "show version and exit")
+	benching       = flag.Bool("B", false, "offline benchmark mode")
+	debug          = flag.Bool("d", false, "debug mode")
+	benchversion   = flag.Uint64("v", 4, "hash version (benchmarking only)")
+	nonceseed      = flag.Int64("seed", 1, "nonce seed multiplier")
+	refresh        = flag.Duration("r", time.Second*3, "seconds to wait between asking for more work")
+	proxypath      = flag.String("prx", "", "example: socks5://192.168.1.3:1080 or 'tor' for localhost:9050")
 )
 
 // big numbers
