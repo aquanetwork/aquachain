@@ -63,7 +63,7 @@ func TestBlockEncoding(t *testing.T) {
 		t.Errorf("encoded 1 block mismatch:\ngot:  %x\nwant: %x", ourBlockEnc, blockEnc)
 	}
 
-	block.SetVersion(H_ARGON2ID)
+	block.SetVersion(H_ARGON2ID_A)
 	check("Difficulty", block.Difficulty(), big.NewInt(131072))
 	check("GasLimit", block.GasLimit(), uint64(3141592))
 	check("GasUsed", block.GasUsed(), uint64(21000))

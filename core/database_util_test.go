@@ -91,7 +91,7 @@ func TestHeaderStorageArgon(t *testing.T) {
 	if entry := GetHeaderRLP(db, header.Hash(), header.Number.Uint64()); entry == nil {
 		t.Fatalf("Stored header RLP not found")
 	} else {
-		if hash := crypto.Argon2idHash(entry); hash != header.Hash() {
+		if hash := common.BytesToHash(crypto.VersionHash(byte(header.Version), entry)); hash != header.Hash() {
 			t.Fatalf("Retrieved RLP header mismatch: have %v, want %v", entry, header)
 		}
 	}
