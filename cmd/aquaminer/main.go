@@ -27,7 +27,7 @@ import (
 const version = "aquaminer version 0.9x (https://gitlab.com/aquachain/aquachain)"
 
 var (
-	digest       = common.BytesToHash(make([]byte, common.HashLength))
+	EmptyMixDigest      = common.BytesToHash(make([]byte, common.HashLength))
 	maxproc      = flag.Int("t", runtime.NumCPU(), "number of miners to spawn")
 	farm         = flag.String("F", "http://localhost:8543", "rpc server to mine to")
 	showVersion  = flag.Bool("version", false, "show version and exit")
@@ -233,7 +233,7 @@ func miner(label string, client *aquaclient.Client, offline bool, getworkchan <-
 				continue
 			}
 			// submit the nonce, with the original job
-			if client.SubmitWork(ctx, blknonce, workHash, digest) {
+			if client.SubmitWork(ctx, blknonce, workHash, EmptyMixDigest) {
 				log.Println("good nonce:", nonce)
 			} else {
 				// there was an error when we send the work. lets get a totally

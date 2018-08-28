@@ -32,7 +32,7 @@ func TestMiner(t *testing.T) {
 	fmt.Printf("beforehash: %x\n", seed)
 
 	// hash
-	result := crypto.Argon2idHash(seed).Bytes()
+	result := crypto.VersionHash(2, seed)
 
 	// difficulty
 	out := new(big.Int).SetBytes(result)
