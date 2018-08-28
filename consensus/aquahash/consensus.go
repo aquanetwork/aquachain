@@ -382,7 +382,7 @@ func CalcDifficultyHF8(chain consensus.ChainReader, time uint64, parent *types.H
 		config = chain.Config()
 	)
 
-	if config.ChainId == nil {
+	if config == nil || config.ChainId == nil {
 		panic("calc difficulty: no chainID set")
 	}
 
