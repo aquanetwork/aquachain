@@ -40,6 +40,7 @@ var customGenesisTests = []struct {
 			"mixhash"    : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"parentHash" : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"timestamp"  : "0x00"
+			"config"     : {"chainId": 210}
 		}`,
 		query:  "aqua.getBlock(0).nonce",
 		result: "0x000000000000002a",
@@ -56,7 +57,7 @@ var customGenesisTests = []struct {
 			"mixhash"    : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"parentHash" : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"timestamp"  : "0x00",
-			"config"     : {}
+			"config"     : {"chainId": 210}
 		}`,
 		query:  "aqua.getBlock(0).nonce",
 		result: "0x000000000000002a",
@@ -73,11 +74,7 @@ var customGenesisTests = []struct {
 			"mixhash"    : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"parentHash" : "0x0000000000000000000000000000000000000000000000000000000000000000",
 			"timestamp"  : "0x00",
-			"config"     : {
-				"homesteadBlock" : 314,
-				"daoForkBlock"   : 141,
-				"daoForkSupport" : true
-			},
+			"config"     : {"chainId": 210}
 		}`,
 		query:  "aqua.getBlock(0).nonce",
 		result: "0x000000000000002a",
