@@ -207,6 +207,9 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 		}
 		parent, number = ancestor.ParentHash(), number-1
 	}
+	if block.Version() == 0 {
+		return fmt.Errorf("verify uncles: block version not set")
+	}
 	ancestorhash := block.Hash()
 	ancestors[ancestorhash] = block.Header()
 	uncles.Add(ancestorhash)
@@ -214,36 +217,49 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 	// Verify each of the uncles that it's recent, but not an ancestor
 	for _, uncle := range block.Uncles() {
 
-		hash := uncle.SetVersion(byte(chain.Config().GetBlockVersion(uncle.Number)))
-		switch hash.Hex() { // strange uncles that ended up in the main chain
-		case "0x361262d059cbf137c9881a6fb3d671818bb45e71877e58be2a60cbd2bc2fedf7":
-		case "0xdc192e7d1bfc5aab2eab88bd1bfa39d7c5c95bc07a926d6f2a050fb05d6932d6":
-		case "0x94177d394e87a8b1e4cd58c69cfee69a67432f526092367464cf45bc1050d82a":
-		case "0xbac2283407b519ffbb8c47772d1b7cf740646dddf69744ff44219cb868b00548":
-		default:
-			// Make sure every uncle is rewarded only once
-			if uncles.Has(hash) {
+		unum := uncle.Number
+		hash := uncle.SetVersion(byte(chain.Config().GetBlockVersion(unum)))
+
+		// Make sure every uncle is rewarded only once
+		if uncles.Has(hash) {
+			if number > 15000 {
+				return errDuplicateUncle
+			} else if ancestorhash.Hex() == "0xbac2283407b519ffbb8c47772d1b7cf740646dddf69744ff44219cb868b00548" && unum.Uint64() == 13313 {
+			} else if ancestorhash.Hex() == "0xa955c8499ce9c4fb00700a8d97db8600dc50c8a81275627a18e30cfb82c19ac2" && unum.Uint64() == 13315 {
+			} else if ancestorhash.Hex() == "0x7da0315b99e059f17b18bfd7f07c57b8e3be3aac261dbf470fb2d6cb0acb9899" && unum.Uint64() == 13998 {
+			} else {
 				return errDuplicateUncle
 			}
 		}
+
 		uncles.Add(hash)
 
 		// Make sure the uncle has a valid ancestry
 		if ancestors[hash] != nil {
-			switch hash.Hex() {
-			case "0x13cb01d5d3566d076b5e128e5733f17968f95329fb1777ff38db53abdcca3e4c":
-			default:
-				println("uncle: " + hash.Hex())
-				common.Report(block)
-				return errUncleIsAncestor
-			}
+			return errUncleIsAncestor
 		}
+
 		if ancestors[uncle.ParentHash] == nil || uncle.ParentHash == block.ParentHash() {
-			switch uncle.ParentHash.Hex() {
-			case "0x6b818656fb5059ab4dd070e2c2822a7774065090e74ff31515764212c88e2923",
-				"0x0afd1b00b8e1a49652beeb860e3b58dacc865dd3e3d9d303374ed3ffdfef8eea":
+			if number > 15000 {
+				return errDanglingUncle
+			}
+			parentHash := uncle.ParentHash.Hex()
+			if parentHash == "0x6b818656fb5059ab4dd070e2c2822a7774065090e74ff31515764212c88e2923" && uncle.Number.Uint64() == 14003 {
+				log.Debug("Weird block", "uncle", unum, "number", number)
 				return nil
-			default:
+			} else if parentHash == "0x0afd1b00b8e1a49652beeb860e3b58dacc865dd3e3d9d303374ed3ffdfef8eea" && uncle.Number.Uint64() == 14001 {
+				log.Debug("Weird block", "uncle", unum, "number", number)
+				return nil
+			} else if hash.Hex() == "0xed6dae6d2d4f599d78429e127e8a654fe96c30f4b6c9bacb01cfa45d8a57b45e" && uncle.Number.Uint64() == 14004 {
+				log.Debug("Weird block", "uncle", unum, "number", number)
+				return nil
+			} else if hash.Hex() == "0x13cb01d5d3566d076b5e128e5733f17968f95329fb1777ff38db53abdcca3e4c" && uncle.Number.Uint64() == 14008 {
+				log.Debug("Weird block", "uncle", unum, "number", number)
+				return nil
+			} else if hash.Hex() == "0x822735d89d8493434d3ec1f504c9f103d7bb4761cd358370b00dd234621cf1b9" && uncle.Number.Uint64() == 14009 {
+				log.Debug("Weird block", "uncle", unum, "number", number)
+				return nil
+			} else {
 				return errDanglingUncle
 			}
 		}
