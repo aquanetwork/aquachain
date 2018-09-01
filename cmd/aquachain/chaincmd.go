@@ -156,6 +156,11 @@ func initGenesis(ctx *cli.Context) error {
 	if err := json.NewDecoder(file).Decode(genesis); err != nil {
 		utils.Fatalf("invalid genesis file: %v", err)
 	}
+
+	if genesis.Config == nil || genesis.Config.ChainId == nil {
+		utils.Fatalf("invalid genesis file: no chainid")
+	}
+
 	// Open an initialise db
 	stack := makeFullNode(ctx)
 	for _, name := range []string{"chaindata"} {

@@ -56,14 +56,14 @@ func TestSetupGenesis(t *testing.T) {
 	var (
 		customghash = common.HexToHash("0x92f036d05929e5762b8e83ce7c104b37881922732b32fd39253efe1e7e5c2b51")
 		customg     = Genesis{
-			Config: &params.ChainConfig{HomesteadBlock: big.NewInt(3)},
+			Config: &params.ChainConfig{HomesteadBlock: big.NewInt(3), HF: params.TestnetChainConfig.HF, ChainId: big.NewInt(101)},
 			Alloc: GenesisAlloc{
 				{1}: {Balance: big.NewInt(1), Storage: map[common.Hash]common.Hash{{1}: {1}}},
 			},
 		}
 		oldcustomg = customg
 	)
-	oldcustomg.Config = &params.ChainConfig{HomesteadBlock: big.NewInt(2)}
+	oldcustomg.Config = &params.ChainConfig{HomesteadBlock: big.NewInt(2), HF: params.TestnetChainConfig.HF, ChainId: big.NewInt(102)}
 	tests := []struct {
 		name       string
 		fn         func(aquadb.Database) (*params.ChainConfig, common.Hash, error)

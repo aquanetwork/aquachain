@@ -358,6 +358,9 @@ func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint6
 // the difficulty that a new block should have when created at time
 // given the parent block's time and difficulty.
 func CalcDifficulty(config *params.ChainConfig, time uint64, parent, grandparent *types.Header) *big.Int {
+	if config == nil {
+		panic("calcdiff got nil config")
+	}
 	return calcDifficultyHFX(config, time, parent, grandparent)
 }
 
