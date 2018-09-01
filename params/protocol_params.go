@@ -80,17 +80,22 @@ const (
 )
 
 var (
-	DifficultyBoundDivisor    = big.NewInt(2048)            // The bound divisor of the difficulty, used in the update calculations.
-	GenesisDifficulty         = big.NewInt(99999999)        // Difficulty of the Genesis block.
-	MinimumDifficultyGenesis  = big.NewInt(99999999)        // The minimum that the difficulty may ever be
-	MinimumDifficultyHF1      = big.NewInt(100001792)       // The minimum that the difficulty may ever be (changed to a nice multiple of 2048).
-	MinimumDifficultyHF3      = big.NewInt(3095918580 * 10) // GPU Announcement
-	MinimumDifficultyHF5      = big.NewInt(46039386)        // Argon2id Announcement
-	MinimumDifficultyTestnet  = big.NewInt(4096)            // Argon2id Testnet
-	DifficultyBoundDivisorHF5 = big.NewInt(16)              // The bound divisor of the difficulty, used in the update calculations.
-	DifficultyBoundDivisorHF6 = big.NewInt(128)             // The bound divisor of the difficulty, used in the update calculations.
-	DurationLimit             = big.NewInt(240)             // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	DifficultyBoundDivisor      = big.NewInt(2048)            // The bound divisor of the difficulty, used in the update calculations.
+	GenesisDifficulty           = big.NewInt(99999999)        // Difficulty of the Genesis block.
+	MinimumDifficultyGenesis    = big.NewInt(99999999)        // The minimum that the difficulty may ever be
+	MinimumDifficultyHF1        = big.NewInt(100001792)       // The minimum that the difficulty may ever be (changed to a nice multiple of 2048).
+	MinimumDifficultyHF3        = big.NewInt(3095918580 * 10) // GPU Announcement
+	MinimumDifficultyHF5Testnet = big.NewInt(4096)            // Argon2id Announcement
+	MinimumDifficultyHF5        = big.NewInt(46039386)        // Argon2id Announcement
+	MinimumDifficultyTestnet    = big.NewInt(4096)            // Argon2id Testnet
+	DifficultyBoundDivisorHF5   = big.NewInt(16)              // The bound divisor of the difficulty, used in the update calculations.
+	DifficultyBoundDivisorHF6   = big.NewInt(128)             // The bound divisor of the difficulty, used in the update calculations.
+	DifficultyBoundDivisorHF8   = big.NewInt(1024)            // The bound divisor of the difficulty, used in the update calculations.
+	DifficultyBoundDivisorHF9   = big.NewInt(2048)            // The bound divisor of the difficulty, used in the update calculations.
+	DurationLimit               = big.NewInt(240)             // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
 	// DurationLimitHF6 lowers the duration limit, keeping 240 second target
-	DurationLimitHF6 = big.NewInt(180)      // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
-	MaxMoney         = big.NewInt(42000000) // At block 42mil rewards will be fees-only
+	DurationLimitHF6  = big.NewInt(180)      // The decision boundary on the blocktime duration used to determine whether difficulty should go up or not.
+	MaxMoney          = big.NewInt(42000000) // At block 42mil rewards will be fees-only
+	JumpDifficultyHF8 = big.NewInt(16)       // divide difficulty by this amount, subtract from difficulty
+	JumpDifficultyHF9 = big.NewInt(64)       // divide difficulty by this amount, subtract from difficulty
 )

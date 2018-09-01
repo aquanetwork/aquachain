@@ -58,6 +58,27 @@ func (c *ChainConfig) IsHF(hf int, num *big.Int) bool {
 	return isForked(c.HF[hf], num)
 }
 
+func (f ForkMap) Sorted() (hfs []int) {
+	for i := 0; i < KnownHF; i++ {
+		if f[i] != nil {
+			hfs = append(hfs, i)
+		}
+	}
+	return hfs
+}
+
+// UseHF returns the highest hf that is activated
+func (c *ChainConfig) UseHF(height *big.Int) int {
+	hfs := c.HF.Sorted()
+	active := 0
+	for _, hf := range hfs {
+		if c.IsHF(hf, height) {
+			active = hf
+		}
+	}
+	return active
+}
+
 // GetHF returns the height of input hf, can be nil.
 func (c *ChainConfig) GetHF(hf int) *big.Int {
 	if c.HF[hf] == nil {

@@ -29,7 +29,7 @@ var (
 	TestnetGenesisHash = common.HexToHash("0xa8773cb7d32b8f7e1b32b0c2c8b735c293b8936dd3760c15afc291a23eb0cf88") // Testnet genesis hash to enforce below configs on
 )
 
-const KnownHF = 7
+const KnownHF = 9
 
 var (
 	AquachainHF = ForkMap{
@@ -55,11 +55,14 @@ var (
 		7: big.NewInt(25), // eip 155, 158
 	}
 
+	// Testnet2HF for -testnet2 private network
 	Testnet2HF = ForkMap{
 		4: big.NewInt(0),
 		5: big.NewInt(0),
 		6: big.NewInt(0),
 		7: big.NewInt(0),
+		8: big.NewInt(8),
+		9: big.NewInt(19),
 	}
 )
 var (
