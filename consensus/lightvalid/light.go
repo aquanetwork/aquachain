@@ -48,8 +48,8 @@ type LightBlock interface {
 // Verify checks whether the block's nonce is valid.
 func (l *Light) Verify(block LightBlock) bool {
 
-	// check version is set and valid
-	if block.Version() != 2 {
+	version := block.Version()
+	if version == 0 {
 		return false
 	}
 
@@ -68,7 +68,7 @@ func (l *Light) Verify(block LightBlock) bool {
 	seed := make([]byte, 40)
 	copy(seed, block.HashNoNonce().Bytes())
 	binary.LittleEndian.PutUint64(seed[32:], block.Nonce())
-	result := crypto.Argon2id(seed)
+	result := crypto.VersionHash(version, seed)
 
 	// check number set from generated hash, is less than target diff
 	target := new(big.Int).Div(maxUint256, difficulty)
