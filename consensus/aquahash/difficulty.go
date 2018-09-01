@@ -116,8 +116,11 @@ func calcDifficultyHFX(config *params.ChainConfig, time uint64, parent, grandpar
 	case 6, 7:
 		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF6)
 	case 5:
-		if next.Cmp(config.GetHF(5)) == 0 {
+		if next.Cmp(config.GetHF(5)) == 0 && mainnet {
 			return params.MinimumDifficultyHF5
+		}
+		if next.Cmp(config.GetHF(5)) == 0 && !mainnet {
+			return params.MinimumDifficultyHF5Testnet
 		}
 		limit = params.DurationLimit // not accurate, fixed in hf6
 		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF5)
