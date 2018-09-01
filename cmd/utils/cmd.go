@@ -156,7 +156,7 @@ func ImportChain(chain *core.BlockChain, fn string) error {
 			continue
 		}
 		if _, err := chain.InsertChain(missing); err != nil {
-			return fmt.Errorf("invalid block %d: %v", n, err)
+			return fmt.Errorf("%v", err)
 		}
 	}
 	return nil
