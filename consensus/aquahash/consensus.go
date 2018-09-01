@@ -85,8 +85,12 @@ func (aquahash *Aquahash) VerifyHeader(chain consensus.ChainReader, header *type
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}
+	grandparent := chain.GetHeader(parent.ParentHash, number-2)
+	if grandparent == nil {
+		return consensus.ErrUnknownAncestor
+	}
 	// Sanity checks passed, do a proper verification
-	return aquahash.verifyHeader(chain, header, parent, false, seal)
+	return aquahash.verifyHeader(chain, header, parent, grandparent, false, seal)
 }
 
 // VerifyHeaders is similar to VerifyHeader, but verifies a batch of headers
@@ -162,19 +166,27 @@ func (aquahash *Aquahash) VerifyHeaders(chain consensus.ChainReader, headers []*
 }
 
 func (aquahash *Aquahash) verifyHeaderWorker(chain consensus.ChainReader, headers []*types.Header, seals []bool, index int) error {
-	var parent *types.Header
+	var parent, grandparent *types.Header
 	if index == 0 {
 		parent = chain.GetHeader(headers[0].ParentHash, headers[0].Number.Uint64()-1)
+		grandparent = chain.GetHeader(parent.ParentHash, headers[0].Number.Uint64()-2)
+	} else if index == 1 {
+		parent = headers[index-1]
+		grandparent = chain.GetHeader(parent.ParentHash, parent.Number.Uint64()-1)
 	} else if headers[index-1].Hash() == headers[index].ParentHash {
 		parent = headers[index-1]
+		grandparent = headers[index-2]
 	}
 	if parent == nil {
+		return consensus.ErrUnknownAncestor
+	}
+	if grandparent == nil && parent.Number.Uint64() > 1 {
 		return consensus.ErrUnknownAncestor
 	}
 	if chain.GetHeader(headers[index].Hash(), headers[index].Number.Uint64()) != nil {
 		return nil // known block
 	}
-	return aquahash.verifyHeader(chain, headers[index], parent, false, seals[index])
+	return aquahash.verifyHeader(chain, headers[index], parent, grandparent, false, seals[index])
 }
 
 // VerifyUncles verifies that the given block's uncles conform to the consensus
@@ -263,7 +275,9 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 				return errDanglingUncle
 			}
 		}
-		if err := aquahash.verifyHeader(chain, uncle, ancestors[uncle.ParentHash], true, true); err != nil {
+		parent := ancestors[uncle.ParentHash]
+		grandparent := ancestors[parent.ParentHash]
+		if err := aquahash.verifyHeader(chain, uncle, parent, grandparent, true, true); err != nil {
 			return err
 		}
 	}
@@ -273,10 +287,10 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 // verifyHeader checks whether a header conforms to the consensus rules of the
 // stock AquaChain aquahash engine.
 // See YP section 4.3.4. "Block Header Validity"
-func (aquahash *Aquahash) verifyHeader(chain consensus.ChainReader, header, parent *types.Header, uncle bool, seal bool) error {
+func (aquahash *Aquahash) verifyHeader(chain consensus.ChainReader, header, parent, grandparent *types.Header, uncle bool, seal bool) error {
 	// Ensure that the header's extra-data section is of a reasonable size
 	if uint64(len(header.Extra)) > params.MaximumExtraDataSize {
-		return fmt.Errorf("extra-data too long: %d > %d", len(header.Extra), params.MaximumExtraDataSize)
+		return fmt.Errorf("block %d extra-data too long: %d > %d", header.Number, len(header.Extra), params.MaximumExtraDataSize)
 	}
 	// Verify the header's timestamp
 	if uncle {
@@ -292,19 +306,19 @@ func (aquahash *Aquahash) verifyHeader(chain consensus.ChainReader, header, pare
 		return errZeroBlockTime
 	}
 	// Verify the block's difficulty based in it's timestamp and parent's difficulty
-	expected := aquahash.CalcDifficulty(chain, header.Time.Uint64(), parent)
+	expected := aquahash.CalcDifficulty(chain, header.Time.Uint64(), parent, grandparent)
 
 	if expected.Cmp(header.Difficulty) != 0 {
-		return fmt.Errorf("invalid difficulty: have %v, want %v", header.Difficulty, expected)
+		return fmt.Errorf("block %d invalid difficulty: have %v, want %v", header.Number, header.Difficulty, expected)
 	}
 	// Verify that the gas limit is <= 2^63-1
 	cap := uint64(0x7fffffffffffffff)
 	if header.GasLimit > cap {
-		return fmt.Errorf("invalid gasLimit: have %v, max %v", header.GasLimit, cap)
+		return fmt.Errorf("block %d invalid gasLimit: have %v, max %v", header.Number, header.GasLimit, cap)
 	}
 	// Verify that the gasUsed is <= gasLimit
 	if header.GasUsed > header.GasLimit {
-		return fmt.Errorf("invalid gasUsed: have %d, gasLimit %d", header.GasUsed, header.GasLimit)
+		return fmt.Errorf("block %d invalid gasUsed: have %d, gasLimit %d", header.Number, header.GasUsed, header.GasLimit)
 	}
 
 	// Verify that the gas limit remains within allowed bounds
@@ -315,7 +329,7 @@ func (aquahash *Aquahash) verifyHeader(chain consensus.ChainReader, header, pare
 	limit := parent.GasLimit / params.GasLimitBoundDivisor
 
 	if uint64(diff) >= limit || header.GasLimit < params.MinGasLimit {
-		return fmt.Errorf("invalid gas limit: have %d, want %d += %d", header.GasLimit, parent.GasLimit, limit)
+		return fmt.Errorf("block %d invalid gas limit: have %d, want %d += %d", header.Number, header.GasLimit, parent.GasLimit, limit)
 	}
 	// Verify that the block number is parent's +1
 	if diff := new(big.Int).Sub(header.Number, parent.Number); diff.Cmp(big.NewInt(1)) != 0 {
@@ -333,67 +347,18 @@ func (aquahash *Aquahash) verifyHeader(chain consensus.ChainReader, header, pare
 // CalcDifficulty is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time
 // given the parent block's time and difficulty.
-func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint64, parent *types.Header) *big.Int {
-	return CalcDifficulty(chain.Config(), time, parent)
+func (aquahash *Aquahash) CalcDifficulty(chain consensus.ChainReader, time uint64, parent, grandparent *types.Header) *big.Int {
+	if grandparent == nil && parent != nil && parent.Number.Uint64() != 0 {
+		grandparent = chain.GetHeader(parent.ParentHash, parent.Number.Uint64()-1)
+	}
+	return CalcDifficulty(chain.Config(), time, parent, grandparent)
 }
 
 // CalcDifficulty is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time
 // given the parent block's time and difficulty.
-func CalcDifficulty(config *params.ChainConfig, time uint64, parent *types.Header) *big.Int {
-	next := new(big.Int).Add(parent.Number, big1)
-
-	if config.ChainId != nil && config.ChainId.Cmp(params.TestnetChainConfig.ChainId) == 0 {
-		return calcDifficultyHF6Testnet(time, parent)
-	}
-	if config.ChainId != nil && config.ChainId.Cmp(params.Testnet2ChainConfig.ChainId) == 0 {
-		return calcDifficultyHF6Testnet(time, parent)
-	}
-
-	switch {
-
-	// hardfork 6
-	case (config.GetHF(6) != nil && next.Cmp(config.GetHF(6)) == 0):
-		log.Info("Activating Hardfork", "HF", 6, "BlockNumber", config.GetHF(6))
-		return calcDifficultyHF6(time, parent)
-	case config.IsHF(6, next):
-		return calcDifficultyHF6(time, parent)
-
-	// hardfork 5
-	case (config.GetHF(5) != nil && next.Cmp(config.GetHF(5)) == 0):
-		log.Info("Activating Hardfork", "HF", 5, "BlockNumber", config.GetHF(5))
-		return params.MinimumDifficultyHF5 // reset diff since pow is much different
-	case config.IsHF(5, next):
-		return calcDifficultyHF5(time, parent)
-
-	// hardfork 3
-	case (config.GetHF(3) != nil && next.Cmp(config.GetHF(3)) == 0):
-		log.Info("Activating Hardfork", "HF", 3, "BlockNumber", config.GetHF(3))
-		return calcDifficultyHF3(time, parent)
-	case config.IsHF(3, next):
-		return calcDifficultyHF3(time, parent)
-
-	// hardfork 2
-	case (config.GetHF(2) != nil && next.Cmp(config.GetHF(2)) == 0):
-		log.Info("Activating Hardfork", "HF", 2, "BlockNumber", config.GetHF(2))
-		return calcDifficultyHF2(time, parent)
-	case config.IsHF(2, next):
-		return calcDifficultyHF2(time, parent)
-
-	// hardfork 1
-	case (config.GetHF(1) != nil && next.Cmp(config.GetHF(1)) == 0):
-		log.Info("Activating Hardfork", "HF", 1, "BlockNumber", config.GetHF(1))
-		return calcDifficultyHF1(time, parent)
-
-	case config.IsHF(1, next):
-		return calcDifficultyHF1(time, parent)
-
-	// genesis mining
-	case config.IsHomestead(next):
-		return calcDifficultyHomestead(time, parent)
-	default:
-		return calcDifficultyHomestead(time, parent)
-	}
+func CalcDifficulty(config *params.ChainConfig, time uint64, parent, grandparent *types.Header) *big.Int {
+	return calcDifficultyHFX(config, time, parent, grandparent)
 }
 
 // VerifySeal implements consensus.Engine, checking whether the given block satisfies
@@ -462,11 +427,18 @@ func (aquahash *Aquahash) VerifySeal(chain consensus.ChainReader, header *types.
 // Prepare implements consensus.Engine, initializing the difficulty field of a
 // header to conform to the aquahash protocol. The changes are done inline.
 func (aquahash *Aquahash) Prepare(chain consensus.ChainReader, header *types.Header) error {
-	parent := chain.GetHeader(header.ParentHash, header.Number.Uint64()-1)
+	var parent, grandparent *types.Header
+	parent = chain.GetHeader(header.ParentHash, header.Number.Uint64()-1)
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}
-	header.Difficulty = aquahash.CalcDifficulty(chain, header.Time.Uint64(), parent)
+	if header.Number.Uint64() > 3 {
+		grandparent = chain.GetHeader(parent.ParentHash, header.Number.Uint64()-2)
+		if grandparent == nil {
+			return consensus.ErrUnknownAncestor
+		}
+	}
+	header.Difficulty = aquahash.CalcDifficulty(chain, header.Time.Uint64(), parent, grandparent)
 	return nil
 }
 
