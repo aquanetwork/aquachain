@@ -113,13 +113,18 @@ func (aquahash *Aquahash) mine(version params.HeaderVersion, block *types.Block,
 		dataset = aquahash.dataset(number)
 	)
 	header.Version = version
+	if header.Version == 0 || header.Version > crypto.KnownVersion {
+		common.Report("Mining incorrect version")
+		return
+	}
+
 	// Start generating random nonces until we abort or find a good one
 	var (
 		attempts = int64(0)
 		nonce    = seed
 	)
 	logger := log.New("miner", id)
-	logger.Trace("Started aquahash search for new nonces", "seed", seed)
+	logger.Trace("Started aquahash search for new nonces", "seed", seed, "algo", version)
 search:
 	for {
 
@@ -143,18 +148,16 @@ search:
 				digest []byte
 				result []byte
 			)
+
 			switch header.Version {
 			case 1:
 				digest, result = hashimotoFull(dataset.dataset, hash, nonce)
-			case 2:
+			default:
 				seed := make([]byte, 40)
 				copy(seed, hash)
 				binary.LittleEndian.PutUint64(seed[32:], nonce)
-				result = crypto.Argon2id(seed)
+				result = crypto.VersionHash(byte(header.Version), seed)
 				digest = make([]byte, common.HashLength)
-			default:
-				common.Report("Mining incorrect version")
-				break search
 			}
 
 			if new(big.Int).SetBytes(result).Cmp(target) <= 0 {
