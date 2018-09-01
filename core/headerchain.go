@@ -75,6 +75,9 @@ func NewHeaderChain(chainDb aquadb.Database, config *params.ChainConfig, engine 
 	tdCache, _ := lru.New(tdCacheLimit)
 	numberCache, _ := lru.New(numberCacheLimit)
 
+	if config == nil {
+		return nil, fmt.Errorf("nil config")
+	}
 	// Seed a fast but crypto originating random generator
 	seed, err := crand.Int(crand.Reader, big.NewInt(math.MaxInt64))
 	if err != nil {

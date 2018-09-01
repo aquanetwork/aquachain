@@ -139,6 +139,9 @@ func NewBlockChain(db aquadb.Database, cacheConfig *CacheConfig, chainConfig *pa
 			TrieTimeLimit: 5 * time.Minute,
 		}
 	}
+	if chainConfig == nil {
+		return nil, fmt.Errorf("nil config")
+	}
 	bodyCache, _ := lru.New(bodyCacheLimit)
 	bodyRLPCache, _ := lru.New(bodyCacheLimit)
 	blockCache, _ := lru.New(blockCacheLimit)

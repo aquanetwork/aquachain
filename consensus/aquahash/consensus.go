@@ -61,6 +61,8 @@ var (
 	errInvalidDifficulty = errors.New("non-positive difficulty")
 	errInvalidMixDigest  = errors.New("invalid mix digest")
 	errInvalidPoW        = errors.New("invalid proof-of-work")
+
+	errUnknownGrandparent = errors.New("nil grandparent")
 )
 
 // Author implements consensus.Engine, returning the header's coinbase as the
@@ -81,13 +83,17 @@ func (aquahash *Aquahash) VerifyHeader(chain consensus.ChainReader, header *type
 	if chain.GetHeader(header.Hash(), number) != nil {
 		return nil
 	}
-	parent := chain.GetHeader(header.ParentHash, number-1)
+
+	var parent, grandparent *types.Header
+	parent = chain.GetHeader(header.ParentHash, number-1)
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}
-	grandparent := chain.GetHeader(parent.ParentHash, number-2)
-	if grandparent == nil {
-		return consensus.ErrUnknownAncestor
+	if number > 2 {
+		grandparent = chain.GetHeader(parent.ParentHash, number-2)
+		if grandparent == nil {
+			return fmt.Errorf("nil grandparent: %v", number-2)
+		}
 	}
 	// Sanity checks passed, do a proper verification
 	return aquahash.verifyHeader(chain, header, parent, grandparent, false, seal)
@@ -435,10 +441,10 @@ func (aquahash *Aquahash) Prepare(chain consensus.ChainReader, header *types.Hea
 	if parent == nil {
 		return consensus.ErrUnknownAncestor
 	}
-	if header.Number.Uint64() > 3 {
+	if header.Number.Uint64() > 2 {
 		grandparent = chain.GetHeader(parent.ParentHash, header.Number.Uint64()-2)
 		if grandparent == nil {
-			return consensus.ErrUnknownAncestor
+			return errUnknownGrandparent
 		}
 	}
 	header.Difficulty = aquahash.CalcDifficulty(chain, header.Time.Uint64(), parent, grandparent)

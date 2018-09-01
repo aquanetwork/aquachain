@@ -219,11 +219,11 @@ func testShorterFork(t *testing.T, full bool) {
 	}
 	// Sum of numbers must be less than `length` for this to be a shorter fork
 	testFork(t, processor, 0, 3, full, worse)
-	// testFork(t, processor, 0, 7, full, worse)
-	// testFork(t, processor, 1, 1, full, worse)
-	// testFork(t, processor, 1, 7, full, worse)
-	// testFork(t, processor, 5, 3, full, worse)
-	// testFork(t, processor, 5, 4, full, worse)
+	testFork(t, processor, 0, 7, full, worse)
+	testFork(t, processor, 1, 1, full, worse)
+	testFork(t, processor, 1, 7, full, worse)
+	testFork(t, processor, 5, 3, full, worse)
+	testFork(t, processor, 5, 4, full, worse)
 }
 
 // Tests that given a starting canonical chain of a given size, creating longer
@@ -318,7 +318,7 @@ func TestReorgLongHeaders(t *testing.T) { testReorgLong(t, false) }
 func TestReorgLongBlocks(t *testing.T)  { testReorgLong(t, true) }
 
 func testReorgLong(t *testing.T, full bool) {
-	testReorg(t, []int64{0, 0, -9}, []int64{0, 0, 0, -9}, 395314703-params.GenesisDifficulty.Int64() , full)
+	testReorg(t, []int64{0, 0, -9}, []int64{0, 0, 0, -9}, 395314703-params.GenesisDifficulty.Int64(), full)
 }
 
 // Tests that reorganising a short difficult chain after a long easy one
