@@ -154,17 +154,15 @@ func (h *Header) Size() common.StorageSize {
 
 func rlpHash(version byte, x interface{}) (h common.Hash) {
 	switch version {
-	case 0, 1:
+	case 0, 1: // ethash
 		hw := sha3.NewKeccak256()
 		rlp.Encode(hw, x)
 		hw.Sum(h[:0])
 		return h
-	case 2:
+	default: // argon2id switch
 		buf := &bytes.Buffer{}
 		rlp.Encode(buf, x)
-		return common.BytesToHash(crypto.VersionHash(2, buf.Bytes()))
-	default:
-		panic("error: version not set")
+		return common.BytesToHash(crypto.VersionHash(version, buf.Bytes()))
 	}
 }
 
