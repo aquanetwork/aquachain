@@ -148,7 +148,7 @@ func (b *BlockGen) OffsetTime(seconds int64) {
 	if b.header.Time.Cmp(b.parent.Header().Time) <= 0 {
 		panic("block time out of range")
 	}
-	b.header.Difficulty = b.engine.CalcDifficulty(b.chainReader, b.header.Time.Uint64(), b.parent.Header())
+	b.header.Difficulty = b.engine.CalcDifficulty(b.chainReader, b.header.Time.Uint64(), b.parent.Header(), nil)
 }
 
 // GenerateChain creates a chain of n blocks. The first block's
@@ -235,7 +235,7 @@ func makeHeader(chain consensus.ChainReader, parent *types.Block, state *state.S
 			Time:       new(big.Int).Sub(time, big.NewInt(240)), // parent time
 			Difficulty: parent.Difficulty(),
 			UncleHash:  parent.UncleHash(),
-		}),
+		}, nil),
 		GasLimit: CalcGasLimit(parent),
 		Number:   num,
 		Time:     time,
