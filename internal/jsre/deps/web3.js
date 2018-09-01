@@ -6134,7 +6134,7 @@ module.exports = {
 var globalRegistrarAbi = require('../contracts/GlobalRegistrar.json');
 var icapRegistrarAbi= require('../contracts/ICAPRegistrar.json');
 
-var globalNameregAddress = '0xc6d9d2cd449a754c494264e1809c50e34d64562b';
+var globalNameregAddress = '0x5c0488575e9C279EB36952f762F706dAC03f9634';
 var icapNameregAddress = '0xa1a111bc074c9cfa781f0c38e63bd51c91b8af00';
 
 module.exports = {
