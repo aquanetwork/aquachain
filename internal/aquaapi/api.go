@@ -1413,7 +1413,8 @@ func (api *PublicDebugAPI) SeedHash(ctx context.Context, number uint64) (string,
 	if block == nil {
 		return "", fmt.Errorf("block #%d not found", number)
 	}
-	return fmt.Sprintf("0x%x", aquahash.SeedHash(number)), nil
+	version := byte(block.Version())
+	return fmt.Sprintf("0x%x", aquahash.SeedHash(number, version)), nil
 }
 
 // PrivateDebugAPI is the collection of AquaChain APIs exposed over the private

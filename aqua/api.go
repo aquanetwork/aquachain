@@ -92,7 +92,7 @@ func (api *PublicMinerAPI) SubmitWork(nonce types.BlockNonce, solution, digest c
 
 // GetWork returns a work package for external miner. The work package consists of 3 strings
 // result[0], 32 bytes hex encoded current block header pow-hash
-// result[1], 32 bytes hex encoded seed hash used for DAG
+// result[1], 32 bytes hex encoded auxiliary chunk (pre hf5: dag seed, hf5: zeros, hf8: header version)
 // result[2], 32 bytes hex encoded boundary condition ("target"), 2^256/difficulty
 func (api *PublicMinerAPI) GetWork() ([3]string, error) {
 	if !api.e.IsMining() {

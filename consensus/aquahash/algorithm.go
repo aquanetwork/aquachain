@@ -64,7 +64,10 @@ func makeHasher(h hash.Hash) hasher {
 
 // seedHash is the seed to use for generating a verification cache and the mining
 // dataset.
-func seedHash(block uint64) []byte {
+func seedHash(block uint64, version byte) []byte {
+	if version > 1 {
+		return common.BytesToHash([]byte{version}).Bytes()
+	}
 	seed := make([]byte, 32)
 	if block < epochLength {
 		return seed

@@ -215,7 +215,7 @@ func newCache(epoch uint64) interface{} {
 func (c *cache) generate(dir string, limit int, test bool) {
 	c.once.Do(func() {
 		size := cacheSize(c.epoch*epochLength + 1)
-		seed := seedHash(c.epoch*epochLength + 1)
+		seed := seedHash(c.epoch*epochLength+1, 0)
 		if test {
 			size = 1024
 		}
@@ -256,7 +256,7 @@ func (c *cache) generate(dir string, limit int, test bool) {
 		}
 		// Iterate over all previous instances and delete old ones
 		for ep := int(c.epoch) - limit; ep >= 0; ep-- {
-			seed := seedHash(uint64(ep)*epochLength + 1)
+			seed := seedHash(uint64(ep)*epochLength+1, 0)
 			path := filepath.Join(dir, fmt.Sprintf("cache-R%d-%x%s", algorithmRevision, seed[:8], endian))
 			os.Remove(path)
 		}
@@ -292,7 +292,7 @@ func (d *dataset) generate(dir string, limit int, test bool) {
 	d.once.Do(func() {
 		csize := cacheSize(d.epoch*epochLength + 1)
 		dsize := datasetSize(d.epoch*epochLength + 1)
-		seed := seedHash(d.epoch*epochLength + 1)
+		seed := seedHash(d.epoch*epochLength+1, 0)
 		if test {
 			csize = 1024
 			dsize = 32 * 1024
@@ -339,7 +339,7 @@ func (d *dataset) generate(dir string, limit int, test bool) {
 		}
 		// Iterate over all previous instances and delete old ones
 		for ep := int(d.epoch) - limit; ep >= 0; ep-- {
-			seed := seedHash(uint64(ep)*epochLength + 1)
+			seed := seedHash(uint64(ep)*epochLength+1, 0)
 			path := filepath.Join(dir, fmt.Sprintf("full-R%d-%x%s", algorithmRevision, seed[:8], endian))
 			os.Remove(path)
 		}
@@ -573,6 +573,6 @@ func (aquahash *Aquahash) APIs(chain consensus.ChainReader) []rpc.API {
 
 // SeedHash is the seed to use for generating a verification cache and the mining
 // dataset.
-func SeedHash(block uint64) []byte {
-	return seedHash(block)
+func SeedHash(block uint64, version byte) []byte {
+	return seedHash(block, version)
 }
