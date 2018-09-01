@@ -46,6 +46,8 @@ const (
 	argonTime    uint32 = 1
 )
 
+const KnownVersion = 4
+
 // VersionHash switch version, returns digest bytes, v is not hashed.
 func VersionHash(v byte, data ...[]byte) []byte {
 	switch v {

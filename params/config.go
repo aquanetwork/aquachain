@@ -28,6 +28,9 @@ var (
 	//MainnetGenesisHash = common.HexToHash("0x2461b9b2e5b57ed037fe99f470511c6dbef8e0ed976b3f3197ae689f5b100a9b") // Mainnet genesis hash to enforce below configs on
 	TestnetGenesisHash = common.HexToHash("0xa8773cb7d32b8f7e1b32b0c2c8b735c293b8936dd3760c15afc291a23eb0cf88") // Testnet genesis hash to enforce below configs on
 )
+
+const KnownHF = 7
+
 var (
 	AquachainHF = ForkMap{
 		0: big.NewInt(3000),  // HF0
