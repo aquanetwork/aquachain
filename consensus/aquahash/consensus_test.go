@@ -78,7 +78,7 @@ func TestCalcDifficulty(t *testing.T) {
 			Number:     number,
 			Time:       new(big.Int).SetUint64(test.ParentTimestamp),
 			Difficulty: test.ParentDifficulty,
-		})
+		}, nil)
 		if diff.Cmp(test.CurrentDifficulty) != 0 {
 			t.Error(name, "failed. Expected", test.CurrentDifficulty, "and calculated", diff)
 		}

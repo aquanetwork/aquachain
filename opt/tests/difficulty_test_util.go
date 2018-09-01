@@ -56,7 +56,7 @@ func (test *DifficultyTest) Run(config *params.ChainConfig) error {
 		UncleHash:  test.UncleHash,
 	}
 
-	actual := aquahash.CalcDifficulty(config, test.CurrentTimestamp.Uint64(), parent)
+	actual := aquahash.CalcDifficulty(config, test.CurrentTimestamp.Uint64(), parent, nil)
 	exp := test.CurrentDifficulty
 
 	if actual.Cmp(exp) != 0 {
