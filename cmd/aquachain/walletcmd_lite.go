@@ -80,7 +80,6 @@ func paper(c *cli.Context) error {
 			if strings.HasPrefix(pubkey, vanity) {
 				break
 			}
-			//println(pubkey, "!=", "vanity")
 		}
 		if c.Bool("json") {
 			wallets = append(wallets, wallet)
