@@ -110,12 +110,15 @@ func (aquahash *Aquahash) mine(version params.HeaderVersion, block *types.Block,
 		hash    = header.HashNoNonce().Bytes()
 		target  = new(big.Int).Div(maxUint256, header.Difficulty)
 		number  = header.Number.Uint64()
-		dataset = aquahash.dataset(number)
+		dataset *dataset
 	)
 	header.Version = version
 	if header.Version == 0 || header.Version > crypto.KnownVersion {
 		common.Report("Mining incorrect version")
 		return
+	}
+	if header.Version < 2 {
+		dataset = aquahash.dataset(number)
 	}
 
 	// Start generating random nonces until we abort or find a good one

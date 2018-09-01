@@ -194,6 +194,19 @@ func CreateDB(ctx *node.ServiceContext, config *Config, name string) (aquadb.Dat
 
 // CreateConsensusEngine creates the required type of consensus engine instance for an AquaChain service
 func CreateConsensusEngine(ctx *node.ServiceContext, config *aquahash.Config, chainConfig *params.ChainConfig, db aquadb.Database) consensus.Engine {
+	startVersion := func() byte {
+		big0 := big.NewInt(0)
+		if chainConfig == nil {
+			return 0
+		}
+		if chainConfig.IsHF(8, big0) {
+			return 3
+		}
+		if chainConfig.IsHF(5, big0) {
+			return 2
+		}
+		return 0
+	}()
 	switch {
 	case config.PowMode == aquahash.ModeFake:
 		log.Warn("Aquahash used in fake mode")
@@ -205,6 +218,11 @@ func CreateConsensusEngine(ctx *node.ServiceContext, config *aquahash.Config, ch
 		log.Warn("Aquahash used in shared mode")
 		return aquahash.NewShared()
 	default:
+		if startVersion > 1 {
+			engine := aquahash.New(aquahash.Config{StartVersion: startVersion})
+			engine.SetThreads(-1)
+			return engine
+		}
 		engine := aquahash.New(aquahash.Config{
 			CacheDir:       ctx.ResolvePath(config.CacheDir),
 			CachesInMem:    config.CachesInMem,
@@ -212,6 +230,7 @@ func CreateConsensusEngine(ctx *node.ServiceContext, config *aquahash.Config, ch
 			DatasetDir:     config.DatasetDir,
 			DatasetsInMem:  config.DatasetsInMem,
 			DatasetsOnDisk: config.DatasetsOnDisk,
+			StartVersion:   startVersion,
 		})
 		engine.SetThreads(-1) // Disable CPU mining
 		return engine

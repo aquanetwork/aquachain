@@ -47,7 +47,7 @@ var (
 	maxUint256 = new(big.Int).Exp(big.NewInt(2), big.NewInt(256), big.NewInt(0))
 
 	// sharedAquahash is a full instance that can be shared between multiple users.
-	sharedAquahash = New(Config{"", 3, 0, "", 1, 0, ModeNormal})
+	sharedAquahash = New(Config{"", 3, 0, "", 1, 0, ModeNormal, 0})
 
 	// algorithmRevision is the data structure version used for file naming.
 	algorithmRevision = 2
@@ -387,6 +387,7 @@ type Config struct {
 	DatasetsInMem  int
 	DatasetsOnDisk int
 	PowMode        Mode
+	StartVersion   byte
 }
 
 // Aquahash is a consensus engine based on proot-of-work implementing the aquahash
@@ -413,6 +414,14 @@ type Aquahash struct {
 
 // New creates a full sized aquahash PoW scheme.
 func New(config Config) *Aquahash {
+	if config.StartVersion > 1 {
+		log.Info("Starting new Aquahash engine", "startVersion", config.StartVersion)
+		return &Aquahash{
+			config:   config,
+			update:   make(chan struct{}),
+			hashrate: metrics.NewMeter(),
+		}
+	}
 	if config.CachesInMem <= 0 {
 		log.Warn("One aquahash cache must always be in memory", "requested", config.CachesInMem)
 		config.CachesInMem = 1
