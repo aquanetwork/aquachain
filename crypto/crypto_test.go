@@ -52,21 +52,21 @@ func TestToECDSAErrors(t *testing.T) {
 
 func TestArgon2id(t *testing.T) {
 	a := []byte("aquachain")
-	fmt.Printf("\nArgonated: 0x%x\n", argon2idA(a))
-	hex2hash := common.HexToHash(fmt.Sprintf("0x%x", argon2idA(a)))
-	bytes2hash := common.BytesToHash(argon2idA(a))
+	fmt.Printf("\nArgonated: 0x%x\n", Argon2idA(a))
+	hex2hash := common.HexToHash(fmt.Sprintf("0x%x", Argon2idA(a)))
+	bytes2hash := common.BytesToHash(Argon2idA(a))
 	if hex2hash.Big().Cmp(bytes2hash.Big()) != 0 {
 		t.Errorf("Unequal")
 	}
 	if !bytes.Equal(hex2hash.Bytes(), bytes2hash.Bytes()) {
 		t.Errorf("Unequal")
 	}
-	fmt.Printf("Argonated: 0x%x\n", argon2idA(argon2idA(a)))
-	fmt.Printf("Argonated: 0x%x\n", argon2idA(argon2idA(argon2idA(a))))
-	fmt.Printf("Argonated: 0x%x\n", argon2idA(argon2idA(argon2idA(argon2idA(a)))))
-	fmt.Printf("Argonated: 0x%x\n", argon2idA(argon2idA(argon2idA(argon2idA(argon2idA(a))))))
-	fmt.Printf("Argonated: 0x%x\n", argon2idB(a))
-	fmt.Printf("Argonated: 0x%x\n", argon2idC(a))
+	fmt.Printf("Argonated: 0x%x\n", Argon2idA(Argon2idA(a)))
+	fmt.Printf("Argonated: 0x%x\n", Argon2idA(Argon2idA(Argon2idA(a))))
+	fmt.Printf("Argonated: 0x%x\n", Argon2idA(Argon2idA(Argon2idA(Argon2idA(a)))))
+	fmt.Printf("Argonated: 0x%x\n", Argon2idA(Argon2idA(Argon2idA(Argon2idA(Argon2idA(a))))))
+	fmt.Printf("Argonated: 0x%x\n", Argon2idB(a))
+	fmt.Printf("Argonated: 0x%x\n", Argon2idC(a))
 }
 func BenchmarkSha3(b *testing.B) {
 	a := []byte("hello world")
@@ -77,19 +77,19 @@ func BenchmarkSha3(b *testing.B) {
 func BenchmarkArgon2idA(b *testing.B) {
 	a := []byte("hello world")
 	for i := 0; i < b.N; i++ {
-		argon2idA(a)
+		Argon2idA(a)
 	}
 }
 func BenchmarkArgon2idB(b *testing.B) {
 	a := []byte("hello world")
 	for i := 0; i < b.N; i++ {
-		argon2idB(a)
+		Argon2idB(a)
 	}
 }
 func BenchmarkArgon2idC(b *testing.B) {
 	a := []byte("hello world")
 	for i := 0; i < b.N; i++ {
-		argon2idC(a)
+		Argon2idC(a)
 	}
 }
 
