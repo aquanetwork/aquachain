@@ -123,20 +123,13 @@ func (h *Header) Hash() common.Hash {
 		common.Report(fmt.Sprintf("Hash algorithm not set, please report this error to developers. Number: %v, Version: %v", h.Number, h.Version))
 		panic("hash algorithm not set")
 	}
-	switch h.Version {
-	case H_KECCAK256:
-		return rlpHash(h)
-	case H_ARGON2ID:
-		return rlpHashArgon2id(h)
-	default:
-		common.Report(fmt.Sprintf("Hash algorithm not set, please report this error to developers. Number: %v, Version: %v", h.Number, h.Version))
-		panic("hash algorithm not set")
-	}
+
+	return rlpHash(byte(h.Version), h)
 }
 
 // HashNoNonce returns the hash which is used as input for the proof-of-work search.
 func (h *Header) HashNoNonce() common.Hash {
-	return rlpHash([]interface{}{
+	return rlpHash(1, []interface{}{
 		h.ParentHash,
 		h.UncleHash,
 		h.Coinbase,
@@ -159,16 +152,20 @@ func (h *Header) Size() common.StorageSize {
 	return common.StorageSize(unsafe.Sizeof(*h)) + common.StorageSize(len(h.Extra)+(h.Difficulty.BitLen()+h.Number.BitLen()+h.Time.BitLen())/8)
 }
 
-func rlpHash(x interface{}) (h common.Hash) {
+func rlpHash(version byte, x interface{}) (h common.Hash) {
+switch version {
+case 0, 1:
 	hw := sha3.NewKeccak256()
 	rlp.Encode(hw, x)
 	hw.Sum(h[:0])
 	return h
-}
-func rlpHashArgon2id(x interface{}) (h common.Hash) {
+case 2:
 	buf := &bytes.Buffer{}
 	rlp.Encode(buf, x)
-	return common.BytesToHash(crypto.Argon2id(buf.Bytes()))
+	return common.BytesToHash(crypto.VersionHash(2 , buf.Bytes()))
+default:
+	panic("error: version not set")
+}
 }
 
 // Body is a simple (mutable, non-safe) data container for storing and moving
@@ -388,7 +385,7 @@ func (c *writeCounter) Write(b []byte) (int, error) {
 }
 
 func CalcUncleHash(uncles []*Header) common.Hash {
-	return rlpHash(uncles)
+	return rlpHash(1, uncles)
 }
 
 // WithSeal returns a new block with the data from b but the header replaced with
