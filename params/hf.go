@@ -25,7 +25,7 @@ import (
 type ForkMap map[int]*big.Int
 
 func (f ForkMap) String() (s string) {
-	for i := 0; i < 10; i++ {
+	for i := 0; i <= KnownHF; i++ {
 		if f[i] == nil {
 			continue
 		}
@@ -34,14 +34,46 @@ func (f ForkMap) String() (s string) {
 	return strings.TrimSpace(s)
 }
 
+// HeaderVersion is not stored in db, or rlp encoded, or sent over the network.
 type HeaderVersion byte
 
 func (c ChainConfig) GetBlockVersion(height *big.Int) HeaderVersion {
 	if height == nil {
-		return 2
+		panic("GetBlockVersion: got nil height")
 	}
-	if height.Uint64() != 0 && c.IsHF(5, height) {
-		return 2
+	if c.IsHF(8, height) {
+		return 3 // argon2id (1,256mb,1)
 	}
-	return 1
+	if c.IsHF(5, height) {
+		return 2 // argon2id (1,1kb,1)
+	}
+	return 1 // ethash
+}
+
+// IsHF returns whether num is either equal to the hf block or greater.
+func (c *ChainConfig) IsHF(hf int, num *big.Int) bool {
+	if c.HF[hf] == nil {
+		return false
+	}
+	return isForked(c.HF[hf], num)
+}
+
+// GetHF returns the height of input hf, can be nil.
+func (c *ChainConfig) GetHF(hf int) *big.Int {
+	if c.HF[hf] == nil {
+		return nil
+	}
+	return new(big.Int).Set(c.HF[hf])
+}
+
+// NextHF returns the next scheduled hard fork block number
+func (c *ChainConfig) NextHF(cur *big.Int) *big.Int {
+	for i := KnownHF; i > 0; i-- {
+		if c.HF[i] == nil {
+			continue
+		}
+		return new(big.Int).Set(c.HF[i])
+	}
+	return nil
+
 }

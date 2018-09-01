@@ -168,35 +168,6 @@ func (c *ChainConfig) String() string {
 	)
 }
 
-// IsHF returns whether num is either equal to the hf block or greater.
-func (c *ChainConfig) IsHF(hf int, num *big.Int) bool {
-	if c.HF[hf] == nil {
-		return false
-	}
-	return isForked(c.HF[hf], num)
-}
-
-// GetHF returns the height of input hf, can be nil.
-func (c *ChainConfig) GetHF(hf int) *big.Int {
-	if c.HF[hf] == nil {
-		return nil
-	}
-	return c.HF[hf]
-}
-
-// NextHF returns the next scheduled hard fork block number
-func (c *ChainConfig) NextHF(cur *big.Int) *big.Int {
-	if cur != nil {
-		for _, height := range c.HF {
-			if cur.Cmp(height) < 0 {
-				return height
-			}
-		}
-	}
-	return nil
-
-}
-
 // IsHomestead returns whether num is either equal to the homestead block or greater.
 func (c *ChainConfig) IsHomestead(num *big.Int) bool {
 	return isForked(c.HomesteadBlock, num)
