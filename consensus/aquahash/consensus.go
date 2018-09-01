@@ -433,15 +433,15 @@ func (aquahash *Aquahash) VerifySeal(chain consensus.ChainReader, header *types.
 		result []byte
 	)
 	switch header.Version {
-	default: // types.H_UNSET: // 0
+	case types.H_UNSET: // 0
 		panic("header version not set")
 	case types.H_KECCAK256: // 1
 		digest, result = hashimotoLight(size, cache.cache, header.HashNoNonce().Bytes(), header.Nonce.Uint64())
-	case types.H_ARGON2ID: // 2
+	default:
 		seed := make([]byte, 40)
 		copy(seed, header.HashNoNonce().Bytes())
 		binary.LittleEndian.PutUint64(seed[32:], header.Nonce.Uint64())
-		result = crypto.Argon2id(seed)
+		result = crypto.VersionHash(byte(header.Version), seed)
 		digest = make([]byte, common.HashLength)
 	}
 	// Caches are unmapped in a finalizer. Ensure that the cache stays live
