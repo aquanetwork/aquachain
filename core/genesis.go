@@ -247,7 +247,7 @@ func (g *Genesis) ToBlock(db aquadb.Database) *types.Block {
 		MixDigest:  g.Mixhash,
 		Coinbase:   g.Coinbase,
 		Root:       root,
-		Version:    1,
+		Version:    g.Config.GetBlockVersion(new(big.Int).SetUint64(g.Number)),
 	}
 	if g.GasLimit == 0 {
 		head.GasLimit = params.GenesisGasLimit

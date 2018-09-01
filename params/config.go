@@ -57,7 +57,6 @@ var (
 
 	// Testnet2HF for -testnet2 private network
 	Testnet2HF = ForkMap{
-		4: big.NewInt(0),
 		5: big.NewInt(0),
 		6: big.NewInt(0),
 		7: big.NewInt(0),
