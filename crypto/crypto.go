@@ -44,47 +44,69 @@ var (
 const (
 	argonThreads uint8  = 1
 	argonTime    uint32 = 1
-	argonMem     uint32 = 1
 )
 
-// Argon2id calculates and returns the Argon2id hash of the input data.
-func Argon2id(data ...[]byte) []byte {
-	return argon2idA(data...)
+// VersionHash switch version, returns digest bytes, v is not hashed.
+func VersionHash(v byte, data ...[]byte) []byte {
+	switch v {
+	//	case 0:
+	//		return Keccak256(data...)
+	case 1:
+		return Keccak256(data...)
+	case 2:
+		return Argon2idA(data...)
+	case 3:
+		return Argon2idB(data...)
+	case 4:
+		return Argon2idC(data...)
+	default:
+		panic("invalid block version")
+	}
 }
 
-// Argon2id calculates and returns the Argon2id hash of the input data.
-func argon2idA(data ...[]byte) []byte {
+// Argon2id calculates and returns the Argon2id hash of the input data, using 1kb mem
+func Argon2idA(data ...[]byte) []byte {
 	//fmt.Printf(".")
 	buf := &bytes.Buffer{}
 	for i := range data {
 		buf.Write(data[i])
 	}
-	return argon2.IDKey(buf.Bytes(), nil, argonTime, argonMem, argonThreads, common.HashLength)
+	return argon2.IDKey(buf.Bytes(), nil, argonTime, 1, argonThreads, common.HashLength)
 }
 
-// Argon2id calculates and returns the Argon2id hash of the input data.
-func argon2idB(data ...[]byte) []byte {
+// Argon2id calculates and returns the Argon2id hash of the input data, using 256mb mem
+func Argon2idB(data ...[]byte) []byte {
 	//fmt.Printf(".")
 	buf := &bytes.Buffer{}
 	for i := range data {
 		buf.Write(data[i])
 	}
-	return argon2.IDKey(buf.Bytes(), nil, 2, argonMem, argonThreads, common.HashLength)
+	return argon2.IDKey(buf.Bytes(), nil, argonTime, 1024*256, argonThreads, common.HashLength)
 }
 
-// Argon2id calculates and returns the Argon2id hash of the input data.
-func argon2idC(data ...[]byte) []byte {
+// Argon2id calculates and returns the Argon2id hash of the input data, using 512mb mem
+func Argon2idC(data ...[]byte) []byte {
 	//fmt.Printf(".")
 	buf := &bytes.Buffer{}
 	for i := range data {
 		buf.Write(data[i])
 	}
-	return argon2.IDKey(buf.Bytes(), nil, 3, argonMem, argonThreads, common.HashLength)
+	return argon2.IDKey(buf.Bytes(), nil, argonTime, 1024*512, argonThreads, common.HashLength)
 }
 
 // Argon2id calculates and returns the Argon2id hash of the input data.
-func Argon2idHash(data ...[]byte) (h common.Hash) {
-	return common.BytesToHash(Argon2id(data...))
+func Argon2idAHash(data ...[]byte) (h common.Hash) {
+	return common.BytesToHash(Argon2idA(data...))
+}
+
+// Argon2id calculates and returns the Argon2id hash of the input data.
+func Argon2idBHash(data ...[]byte) (h common.Hash) {
+	return common.BytesToHash(Argon2idB(data...))
+}
+
+// Argon2id calculates and returns the Argon2id hash of the input data.
+func Argon2idCHash(data ...[]byte) (h common.Hash) {
+	return common.BytesToHash(Argon2idC(data...))
 }
 
 // Keccak256 calculates and returns the Keccak256 hash of the input data.
