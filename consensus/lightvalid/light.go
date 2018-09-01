@@ -49,7 +49,7 @@ type LightBlock interface {
 func (l *Light) Verify(block LightBlock) bool {
 
 	version := block.Version()
-	if version == 0 {
+	if version == 0 || version > crypto.KnownVersion {
 		return false
 	}
 
