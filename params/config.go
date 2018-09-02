@@ -45,14 +45,15 @@ var (
 
 	// Testnet now is HF6, avoiding the block #3 (HF3) difficulty bomb
 	TestnetHF = ForkMap{
-		0: big.NewInt(0),  //  hf0 had no changes
-		1: big.NewInt(1),  // increase min difficulty to the next multiple of 2048
-		2: big.NewInt(2),  // use simple difficulty algo (240 seconds)
-		3: big.NewInt(3),  // increase min difficulty for anticipation of gpu mining
-		4: big.NewInt(4),  // HF4
-		5: big.NewInt(5),  // HF5
-		6: big.NewInt(6),  // noop in testnet
-		7: big.NewInt(25), // eip 155, 158
+		0: big.NewInt(0),   //  hf0 had no changes
+		1: big.NewInt(1),   // increase min difficulty to the next multiple of 2048
+		2: big.NewInt(2),   // use simple difficulty algo (240 seconds)
+		3: big.NewInt(3),   // increase min difficulty for anticipation of gpu mining
+		4: big.NewInt(4),   // HF4
+		5: big.NewInt(5),   // HF5
+		6: big.NewInt(6),   // noop in testnet
+		7: big.NewInt(25),  // eip 155, 158
+		8: big.NewInt(650), // HF8
 	}
 
 	// Testnet2HF for -testnet2 private network
