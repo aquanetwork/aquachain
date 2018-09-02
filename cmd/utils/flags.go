@@ -321,7 +321,7 @@ var (
 
 	VMEnableDebugFlag = cli.BoolFlag{
 		Name:  "vmdebug",
-		Usage: "Record information useful for VM and contract debugging", 
+		Usage: "Record information useful for VM and contract debugging",
 	}
 	// Logging and debug settings
 	AquaStatsURLFlag = cli.StringFlag{
