@@ -43,7 +43,7 @@ var (
 		7: big.NewInt(36050), // eip 155, 158
 	}
 
-	// Testnet now is HF6, avoiding the block #3 (HF3) difficulty bomb
+	// TestnetHF ...
 	TestnetHF = ForkMap{
 		0: big.NewInt(0),   //  hf0 had no changes
 		1: big.NewInt(1),   // increase min difficulty to the next multiple of 2048
@@ -63,6 +63,13 @@ var (
 		7: big.NewInt(0),
 		8: big.NewInt(8),
 		9: big.NewInt(19),
+	}
+
+	// TestHF for test suite
+	TestHF = ForkMap{
+		5: big.NewInt(10),
+		6: big.NewInt(10),
+		7: big.NewInt(30),
 	}
 )
 var (
@@ -109,7 +116,7 @@ var (
 	// adding flags to the config to also have to set these fields.
 	AllAquahashProtocolChanges = &ChainConfig{big.NewInt(1337), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), TestnetHF}
 
-	TestChainConfig = &ChainConfig{big.NewInt(1), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), TestnetHF}
+	TestChainConfig = &ChainConfig{big.NewInt(3), big.NewInt(0), nil, false, big.NewInt(0), common.Hash{}, big.NewInt(0), big.NewInt(0), big.NewInt(0), nil, new(AquahashConfig), TestHF}
 	TestRules       = TestChainConfig.Rules(new(big.Int))
 )
 
