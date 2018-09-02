@@ -174,7 +174,7 @@ var (
 	}
 	GCModeFlag = cli.StringFlag{
 		Name:  "gcmode",
-		Usage: `Blockchain garbage collection mode ("full", "archive")`,
+		Usage: `Blockchain garbage collection mode ("full", "archive") *SYNC WITH '-gcmode archive' FOR COMPLETE CIRCULATING SUPPLY*`,
 		Value: "full",
 	}
 	// Aquahash settings
@@ -260,7 +260,7 @@ var (
 	// Performance tuning settings
 	CacheFlag = cli.IntFlag{
 		Name:  "cache",
-		Usage: "Megabytes of memory allocated to internal caching",
+		Usage: "Megabytes of memory allocated to internal caching (consider 2048)",
 		Value: 1024,
 	}
 	CacheDatabaseFlag = cli.IntFlag{
@@ -321,7 +321,7 @@ var (
 
 	VMEnableDebugFlag = cli.BoolFlag{
 		Name:  "vmdebug",
-		Usage: "Record information useful for VM and contract debugging",
+		Usage: "Record information useful for VM and contract debugging", 
 	}
 	// Logging and debug settings
 	AquaStatsURLFlag = cli.StringFlag{
@@ -647,7 +647,7 @@ func splitAndTrim(input string) []string {
 func setHTTP(ctx *cli.Context, cfg *node.Config) {
 	if ctx.GlobalBool(RPCEnabledFlag.Name) && cfg.HTTPHost == "" {
 		cfg.HTTPHost = "127.0.0.1"
-		if ctx.GlobalIsSet(RPCEnabledFlag.Name) && ctx.GlobalIsSet(UnlockedAccountFlag.Name) && !ctx.GlobalIsSet(RPCUnlockFlag.Name) {
+		if ctx.GlobalIsSet(RPCListenAddrFlag.Name) && ctx.GlobalIsSet(UnlockedAccountFlag.Name) && !ctx.GlobalIsSet(RPCUnlockFlag.Name) {
 			Fatalf("Woah there! By default, using -rpc and -unlock is safe.\n" +
 				"But you shouldn't use --rpcaddr with --unlock flag.\n" +
 				"If you really know what you are doing and would like to unlock a wallet while" +
@@ -799,9 +799,6 @@ func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config) {
 	if ctx.GlobalBool(Testnet2Flag.Name) {
 		cfg.NoDiscovery = true
 	}
-	// if we're running a light client or server, force enable the v5 peer discovery
-	// unless it is explicitly disabled with --nodiscover note that explicitly specifying
-	// --v5disc overrides --nodiscover, in which case the later only disables v4 discovery
 	if ctx.GlobalIsSet(DiscoveryV5Flag.Name) {
 		cfg.DiscoveryV5 = ctx.GlobalBool(DiscoveryV5Flag.Name)
 	}
@@ -1025,12 +1022,12 @@ func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 	switch {
 	case ctx.GlobalBool(TestnetFlag.Name):
 		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
-			cfg.NetworkId = 3
+			cfg.NetworkId = params.TestnetChainConfig.ChainId.Uint64()
 		}
 		cfg.Genesis = core.DefaultTestnetGenesisBlock()
 	case ctx.GlobalBool(Testnet2Flag.Name):
 		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
-			cfg.NetworkId = 4
+			cfg.NetworkId = params.Testnet2ChainConfig.ChainId.Uint64()
 		}
 		cfg.Genesis = core.DefaultTestnet2GenesisBlock()
 	case ctx.GlobalBool(DeveloperFlag.Name):
