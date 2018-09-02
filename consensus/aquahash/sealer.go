@@ -183,5 +183,7 @@ search:
 	}
 	// Datasets are unmapped in a finalizer. Ensure that the dataset stays live
 	// during sealing so it's not unmapped while being read.
-	runtime.KeepAlive(dataset)
+	if dataset != nil {
+		runtime.KeepAlive(dataset)
+	}
 }

@@ -103,6 +103,9 @@ func calcDifficultyHFX(config *params.ChainConfig, time uint64, parent, grandpar
 		min           = params.MinimumDifficultyHF5
 		mainnet       = params.MainnetChainConfig.ChainId.Uint64() == chainID // bool
 	)
+	if !mainnet {
+		min = params.MinimumDifficultyHF5Testnet
+	}
 
 	if hf > params.KnownHF {
 		panic("unknown HF not implemented")
@@ -112,7 +115,17 @@ func calcDifficultyHFX(config *params.ChainConfig, time uint64, parent, grandpar
 	case 9:
 		return calcDifficultyGrandparent(time, parent, grandparent, hf, chainID)
 	case 8:
+		if next.Cmp(config.GetHF(8)) == 0 && mainnet {
+			return params.MinimumDifficultyHF5
+		}
+		if next.Cmp(config.GetHF(8)) == 0 && !mainnet {
+			return params.MinimumDifficultyHF8Testnet
+		}
 		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF8)
+		if !mainnet {
+			adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF8Testnet)
+			min = params.MinimumDifficultyHF8Testnet
+		}
 	case 6, 7:
 		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF6)
 	case 5:
@@ -124,15 +137,21 @@ func calcDifficultyHFX(config *params.ChainConfig, time uint64, parent, grandpar
 		}
 		limit = params.DurationLimit // not accurate, fixed in hf6
 		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisorHF5)
-		min = params.MinimumDifficultyHF5
+		if mainnet {
+			min = params.MinimumDifficultyHF5
+		}
 	case 3, 4:
 		limit = params.DurationLimit // not accurate, fixed in hf6
 		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
-		min = params.MinimumDifficultyHF3
+		if mainnet {
+			min = params.MinimumDifficultyHF3
+		}
 	case 2:
 		limit = params.DurationLimit // not accurate, fixed in hf6
 		adjust = new(big.Int).Div(parent.Difficulty, params.DifficultyBoundDivisor)
-		min = params.MinimumDifficultyHF1
+		if mainnet {
+			min = params.MinimumDifficultyHF1
+		}
 	case 1:
 		return calcDifficultyHF1(time, parent, chainID)
 	case 0:
@@ -143,10 +162,6 @@ func calcDifficultyHFX(config *params.ChainConfig, time uint64, parent, grandpar
 
 	bigTime.SetUint64(time)
 	bigParentTime.Set(parent.Time)
-
-	if !mainnet {
-		min = params.MinimumDifficultyHF5Testnet
-	}
 
 	// calculate difficulty
 	if bigTime.Sub(bigTime, bigParentTime).Cmp(limit) < 0 {
