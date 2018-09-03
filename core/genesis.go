@@ -311,7 +311,7 @@ func (g *Genesis) MustCommit(db aquadb.Database) *types.Block {
 
 // GenesisBlockForTesting creates and writes a block in which addr has the given wei balance.
 func GenesisBlockForTesting(db aquadb.Database, addr common.Address, balance *big.Int) *types.Block {
-	g := Genesis{Alloc: GenesisAlloc{addr: {Balance: balance}}, Config: params.TestnetChainConfig}
+	g := Genesis{Alloc: GenesisAlloc{addr: {Balance: balance}}, Config: params.TestChainConfig}
 	return g.MustCommit(db)
 }
 

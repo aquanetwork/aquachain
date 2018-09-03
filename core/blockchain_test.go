@@ -317,8 +317,8 @@ func testBrokenChain(t *testing.T, full bool) {
 func TestReorgLongHeaders(t *testing.T) { testReorgLong(t, false) }
 func TestReorgLongBlocks(t *testing.T)  { testReorgLong(t, true) }
 
-func testReorgLong(t *testing.T, full bool) {
-	testReorg(t, []int64{0, 0, -9}, []int64{0, 0, 0, -9}, 395314703-params.GenesisDifficulty.Int64(), full)
+func testReorgShort(t *testing.T, full bool) {
+	testReorg(t, []int64{0, 0, -9}, []int64{0, 0, 0, -9}, 399609468, full)
 }
 
 // Tests that reorganising a short difficult chain after a long easy one
@@ -326,7 +326,7 @@ func testReorgLong(t *testing.T, full bool) {
 func TestReorgShortHeaders(t *testing.T) { testReorgShort(t, false) }
 func TestReorgShortBlocks(t *testing.T)  { testReorgShort(t, true) }
 
-func testReorgShort(t *testing.T, full bool) {
+func testReorgLong(t *testing.T, full bool) {
 	// Create a long easy chain vs. a short heavy one. Due to difficulty adjustment
 	// we need a fairly long chain of blocks with different difficulties for a short
 	// one to become heavyer than a long one. The 96 is an empirical value.
@@ -336,9 +336,9 @@ func testReorgShort(t *testing.T, full bool) {
 	}
 	diff := make([]int64, len(easy)-1)
 	for i := 0; i < len(diff); i++ {
-		diff[i] = -9
+		diff[i] = -20
 	}
-	testReorg(t, easy, diff, 3419632510-params.GenesisDifficulty.Int64(), full)
+	testReorg(t, easy, diff, 7160200477, full)
 }
 
 func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
@@ -349,6 +349,9 @@ func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
 	}
 	defer blockchain.Stop()
 
+	var headNum *big.Int
+	var head *types.Header
+	var headTd *big.Int
 	// Insert an easy and a difficult chain afterwards
 	easyBlocks, _ := GenerateChain(params.TestChainConfig, blockchain.CurrentBlock(), aquahash.NewFaker(), db, len(first), func(i int, b *BlockGen) {
 		b.OffsetTime(first[i])
@@ -356,13 +359,21 @@ func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
 	diffBlocks, _ := GenerateChain(params.TestChainConfig, blockchain.CurrentBlock(), aquahash.NewFaker(), db, len(second), func(i int, b *BlockGen) {
 		b.OffsetTime(second[i])
 	})
+
 	if full {
 		if _, err := blockchain.InsertChain(easyBlocks); err != nil {
 			t.Fatalf("failed to insert easy chain: %v", err)
 		}
+		headNum = blockchain.CurrentBlock().Number()
+		head = blockchain.CurrentBlock().Header()
+		headTd = blockchain.GetTdByHash(head.Hash())
+		println("easy chain", headNum.String(), "td", headTd.String())
 		if _, err := blockchain.InsertChain(diffBlocks); err != nil {
 			t.Fatalf("failed to insert difficult chain: %v", err)
 		}
+		headNum = blockchain.CurrentBlock().Number()
+		head = blockchain.CurrentBlock().Header()
+		headTd = blockchain.GetTdByHash(head.Hash())
 	} else {
 		easyHeaders := make([]*types.Header, len(easyBlocks))
 		for i, block := range easyBlocks {
@@ -375,10 +386,20 @@ func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
 		if _, err := blockchain.InsertHeaderChain(easyHeaders, 1); err != nil {
 			t.Fatalf("failed to insert easy chain: %v", err)
 		}
+		head = blockchain.CurrentHeader()
+		headNum = blockchain.CurrentHeader().Number
+		headTd = blockchain.GetTdByHash(head.Hash())
+		println("easy chain", headNum.String(), "td", headTd.String())
+
 		if _, err := blockchain.InsertHeaderChain(diffHeaders, 1); err != nil {
 			t.Fatalf("failed to insert difficult chain: %v", err)
 		}
+		head = blockchain.CurrentHeader()
+		headNum = blockchain.CurrentHeader().Number
+		headTd = blockchain.GetTdByHash(head.Hash())
 	}
+	println("current chain", headNum.String(), "td", headTd.String())
+
 	// Check that the chain is valid number and link wise
 	if full {
 		prev := blockchain.CurrentBlock()
@@ -396,18 +417,16 @@ func testReorg(t *testing.T, first, second []int64, td int64, full bool) {
 		}
 	}
 	// Make sure the chain total difficulty is the correct one
-	want := new(big.Int).Add(blockchain.genesisBlock.Difficulty(), big.NewInt(td))
-	// want := big.NewInt(td)
+	want := new(big.Int).Add(blockchain.genesisBlock.Difficulty(), new(big.Int).Sub(big.NewInt(td), blockchain.genesisBlock.Difficulty()))
 	if full {
-		if have := blockchain.GetTdByHash(blockchain.CurrentBlock().Hash()); have.Cmp(want) != 0 {
-			diff := new(big.Int).Sub(want, have)
-			t.Errorf("total difficulty %s mismatch: have %v, want %v, d %v", blockchain.CurrentBlock().Number(), have, want, diff)
-		}
+		headNum = blockchain.CurrentBlock().Number()
 	} else {
-		if have := blockchain.GetTdByHash(blockchain.CurrentHeader().Hash()); have.Cmp(want) != 0 {
-			diff := new(big.Int).Sub(want, have)
-			t.Errorf("total difficulty %s mismatch: have %v, want %v, d %v", blockchain.CurrentHeader().Number, have, want, diff)
-		}
+		headNum = blockchain.CurrentHeader().Number
+	}
+
+	if have := blockchain.GetTdByHash(blockchain.CurrentHeader().Hash()); have.Cmp(want) != 0 {
+		diff := new(big.Int).Sub(want, have)
+		t.Errorf("total difficulty block %s mismatch: have %v, want %v, d %v", headNum, have, want, diff)
 	}
 }
 
