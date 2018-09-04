@@ -67,9 +67,9 @@ var (
 
 	// TestHF for test suite
 	TestHF = ForkMap{
-		0: big.NewInt(0),   //  hf0 had no changes
-		1: big.NewInt(0),   // increase min difficulty to the next multiple of 2048
-		2: big.NewInt(0),   // use simple difficulty algo (240 seconds)
+		0: big.NewInt(0), //  hf0 had no changes
+		1: big.NewInt(0), // increase min difficulty to the next multiple of 2048
+		2: big.NewInt(0), // use simple difficulty algo (240 seconds)
 		5: big.NewInt(10),
 		6: big.NewInt(10),
 		7: big.NewInt(30),
