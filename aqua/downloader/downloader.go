@@ -253,6 +253,7 @@ func (d *Downloader) Progress() aquachain.SyncProgress {
 		current = d.blockchain.CurrentFastBlock().NumberU64()
 	case LightSync:
 		current = d.lightchain.CurrentHeader().Number.Uint64()
+		common.Report("light sync activated but should not be")
 	}
 	return aquachain.SyncProgress{
 		StartingBlock: d.syncStatsChainOrigin,
@@ -1188,16 +1189,16 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 				hashes[i] = header.Hash()
 			}
 			lastHeader, lastFastBlock, lastBlock := d.lightchain.CurrentHeader().Number, common.Big0, common.Big0
-			if d.mode != LightSync {
-				lastFastBlock = d.blockchain.CurrentFastBlock().Number()
-				lastBlock = d.blockchain.CurrentBlock().Number()
-			}
+			//if d.mode != LightSync {
+			lastFastBlock = d.blockchain.CurrentFastBlock().Number()
+			lastBlock = d.blockchain.CurrentBlock().Number()
+			//}
 			d.lightchain.Rollback(hashes)
 			curFastBlock, curBlock := common.Big0, common.Big0
-			if d.mode != LightSync {
-				curFastBlock = d.blockchain.CurrentFastBlock().Number()
-				curBlock = d.blockchain.CurrentBlock().Number()
-			}
+			//if d.mode != LightSync {
+			curFastBlock = d.blockchain.CurrentFastBlock().Number()
+			curBlock = d.blockchain.CurrentBlock().Number()
+			//}
 			log.Warn("Rolled back headers", "count", len(hashes),
 				"header", fmt.Sprintf("%d->%d", lastHeader, d.lightchain.CurrentHeader().Number),
 				"fast", fmt.Sprintf("%d->%d", lastFastBlock, curFastBlock),
@@ -1235,12 +1236,12 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 				// L: Sync begins, and finds common ancestor at 11
 				// L: Request new headers up from 11 (R's TD was higher, it must have something)
 				// R: Nothing to give
-				if d.mode != LightSync {
-					head := d.blockchain.CurrentBlock()
-					if !gotHeaders && td.Cmp(d.blockchain.GetTd(head.Hash(), head.NumberU64())) > 0 {
-						return errStallingPeer
-					}
+				//if d.mode != LightSync {
+				head := d.blockchain.CurrentBlock()
+				if !gotHeaders && td.Cmp(d.blockchain.GetTd(head.Hash(), head.NumberU64())) > 0 {
+					return errStallingPeer
 				}
+				//}
 				// If fast or light syncing, ensure promised headers are indeed delivered. This is
 				// needed to detect scenarios where an attacker feeds a bad pivot and then bails out
 				// of delivering the post-pivot blocks that would flag the invalid content.
@@ -1248,7 +1249,8 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 				// This check cannot be executed "as is" for full imports, since blocks may still be
 				// queued for processing when the header download completes. However, as long as the
 				// peer gave us something useful, we're already happy/progressed (above check).
-				if d.mode == FastSync || d.mode == LightSync {
+				//if d.mode == FastSync || d.mode == LightSync {
+				if d.mode == FastSync {
 					head := d.lightchain.CurrentHeader()
 					if td.Cmp(d.lightchain.GetTd(head.SetVersion(byte(d.lightchain.RetrieveHeaderVersion(head.Number))), head.Number.Uint64())) > 0 {
 						return errStallingPeer
@@ -1276,7 +1278,8 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 				chunk := headers[:limit]
 
 				// In case of header only syncing, validate the chunk immediately
-				if d.mode == FastSync || d.mode == LightSync {
+				//if d.mode == FastSync || d.mode == LightSync {
+				if d.mode == FastSync {
 					// Collect the yet unknown headers to mark them as uncertain
 					unknown := make([]*types.Header, 0, len(headers))
 					for _, header := range chunk { // copies

@@ -28,7 +28,7 @@ const (
 )
 
 func (mode SyncMode) IsValid() bool {
-	return mode >= FullSync && mode <= LightSync
+	return mode >= FullSync && mode <= FastSync
 }
 
 // String implements the stringer interface.
@@ -39,7 +39,7 @@ func (mode SyncMode) String() string {
 	case FastSync:
 		return "fast"
 	case LightSync:
-		return "light"
+		return "light (invalid)"
 	default:
 		return "unknown"
 	}
@@ -64,10 +64,10 @@ func (mode *SyncMode) UnmarshalText(text []byte) error {
 		*mode = FullSync
 	case "fast":
 		*mode = FastSync
-	case "light":
-		*mode = LightSync
+	//case "light":
+	//	*mode = LightSync
 	default:
-		return fmt.Errorf(`unknown sync mode %q, want "full", "fast" or "light"`, text)
+		return fmt.Errorf(`unknown sync mode %q, want "full", "fast"`, text)
 	}
 	return nil
 }
