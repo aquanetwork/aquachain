@@ -44,12 +44,14 @@ See more commands: [Wiki](https://github.com/aquanetwork/aquachain/wiki/Basics)
 
 Now double-clickable! Just unzip and run to enter the Aquachain Javascript Console
 
+Run `aquachain account new` and then `aquachain`
+
 Type `help` at the `AQUA>` prompt for common commands.
 
 For automated scripts and whatnot, add 'daemon' argument for the previous default action:
 
 ```
-aquachain -rpc -rpcapi 'aqua,eth,net,web3' daemon
+aquachain daemon
 ```
 
 ## Resources
@@ -81,3 +83,14 @@ Discord: https://discordapp.com/invite/J7jBhZf
 Contributions welcome. Check out @AquaCrypto on telegram for ways to help.
 
 [![Build Status](https://travis-ci.org/aquanetwork/aquachain.svg?branch=master)](https://travis-ci.org/aquanetwork/aquachain)
+
+### Some tips and tricks for hacking on Aquachain core:
+
+  * Always `gofmt -w -l -s` before commiting. If you forget, adding a simple 'gofmt -w -l -s' commit works.
+  * `AQUAPATH=$(go env GOPATH)/src/gitlab.com/aquachain/aquachain` in ~/.bashrc, this saves time.
+Work in $AQUAPATH, and use `git branch` to navigate git forks (`git remote add fork git@github.com:user/aquachain.git`), this prevents having to change import paths.
+  * Before making a pull request, try `make test` to run all tests. If any tests pass, the PR can not be merged into the master branch.
+  * Rebase: Don't `git pull`, use `git pull -r`
+  * Squash similar commits
+  * Prefix commit message with package name, such as "core: fix blockchain"
+
