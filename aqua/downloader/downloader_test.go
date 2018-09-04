@@ -627,7 +627,9 @@ func assertOwnForkedChain(t *testing.T, tester *downloadTester, common int, leng
 		blocks += length - common
 		receipts += length - common - fsMinFullBlocks
 	}
-	receipts = 1
+	if tester.downloader.mode == FullSync {
+		receipts = 1
+	}
 	if hs := len(tester.ownHeaders); hs != headers {
 		t.Fatalf("synchronised headers mismatch: have %v, want %v", hs, headers)
 	}
