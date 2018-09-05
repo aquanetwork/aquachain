@@ -551,14 +551,12 @@ func (s *Service) assembleBlockStats(block *types.Block) *blockStats {
 		//		txs = []txStats{}
 	}
 	// Assemble and return the block stats
-	author, _ := s.engine.Author(header)
-
 	return &blockStats{
 		Number:     header.Number,
 		Hash:       header.Hash(),
 		ParentHash: header.ParentHash,
 		Timestamp:  header.Time,
-		Miner:      author,
+		Miner:      header.Coinbase,
 		GasUsed:    header.GasUsed,
 		GasLimit:   header.GasLimit,
 		Diff:       header.Difficulty.String(),
