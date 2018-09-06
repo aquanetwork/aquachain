@@ -19,10 +19,12 @@ package lightvalid
 
 import (
 	"encoding/binary"
+	"errors"
 	"math/big"
 
 	"gitlab.com/aquachain/aquachain/common"
 	"gitlab.com/aquachain/aquachain/crypto"
+	"gitlab.com/aquachain/aquachain/params"
 )
 
 var NoMixDigest = common.Hash{}
@@ -42,7 +44,7 @@ type LightBlock interface {
 	Nonce() uint64
 	MixDigest() common.Hash
 	NumberU64() uint64
-	Version() byte
+	Version() params.HeaderVersion
 }
 
 // Verify checks whether the block's nonce is valid.
@@ -68,9 +70,49 @@ func (l *Light) Verify(block LightBlock) bool {
 	seed := make([]byte, 40)
 	copy(seed, block.HashNoNonce().Bytes())
 	binary.LittleEndian.PutUint64(seed[32:], block.Nonce())
-	result := crypto.VersionHash(version, seed)
+	result := crypto.VersionHash(byte(version), seed)
 
 	// check number set from generated hash, is less than target diff
 	target := new(big.Int).Div(maxUint256, difficulty)
 	return new(big.Int).SetBytes(result).Cmp(target) <= 0
+}
+
+var (
+	ErrNoVersion        = errors.New("header has no version")
+	ErrDifficultyZero   = errors.New("difficulty is zero")
+	ErrMixDigestNonZero = errors.New("invalid mix digest")
+	ErrPOW              = errors.New("invalid proof of work")
+)
+
+// VerifyWithError returns an error
+func (l *Light) VerifyWithError(block LightBlock) error {
+
+	version := block.Version()
+	if version == 0 || version > crypto.KnownVersion {
+		return ErrNoVersion
+	}
+
+	// check difficulty is nonzero
+	difficulty := block.Difficulty()
+	if difficulty.Cmp(common.Big0) == 0 {
+		return ErrDifficultyZero
+	}
+
+	// avoid mixdigest malleability as it's not included in a block's "hashNononce"
+	if block.MixDigest() != NoMixDigest {
+		return ErrMixDigestNonZero
+	}
+
+	// generate block hash
+	seed := make([]byte, 40)
+	copy(seed, block.HashNoNonce().Bytes())
+	binary.LittleEndian.PutUint64(seed[32:], block.Nonce())
+	result := crypto.VersionHash(byte(version), seed)
+
+	// check number set from generated hash, is less than target diff
+	target := new(big.Int).Div(maxUint256, difficulty)
+	if new(big.Int).SetBytes(result).Cmp(target) <= 0 {
+		return nil
+	}
+	return ErrPOW
 }
