@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"gitlab.com/aquachain/aquachain/cmd/utils"
 	"gitlab.com/aquachain/aquachain/common"
@@ -25,6 +27,8 @@ var (
 	Config = params.TestnetChainConfig
 )
 
+const ticker uint64 = 60
+
 var gitCommit = ""
 
 var (
@@ -34,9 +38,11 @@ var (
 func init() {
 	app.Name = "aquacli"
 	app.Action = loopit
+	_ = filepath.Join
 	app.Flags = append(debug.Flags, []cli.Flag{
 		cli.StringFlag{
-			Value: filepath.Join(utils.DataDirFlag.Value.String(), "testnet/aquachain.ipc"),
+			//Value: filepath.Join(utils.DataDirFlag.Value.String(), "testnet/aquachain.ipc"),
+			Value: "https://tx.aquacha.in/testnet/",
 			Name:  "rpc",
 			Usage: "path or url to rpc",
 		},
@@ -91,7 +97,7 @@ func runit(ctx *cli.Context) error {
 
 	var encoded []byte
 	// first block is on the house
-	if parent.Number().Uint64() == 0 {
+	if false && parent.Number().Uint64() == 0 {
 		parent.SetVersion(Config.GetBlockVersion(parent.Number()))
 		block1 := types.NewBlock(header1, nil, nil, nil)
 		encoded, err = rlp.EncodeToBytes(&block1)
@@ -130,26 +136,39 @@ func runit(ctx *cli.Context) error {
 
 func mine(block *types.Block) ([]byte, error) {
 	validator := lightvalid.New()
-	_ = validator
+	rand.Seed(time.Now().UnixNano())
 	nonce := uint64(0)
-	resultHeader := block.Header()
+	nonce = rand.Uint64()
+	hdr := block.Header()
+	fmt.Println("mining algo:", hdr.Version)
+	fmt.Printf("#%v, by %x\ndiff: %s\ntx: %s\n", hdr.Number, hdr.Coinbase, hdr.Difficulty, block.Transactions())
+	fmt.Printf("starting from nonce: %v\n", nonce)
+	second := time.Tick(time.Duration(ticker) * time.Second)
+	fps := uint64(0)
 	for {
-		if nonce%1000 == 0 {
-			println(".")
+		select {
+		case <-second:
+			fmt.Printf("%v h/s\n", fps/uint64(ticker))
+			fps = 0
+		default:
+			nonce++
+			fps++
+			hdr.Nonce = types.EncodeNonce(nonce)
+			block = block.WithSeal(hdr)
+			if err := validator.VerifyWithError(block); err != nil {
+				if err != lightvalid.ErrPOW {
+					fmt.Println("error:", err)
+				}
+				continue
+			}
+			println("encoding block", block.String())
+			b, err := rlp.EncodeToBytes(&block)
+			if err != nil {
+				return nil, err
+			}
+			fmt.Println(b)
+			return b, nil
 		}
-		nonce++
-		resultHeader.Nonce = types.EncodeNonce(nonce)
-		block = block.WithSeal(resultHeader)
-		if err := validator.VerifyWithError(block); err != nil {
-			continue
-		}
-		println("encoding block", block.String())
-		b, err := rlp.EncodeToBytes(&block)
-		if err != nil {
-			return nil, err
-		}
-		fmt.Println(b)
-		return b, nil
 	}
 }
 
