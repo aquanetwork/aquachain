@@ -1344,7 +1344,7 @@ func (bc *BlockChain) reorg(oldBlock, newBlock *types.Block) error {
 	// Ensure the user sees large reorgs
 	if len(oldChain) > 0 && len(newChain) > 0 {
 		logFn := log.Debug
-		if len(oldChain) > 63 {
+		if len(oldChain) > 5 {
 			logFn = log.Warn
 		}
 		logFn("Chain split detected", "number", commonBlock.Number(), "hash", commonBlock.Hash(),
