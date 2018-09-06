@@ -22,7 +22,7 @@ import (
 
 	"gitlab.com/aquachain/aquachain/aquadb"
 	"gitlab.com/aquachain/aquachain/common"
-	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
+	"gitlab.com/aquachain/aquachain/common/prque"
 )
 
 // ErrNotRequested is returned by the trie sync when it's requested to process a
@@ -84,7 +84,7 @@ func NewTrieSync(root common.Hash, database DatabaseReader, callback LeafCallbac
 		database: database,
 		membatch: newSyncMemBatch(),
 		requests: make(map[common.Hash]*request),
-		queue:    prque.New(),
+		queue:    prque.New(nil),
 	}
 	ts.AddSubTrie(root, 0, common.Hash{}, callback)
 	return ts
@@ -242,7 +242,7 @@ func (s *TrieSync) schedule(req *request) {
 		return
 	}
 	// Schedule the request for future retrieval
-	s.queue.Push(req.hash, float32(req.depth))
+	s.queue.Push(req.hash, int64(req.depth))
 	s.requests[req.hash] = req
 }
 

@@ -29,10 +29,10 @@ import (
 	"gitlab.com/aquachain/aquachain/common"
 	"gitlab.com/aquachain/aquachain/common/log"
 	"gitlab.com/aquachain/aquachain/common/metrics"
+	"gitlab.com/aquachain/aquachain/common/prque"
 	"gitlab.com/aquachain/aquachain/core/state"
 	"gitlab.com/aquachain/aquachain/core/types"
 	"gitlab.com/aquachain/aquachain/params"
-	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
 )
 
 const (
@@ -967,11 +967,11 @@ func (pool *TxPool) promoteExecutables(accounts []common.Address) {
 	if pending > pool.config.GlobalSlots {
 		pendingBeforeCap := pending
 		// Assemble a spam order to penalize large transactors first
-		spammers := prque.New()
+		spammers := prque.New(nil)
 		for addr, list := range pool.pending {
 			// Only evict transactions from high rollers
 			if !pool.locals.contains(addr) && uint64(list.Len()) > pool.config.AccountSlots {
-				spammers.Push(addr, float32(list.Len()))
+				spammers.Push(addr, int64(list.Len()))
 			}
 		}
 		// Gradually drop transactions from offenders

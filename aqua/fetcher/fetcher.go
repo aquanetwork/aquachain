@@ -25,10 +25,10 @@ import (
 
 	"gitlab.com/aquachain/aquachain/common"
 	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/common/prque"
 	"gitlab.com/aquachain/aquachain/consensus"
 	"gitlab.com/aquachain/aquachain/core/types"
 	"gitlab.com/aquachain/aquachain/params"
-	"gopkg.in/karalabe/cookiejar.v2/collections/prque"
 )
 
 const (
@@ -164,7 +164,7 @@ func New(hashfunc func(*big.Int) params.HeaderVersion, getBlock blockRetrievalFn
 		fetching:       make(map[common.Hash]*announce),
 		fetched:        make(map[common.Hash][]*announce),
 		completing:     make(map[common.Hash]*announce),
-		queue:          prque.New(),
+		queue:          prque.New(nil),
 		queues:         make(map[string]int),
 		queued:         make(map[common.Hash]*inject),
 		getBlock:       getBlock,
@@ -302,7 +302,7 @@ func (f *Fetcher) loop() {
 			// If too high up the chain or phase, continue later
 			number := op.block.NumberU64()
 			if number > height+1 {
-				f.queue.Push(op, -float32(op.block.NumberU64()))
+				f.queue.Push(op, -int64(op.block.NumberU64()))
 				if f.queueChangeHook != nil {
 					f.queueChangeHook(op.block.Hash(), true)
 				}
@@ -629,7 +629,7 @@ func (f *Fetcher) enqueue(peer string, block *types.Block) {
 		}
 		f.queues[peer] = count
 		f.queued[hash] = op
-		f.queue.Push(op, -float32(block.NumberU64()))
+		f.queue.Push(op, -int64(block.NumberU64()))
 		if f.queueChangeHook != nil {
 			f.queueChangeHook(op.block.Hash(), true)
 		}
