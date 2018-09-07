@@ -328,7 +328,7 @@ func (q *queue) Schedule(headers []*types.Header, from uint64) []*types.Header {
 			break
 		}
 		if q.headerHead != (common.Hash{}) && q.headerHead != header.ParentHash {
-			log.Warn("Header broke chain ancestry", "number", header.Number, "hash", hash)
+			log.Warn("Incoming header broke chain ancestry, skipping rest of chain", "number", header.Number, "hash", hash)
 			break
 		}
 		// Make sure no duplicate requests are executed
