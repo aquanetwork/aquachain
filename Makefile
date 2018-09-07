@@ -23,6 +23,11 @@ musl:
 static:
 	build/env.sh go run build/ci.go install -static ./cmd/aquachain
 
+# build (WIP) reference stratum client
+aquastrat:
+	@echo "Building aquastrat, stratum test client"
+	build/env.sh go run build/ci.go install -static ./cmd/aquastrat
+
 # build reference miner
 aquaminer:
 	build/env.sh go run build/ci.go install -static ./cmd/aquaminer

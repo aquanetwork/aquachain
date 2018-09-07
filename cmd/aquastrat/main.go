@@ -23,20 +23,19 @@ import (
 )
 
 var (
-	big1   = big.NewInt(1)
-	Config = params.TestnetChainConfig
+	minerAddress = common.HexToAddress("0xf38e4687f759d175955dc03289f5cc2fbc3d58c0")
 )
-
-const ticker uint64 = 60
 
 var gitCommit = ""
 
 var (
-	app = utils.NewApp(gitCommit, "usage")
+	app    = utils.NewApp(gitCommit, "usage")
+	big1   = big.NewInt(1)
+	Config *params.ChainConfig
 )
 
 func init() {
-	app.Name = "aquacli"
+	app.Name = "aquastrat"
 	app.Action = loopit
 	_ = filepath.Join
 	app.Flags = append(debug.Flags, []cli.Flag{
@@ -79,6 +78,7 @@ func loopit(ctx *cli.Context) error {
 	for {
 		if err := runit(ctx); err != nil {
 			fmt.Println(err)
+			return err
 		}
 	}
 }
@@ -88,37 +88,58 @@ func runit(ctx *cli.Context) error {
 		return err
 	}
 	aqua := aquaclient.NewClient(rpcclient)
+	block1, err := aqua.BlockByNumber(context.Background(), big1)
+	if err != nil {
+		fmt.Println("blockbynumber")
+		return err
+	}
+
+	// to get genesis hash, we can't grab block zero and Hash()
+	// because we dont know the chainconfig which tells us
+	// the version to use for hashing.
+	genesisHash := block1.ParentHash()
+	switch genesisHash {
+	case params.MainnetGenesisHash:
+		Config = params.MainnetChainConfig
+	case params.TestnetGenesisHash:
+		Config = params.TestnetChainConfig
+	default:
+		Config = params.Testnet2ChainConfig
+	}
+	// prime rpc server for submitting work
 	parent, err := aqua.BlockByNumber(context.Background(), nil)
 	if err != nil {
+		fmt.Println("blockbynumber")
 		return err
 	}
 	// prime rpc server for submitting work
 	//	_, _ = aqua.GetWork(context.Background())
 
 	var encoded []byte
-	// first block is on the house
-	if false && parent.Number().Uint64() == 0 {
+	// first block is on the house (testnet2 only)
+	if Config == params.Testnet2ChainConfig && parent.Number().Uint64() == 0 {
 		parent.SetVersion(Config.GetBlockVersion(parent.Number()))
 		block1 := types.NewBlock(header1, nil, nil, nil)
 		encoded, err = rlp.EncodeToBytes(&block1)
 		if err != nil {
 			return err
 		}
-	} else {
-		encoded, err = aqua.GetBlockTemplate(context.Background())
-		if err != nil {
-			return err
-		}
-		var bt types.Block
-		if err := rlp.DecodeBytes(encoded, &bt); err != nil {
-			println("submitblock rlp decode error", err.Error())
-			return err
-		}
-		bt.SetVersion(Config.GetBlockVersion(bt.Number()))
-		encoded, err = mine(&bt)
-		if err != nil {
-			return err
-		}
+	}
+	encoded, err = aqua.GetBlockTemplate(context.Background())
+	if err != nil {
+		println("gbt")
+		return err
+	}
+	var bt types.Block
+	if err := rlp.DecodeBytes(encoded, &bt); err != nil {
+		println("submitblock rlp decode error", err.Error())
+		return err
+	}
+	bt.SetVersion(Config.GetBlockVersion(bt.Number()))
+
+	encoded, err = mine(&bt)
+	if err != nil {
+		return err
 	}
 	if encoded == nil {
 		return fmt.Errorf("failed to encoded block to rlp")
@@ -143,12 +164,13 @@ func mine(block *types.Block) ([]byte, error) {
 	fmt.Println("mining algo:", hdr.Version)
 	fmt.Printf("#%v, by %x\ndiff: %s\ntx: %s\n", hdr.Number, hdr.Coinbase, hdr.Difficulty, block.Transactions())
 	fmt.Printf("starting from nonce: %v\n", nonce)
-	second := time.Tick(time.Duration(ticker) * time.Second)
+	second := time.Tick(10 * time.Second)
 	fps := uint64(0)
 	for {
 		select {
 		case <-second:
-			fmt.Printf("%v h/s\n", fps/uint64(ticker))
+			hdr.Time = big.NewInt(time.Now().Unix())
+			fmt.Printf("%s %v h/s\n", hdr.Time, fps/uint64(10))
 			fps = 0
 		default:
 			nonce++
