@@ -125,6 +125,10 @@ func (hc *HeaderChain) GetBlockNumber(hash common.Hash) uint64 {
 	return number
 }
 
+func (hc *HeaderChain) GetBlockVersion(height *big.Int) byte {
+	return byte(hc.config.GetBlockVersion(height))
+}
+
 // WriteHeader writes a header into the local chain, given that its parent is
 // already known. If the total difficulty of the newly inserted header becomes
 // greater than the current known TD, the canonical chain is re-routed.
@@ -400,8 +404,7 @@ func (hc *HeaderChain) CurrentHeader() *types.Header {
 
 // SetCurrentHeader sets the current head header of the canonical chain.
 func (hc *HeaderChain) SetCurrentHeader(head *types.Header) {
-	head.SetVersion(byte(hc.Config().GetBlockVersion(head.Number)))
-	if err := WriteHeadHeaderHash(hc.chainDb, head.Hash()); err != nil {
+	if err := WriteHeadHeaderHash(hc.chainDb, head.SetVersion(hc.GetBlockVersion(head.Number))); err != nil {
 		log.Crit("Failed to insert head header hash", "err", err)
 	}
 	hc.currentHeader.Store(head)

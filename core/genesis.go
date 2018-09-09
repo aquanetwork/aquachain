@@ -151,6 +151,7 @@ func (e *GenesisMismatchError) Error() string {
 // The returned chain configuration is never nil.
 func SetupGenesisBlock(db aquadb.Database, genesis *Genesis) (*params.ChainConfig, common.Hash, error) {
 	if genesis != nil && genesis.Config == nil {
+		log.Warn("No genesis config found, using default (all)")
 		return params.AllAquahashProtocolChanges, common.Hash{}, errGenesisNoConfig
 	}
 
@@ -197,7 +198,7 @@ func SetupGenesisBlock(db aquadb.Database, genesis *Genesis) (*params.ChainConfi
 	// are returned to the caller unless we're already at block zero.
 	height := GetBlockNumber(db, GetHeadHeaderHash(db))
 	if height == missingNumber {
-		return newcfg, stored, fmt.Errorf("missing block number for head header hash")
+		return newcfg, stored, fmt.Errorf("missing block number for head header hash, this happens when using test versions on existing incompatible databases, if you are sure you are running the correct version, try removedb")
 	}
 	compatErr := storedcfg.CheckCompatible(newcfg, height)
 	if compatErr != nil && height != 0 && compatErr.RewindTo != 0 {
