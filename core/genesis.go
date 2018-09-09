@@ -214,6 +214,8 @@ func (g *Genesis) configOrDefault(ghash common.Hash) *params.ChainConfig {
 		return params.MainnetChainConfig
 	case ghash == params.TestnetGenesisHash:
 		return params.TestnetChainConfig
+	case ghash == params.Testnet2GenesisHash:
+		return params.Testnet2ChainConfig
 	default:
 		return params.AllAquahashProtocolChanges
 	}

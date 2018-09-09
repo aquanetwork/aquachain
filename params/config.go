@@ -26,7 +26,8 @@ import (
 var (
 	MainnetGenesisHash = common.HexToHash("0x381c8d2c3e3bc702533ee504d7621d510339cafd830028337a4b532ff27cd505") // Mainnet genesis hash to enforce below configs on
 	//MainnetGenesisHash = common.HexToHash("0x2461b9b2e5b57ed037fe99f470511c6dbef8e0ed976b3f3197ae689f5b100a9b") // Mainnet genesis hash to enforce below configs on
-	TestnetGenesisHash = common.HexToHash("0xa8773cb7d32b8f7e1b32b0c2c8b735c293b8936dd3760c15afc291a23eb0cf88") // Testnet genesis hash to enforce below configs on
+	TestnetGenesisHash  = common.HexToHash("0xa8773cb7d32b8f7e1b32b0c2c8b735c293b8936dd3760c15afc291a23eb0cf88") // Testnet genesis hash to enforce below configs on
+	Testnet2GenesisHash = common.HexToHash("0xde434983d3ada19cd43c44d8ad5511bad01ed12b3cc9a99b1717449a245120df") // Testnet2 genesis hash to enforce below configs on
 )
 
 const KnownHF = 9
