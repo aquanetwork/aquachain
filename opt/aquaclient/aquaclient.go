@@ -482,6 +482,12 @@ func (ec *Client) GetWork(ctx context.Context) ([3]string, error) {
 	return work, err
 }
 
+func (ec *Client) GetBlockTemplate(ctx context.Context) ([]byte, error) {
+	var bt []byte
+	err := ec.c.CallContext(ctx, &bt, "aqua_getBlockTemplate")
+	return bt, err
+}
+
 func (ec *Client) SubmitWork(ctx context.Context, nonce types.BlockNonce, solution, digest common.Hash) bool {
 	var ok bool
 	return ec.c.CallContext(ctx, &ok, "aqua_submitWork", nonce, solution, digest) == nil && ok

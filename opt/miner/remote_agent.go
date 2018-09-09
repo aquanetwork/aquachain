@@ -28,6 +28,7 @@ import (
 	"gitlab.com/aquachain/aquachain/consensus"
 	"gitlab.com/aquachain/aquachain/consensus/aquahash"
 	"gitlab.com/aquachain/aquachain/core/types"
+	"gitlab.com/aquachain/aquachain/rlp"
 )
 
 type hashrate struct {
@@ -104,6 +105,16 @@ func (a *RemoteAgent) GetHashRate() (tot int64) {
 		tot += int64(hashrate.rate)
 	}
 	return
+}
+
+func (a *RemoteAgent) GetBlockTemplate() ([]byte, error) {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.currentWork != nil {
+		return rlp.EncodeToBytes(a.currentWork.Block)
+	}
+	return nil, errors.New("No work available yet, don't panic.")
 }
 
 func (a *RemoteAgent) GetWork() ([3]string, error) {

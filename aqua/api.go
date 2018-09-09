@@ -102,6 +102,32 @@ func (api *PublicMinerAPI) SubmitWork(nonce types.BlockNonce, solution, digest c
 	return api.agent.SubmitWork(nonce, digest, solution)
 }
 
+// SubmitBlock can be used by external miner to submit their POW solution. It returns an indication if the work was
+// accepted. Note, this is not an indication if the provided work was valid!
+func (api *PublicMinerAPI) SubmitBlock(encodedBlock []byte) bool {
+	var block types.Block
+	if encodedBlock == nil {
+		log.Warn("submitblock rlp got nil")
+		return false
+	}
+	if err := rlp.DecodeBytes(encodedBlock, &block); err != nil {
+		log.Warn("submitblock rlp decode error", "err", err)
+		return false
+	}
+	block.SetVersion(api.e.chainConfig.GetBlockVersion(block.Number()))
+	log.Debug("RPC client submitted block:", "block", block.Header())
+	return api.agent.SubmitBlock(&block)
+}
+
+func (api *PublicMinerAPI) GetBlockTemplate() ([]byte, error) {
+	if !api.e.IsMining() {
+		if err := api.e.StartMining(false); err != nil {
+			return nil, err
+		}
+	}
+	return api.agent.GetBlockTemplate()
+}
+
 // GetWork returns a work package for external miner. The work package consists of 3 strings
 // result[0], 32 bytes hex encoded current block header pow-hash
 // result[1], 32 bytes hex encoded auxiliary chunk (pre hf5: dag seed, hf5: zeros, hf8: header version)
