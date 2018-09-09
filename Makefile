@@ -82,6 +82,7 @@ install:
 
 .PHONY: aquachain all test clean
 .PHONY: aquaminer aquastrat race install generate lint musl all-musl static
+.PHONY: docker-run cross generate devtools
 
 docker-run:
 	mkdir -p ${HOME}/.aquachain-alt
