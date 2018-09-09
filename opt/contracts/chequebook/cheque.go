@@ -43,7 +43,7 @@ import (
 	"gitlab.com/aquachain/aquachain/core/types"
 	"gitlab.com/aquachain/aquachain/crypto"
 	"gitlab.com/aquachain/aquachain/opt/contracts/chequebook/contract"
-	"gitlab.com/aquachain/aquachain/opt/swarm/services/swap/swap"
+	"gitlab.com/aquachain/aquachain/opt/swap/swap"
 )
 
 // TODO(zelig): watch peer solvency and notify of bouncing cheques
