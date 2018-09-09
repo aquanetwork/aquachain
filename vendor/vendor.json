@@ -3,24 +3,6 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "HjCEoQVSw+HYpLZix1IG97jSEPw=",
-			"path": "bazil.org/fuse",
-			"revision": "65cc252bf6691cb3c7014bcb2c8dc29de91e3a7e",
-			"revisionTime": "2018-04-21T15:31:58Z"
-		},
-		{
-			"checksumSHA1": "389JFJTJADMtZkTIfdSnsmHVOUs=",
-			"path": "bazil.org/fuse/fs",
-			"revision": "65cc252bf6691cb3c7014bcb2c8dc29de91e3a7e",
-			"revisionTime": "2018-04-21T15:31:58Z"
-		},
-		{
-			"checksumSHA1": "NPgkh9UWMsaTtsAAs3kPrclHT9Y=",
-			"path": "bazil.org/fuse/fuseutil",
-			"revision": "65cc252bf6691cb3c7014bcb2c8dc29de91e3a7e",
-			"revisionTime": "2018-04-21T15:31:58Z"
-		},
-		{
 			"checksumSHA1": "6+sywuQeV+Dvo0iB258po7ztg4I=",
 			"path": "github.com/aerth/tgun",
 			"revision": "e7f5fb06edc01a24f4a486ef87a99a7d1a71dc6d",
@@ -340,12 +322,6 @@
 			"revisionTime": "2018-05-24T07:14:09Z"
 		},
 		{
-			"checksumSHA1": "dCvuKKbrgIk4OXLelrA6O9Ey4Og=",
-			"path": "github.com/spkg/zipfs",
-			"revision": "4c5941d51e663b230ac0358e38f6f1d93d0cf810",
-			"revisionTime": "2016-06-24T12:13:28Z"
-		},
-		{
 			"checksumSHA1": "c6pbpF7eowwO59phRTpF8cQ80Z0=",
 			"path": "github.com/stretchr/testify/assert",
 			"revision": "f35b8ab0b5a2cef36673838d662e249dd9c94686",
@@ -548,12 +524,6 @@
 			"path": "golang.org/x/crypto/ssh/terminal",
 			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
 			"revisionTime": "2018-08-30T18:34:03Z"
-		},
-		{
-			"checksumSHA1": "GtamqiJoL7PGHsN454AoffBFMa8=",
-			"path": "golang.org/x/net/context",
-			"revision": "a1d68217f862ad3373f1d49f9a3a2bcfe844e73a",
-			"revisionTime": "2018-07-12T18:40:03Z"
 		},
 		{
 			"checksumSHA1": "1c4mJK7gaUXt0/442AqB4Trn+kM=",
