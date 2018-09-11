@@ -88,7 +88,7 @@ var (
 	MinimumDifficultyGenesis    = big.NewInt(99999999)        // The minimum that the difficulty may ever be
 	MinimumDifficultyHF1        = big.NewInt(100001792)       // The minimum that the difficulty may ever be (changed to a nice multiple of 2048).
 	MinimumDifficultyHF3        = big.NewInt(3095918580 * 10) // GPU Announcement
-	MinimumDifficultyHF8Testnet = big.NewInt(256)             // Argon2id Announcement
+	MinimumDifficultyHF8Testnet = big.NewInt(64)              // Argon2id Announcement
 	MinimumDifficultyHF5Testnet = big.NewInt(4096)            // Argon2id Announcement
 	MinimumDifficultyHF5        = big.NewInt(46039386)        // Argon2id Announcement
 	MinimumDifficultyTestnet    = big.NewInt(4096)            // Argon2id Testnet

@@ -24,8 +24,7 @@ import (
 )
 
 var (
-	MainnetGenesisHash = common.HexToHash("0x381c8d2c3e3bc702533ee504d7621d510339cafd830028337a4b532ff27cd505") // Mainnet genesis hash to enforce below configs on
-	//MainnetGenesisHash = common.HexToHash("0x2461b9b2e5b57ed037fe99f470511c6dbef8e0ed976b3f3197ae689f5b100a9b") // Mainnet genesis hash to enforce below configs on
+	MainnetGenesisHash  = common.HexToHash("0x381c8d2c3e3bc702533ee504d7621d510339cafd830028337a4b532ff27cd505") // Mainnet genesis hash to enforce below configs on
 	TestnetGenesisHash  = common.HexToHash("0xa8773cb7d32b8f7e1b32b0c2c8b735c293b8936dd3760c15afc291a23eb0cf88") // Testnet genesis hash to enforce below configs on
 	Testnet2GenesisHash = common.HexToHash("0xde434983d3ada19cd43c44d8ad5511bad01ed12b3cc9a99b1717449a245120df") // Testnet2 genesis hash to enforce below configs on
 )
@@ -69,10 +68,12 @@ var (
 	// TestHF for test suite
 	TestHF = ForkMap{
 		0: big.NewInt(0), //  hf0 had no changes
-		1: big.NewInt(0), // increase min difficulty to the next multiple of 2048
-		2: big.NewInt(0), // use simple difficulty algo (240 seconds)
-		5: big.NewInt(10),
-		6: big.NewInt(10),
+		//1: big.NewInt(0), // increase min difficulty to the next multiple of 2048
+		//2: big.NewInt(10),
+		//3: big.NewInt(11),
+		4: big.NewInt(12),
+		5: big.NewInt(13),
+		//6: big.NewInt(14),
 		7: big.NewInt(30),
 	}
 )
