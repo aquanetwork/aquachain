@@ -56,7 +56,7 @@ func Fatalf(format string, args ...interface{}) {
 		}
 	}
 	fmt.Fprintf(w, "Fatal: "+format+"\n", args...)
-	os.Exit(1)
+	os.Exit(111)
 }
 
 func StartNode(stack *node.Node) {

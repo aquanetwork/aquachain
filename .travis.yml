@@ -26,8 +26,8 @@ matrix:
         - sudo chmod ugo+rw /dev/fuse
         - sudo chown root:$USER /etc/fuse.conf
         - go run build/ci.go install -musl
-        - git clone https://gitlab.com/aquachain/bootstraps.git 
-        - go run build/ci.go import-test bootstraps/latest.dat
+        - git clone https://gitlab.com/aquachain/bootstraps.git /tmp/bootstraps
+        - go run build/ci.go import-test /tmp/bootstraps/latest.dat
 
     - os: linux
       dist: trusty

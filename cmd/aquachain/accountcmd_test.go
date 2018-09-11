@@ -53,15 +53,15 @@ func TestAccountList(t *testing.T) {
 	defer aquachain.ExpectExit()
 	if runtime.GOOS == "windows" {
 		aquachain.Expect(`
-Account #0: {7ef5a6135f1fd6a02593eedc869c6d41d934aef8} keystore://{{.Datadir}}\keystore\UTC--2016-03-22T12-57-55.920751759Z--7ef5a6135f1fd6a02593eedc869c6d41d934aef8
-Account #1: {f466859ead1932d743d622cb74fc058882e8648a} keystore://{{.Datadir}}\keystore\aaa
-Account #2: {289d485d9771714cce91d3393d764e1311907acc} keystore://{{.Datadir}}\keystore\zzz
+Account #0: {0x7ef5a6135f1fd6a02593eedc869c6d41d934aef8} keystore://{{.Datadir}}\keystore\UTC--2016-03-22T12-57-55.920751759Z--7ef5a6135f1fd6a02593eedc869c6d41d934aef8
+Account #1: {0xf466859ead1932d743d622cb74fc058882e8648a} keystore://{{.Datadir}}\keystore\aaa
+Account #2: {0x289d485d9771714cce91d3393d764e1311907acc} keystore://{{.Datadir}}\keystore\zzz
 `)
 	} else {
 		aquachain.Expect(`
-Account #0: {7ef5a6135f1fd6a02593eedc869c6d41d934aef8} keystore://{{.Datadir}}/keystore/UTC--2016-03-22T12-57-55.920751759Z--7ef5a6135f1fd6a02593eedc869c6d41d934aef8
-Account #1: {f466859ead1932d743d622cb74fc058882e8648a} keystore://{{.Datadir}}/keystore/aaa
-Account #2: {289d485d9771714cce91d3393d764e1311907acc} keystore://{{.Datadir}}/keystore/zzz
+Account #0: {0x7ef5a6135f1fd6a02593eedc869c6d41d934aef8} keystore://{{.Datadir}}/keystore/UTC--2016-03-22T12-57-55.920751759Z--7ef5a6135f1fd6a02593eedc869c6d41d934aef8
+Account #1: {0xf466859ead1932d743d622cb74fc058882e8648a} keystore://{{.Datadir}}/keystore/aaa
+Account #2: {0x289d485d9771714cce91d3393d764e1311907acc} keystore://{{.Datadir}}/keystore/zzz
 `)
 	}
 }
@@ -75,7 +75,7 @@ Your new account is locked with a password. Please give a password. Do not forge
 Passphrase: {{.InputLine "foobar"}}
 Repeat passphrase: {{.InputLine "foobar"}}
 `)
-	aquachain.ExpectRegexp(`Address: \{[0-9a-f]{40}\}\n`)
+	aquachain.ExpectRegexp(`Address: \{0x[0-9a-f]{40}\}\n`)
 }
 
 func TestAccountNewBadRepeat(t *testing.T) {
@@ -113,7 +113,7 @@ func TestWalletImport(t *testing.T) {
 	aquachain.Expect(`
 !! Unsupported terminal, password will be echoed.
 Passphrase: {{.InputLine "foo"}}
-Address: {d4584b5f6229b7be90727b0fc8c6b91bb427821f}
+Address: {0xd4584b5f6229b7be90727b0fc8c6b91bb427821f}
 `)
 
 	files, err := ioutil.ReadDir(filepath.Join(aquachain.Datadir, "keystore"))

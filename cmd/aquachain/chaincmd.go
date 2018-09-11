@@ -202,10 +202,12 @@ func importChain(ctx *cli.Context) error {
 	}()
 	// Import the chain
 	start := time.Now()
+	exitcode := 0
 
 	if len(ctx.Args()) == 1 {
 		if err := utils.ImportChain(chain, ctx.Args().First()); err != nil {
 			log.Error("Import error", "err", err)
+			exitcode = 111
 		}
 	} else {
 		for _, arg := range ctx.Args() {
@@ -255,6 +257,9 @@ func importChain(ctx *cli.Context) error {
 	}
 	fmt.Println(stats)
 
+	if exitcode != 0 {
+		utils.Fatalf("Exiting with error code: %v", exitcode)
+	}
 	return nil
 }
 
