@@ -359,7 +359,8 @@ func (hc *HeaderChain) GetHeader(hash common.Hash, number uint64) *types.Header 
 	}
 	header.Version = hc.Config().GetBlockVersion(header.Number)
 	if header.Hash() != hash {
-		common.Report(fmt.Sprintf("hc.GetHeader(%x)", hash))
+		log.Info("header hash version mismatch")
+		return nil
 	}
 	// Cache the found header for next time and return
 	hc.headerCache.Add(hash, header)

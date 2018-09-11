@@ -504,8 +504,8 @@ func (bc *BlockChain) Genesis() *types.Block {
 	return bc.genesisBlock
 }
 
-// RetrieveHeaderVersion returns the version byte for the given height
-func (bc *BlockChain) RetrieveHeaderVersion(height *big.Int) params.HeaderVersion {
+// GetBlockVersion returns the version byte for the given height
+func (bc *BlockChain) GetBlockVersion(height *big.Int) params.HeaderVersion {
 	return bc.Config().GetBlockVersion(height)
 }
 
@@ -523,7 +523,7 @@ func (bc *BlockChain) GetBody(hash common.Hash) *types.Body {
 	}
 
 	for i := range body.Uncles {
-		body.Uncles[i].Version = bc.RetrieveHeaderVersion(body.Uncles[0].Number) // only one version
+		body.Uncles[i].Version = bc.GetBlockVersion(body.Uncles[0].Number) // only one version
 	}
 	// Cache the found body for next time and return
 	bc.bodyCache.Add(hash, body)
@@ -569,7 +569,7 @@ func (bc *BlockChain) HasBlockAndState(hash common.Hash, number uint64) bool {
 	if block == nil {
 		return false
 	}
-	// block.SetVersion(bc.RetrieveHeaderVersion(block.Number()))
+	// block.SetVersion(bc.GetBlockVersion(block.Number()))
 	return bc.HasState(block.Root())
 }
 

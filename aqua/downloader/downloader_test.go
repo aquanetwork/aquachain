@@ -100,7 +100,7 @@ func newTester() *downloadTester {
 
 	return tester
 }
-func (dl *downloadTester) RetrieveHeaderVersion(height *big.Int) params.HeaderVersion {
+func (dl *downloadTester) GetBlockVersion(height *big.Int) params.HeaderVersion {
 	return params.TestChainConfig.GetBlockVersion(height)
 }
 

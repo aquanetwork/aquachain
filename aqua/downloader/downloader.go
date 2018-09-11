@@ -169,7 +169,7 @@ type LightChain interface {
 	// Rollback removes a few recently added elements from the local chain.
 	Rollback([]common.Hash)
 
-	RetrieveHeaderVersion(*big.Int) types.HeaderVersion
+	GetBlockVersion(*big.Int) types.HeaderVersion
 }
 
 // BlockChain encapsulates functions required to sync a (full or fast) blockchain.
@@ -207,7 +207,7 @@ func New(mode SyncMode, stateDb aquadb.Database, mux *event.TypeMux, chain Block
 		mode:           mode,
 		stateDB:        stateDb,
 		mux:            mux,
-		queue:          newQueue(lightchain.RetrieveHeaderVersion),
+		queue:          newQueue(lightchain.GetBlockVersion),
 		peers:          newPeerSet(),
 		rttEstimate:    uint64(rttMaxEstimate),
 		rttConfidence:  uint64(1000000),
@@ -665,7 +665,7 @@ func (d *Downloader) findAncestor(p *peerConnection, height uint64) (uint64, err
 				switch d.mode {
 				case FullSync:
 					// cache the header hash with the correct version (using the block height)
-					version = byte(d.blockchain.RetrieveHeaderVersion(headers[i].Number))
+					version = byte(d.blockchain.GetBlockVersion(headers[i].Number))
 					hcache := headers[i].SetVersion(version)
 					// check if we already know the header or not
 					if d.blockchain.HasBlock(hcache, headers[i].Number.Uint64()) {
@@ -673,7 +673,7 @@ func (d *Downloader) findAncestor(p *peerConnection, height uint64) (uint64, err
 					}
 				default:
 					// cache the header hash with the correct version (using the block height)
-					version = byte(d.lightchain.RetrieveHeaderVersion(headers[i].Number))
+					version = byte(d.lightchain.GetBlockVersion(headers[i].Number))
 					hcache := headers[i].SetVersion(version)
 					// check if we already know the header or not
 					if d.lightchain.HasHeader(hcache, headers[i].Number.Uint64()) {
@@ -742,7 +742,7 @@ func (d *Downloader) findAncestor(p *peerConnection, height uint64) (uint64, err
 				arrived = true
 
 				// Modify the search interval based on the response
-				firstversion := byte(d.blockchain.RetrieveHeaderVersion(headers[0].Number))
+				firstversion := byte(d.blockchain.GetBlockVersion(headers[0].Number))
 				if (d.mode == FullSync && !d.blockchain.HasBlock(headers[0].SetVersion(firstversion), headers[0].Number.Uint64())) ||
 					(d.mode != FullSync && !d.lightchain.HasHeader(headers[0].SetVersion(firstversion), headers[0].Number.Uint64())) {
 					end = check
@@ -1252,7 +1252,7 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 				//if d.mode == FastSync || d.mode == LightSync {
 				if d.mode == FastSync {
 					head := d.lightchain.CurrentHeader()
-					if td.Cmp(d.lightchain.GetTd(head.SetVersion(byte(d.lightchain.RetrieveHeaderVersion(head.Number))), head.Number.Uint64())) > 0 {
+					if td.Cmp(d.lightchain.GetTd(head.SetVersion(byte(d.lightchain.GetBlockVersion(head.Number))), head.Number.Uint64())) > 0 {
 						return errStallingPeer
 					}
 				}
@@ -1283,7 +1283,7 @@ func (d *Downloader) processHeaders(origin uint64, pivot uint64, td *big.Int) er
 					// Collect the yet unknown headers to mark them as uncertain
 					unknown := make([]*types.Header, 0, len(headers))
 					for _, header := range chunk { // copies
-						header.SetVersion(byte(d.lightchain.RetrieveHeaderVersion(header.Number)))
+						header.SetVersion(byte(d.lightchain.GetBlockVersion(header.Number)))
 						if !d.lightchain.HasHeader(header.Hash(), header.Number.Uint64()) {
 							unknown = append(unknown, header)
 						}
@@ -1380,9 +1380,9 @@ func (d *Downloader) importBlockResults(results []*fetchResult) error {
 	)
 	blocks := make([]*types.Block, len(results))
 	for i, result := range results {
-		result.Header.Version = d.blockchain.RetrieveHeaderVersion(result.Header.Number)
+		result.Header.Version = d.blockchain.GetBlockVersion(result.Header.Number)
 		for i := range result.Uncles {
-			result.Uncles[i].Version = d.blockchain.RetrieveHeaderVersion(result.Uncles[i].Number)
+			result.Uncles[i].Version = d.blockchain.GetBlockVersion(result.Uncles[i].Number)
 		}
 		blocks[i] = types.NewBlockWithHeader(result.Header).WithBody(result.Transactions, result.Uncles)
 	}
