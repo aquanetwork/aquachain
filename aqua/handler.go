@@ -248,7 +248,7 @@ func (pm *ProtocolManager) handle(p *peer) error {
 	if pm.peers.Len() >= pm.maxPeers {
 		return p2p.DiscTooManyPeers
 	}
-	p.Log().Debug("AquaChain peer connected", "name", p.Name())
+	p.Log().Trace("AquaChain peer connected", "name", p.Name())
 
 	// Execute the AquaChain handshake
 	var (
@@ -259,7 +259,7 @@ func (pm *ProtocolManager) handle(p *peer) error {
 		td      = pm.blockchain.GetTd(hash, number)
 	)
 	if err := p.Handshake(pm.networkId, td, hash, genesis.Hash()); err != nil {
-		p.Log().Debug("AquaChain handshake failed", "err", err)
+		p.Log().Trace("AquaChain handshake failed", "err", err)
 		return err
 	}
 	if rw, ok := p.rw.(*meteredMsgReadWriter); ok {
@@ -276,6 +276,7 @@ func (pm *ProtocolManager) handle(p *peer) error {
 	if err := pm.downloader.RegisterPeer(p.id, p.version, p); err != nil {
 		return err
 	}
+	p.Log().Debug("AquaChain peer registered", "name", p.Name())
 	// Propagate existing transactions. new transactions appearing
 	// after this will be sent via broadcasts.
 	pm.syncTransactions(p)
