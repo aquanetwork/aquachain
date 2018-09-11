@@ -50,18 +50,29 @@ type HandlerT struct {
 	traceFile string
 }
 
+const (
+	VmoduleGood  = "p2p/discover=3,aqua/*=4,consensus/*=9,core/*=9,rpc/*=9,node/*=9,opt/*=9"
+	VmoduleGreat = "p2p/discover=3,aqua/*=9,consensus/*=9,core/*=9,rpc/*=9,node/*=9,opt/*=9"
+)
+
 // Verbosity sets the log verbosity ceiling. The verbosity of individual packages
 // and source files can be raised using Vmodule.
 func (*HandlerT) Verbosity(level int) {
 	glogger.Verbosity(log.Lvl(level))
 }
 
+func wrapVmodule(pattern string) string {
+	if pattern == "good" {
+		pattern = VmoduleGood
+	} else if pattern == "great" {
+		pattern = VmoduleGreat
+	}
+	return pattern
+}
+
 // Vmodule sets the log verbosity pattern. See package log for details on the
 // pattern syntax.
 func (*HandlerT) Vmodule(pattern string) error {
-	if pattern == "good" {
-		pattern = "p2p/discover=3,aqua/*=9,consensus/*=9,core/*=9,rpc/*=9,node/*=9,opt/*=9"
-	}
 	return glogger.Vmodule(pattern)
 }
 
