@@ -135,6 +135,8 @@ func main() {
 		doInstall(os.Args[2:])
 	case "test":
 		doTest(os.Args[2:])
+	case "import-test":
+		doImportTest(os.Args[2:])
 	case "lint":
 		doLint(os.Args[2:])
 	case "archive":
@@ -358,6 +360,16 @@ func doLint(cmdline []string) {
 		configs = []string{"--vendor", "--deadline=10m", "--disable-all", "--enable=" + linter}
 		build.MustRunCommand(filepath.Join(GOBIN, "gometalinter.v2"), append(configs, packages...)...)
 	}
+}
+
+func doImportTest(cmdline []string) {
+	flag.CommandLine.Parse(cmdline)
+	build.Env()
+	bootstrap := "bootstrap.dat"
+	if len(cmdline) == 1 {
+		bootstrap = cmdline[0]
+	}
+	build.MustRunCommand(filepath.Join(GOBIN, "aquachain"), "import", bootstrap)
 }
 
 // Release Packaging
