@@ -15,13 +15,17 @@ aquachain:
 usb:
 	build/env.sh go run build/ci.go install -usb ./cmd/aquachain 
 
+# static, using musl c lib
+musl:
+	build/env.sh go run build/ci.go install -static -musl ./cmd/aquachain 
+
 # static linked binary
 static:
 	build/env.sh go run build/ci.go install -static ./cmd/aquachain
 
 # build reference miner
 aquaminer:
-	build/env.sh go run build/ci.go install ./cmd/aquaminer
+	build/env.sh go run build/ci.go install -static ./cmd/aquaminer
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/aquaminer\" to start mining to localhost:8543 rpc-server."
 
