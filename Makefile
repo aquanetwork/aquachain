@@ -108,3 +108,7 @@ install:
 .PHONY: aquachain-darwin aquachain-darwin-386 aquachain-darwin-amd64
 .PHONY: aquachain-windows aquachain-windows-386 aquachain-windows-amd64
 .PHONY: aquaminer
+
+docker-run:
+	mkdir -p ${HOME}/.aquachain-alt
+	docker run -it -p 127.0.0.1:8543:8543 -v ${HOME}/.aquachain-alt/:/root/.aquachain aquachain/aquachain:latest -- aquachain -rpc
