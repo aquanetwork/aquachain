@@ -245,7 +245,7 @@ func (api *PrivateAdminAPI) GetDistribution() (map[string]state.DumpAccount, err
 	return dump.Accounts, nil
 }
 
-// GetDistribution returns a map of address->balance
+// Supply returns a map of address->balance
 func (api *PrivateAdminAPI) Supply() (*big.Int, error) {
 	statedb, err := api.aqua.BlockChain().State()
 	if err != nil {
@@ -276,7 +276,7 @@ func (api *PrivateAdminAPI) Supply() (*big.Int, error) {
 	return total, nil
 }
 
-// ExportState exports the current state database into a simplified json file.
+// ExportRealloc exports the current state database into a ready to import json file
 func (api *PrivateAdminAPI) ExportRealloc(file string) (bool, error) {
 	// Make sure we can create the file to export into
 	out, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
@@ -510,7 +510,7 @@ func storageRangeAt(st state.Trie, start []byte, maxResult int) (StorageRangeRes
 	return result, nil
 }
 
-// GetModifiedAccountsByumber returns all accounts that have changed between the
+// GetModifiedAccountsByNumber returns all accounts that have changed between the
 // two blocks specified. A change is defined as a difference in nonce, balance,
 // code hash, or storage hash.
 //
