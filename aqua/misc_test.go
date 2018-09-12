@@ -40,7 +40,7 @@ func TestDecodeExtra2(t *testing.T) {
 }
 
 func gohex(b []byte) (s string) {
-	if b == nil || len(b) == 0 {
+	if len(b) == 0 {
 		return "nil"
 	}
 	for i := range b {

@@ -23,6 +23,7 @@ import (
 	"io"
 	"math/big"
 	"os"
+	"sort"
 	"strings"
 
 	"gitlab.com/aquachain/aquachain/common"
@@ -245,24 +246,59 @@ func (api *PrivateAdminAPI) GetDistribution() (map[string]state.DumpAccount, err
 	return dump.Accounts, nil
 }
 
-// Supply returns a map of address->balance
-func (api *PrivateAdminAPI) Supply() (*big.Int, error) {
-	statedb, err := api.aqua.BlockChain().State()
+var BigAqua = new(big.Float).SetFloat64(params.Aqua)
+
+func (api *PrivateAdminAPI) GetRichlist(n int) ([]string, error) {
+	if n == 0 {
+		n = 100
+	}
+	dist, err := api.GetDistribution()
 	if err != nil {
 		return nil, err
 	}
-	// Export the state
-	dump := statedb.RawDump()
+	type distribResult struct {
+		a  string
+		ss state.DumpAccount
+	}
+	var results = []distribResult{}
+	for addr, bal := range dist {
+		results = append(results, distribResult{addr, bal})
+	}
+	sort.Slice(results, func(i, j int) bool {
+		ii, _ := new(big.Int).SetString(results[i].ss.Balance, 10)
+		jj, _ := new(big.Int).SetString(results[j].ss.Balance, 10)
+		return ii.Cmp(jj) > 0
+	})
+	var balances []string
+	for i, v := range results {
+		if v.ss.Balance != "0" {
+			f, _ := new(big.Float).SetString(v.ss.Balance)
+			f = f.Quo(f, BigAqua)
+			balances = append(balances, fmt.Sprintf("%s: %2.8f", v.a, f))
+			if i >= n-1 {
+				break
+			}
+		}
+	}
+	return balances, nil
+}
+
+// Supply returns a map of address->balance
+func (api *PrivateAdminAPI) Supply() (*big.Int, error) {
+	dump, err := api.GetDistribution()
+	if err != nil {
+		return nil, err
+	}
 	total := new(big.Int)
 
-	if len(dump.Accounts) > 100000 {
+	if len(dump) > 100000 {
 		return nil, fmt.Errorf("number of accounts over 100000, bailing")
 	}
 
-	bal := make([]string, len(dump.Accounts))
+	bal := make([]string, len(dump))
 	n := 0
-	for i := range dump.Accounts {
-		bal[n] = dump.Accounts[i].Balance
+	for i := range dump {
+		bal[n] = dump[i].Balance
 		n++
 	}
 

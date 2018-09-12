@@ -105,6 +105,12 @@ web3._extend({
 			outputFormatter: web3._extend.utils.fromWei
 		}),
 		new web3._extend.Method({
+			name: 'richlist',
+			call: 'admin_getRichlist',
+			inputFormatter: [null],
+			params: 1
+		}),
+		new web3._extend.Method({
 			name: 'sleepBlocks',
 			call: 'admin_sleepBlocks',
 			params: 2
