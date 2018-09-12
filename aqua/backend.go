@@ -215,11 +215,6 @@ func DecodeExtraData(extra []byte) (version [3]uint8, osname string, extradata [
 		osname = string(osnameBytes)
 	}
 
-	// get extra
-	if e, ok := v[3].([]byte); ok {
-		extra = e
-	}
-
 	return [3]uint8{major, minor, patch}, osname, extra, nil
 }
 
