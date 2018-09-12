@@ -314,11 +314,22 @@ func (c *Console) AutoCompleteInput(line string, pos int) (string, []string, str
 func (c *Console) Welcome() {
 	// friendly balance
 	c.jsre.Run(`
+function pending() {
+			var totalBal = 0;
+			for (var acctNum in aqua.accounts) {
+								var acct = aqua.accounts[acctNum];
+								var acctBal = aqua.balance(acct, 'pending');
+								totalBal += parseFloat(acctBal);
+								console.log("  aqua.accounts[" + acctNum + "]: \t" + acct + " \tbalance: " + acctBal + " AQUA");
+						}
+			console.log("Pending balance: " + totalBal + " AQUA");
+			return totalBal;
+};
 function balance() {
 			var totalBal = 0;
 			for (var acctNum in aqua.accounts) {
 								var acct = aqua.accounts[acctNum];
-								var acctBal = web3.fromWei(aqua.getBalance(acct), "aqua");
+								var acctBal = aqua.balance(acct, 'latest');
 								totalBal += parseFloat(acctBal);
 								console.log("  aqua.accounts[" + acctNum + "]: \t" + acct + " \tbalance: " + acctBal + " AQUA");
 						}
@@ -335,6 +346,7 @@ function balance() {
 		console.log("instance: " + web3.version.node);
 		console.log("coinbase: " + aqua.coinbase);
 		console.log("at block: " + aqua.blockNumber + " (" + new Date(1000 * aqua.getBlock(aqua.blockNumber).timestamp) + ")");
+		console.log("    algo: " + aqua.getBlock(aqua.blockNumber).version);
 		console.log(" datadir: " + admin.datadir);
 	`)
 

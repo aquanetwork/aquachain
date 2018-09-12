@@ -100,6 +100,11 @@ web3._extend({
 			params: 1
 		}),
 		new web3._extend.Method({
+			name: 'supply',
+			call: 'admin_supply',
+			outputFormatter: web3._extend.utils.fromWei
+		}),
+		new web3._extend.Method({
 			name: 'sleepBlocks',
 			call: 'admin_sleepBlocks',
 			params: 2
@@ -129,11 +134,6 @@ web3._extend({
 		new web3._extend.Property({
 			name: 'nodeInfo',
 			getter: 'admin_nodeInfo'
-		}),
-		new web3._extend.Property({
-			name: 'supply',
-			getter: 'admin_supply',
-		  outputFormatter: web3._extend.utils.fromWei
 		}),
 		new web3._extend.Property({
 			name: 'peers',
