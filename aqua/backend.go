@@ -180,6 +180,49 @@ func makeExtraData(extra []byte) []byte {
 	return extra
 }
 
+func DecodeExtraData(extra []byte) (version [3]uint8, osname string, extradata []byte, err error) {
+	var (
+		v                   []interface{}
+		major, minor, patch uint8
+	)
+
+	err = rlp.DecodeBytes(extra, &v)
+	if err != nil {
+		return version, osname, extra, err
+	}
+
+	// extract version
+	vr, ok := v[0].([]uint8)
+	if !ok || len(vr) != 3 {
+		fmt.Printf("%T type, len %v\n", v[0], len(vr))
+		err = fmt.Errorf("could not decode version")
+		return version, osname, extra, err
+	}
+	major, minor, patch = vr[0], vr[1], vr[2]
+
+	// check "aquachain"
+	if aq, ok := v[1].([]byte); !ok {
+		return version, osname, extra, nil
+	} else if string(aq) != "aquachain" {
+		return version, osname, extra, nil
+	}
+
+	// get OS
+	if osnameBytes, ok := v[2].([]byte); !ok {
+		fmt.Printf("%T type\n", v[2])
+		return version, osname, extra, fmt.Errorf("osname")
+	} else {
+		osname = string(osnameBytes)
+	}
+
+	// get extra
+	if e, ok := v[3].([]byte); ok {
+		extra = e
+	}
+
+	return [3]uint8{major, minor, patch}, osname, extra, nil
+}
+
 // CreateDB creates the chain database.
 func CreateDB(ctx *node.ServiceContext, config *Config, name string) (aquadb.Database, error) {
 	db, err := ctx.OpenDatabase(name, config.DatabaseCache, config.DatabaseHandles)
