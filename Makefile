@@ -29,11 +29,6 @@ aquaminer:
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/aquaminer\" to start mining to localhost:8543 rpc-server."
 
-# experimental
-browsermine:
-	GOARCH=wasm GOOS=js go build -o aquaminer.wasm ./cmd/aquaminer
-	@echo "Done building."
-
 # build all tools also see aquachain/x repo
 all:
 	build/env.sh go run build/ci.go install
@@ -46,29 +41,12 @@ all-static:
 all-musl:
 	build/env.sh go run build/ci.go install -musl -static
 
-# unused
-
-release: aquachain-windows-amd64 aquachain-darwin-amd64 aquachain-linux-amd64
-
-archive:
-	build/env.sh go run build/ci.go archive
-
-android:
-	build/env.sh go run build/ci.go aar --local
-	@echo "Done building."
-	@echo "Import \"$(GOBIN)/aquachain.aar\" to use the library."
-
-ios:
-	build/env.sh go run build/ci.go xcode --local
-	@echo "Done building."
-	@echo "Import \"$(GOBIN)/AquaChain.framework\" to use the library."
-
 # ci/test stuff
 
 test: all
 	build/env.sh go run build/ci.go test 
 
-musl-test: musl
+test-musl: musl
 	build/env.sh go run build/ci.go test -musl 
 
 lint: 
@@ -102,13 +80,12 @@ race:
 install:
 	install $(GOBIN)/aquachain $(PREFIX)
 
-.PHONY: aquachain android ios aquachain-cross swarm evm all test clean
-.PHONY: aquachain-linux aquachain-linux-386 aquachain-linux-amd64 aquachain-linux-mips64 aquachain-linux-mips64le
-.PHONY: aquachain-linux-arm aquachain-linux-arm-5 aquachain-linux-arm-6 aquachain-linux-arm-7 aquachain-linux-arm64
-.PHONY: aquachain-darwin aquachain-darwin-386 aquachain-darwin-amd64
-.PHONY: aquachain-windows aquachain-windows-386 aquachain-windows-amd64
-.PHONY: aquaminer
+.PHONY: aquachain all test clean
+.PHONY: aquaminer aquastrat race install generate lint musl all-musl static
 
 docker-run:
 	mkdir -p ${HOME}/.aquachain-alt
 	docker run -it -p 127.0.0.1:8543:8543 -v ${HOME}/.aquachain-alt/:/root/.aquachain aquachain/aquachain:latest -- aquachain -rpc
+
+cross:
+	xgo -image aquachain/xgo -ldflags='-w -s -extldflags -static' -tags 'osusergo netgo static' -pkg cmd/aquachain -targets='windows/*,linux/arm,linux/386,linux/amd64,darwin/amd64' gitlab.com/aquachain/aquachain
