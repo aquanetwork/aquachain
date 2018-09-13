@@ -463,6 +463,10 @@ var (
 		Name:  "nodiscover",
 		Usage: "Disables the peer discovery mechanism (manual peer addition)",
 	}
+	OfflineFlag = cli.BoolFlag{
+		Name:  "offline",
+		Usage: "Disables peer discovery and sets nat=none, still listens on tcp/udp port",
+	}
 	DiscoveryV5Flag = cli.BoolFlag{
 		Name:  "v5disc",
 		Usage: "Enables the experimental RLPx V5 (Topic Discovery) mechanism",
@@ -630,6 +634,9 @@ func setNAT(ctx *cli.Context, cfg *p2p.Config) {
 		}
 		cfg.NAT = natif
 	}
+	if ctx.GlobalIsSet(OfflineFlag.Name) {
+		cfg.NAT = nil
+	}
 }
 
 // splitAndTrim splits input separated by a comma
@@ -793,6 +800,11 @@ func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config) {
 	if ctx.GlobalIsSet(MaxPendingPeersFlag.Name) {
 		cfg.MaxPendingPeers = ctx.GlobalInt(MaxPendingPeersFlag.Name)
 	}
+
+	if ctx.GlobalIsSet(OfflineFlag.Name) {
+		cfg.NoDiscovery = true
+	}
+
 	if ctx.GlobalIsSet(NoDiscoverFlag.Name) {
 		cfg.NoDiscovery = true
 	}
