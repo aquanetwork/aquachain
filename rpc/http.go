@@ -174,6 +174,7 @@ func (srv *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	uip := getip(r)
 	log.Debug("handling http request", "from", uip, "path", r.URL.Path, "ua", r.UserAgent(), "http", r.Method, "host", r.Host, "size", r.ContentLength)
 	if code, err := validateRequest(r); err != nil {
+		log.Debug("invalid request", "from", uip, "size", r.ContentLength)
 		http.Error(w, err.Error(), code)
 		return
 	}
