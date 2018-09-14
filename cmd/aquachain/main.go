@@ -118,6 +118,7 @@ var (
 		utils.RPCCORSDomainFlag,
 		utils.RPCVirtualHostsFlag,
 		utils.RPCListenAddrFlag,
+		utils.RPCAllowIPFlag,
 		utils.RPCPortFlag,
 		utils.RPCApiFlag,
 		utils.WSEnabledFlag,

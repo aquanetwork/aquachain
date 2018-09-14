@@ -55,9 +55,9 @@ var websocketJSONCodec = websocket.Codec{
 //
 // allowedOrigins should be a comma-separated list of allowed origin URLs.
 // To allow connections with any origin, pass "*".
-func (srv *Server) WebsocketHandler(allowedOrigins []string) http.Handler {
+func (srv *Server) WebsocketHandler(allowedOrigins []string, allowedIP []string) http.Handler {
 	return websocket.Server{
-		Handshake: wsHandshakeValidator(allowedOrigins),
+		Handshake: wsHandshakeValidator(allowedOrigins, allowedIP),
 		Handler: func(conn *websocket.Conn) {
 			// Create a custom encode/decode pair to enforce payload size and number encoding
 			conn.MaxPayloadBytes = maxHTTPRequestContentLength
@@ -76,23 +76,33 @@ func (srv *Server) WebsocketHandler(allowedOrigins []string) http.Handler {
 // NewWSServer creates a new websocket RPC server around an API provider.
 //
 // Deprecated: use Server.WebsocketHandler
-func NewWSServer(allowedOrigins []string, srv *Server) *http.Server {
-	return &http.Server{Handler: srv.WebsocketHandler(allowedOrigins)}
+func NewWSServer(allowedOrigins []string, allowedIP []string, srv *Server) *http.Server {
+	return &http.Server{Handler: srv.WebsocketHandler(allowedOrigins, allowedIP)}
 }
 
 // wsHandshakeValidator returns a handler that verifies the origin during the
 // websocket upgrade process. When a '*' is specified as an allowed origins all
 // connections are accepted.
-func wsHandshakeValidator(allowedOrigins []string) func(*websocket.Config, *http.Request) error {
+func wsHandshakeValidator(allowedOrigins, allowedIP []string) func(*websocket.Config, *http.Request) error {
 	origins := set.New()
+	allowedIPset := set.New()
 	allowAllOrigins := false
-
+	allowAllIP := false
 	for _, origin := range allowedOrigins {
 		if origin == "*" {
 			allowAllOrigins = true
 		}
 		if origin != "" {
 			origins.Add(strings.ToLower(origin))
+		}
+	}
+	for _, ip := range allowedIP {
+		if ip == "*" {
+			allowAllIP = true
+			break
+		}
+		if ip != "" {
+			allowedIPset.Add(strings.ToLower(ip))
 		}
 	}
 
@@ -107,6 +117,22 @@ func wsHandshakeValidator(allowedOrigins []string) func(*websocket.Config, *http
 	log.Debug(fmt.Sprintf("Allowed origin(s) for WS RPC interface %v\n", origins.List()))
 
 	f := func(cfg *websocket.Config, req *http.Request) error {
+		if !allowAllIP {
+			checkip := func(r *http.Request) error {
+				ip := getIP(r)
+				if ip == "" {
+					ip = strings.Split(r.RemoteAddr, ":")[0]
+				}
+				if allowedIPset.Has(ip) {
+					return nil
+				}
+				log.Warn("unwarranted websocket request", "ip", ip)
+				return fmt.Errorf("ip not allowed")
+			}
+			if err := checkip(req); err != nil {
+				return err
+			}
+		}
 		origin := strings.ToLower(req.Header.Get("Origin"))
 		if allowAllOrigins || origins.Has(origin) {
 			return nil

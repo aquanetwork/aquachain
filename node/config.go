@@ -113,6 +113,7 @@ type Config struct {
 	// made against the server with a malicious host domain.
 	// Requests using ip address directly are not affected
 	HTTPVirtualHosts []string `toml:",omitempty"`
+	RPCAllowIP       []string `toml:",omitempty"`
 
 	// HTTPModules is a list of API modules to expose via the HTTP RPC interface.
 	// If the module list is empty, all RPC API endpoints designated public will be

@@ -365,6 +365,7 @@ var (
 		Usage: "Comma separated list of virtual hostnames from which to accept requests (server enforced). Accepts '*' wildcard.",
 		Value: "localhost",
 	}
+
 	RPCApiFlag = cli.StringFlag{
 		Name:  "rpcapi",
 		Usage: "API's offered over the HTTP-RPC interface",
@@ -405,6 +406,11 @@ var (
 		Name:  "wsorigins",
 		Usage: "Origins from which to accept websockets requests",
 		Value: "",
+	}
+	RPCAllowIPFlag = cli.StringFlag{
+		Name:  "allowip",
+		Usage: "Comma separated list of IP allowed to access RPC (http/ws)",
+		Value: "none",
 	}
 	ExecFlag = cli.StringFlag{
 		Name:  "exec",
@@ -676,6 +682,7 @@ func setHTTP(ctx *cli.Context, cfg *node.Config) {
 	}
 
 	cfg.HTTPVirtualHosts = splitAndTrim(ctx.GlobalString(RPCVirtualHostsFlag.Name))
+	cfg.RPCAllowIP = splitAndTrim(ctx.GlobalString(RPCAllowIPFlag.Name))
 }
 
 // setWS creates the WebSocket RPC listener interface string from the set
