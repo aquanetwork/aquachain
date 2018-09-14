@@ -319,10 +319,21 @@ func (b *StorageBlock) DecodeRLP(s *rlp.Stream) error {
 	return nil
 }
 
-// TODO: copies
-
 func (b *Block) Uncles() []*Header {
-	return b.uncles
+	if b.uncles == nil {
+		return nil
+	}
+	if len(b.uncles) == 1 {
+		return []*Header{CopyHeader(b.uncles[0])}
+	}
+	if len(b.uncles) == 2 {
+		return []*Header{CopyHeader(b.uncles[0]), CopyHeader(b.uncles[1])}
+	}
+	uncles := []*Header{}
+	for i := range b.uncles {
+		uncles = append(uncles, CopyHeader(b.uncles[i]))
+	}
+	return uncles
 }
 func (b *Block) Transactions() Transactions { return b.transactions }
 

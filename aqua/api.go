@@ -119,13 +119,13 @@ func (api *PublicMinerAPI) SubmitBlock(encodedBlock []byte) bool {
 	return api.agent.SubmitBlock(&block)
 }
 
-func (api *PublicMinerAPI) GetBlockTemplate() ([]byte, error) {
+func (api *PublicMinerAPI) GetBlockTemplate(addr common.Address) ([]byte, error) {
 	if !api.e.IsMining() {
 		if err := api.e.StartMining(false); err != nil {
 			return nil, err
 		}
 	}
-	return api.agent.GetBlockTemplate()
+	return api.agent.GetBlockTemplate(addr)
 }
 
 // GetWork returns a work package for external miner. The work package consists of 3 strings

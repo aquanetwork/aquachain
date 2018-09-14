@@ -291,8 +291,22 @@ func (w *worker) wait() {
 				continue
 			}
 			block := result.Block
+			if block == nil {
+				log.Error("submitblock: Skipping nil block")
+				continue
+			}
 			work := result.Work
 			hash := block.Hash()
+			// work is nil when using submitblock rpc
+			if work == nil {
+				log.Trace("inserting block via submitblock RPC", block.Number())
+				_, err := w.chain.InsertChain(types.Blocks{block})
+				if err != nil {
+					log.Error("Failed writing block to chain", "err", err)
+				}
+				continue
+			}
+
 			// Update the block hash in all logs since it is now available and not when the
 			// receipt/log of individual transactions were created.
 			for _, r := range work.receipts {
@@ -308,6 +322,7 @@ func (w *worker) wait() {
 				log.Error("Failed writing block to chain", "err", err)
 				continue
 			}
+
 			// check if canon block and write transactions
 			if stat == core.CanonStatTy {
 				// implicit by posting ChainHeadEvent

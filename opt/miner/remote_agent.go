@@ -18,6 +18,7 @@ package miner
 
 import (
 	"errors"
+	"fmt"
 	"math/big"
 	"sync"
 	"sync/atomic"
@@ -27,6 +28,7 @@ import (
 	"gitlab.com/aquachain/aquachain/common/log"
 	"gitlab.com/aquachain/aquachain/consensus"
 	"gitlab.com/aquachain/aquachain/consensus/aquahash"
+	"gitlab.com/aquachain/aquachain/core"
 	"gitlab.com/aquachain/aquachain/core/types"
 	"gitlab.com/aquachain/aquachain/rlp"
 )
@@ -64,10 +66,10 @@ func NewRemoteAgent(chain consensus.ChainReader, engine consensus.Engine) *Remot
 }
 
 func (a *RemoteAgent) SubmitHashrate(id common.Hash, rate uint64) {
-	a.hashrateMu.Lock()
-	defer a.hashrateMu.Unlock()
+	//a.hashrateMu.Lock()
+	//defer a.hashrateMu.Unlock()
 
-	a.hashrate[id] = hashrate{time.Now(), rate}
+	//a.hashrate[id] = hashrate{time.Now(), rate}
 }
 
 func (a *RemoteAgent) Work() chan<- *Work {
@@ -96,25 +98,59 @@ func (a *RemoteAgent) Stop() {
 }
 
 // GetHashRate returns the accumulated hashrate of all identifier combined
-func (a *RemoteAgent) GetHashRate() (tot int64) {
-	a.hashrateMu.RLock()
-	defer a.hashrateMu.RUnlock()
-
-	// this could overflow
-	for _, hashrate := range a.hashrate {
-		tot += int64(hashrate.rate)
-	}
-	return
+func (a *RemoteAgent) GetHashRate() int64 {
+	return 0
 }
 
-func (a *RemoteAgent) GetBlockTemplate() ([]byte, error) {
+func (a *RemoteAgent) GetBlockTemplate(coinbaseAddress common.Address) ([]byte, error) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
-
 	if a.currentWork != nil {
-		return rlp.EncodeToBytes(a.currentWork.Block)
+		if _, ok := a.chain.(*core.BlockChain); !ok {
+			return nil, fmt.Errorf("could not assert interface")
+		} else {
+			hdr := types.CopyHeader(a.currentWork.header)
+			hdr.Coinbase = coinbaseAddress
+			blk := types.NewBlock(hdr, a.currentWork.txs, nil, a.currentWork.receipts)
+			return rlp.EncodeToBytes(blk)
+		}
 	}
 	return nil, errors.New("No work available yet, don't panic.")
+}
+
+// SubmitBlock tries to inject a pow solution into the remote agent, returning
+// whether the solution was accepted or not (not can be both a bad pow as well as
+// any other error, like no work pending).
+func (a *RemoteAgent) SubmitBlock(block *types.Block) bool {
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if block == nil {
+		log.Warn("nil block")
+		return false
+	}
+	if block.Header() == nil {
+		log.Warn("nil block header")
+		return false
+	}
+	if wanted := new(big.Int).Add(a.chain.CurrentHeader().Number, common.Big1); block.Number().Uint64() != wanted.Uint64() {
+		log.Warn("Block submitted out of order", "number", block.Number(), "wanted", wanted)
+		return false
+	}
+	// Make sure the Engine solutions is indeed valid
+	result := block.Header()
+	result.Version = a.chain.Config().GetBlockVersion(result.Number)
+	if result.Version == 0 {
+		log.Warn("Not real work", "version", result.Version)
+		return false
+	}
+	if err := a.engine.VerifyHeader(a.chain, result, true); err != nil {
+		log.Warn("Invalid proof-of-work submitted", "hash", result.Hash(), "number", result.Number, "err", err)
+		return false
+	}
+	// Solutions seems to be valid, return to the miner and notify acceptance
+	a.returnCh <- &Result{nil, block}
+	return true
+
 }
 
 func (a *RemoteAgent) GetWork() ([3]string, error) {

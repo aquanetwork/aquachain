@@ -12,6 +12,7 @@ import (
 
 	"gitlab.com/aquachain/aquachain/cmd/utils"
 	"gitlab.com/aquachain/aquachain/common"
+	"gitlab.com/aquachain/aquachain/consensus/aquahash"
 	"gitlab.com/aquachain/aquachain/consensus/lightvalid"
 	"gitlab.com/aquachain/aquachain/core/types"
 	"gitlab.com/aquachain/aquachain/internal/debug"
@@ -44,6 +45,11 @@ func init() {
 			Value: "https://tx.aquacha.in/testnet/",
 			Name:  "rpc",
 			Usage: "path or url to rpc",
+		},
+		cli.StringFlag{
+			Value: "",
+			Name:  "coinbase",
+			Usage: "address for mining rewards",
 		},
 	}...)
 }
@@ -83,6 +89,12 @@ func loopit(ctx *cli.Context) error {
 	}
 }
 func runit(ctx *cli.Context) error {
+	coinbase := ctx.String("coinbase")
+	if coinbase == "" || !strings.HasPrefix(coinbase, "0x") || len(coinbase) != 42 {
+		return fmt.Errorf("cant mine with no -coinbase flag, or invalid: len: %v, coinbase: %q", len(coinbase), coinbase)
+	}
+	coinbaseAddr := common.HexToAddress(coinbase)
+
 	rpcclient, err := getclient(ctx)
 	if err != nil {
 		return err
@@ -106,15 +118,11 @@ func runit(ctx *cli.Context) error {
 	default:
 		Config = params.Testnet2ChainConfig
 	}
-	// prime rpc server for submitting work
 	parent, err := aqua.BlockByNumber(context.Background(), nil)
 	if err != nil {
 		fmt.Println("blockbynumber")
 		return err
 	}
-	// prime rpc server for submitting work
-	//	_, _ = aqua.GetWork(context.Background())
-
 	var encoded []byte
 	// first block is on the house (testnet2 only)
 	if Config == params.Testnet2ChainConfig && parent.Number().Uint64() == 0 {
@@ -125,26 +133,28 @@ func runit(ctx *cli.Context) error {
 			return err
 		}
 	}
-	encoded, err = aqua.GetBlockTemplate(context.Background())
+	encoded, err = aqua.GetBlockTemplate(context.Background(), coinbaseAddr)
 	if err != nil {
 		println("gbt")
 		return err
 	}
-	var bt types.Block
-	if err := rlp.DecodeBytes(encoded, &bt); err != nil {
-		println("submitblock rlp decode error", err.Error())
+	var bt = new(types.Block)
+	if err := rlp.DecodeBytes(encoded, bt); err != nil {
+		println("getblocktemplate rlp decode error", err.Error())
 		return err
 	}
-	bt.SetVersion(Config.GetBlockVersion(bt.Number()))
 
-	encoded, err = mine(&bt)
+	// modify block
+	bt.SetVersion(Config.GetBlockVersion(bt.Number()))
+	fmt.Println("mining:")
+	fmt.Println(bt)
+	encoded, err = mine(Config, parent.Header(), bt)
 	if err != nil {
 		return err
 	}
 	if encoded == nil {
 		return fmt.Errorf("failed to encoded block to rlp")
 	}
-
 	if !aqua.SubmitBlock(context.Background(), encoded) {
 		fmt.Println("failed")
 		return fmt.Errorf("failed")
@@ -155,7 +165,7 @@ func runit(ctx *cli.Context) error {
 
 }
 
-func mine(block *types.Block) ([]byte, error) {
+func mine(cfg *params.ChainConfig, parent *types.Header, block *types.Block) ([]byte, error) {
 	validator := lightvalid.New()
 	rand.Seed(time.Now().UnixNano())
 	nonce := uint64(0)
@@ -169,7 +179,9 @@ func mine(block *types.Block) ([]byte, error) {
 	for {
 		select {
 		case <-second:
+			// not necessary, but impossible with getwork()
 			hdr.Time = big.NewInt(time.Now().Unix())
+			hdr.Difficulty = aquahash.CalcDifficulty(cfg, hdr.Time.Uint64(), parent, nil)
 			fmt.Printf("%s %v h/s\n", hdr.Time, fps/uint64(10))
 			fps = 0
 		default:
@@ -177,13 +189,14 @@ func mine(block *types.Block) ([]byte, error) {
 			fps++
 			hdr.Nonce = types.EncodeNonce(nonce)
 			block = block.WithSeal(hdr)
+			block = types.NewBlock(hdr, block.Transactions(), block.Uncles(), []*types.Receipt{})
 			if err := validator.VerifyWithError(block); err != nil {
 				if err != lightvalid.ErrPOW {
 					fmt.Println("error:", err)
 				}
 				continue
 			}
-			println("encoding block", block.String())
+			println("found nonce, encoding block", block.String())
 			b, err := rlp.EncodeToBytes(&block)
 			if err != nil {
 				return nil, err
