@@ -78,7 +78,7 @@ race:
 
 # install to $(PREFIX)
 install:
-	install $(GOBIN)/aquachain $(PREFIX)
+	install $(GOBIN)/* $(PREFIX)
 
 .PHONY: aquachain all test clean
 .PHONY: aquaminer aquastrat race install generate lint musl all-musl static
