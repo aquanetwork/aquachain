@@ -112,7 +112,7 @@ func (api *PublicMinerAPI) GetWork() ([3]string, error) {
 // hash rate of all miners which submit work through this node. It accepts the miner hash rate and an identifier which
 // must be unique between nodes.
 func (api *PublicMinerAPI) SubmitHashrate(hashrate hexutil.Uint64, id common.Hash) bool {
-	api.agent.SubmitHashrate(id, uint64(hashrate))
+	// api.agent.SubmitHashrate(id, uint64(hashrate))
 	return true
 }
 
