@@ -39,11 +39,10 @@ import (
 
 // Aquahash proof-of-work protocol constants.
 var (
-	BlockReward            *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block
-	ByzantiumBlockReward   *big.Int = big.NewInt(1e+18) // Block reward in wei for successfully mining a block upward from Byzantium
-	maxUncles                       = 2                 // Maximum number of uncles allowed in a single block
-	maxUnclesHF5                    = 1                 // Maximum number of uncles allowed in a single block after HF5 is activated
-	allowedFutureBlockTime          = 15 * time.Second  // Max time from current time allowed for blocks, before they're considered future blocks
+	BlockReward            = params.BlockReward
+	maxUncles              = 2                // Maximum number of uncles allowed in a single block
+	maxUnclesHF5           = 1                // Maximum number of uncles allowed in a single block after HF5 is activated
+	allowedFutureBlockTime = 15 * time.Second // Max time from current time allowed for blocks, before they're considered future blocks
 )
 
 // Various error messages to mark blocks invalid. These should be private to

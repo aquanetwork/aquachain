@@ -19,7 +19,8 @@ package params
 import "math/big"
 
 var (
-	MaxMoney = big.NewInt(42000000) // At block 42mil rewards will be fees-only
+	MaxMoney             = big.NewInt(42000000) // At block 42mil rewards will be fees-only
+	BlockReward *big.Int = big.NewInt(1e+18)    // Block reward in wei for successfully mining a block
 )
 
 var (
