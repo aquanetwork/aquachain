@@ -502,6 +502,9 @@ func NewShared() *Aquahash {
 // by first checking against a list of in-memory caches, then against caches
 // stored on disk, and finally generating one if none can be found.
 func (aquahash *Aquahash) cache(block uint64) *cache {
+	if aquahash.config.StartVersion > 1 {
+		return nil
+	}
 	epoch := block / epochLength
 	currentI, futureI := aquahash.caches.get(epoch)
 	current := currentI.(*cache)
