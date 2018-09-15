@@ -196,6 +196,9 @@ type BlockChain interface {
 
 	// InsertReceiptChain inserts a batch of receipts into the local chain.
 	InsertReceiptChain(types.Blocks, []types.Receipts) (int, error)
+
+	// InsertReceiptChain inserts a batch of receipts into the local chain.
+	Config() *params.ChainConfig
 }
 
 // New creates a new downloader to fetch hashes and blocks from remote peers.
@@ -205,6 +208,10 @@ func New(mode SyncMode, stateDb aquadb.Database, mux *event.TypeMux, chain Block
 	}
 	if lightchain == nil {
 		lightchain = chain
+	}
+
+	if chain.Config() == params.EthnetChainConfig {
+		log.Info("Connecting to Ethereum network")
 	}
 	dl := &Downloader{
 		mode:           mode,

@@ -122,7 +122,7 @@ func NewProtocolManager(config *params.ChainConfig, mode downloader.SyncMode, ne
 	manager.SubProtocols = make([]p2p.Protocol, 0, len(ProtocolVersions))
 	for i, version := range ProtocolVersions {
 		// Skip protocol version if incompatible with the mode of operation
-		if mode == downloader.FastSync && version < aqua64 {
+		if mode == downloader.FastSync && version < 63 {
 			continue
 		}
 		// Compatible; initialise the sub-protocol

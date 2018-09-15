@@ -22,7 +22,7 @@ var (
 // calcDifficultyHomestead is the difficulty adjustment algorithm. It returns
 // the difficulty that a new block should have when created at time given the
 // parent block's time and difficulty. The calculation uses the Homestead rules.
-func calcDifficultyHomestead(time uint64, parent *types.Header, chainID uint64) *big.Int {
+func calcDifficultyStarting(time uint64, parent *types.Header, chainID uint64) *big.Int {
 	// https://github.com/aquanetwork/EIPs/blob/master/EIPS/eip-2.md
 	// algorithm:
 	// diff = (parent_diff +
@@ -102,7 +102,11 @@ func calcDifficultyHFX(config *params.ChainConfig, time uint64, parent, grandpar
 		limit         = params.DurationLimitHF6 // target 240 seconds
 		min           = params.MinimumDifficultyHF5
 		mainnet       = params.MainnetChainConfig.ChainId.Uint64() == chainID // bool
+		ethnet        = params.EthnetChainConfig.ChainId.Uint64() == chainID  // bool
 	)
+	if ethnet {
+		return EthCalcDifficulty(config, time, parent)
+	}
 	if !mainnet {
 		min = params.MinimumDifficultyHF5Testnet
 	}
@@ -155,7 +159,7 @@ func calcDifficultyHFX(config *params.ChainConfig, time uint64, parent, grandpar
 	case 1:
 		return calcDifficultyHF1(time, parent, chainID)
 	case 0:
-		return calcDifficultyHomestead(time, parent, chainID)
+		return calcDifficultyStarting(time, parent, chainID)
 	default:
 		panic("calcDifficulty: invalid hf")
 	}

@@ -259,7 +259,7 @@ func accountCreate(ctx *cli.Context) error {
 			utils.Fatalf("%v", err)
 		}
 	}
-	utils.SetNodeConfig(ctx, &cfg.Node)
+	utils.SetNodeConfig(ctx, &cfg.Node, cfg.Aqua.NetworkId)
 	scryptN, scryptP, keydir, err := cfg.Node.AccountConfig()
 
 	if err != nil {

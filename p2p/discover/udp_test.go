@@ -50,6 +50,12 @@ var (
 	testRemote         = rpcEndpoint{IP: net.ParseIP("1.1.1.1").To4(), UDP: 1, TCP: 2}
 	testLocalAnnounced = rpcEndpoint{IP: net.ParseIP("2.2.2.2").To4(), UDP: 3, TCP: 4}
 	testLocal          = rpcEndpoint{IP: net.ParseIP("3.3.3.3").To4(), UDP: 5, TCP: 6}
+
+	netcompat       = false
+	pingPacket      = aquapingPacket
+	pongPacket      = aquapongPacket
+	findnodePacket  = aquafindnodePacket
+	neighborsPacket = aquaneighborsPacket
 )
 
 type udpTest struct {
@@ -70,7 +76,7 @@ func newUDPTest(t *testing.T) *udpTest {
 		remotekey:  newkey(),
 		remoteaddr: &net.UDPAddr{IP: net.IP{10, 0, 1, 99}, Port: 30303},
 	}
-	test.table, test.udp, _ = newUDP(test.pipe, Config{PrivateKey: test.localkey})
+	test.table, test.udp, _ = newUDP(test.pipe, Config{PrivateKey: test.localkey, ChainId: rand.Uint64()})
 	// Wait for initial refresh so the table doesn't send unexpected findnode.
 	<-test.table.initDone
 	return test
@@ -78,7 +84,7 @@ func newUDPTest(t *testing.T) *udpTest {
 
 // handles a packet as if it had been sent to the transport.
 func (test *udpTest) packetIn(wantError error, ptype byte, data packet) error {
-	enc, _, err := encodePacket(test.remotekey, ptype, data)
+	enc, _, err := encodePacket(netcompat, test.remotekey, ptype, data)
 	if err != nil {
 		return test.errorf("packet (%d) encode error: %v", ptype, err)
 	}
@@ -93,7 +99,7 @@ func (test *udpTest) packetIn(wantError error, ptype byte, data packet) error {
 // validate should have type func(*udpTest, X) error, where X is a packet type.
 func (test *udpTest) waitPacketOut(validate interface{}) ([]byte, error) {
 	dgram := test.pipe.waitPacketOut()
-	p, _, hash, err := decodePacket(dgram)
+	p, _, hash, err := decodePacket(netcompat, dgram)
 	if err != nil {
 		return hash, test.errorf("sent packet decode error: %v", err)
 	}
@@ -483,7 +489,7 @@ func TestForwardCompatibility(t *testing.T) {
 		if err != nil {
 			t.Fatalf("invalid hex: %s", test.input)
 		}
-		packet, nodeid, _, err := decodePacket(input)
+		packet, nodeid, _, err := decodePacket(netcompat, input)
 		if err != nil {
 			t.Errorf("did not accept packet %s\n%v", test.input, err)
 			continue

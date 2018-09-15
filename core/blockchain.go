@@ -23,6 +23,7 @@ import (
 	"io"
 	"math/big"
 	mrand "math/rand"
+	"runtime"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -1029,6 +1030,7 @@ func (bc *BlockChain) InsertChain(chain types.Blocks) (int, error) {
 // only reason this method exists as a separate one is to make locking cleaner
 // with deferred statements.
 func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*types.Log, error) {
+	log.Debug("Inserting chain", "length", len(chain), "startversion", chain[0].Version())
 	// Do a sanity check that the provided chain is actually ordered and linked
 	for i := 1; i < len(chain); i++ {
 		if chain[i-1].Version() == 0 {
@@ -1078,6 +1080,9 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 
 	// Iterate over the blocks and insert when the verifier permits
 	for i, block := range chain {
+		if block.Version() == 0 {
+			panic("block version not set")
+		}
 		// If the chain is terminating, stop processing blocks
 		if atomic.LoadInt32(&bc.procInterrupt) == 1 {
 			log.Warn("Premature abort during blocks processing")
@@ -1444,7 +1449,12 @@ func (bc *BlockChain) addBadBlock(block *types.Block) {
 // reportBlock logs a bad block error.
 func (bc *BlockChain) reportBlock(block *types.Block, receipts types.Receipts, err error) {
 	bc.addBadBlock(block)
-
+	var caller, line string
+	var num int
+	_, line, num, _ = runtime.Caller(1)
+	caller += fmt.Sprintf("%s:%v\n", line, num)
+	_, line, num, _ = runtime.Caller(2)
+	caller += fmt.Sprintf("%s:%v\n", line, num)
 	var receiptString string
 	for _, receipt := range receipts {
 		receiptString += fmt.Sprintf("\t%v\n", receipt)
@@ -1456,11 +1466,16 @@ Chain config: %v
 Number:  %v
 Hash:  0x%x
 Version: %v
-%v
-
+Receipts: %v
 Error: %v
+Caller:
+
+%s
+
 ##############################
-`, bc.chainConfig, block.Number(), block.Hash(), block.Version(), receiptString, err))
+`, bc.chainConfig, block.Number(), block.Hash(), block.Version(), receiptString, err, caller))
+
+	log.Debug("%v", "block", block)
 }
 
 // InsertHeaderChain attempts to insert the given header chain in to the local

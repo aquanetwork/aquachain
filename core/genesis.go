@@ -217,6 +217,8 @@ func (g *Genesis) configOrDefault(ghash common.Hash) *params.ChainConfig {
 		return params.TestnetChainConfig
 	case ghash == params.Testnet2GenesisHash:
 		return params.Testnet2ChainConfig
+	case ghash == params.EthnetGenesisHash:
+		return params.EthnetChainConfig
 	default:
 		return params.AllAquahashProtocolChanges
 	}
@@ -233,6 +235,7 @@ func (g *Genesis) ToBlock(db aquadb.Database) *types.Block {
 	}
 	statedb, _ := state.New(common.Hash{}, state.NewDatabase(db))
 	for addr, account := range g.Alloc {
+		// log.Warn("Adding balance:", "addr", addr, "bal", account.Balance)
 		statedb.AddBalance(addr, account.Balance)
 		statedb.SetCode(addr, account.Code)
 		statedb.SetNonce(addr, account.Nonce)
@@ -253,7 +256,7 @@ func (g *Genesis) ToBlock(db aquadb.Database) *types.Block {
 		MixDigest:  g.Mixhash,
 		Coinbase:   g.Coinbase,
 		Root:       root,
-		Version:    g.Config.GetBlockVersion(new(big.Int).SetUint64(g.Number)),
+		Version:    g.Config.GetBlockVersion(new(big.Int)),
 	}
 	if g.GasLimit == 0 {
 		head.GasLimit = params.GenesisGasLimit
@@ -372,6 +375,18 @@ func DeveloperGenesisBlock(period uint64, faucet common.Address) *Genesis {
 			common.BytesToAddress([]byte{8}): {Balance: big.NewInt(1)}, // ECPairing
 			faucet:                           {Balance: new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 256), big.NewInt(9))},
 		},
+	}
+}
+
+// DefaultEthnetGenesisBlock returns the Ethereum main net genesis block.
+func DefaultEthnetGenesisBlock() *Genesis {
+	return &Genesis{
+		Config:     params.EthnetChainConfig,
+		Nonce:      66,
+		ExtraData:  hexutil.MustDecode("0x11bbe8db4e347b4e8c937c1c8370e4b5ed33adb3db69cbdb7a38e1e50b1b82fa"),
+		GasLimit:   5000,
+		Difficulty: big.NewInt(17179869184),
+		Alloc:      decodePrealloc(mainnetAllocData),
 	}
 }
 

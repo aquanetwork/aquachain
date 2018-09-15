@@ -421,8 +421,9 @@ func (api *PrivateAdminAPI) ExportChain(file string) (bool, error) {
 }
 
 func hasAllBlocks(chain *core.BlockChain, bs []*types.Block) bool {
+	getversion := chain.Config().GetBlockVersion
 	for _, b := range bs {
-		if !chain.HasBlock(b.Hash(), b.NumberU64()) {
+		if !chain.HasBlock(b.SetVersion(getversion(b.Number())), b.NumberU64()) {
 			return false
 		}
 	}

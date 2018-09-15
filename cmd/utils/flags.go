@@ -143,7 +143,11 @@ var (
 	}
 	Testnet2Flag = cli.BoolFlag{
 		Name:  "testnet2",
-		Usage: "Testnet2: pre-configured proof-of-authority test network",
+		Usage: "Testnet2: offline test network",
+	}
+	NetworkEthFlag = cli.BoolFlag{
+		Name:  "ethereum",
+		Usage: "Connect to ethereum network",
 	}
 	DeveloperFlag = cli.BoolFlag{
 		Name:  "dev",
@@ -536,6 +540,9 @@ func MakeDataDir(ctx *cli.Context) string {
 		if ctx.GlobalBool(Testnet2Flag.Name) {
 			return filepath.Join(path, "testnet2")
 		}
+		if ctx.GlobalBool(NetworkEthFlag.Name) {
+			return filepath.Join(path, "ethereum")
+		}
 		return path
 	}
 	Fatalf("Cannot determine default data directory, please set manually (--datadir)")
@@ -590,6 +597,8 @@ func setBootstrapNodes(ctx *cli.Context, cfg *p2p.Config) {
 		urls = params.TestnetBootnodes
 	case ctx.GlobalBool(Testnet2Flag.Name):
 		urls = params.Testnet2Bootnodes
+	case ctx.GlobalBool(NetworkEthFlag.Name):
+		urls = params.EthnetBootnodes
 	case cfg.BootstrapNodes != nil:
 		return // already set, don't apply defaults.
 	}
@@ -805,7 +814,10 @@ func MakePasswordList(ctx *cli.Context) []string {
 	return lines
 }
 
-func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config) {
+func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config, chainid uint64) {
+
+	cfg.ChainId = chainid
+
 	setNodeKey(ctx, cfg)
 	setNAT(ctx, cfg)
 	setListenAddress(ctx, cfg)
@@ -856,12 +868,15 @@ func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config) {
 	if ctx.GlobalBool(TestnetFlag.Name) && !ctx.GlobalIsSet(ListenPortFlag.Name) {
 		cfg.ListenAddr = ":21304"
 	}
+	if ctx.GlobalBool(NetworkEthFlag.Name) && !ctx.GlobalIsSet(ListenPortFlag.Name) {
+		cfg.ListenAddr = ":30303"
+	}
 
 }
 
 // SetNodeConfig applies node-related command line flags to the config.
-func SetNodeConfig(ctx *cli.Context, cfg *node.Config) {
-	SetP2PConfig(ctx, &cfg.P2P)
+func SetNodeConfig(ctx *cli.Context, cfg *node.Config, chainid uint64) {
+	SetP2PConfig(ctx, &cfg.P2P, chainid)
 	setIPC(ctx, cfg)
 	setHTTP(ctx, cfg)
 	setWS(ctx, cfg)
@@ -876,6 +891,8 @@ func SetNodeConfig(ctx *cli.Context, cfg *node.Config) {
 		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet")
 	case ctx.GlobalBool(Testnet2Flag.Name):
 		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet2")
+	case ctx.GlobalBool(NetworkEthFlag.Name):
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "ethereum")
 	}
 
 	if ctx.GlobalIsSet(KeyStoreDirFlag.Name) {
@@ -1006,7 +1023,7 @@ func SetShhConfig(ctx *cli.Context, stack *node.Node, cfg *whisper.Config) {
 // SetAquaConfig applies aqua-related command line flags to the config.
 func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 	// Avoid conflicting network flags
-	checkExclusive(ctx, DeveloperFlag, TestnetFlag, Testnet2Flag)
+	checkExclusive(ctx, DeveloperFlag, TestnetFlag, Testnet2Flag, NetworkEthFlag)
 	checkExclusive(ctx, FastSyncFlag, SyncModeFlag)
 	// checkExclusive(ctx, LightServFlag, LightModeFlag)
 	// checkExclusive(ctx, LightServFlag, SyncModeFlag, "light")
@@ -1062,20 +1079,7 @@ func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 		// TODO(fjl): force-enable this in --dev mode
 		cfg.EnablePreimageRecording = ctx.GlobalBool(VMEnableDebugFlag.Name)
 	}
-
-	// Override any default configs for hard coded networks.
-	switch {
-	case ctx.GlobalBool(TestnetFlag.Name):
-		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
-			cfg.NetworkId = params.TestnetChainConfig.ChainId.Uint64()
-		}
-		cfg.Genesis = core.DefaultTestnetGenesisBlock()
-	case ctx.GlobalBool(Testnet2Flag.Name):
-		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
-			cfg.NetworkId = params.Testnet2ChainConfig.ChainId.Uint64()
-		}
-		cfg.Genesis = core.DefaultTestnet2GenesisBlock()
-	case ctx.GlobalBool(DeveloperFlag.Name):
+	if ctx.GlobalBool(DeveloperFlag.Name) {
 		// Create new developer account or reuse existing one
 		var (
 			developer accounts.Account
@@ -1093,11 +1097,36 @@ func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 			Fatalf("Failed to unlock developer account: %v", err)
 		}
 		log.Info("Using developer account", "address", developer.Address)
-
 		cfg.Genesis = core.DeveloperGenesisBlock(uint64(ctx.GlobalInt(DeveloperPeriodFlag.Name)), developer.Address)
+	}
+
+}
+func SetChainId(ctx *cli.Context, cfg *aqua.Config) {
+	if ctx.GlobalIsSet(NetworkIdFlag.Name) {
+		cfg.NetworkId = ctx.GlobalUint64(NetworkIdFlag.Name)
+	}
+
+	// Override any default configs for hard coded networks.
+	switch {
+	case ctx.GlobalBool(TestnetFlag.Name):
+		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
+			cfg.NetworkId = params.TestnetChainConfig.ChainId.Uint64()
+		}
+		cfg.Genesis = core.DefaultTestnetGenesisBlock()
+	case ctx.GlobalBool(Testnet2Flag.Name):
+		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
+			cfg.NetworkId = params.Testnet2ChainConfig.ChainId.Uint64()
+		}
+		cfg.Genesis = core.DefaultTestnet2GenesisBlock()
+	case ctx.GlobalBool(DeveloperFlag.Name):
 		if !ctx.GlobalIsSet(GasPriceFlag.Name) {
 			cfg.GasPrice = big.NewInt(1)
 		}
+	case ctx.GlobalBool(NetworkEthFlag.Name):
+		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
+			cfg.NetworkId = params.EthnetChainConfig.ChainId.Uint64()
+		}
+		cfg.Genesis = core.DefaultEthnetGenesisBlock()
 	}
 	// TODO(fjl): move trie cache generations into config
 	if gen := ctx.GlobalInt(TrieCacheGenFlag.Name); gen > 0 {
@@ -1165,6 +1194,8 @@ func MakeGenesis(ctx *cli.Context) *core.Genesis {
 		genesis = core.DefaultTestnetGenesisBlock()
 	case ctx.GlobalBool(Testnet2Flag.Name):
 		genesis = core.DefaultTestnet2GenesisBlock()
+	case ctx.GlobalBool(NetworkEthFlag.Name):
+		genesis = core.DefaultEthnetGenesisBlock()
 	case ctx.GlobalBool(DeveloperFlag.Name):
 		Fatalf("Developer chains are ephemeral")
 	}

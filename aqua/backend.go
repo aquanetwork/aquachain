@@ -117,6 +117,12 @@ func New(ctx *node.ServiceContext, config *Config) (*AquaChain, error) {
 		bloomIndexer:   NewBloomIndexer(chainConfig, chainDb, params.BloomBitsBlocks),
 	}
 
+	if chainConfig == params.EthnetChainConfig {
+		ProtocolName = "eth"
+		ProtocolVersions = []uint{63, 62}
+		ProtocolLengths = []uint64{17, 8}
+	}
+
 	log.Info("Initialising AquaChain protocol", "versions", ProtocolVersions, "network", config.NetworkId)
 
 	//if !config.SkipBcVersionCheck {

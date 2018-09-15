@@ -474,12 +474,22 @@ var (
 	big32 = big.NewInt(32)
 )
 
+// just for reward log
+func weiToAqua(wei *big.Int) string {
+	aqu := new(big.Float).SetFloat64(params.Aqua)
+	aqu.Set(new(big.Float).Quo(new(big.Float).SetInt(wei), aqu))
+	return fmt.Sprintf("%00.2f", aqu)
+}
+
 // AccumulateRewards credits the coinbase of the given block with the mining
 // reward. The total reward consists of the static block reward and rewards for
 // included uncles. The coinbase of each uncle block is also rewarded.
 func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header *types.Header, uncles []*types.Header) {
-	// Select the correct block reward based on chain progression
+	// Select the correct block reward based on chain config
 	blockReward := BlockReward
+	if config == params.EthnetChainConfig {
+		blockReward = ethReward(config, header)
+	}
 
 	// fees-only after 42,000,000
 	// since uncles have a reward too, we will have to adjust this number
@@ -497,9 +507,11 @@ func accumulateRewards(config *params.ChainConfig, state *state.StateDB, header 
 		r.Mul(r, blockReward)
 		r.Div(r, big8)
 		state.AddBalance(uncle.Coinbase, r)
+		log.Trace("Uncle reward", "miner", uncle.Coinbase, "reward", weiToAqua(r))
 
 		r.Div(blockReward, big32)
 		reward.Add(reward, r)
 	}
 	state.AddBalance(header.Coinbase, reward)
+	log.Trace("Block reward", "miner", header.Coinbase, "reward", weiToAqua(reward))
 }

@@ -56,12 +56,18 @@ const (
 )
 
 // RPC packet types
+
 const (
-	pingPacket = iota + 134 // zero is 'reserved'
-	//pingPacket = iota + 1 // zero is 'reserved'
-	pongPacket
-	findnodePacket
-	neighborsPacket
+	ethpingPacket byte = iota + 1 // zero is 'reserved'
+	ethpongPacket
+	ethfindnodePacket
+	ethneighborsPacket
+)
+const (
+	aquapingPacket byte = iota + 134 // zero is 'reserved'
+	aquapongPacket
+	aquafindnodePacket
+	aquaneighborsPacket
 )
 
 // RPC request structures
@@ -170,6 +176,7 @@ type udp struct {
 	gotreply   chan reply
 
 	closing chan struct{}
+	chainid uint64
 
 	*Table
 }
@@ -228,6 +235,7 @@ type Config struct {
 	NetRestrict  *netutil.Netlist  // network whitelist
 	Bootnodes    []*Node           // list of bootstrap nodes
 	Unhandled    chan<- ReadPacket // unhandled packets are sent on this channel
+	ChainId      uint64
 }
 
 // ListenUDP returns a new table that listens for UDP packets on laddr.
@@ -248,6 +256,10 @@ func newUDP(c conn, cfg Config) (*Table, *udp, error) {
 		closing:     make(chan struct{}),
 		gotreply:    make(chan reply),
 		addpending:  make(chan *pending),
+		chainid:     cfg.ChainId,
+	}
+	if cfg.ChainId == 0 {
+		panic("no chain id set, no udp protocol version")
 	}
 	realaddr := c.LocalAddr().(*net.UDPAddr)
 	if cfg.AnnounceAddr != nil {
@@ -272,22 +284,34 @@ func (t *udp) close() {
 	// TODO: wait for the loops to end.
 }
 
+func (t *udp) netcompat() bool {
+	return t.chainid == 1
+}
+
 // ping sends a ping message to the given node and waits for a reply.
 func (t *udp) ping(toid NodeID, toaddr *net.UDPAddr) error {
 	// if 30300 < toaddr.Port && toaddr.Port < 30309 {
 	// 	return fmt.Errorf("maybe not aqua")
 	// }
+	//log.Info("sending ping", "netcompat", t.netcompat(), "chainid", t.chainid)
 	req := &ping{
 		Version:    Version,
 		From:       t.ourEndpoint,
 		To:         makeEndpoint(toaddr, 0), // TODO: maybe use known TCP port from DB
 		Expiration: uint64(time.Now().Add(expiration).Unix()),
 	}
-	packet, hash, err := encodePacket(t.priv, pingPacket, req)
+	var packetPing byte = aquapingPacket
+	var pend byte = aquapongPacket
+	if t.netcompat() {
+		pend = ethpongPacket
+		packetPing = ethpingPacket
+	}
+	packet, hash, err := encodePacket(t.netcompat(), t.priv, packetPing, req)
 	if err != nil {
 		return err
 	}
-	errc := t.pending(toid, pongPacket, func(p interface{}) bool {
+
+	errc := t.pending(toid, pend, func(p interface{}) bool {
 		return bytes.Equal(p.(*pong).ReplyTok, hash)
 	})
 	t.write(toaddr, req.name(), packet)
@@ -295,6 +319,10 @@ func (t *udp) ping(toid NodeID, toaddr *net.UDPAddr) error {
 }
 
 func (t *udp) waitping(from NodeID) error {
+	var pingPacket byte = aquapingPacket
+	if t.netcompat() {
+		pingPacket = ethpingPacket
+	}
 	return <-t.pending(from, pingPacket, func(interface{}) bool { return true })
 }
 
@@ -303,6 +331,12 @@ func (t *udp) waitping(from NodeID) error {
 func (t *udp) findnode(toid NodeID, toaddr *net.UDPAddr, target NodeID) ([]*Node, error) {
 	nodes := make([]*Node, 0, bucketSize)
 	nreceived := 0
+	neighborsPacket := aquaneighborsPacket
+	findnodePacket := aquafindnodePacket
+	if t.netcompat() {
+		neighborsPacket = ethneighborsPacket
+		findnodePacket = ethfindnodePacket
+	}
 	errc := t.pending(toid, neighborsPacket, func(r interface{}) bool {
 		reply := r.(*neighbors)
 		for _, rn := range reply.Nodes {
@@ -475,7 +509,7 @@ func init() {
 }
 
 func (t *udp) send(toaddr *net.UDPAddr, ptype byte, req packet) ([]byte, error) {
-	packet, hash, err := encodePacket(t.priv, ptype, req)
+	packet, hash, err := encodePacket(t.netcompat(), t.priv, ptype, req)
 	if err != nil {
 		return hash, err
 	}
@@ -488,11 +522,13 @@ func (t *udp) write(toaddr *net.UDPAddr, what string, packet []byte) error {
 	return err
 }
 
-func encodePacket(priv *ecdsa.PrivateKey, ptype byte, req interface{}) (packet, hash []byte, err error) {
+func encodePacket(netcompat bool, priv *ecdsa.PrivateKey, ptype byte, req interface{}) (packet, hash []byte, err error) {
 	b := new(bytes.Buffer)
 	b.Write(headSpace)
 	b.WriteByte(ptype)
-	b.WriteString("aqua")
+	if !netcompat {
+		b.WriteString("aqua")
+	}
 	if err := rlp.Encode(b, req); err != nil {
 		log.Error("Can't encode discv4 packet", "err", err)
 		return nil, nil, err
@@ -543,7 +579,7 @@ func (t *udp) readLoop(unhandled chan<- ReadPacket) {
 }
 
 func (t *udp) handlePacket(from *net.UDPAddr, buf []byte) error {
-	packet, fromID, hash, err := decodePacket(buf)
+	packet, fromID, hash, err := decodePacket(t.netcompat(), buf)
 	if err != nil {
 		log.Debug("Bad discv4 packet", "addr", from, "err", err)
 		return err
@@ -553,7 +589,7 @@ func (t *udp) handlePacket(from *net.UDPAddr, buf []byte) error {
 	return err
 }
 
-func decodePacket(buf []byte) (packet, NodeID, []byte, error) {
+func decodePacket(netcompat bool, buf []byte) (packet, NodeID, []byte, error) {
 	if len(buf) < headSize+1 {
 		return nil, NodeID{}, nil, errPacketTooSmall
 	}
@@ -566,20 +602,27 @@ func decodePacket(buf []byte) (packet, NodeID, []byte, error) {
 	if err != nil {
 		return nil, NodeID{}, hash, err
 	}
+	if netcompat && sigdata[0] < 133 {
+		sigdata[0] += 133
+	}
 	var req packet
 	switch ptype := sigdata[0]; ptype {
-	case pingPacket:
+	case aquapingPacket:
 		req = new(ping)
-	case pongPacket:
+	case aquapongPacket:
 		req = new(pong)
-	case findnodePacket:
+	case aquafindnodePacket:
 		req = new(findnode)
-	case neighborsPacket:
+	case aquaneighborsPacket:
 		req = new(neighbors)
 	default:
 		return nil, fromID, hash, fmt.Errorf("unknown type: %d", ptype)
 	}
-	s := rlp.NewStream(bytes.NewReader(sigdata[1+len("aqua"):]), 0)
+	x := 0
+	if !netcompat {
+		x = len("aqua")
+	}
+	s := rlp.NewStream(bytes.NewReader(sigdata[1+x:]), 0)
 	err = s.Decode(req)
 	return req, fromID, hash, err
 }
@@ -588,11 +631,18 @@ func (req *ping) handle(t *udp, from *net.UDPAddr, fromID NodeID, mac []byte) er
 	if expired(req.Expiration) {
 		return errExpired
 	}
+	pongPacket := aquapongPacket
+	pingPacket := aquapingPacket
+	if t.netcompat() {
+		pongPacket = ethpongPacket
+		pingPacket = ethpingPacket
+	}
 	t.send(from, pongPacket, &pong{
 		To:         makeEndpoint(from, req.From.TCP),
 		ReplyTok:   mac,
 		Expiration: uint64(time.Now().Add(expiration).Unix()),
 	})
+
 	if !t.handleReply(fromID, pingPacket, req) {
 		// Note: we're ignoring the provided IP address right now
 		go t.bond(true, fromID, from, req.From.TCP)
@@ -605,6 +655,10 @@ func (req *ping) name() string { return "PING/v4" }
 func (req *pong) handle(t *udp, from *net.UDPAddr, fromID NodeID, mac []byte) error {
 	if expired(req.Expiration) {
 		return errExpired
+	}
+	pongPacket := aquapongPacket
+	if t.netcompat() {
+		pongPacket = ethpongPacket
 	}
 	if !t.handleReply(fromID, pongPacket, req) {
 		return errUnsolicitedReply
@@ -637,6 +691,12 @@ func (req *findnode) handle(t *udp, from *net.UDPAddr, fromID NodeID, mac []byte
 	var sent bool
 	// Send neighbors in chunks with at most maxNeighbors per packet
 	// to stay below the 1280 byte limit.
+
+	neighborsPacket := aquaneighborsPacket
+	if t.netcompat() {
+		neighborsPacket = ethneighborsPacket
+	}
+
 	for _, n := range closest {
 		if netutil.CheckRelayIP(from.IP, n.IP) == nil {
 			p.Nodes = append(p.Nodes, nodeToRPC(n))
@@ -658,6 +718,10 @@ func (req *findnode) name() string { return "FINDNODE/v4" }
 func (req *neighbors) handle(t *udp, from *net.UDPAddr, fromID NodeID, mac []byte) error {
 	if expired(req.Expiration) {
 		return errExpired
+	}
+	neighborsPacket := aquaneighborsPacket
+	if t.netcompat() {
+		neighborsPacket = ethneighborsPacket
 	}
 	if !t.handleReply(fromID, neighborsPacket, req) {
 		return errUnsolicitedReply

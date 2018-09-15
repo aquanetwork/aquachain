@@ -27,6 +27,7 @@ var (
 	MainnetGenesisHash  = common.HexToHash("0x381c8d2c3e3bc702533ee504d7621d510339cafd830028337a4b532ff27cd505") // Mainnet genesis hash to enforce below configs on
 	TestnetGenesisHash  = common.HexToHash("0xa8773cb7d32b8f7e1b32b0c2c8b735c293b8936dd3760c15afc291a23eb0cf88") // Testnet genesis hash to enforce below configs on
 	Testnet2GenesisHash = common.HexToHash("0xde434983d3ada19cd43c44d8ad5511bad01ed12b3cc9a99b1717449a245120df") // Testnet2 genesis hash to enforce below configs on
+	EthnetGenesisHash   = common.HexToHash("0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3")
 )
 
 const KnownHF = 9
@@ -76,6 +77,8 @@ var (
 		//6: big.NewInt(14),
 		7: big.NewInt(30),
 	}
+
+	NoHF = ForkMap{}
 )
 var (
 	// MainnetChainConfig is the chain parameters to run a node on the main network.
@@ -112,6 +115,20 @@ var (
 		ByzantiumBlock: Testnet2HF[7],
 		Aquahash:       new(AquahashConfig),
 		HF:             Testnet2HF,
+	}
+	EthnetChainConfig = &ChainConfig{
+		ChainId:             big.NewInt(1),
+		HomesteadBlock:      big.NewInt(1150000),
+		DAOForkBlock:        big.NewInt(1920000),
+		DAOForkSupport:      true,
+		EIP150Block:         big.NewInt(2463000),
+		EIP150Hash:          common.HexToHash("0x2086799aeebeae135c246c65021c82b4e15a2c451340993aacfd2751886514f0"),
+		EIP155Block:         big.NewInt(2675000),
+		EIP158Block:         big.NewInt(2675000),
+		ByzantiumBlock:      big.NewInt(4370000),
+		ConstantinopleBlock: nil,
+		Aquahash:            new(AquahashConfig),
+		HF:                  NoHF,
 	}
 
 	// AllAquahashProtocolChanges contains every protocol change (EIPs) introduced

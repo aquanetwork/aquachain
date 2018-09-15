@@ -414,8 +414,8 @@ type Aquahash struct {
 
 // New creates a full sized aquahash PoW scheme.
 func New(config Config) *Aquahash {
+	log.Info("Starting new Aquahash engine", "startVersion", config.StartVersion)
 	if config.StartVersion > 1 {
-		log.Info("Starting new Aquahash engine", "startVersion", config.StartVersion)
 		return &Aquahash{
 			config:   config,
 			update:   make(chan struct{}),

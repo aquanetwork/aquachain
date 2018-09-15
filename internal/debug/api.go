@@ -51,7 +51,7 @@ type HandlerT struct {
 }
 
 const (
-	VmoduleGood  = "p2p/discover=3,aqua/*=4,consensus/*=9,core/*=9,rpc/*=9,node/*=9,opt/*=9"
+	VmoduleGood  = "p2p/discover=3,aqua/*=4,consensus/*=9,core/*=9,rpc/*=9,node/*=9,opt/*=9,p2p/discover/udp.go=0"
 	VmoduleGreat = "p2p/discover=3,aqua/*=9,consensus/*=9,core/*=9,rpc/*=9,node/*=9,opt/*=9"
 )
 
@@ -73,7 +73,7 @@ func wrapVmodule(pattern string) string {
 // Vmodule sets the log verbosity pattern. See package log for details on the
 // pattern syntax.
 func (*HandlerT) Vmodule(pattern string) error {
-	return glogger.Vmodule(pattern)
+	return glogger.Vmodule(wrapVmodule(pattern))
 }
 
 // BacktraceAt sets the log backtrace location. See package log for details on

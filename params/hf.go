@@ -37,15 +37,21 @@ func (f ForkMap) String() (s string) {
 // HeaderVersion is not stored in db, or rlp encoded, or sent over the network.
 type HeaderVersion byte
 
-func (c ChainConfig) GetBlockVersion(height *big.Int) HeaderVersion {
+func (c *ChainConfig) GetBlockVersion(height *big.Int) HeaderVersion {
 	if height == nil {
 		panic("GetBlockVersion: got nil height")
 	}
+	if c == EthnetChainConfig {
+		return 1
+	}
+	if c.IsHF(9, height) {
+		return 4 // argon2id-C
+	}
 	if c.IsHF(8, height) {
-		return 3 // argon2id (1,256mb,1)
+		return 3 // argon2id-B
 	}
 	if c.IsHF(5, height) {
-		return 2 // argon2id (1,1kb,1)
+		return 2 // argon2id
 	}
 	return 1 // ethash
 }

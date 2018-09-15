@@ -144,6 +144,7 @@ type Config struct {
 
 	// Offline
 	Offline bool
+	ChainId uint64
 }
 
 // Server manages all peer connections.
@@ -461,6 +462,7 @@ func (srv *Server) Start() (err error) {
 			NetRestrict:  srv.NetRestrict,
 			Bootnodes:    srv.BootstrapNodes,
 			Unhandled:    unhandled,
+			ChainId:      srv.ChainId,
 		}
 		ntab, err := discover.ListenUDP(conn, cfg)
 		if err != nil {
@@ -700,6 +702,7 @@ running:
 func (srv *Server) protoHandshakeChecks(peers map[discover.NodeID]*Peer, inboundCount int, c *conn) error {
 	// Drop connections with no matching protocols.
 	if len(srv.Protocols) > 0 && countMatchingProtocols(srv.Protocols, c.caps) == 0 {
+		log.Debug("Peer does not have protocol necessary", "alien", c.caps)
 		return DiscUselessPeer
 	}
 	// Repeat the encryption handshake checks because the

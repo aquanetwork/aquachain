@@ -102,6 +102,7 @@ var (
 		utils.DeveloperPeriodFlag,
 		utils.TestnetFlag,
 		utils.Testnet2Flag,
+		utils.NetworkEthFlag,
 		utils.VMEnableDebugFlag,
 		utils.NetworkIdFlag,
 		utils.AquaStatsURLFlag,

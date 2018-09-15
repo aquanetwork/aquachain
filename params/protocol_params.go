@@ -19,8 +19,10 @@ package params
 import "math/big"
 
 var (
-	MaxMoney             = big.NewInt(42000000) // At block 42mil rewards will be fees-only
-	BlockReward *big.Int = big.NewInt(1e+18)    // Block reward in wei for successfully mining a block
+	MaxMoney                 = big.NewInt(42000000) // At block 42mil rewards will be fees-only
+	BlockReward     *big.Int = big.NewInt(1e+18)    // Block reward in wei for successfully mining a block
+	EthBlockReward  *big.Int = big.NewInt(5e+18)    // Block reward in wei for successfully mining a block
+	EthBlockReward2 *big.Int = big.NewInt(3e+18)    // Block reward in wei for successfully mining a block
 )
 
 var (
@@ -82,6 +84,11 @@ const (
 	Bn256ScalarMulGas       uint64 = 40000  // Gas needed for an elliptic curve scalar multiplication
 	Bn256PairingBaseGas     uint64 = 100000 // Base price for an elliptic curve pairing check
 	Bn256PairingPerPointGas uint64 = 80000  // Per-point price for an elliptic curve pairing check
+)
+
+var (
+	GenesisDifficultyEth = big.NewInt(131072) // Difficulty of the Ethereum Genesis block.
+	MinimumDifficultyEth = big.NewInt(131072) // The minimum that the Ethereum difficulty may ever be
 )
 
 var (
