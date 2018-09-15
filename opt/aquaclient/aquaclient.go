@@ -484,13 +484,13 @@ func (ec *Client) GetWork(ctx context.Context) ([3]string, error) {
 
 func (ec *Client) GetBlockTemplate(ctx context.Context, coinbaseAddr common.Address) ([]byte, error) {
 	var bt []byte
-	err := ec.c.CallContext(ctx, &bt, "aqua_getBlockTemplate", coinbaseAddr)
+	err := ec.c.CallContext(ctx, &bt, "testing_getBlockTemplate", coinbaseAddr)
 	return bt, err
 }
 
 func (ec *Client) SubmitBlock(ctx context.Context, encoded []byte) bool {
 	var ok bool
-	return ec.c.CallContext(ctx, &ok, "aqua_submitBlock", encoded) == nil && ok
+	return ec.c.CallContext(ctx, &ok, "testing_submitBlock", encoded) == nil && ok
 }
 
 func (ec *Client) SubmitWork(ctx context.Context, nonce types.BlockNonce, solution, digest common.Hash) bool {
