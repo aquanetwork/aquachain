@@ -117,12 +117,17 @@ func (api *PublicTestingAPI) SubmitBlock(encodedBlock []byte) bool {
 		log.Warn("submitblock rlp decode error", "err", err)
 		return false
 	}
+	if block.Nonce() == 0 {
+		log.Warn("submitblock got 0 nonce")
+		return false
+	}
 	block.SetVersion(api.e.chainConfig.GetBlockVersion(block.Number()))
 	log.Debug("RPC client submitted block:", "block", block.Header())
 	return api.agent.SubmitBlock(&block)
 }
 
 func (api *PublicTestingAPI) GetBlockTemplate(addr common.Address) ([]byte, error) {
+	log.Debug("Got block template request:", "coinbase", addr)
 	if !api.e.IsMining() {
 		if err := api.e.StartMining(false); err != nil {
 			return nil, err
