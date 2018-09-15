@@ -41,13 +41,16 @@ import (
 
 // PublicTestingAPI provides an API to access new features
 type PublicTestingAPI struct {
-	cfg *params.ChainConfig
-	e   *AquaChain
+	cfg   *params.ChainConfig
+	agent *miner.RemoteAgent
+	e     *AquaChain
 }
 
 // NewPublicAquaChainAPI creates a new AquaChain protocol API for full nodes.
 func NewPublicTestingAPI(cfg *params.ChainConfig, e *AquaChain) *PublicTestingAPI {
-	return &PublicTestingAPI{cfg, e}
+	agent := miner.NewRemoteAgent(e.BlockChain(), e.Engine())
+	e.Miner().Register(agent)
+	return &PublicTestingAPI{cfg, agent, e}
 }
 
 // PublicAquaChainAPI provides an API to access AquaChain full node-related
@@ -104,7 +107,7 @@ func (api *PublicMinerAPI) SubmitWork(nonce types.BlockNonce, solution, digest c
 
 // SubmitBlock can be used by external miner to submit their POW solution. It returns an indication if the work was
 // accepted. Note, this is not an indication if the provided work was valid!
-func (api *PublicMinerAPI) SubmitBlock(encodedBlock []byte) bool {
+func (api *PublicTestingAPI) SubmitBlock(encodedBlock []byte) bool {
 	var block types.Block
 	if encodedBlock == nil {
 		log.Warn("submitblock rlp got nil")
@@ -119,7 +122,7 @@ func (api *PublicMinerAPI) SubmitBlock(encodedBlock []byte) bool {
 	return api.agent.SubmitBlock(&block)
 }
 
-func (api *PublicMinerAPI) GetBlockTemplate(addr common.Address) ([]byte, error) {
+func (api *PublicTestingAPI) GetBlockTemplate(addr common.Address) ([]byte, error) {
 	if !api.e.IsMining() {
 		if err := api.e.StartMining(false); err != nil {
 			return nil, err
