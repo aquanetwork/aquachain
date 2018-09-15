@@ -410,7 +410,7 @@ var (
 	RPCAllowIPFlag = cli.StringFlag{
 		Name:  "allowip",
 		Usage: "Comma separated list of IP allowed to access RPC (http/ws)",
-		Value: "none",
+		Value: "127.0.0.1",
 	}
 	ExecFlag = cli.StringFlag{
 		Name:  "exec",
