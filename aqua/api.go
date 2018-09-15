@@ -39,6 +39,17 @@ import (
 	"gitlab.com/aquachain/aquachain/trie"
 )
 
+// PublicTestingAPI provides an API to access new features
+type PublicTestingAPI struct {
+	cfg *params.ChainConfig
+	e   *AquaChain
+}
+
+// NewPublicAquaChainAPI creates a new AquaChain protocol API for full nodes.
+func NewPublicTestingAPI(cfg *params.ChainConfig, e *AquaChain) *PublicTestingAPI {
+	return &PublicTestingAPI{cfg, e}
+}
+
 // PublicAquaChainAPI provides an API to access AquaChain full node-related
 // information.
 type PublicAquaChainAPI struct {

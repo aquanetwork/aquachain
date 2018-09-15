@@ -324,6 +324,10 @@ func (s *AquaChain) APIs() []rpc.API {
 			Version:   "1.0",
 			Service:   NewPrivateDebugAPI(s.chainConfig, s),
 		}, {
+			Namespace: "testing",
+			Version:   "1.0",
+			Service:   NewPublicTestingAPI(s.chainConfig, s),
+		}, {
 			Namespace: "net",
 			Version:   "1.0",
 			Service:   s.netRPCService,
