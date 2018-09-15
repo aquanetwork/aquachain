@@ -174,7 +174,9 @@ func (aquahash *Aquahash) verifyHeaderWorker(chain consensus.ChainReader, header
 	var parent, grandparent *types.Header
 	if index == 0 {
 		parent = chain.GetHeader(headers[0].ParentHash, headers[0].Number.Uint64()-1)
-		grandparent = chain.GetHeader(parent.ParentHash, headers[0].Number.Uint64()-2)
+		if headers[0].Number.Uint64() > 1 {
+			grandparent = chain.GetHeader(parent.ParentHash, headers[0].Number.Uint64()-2)
+		}
 	} else if index == 1 {
 		parent = headers[index-1]
 		grandparent = chain.GetHeader(parent.ParentHash, parent.Number.Uint64()-1)
