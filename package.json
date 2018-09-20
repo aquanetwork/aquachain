@@ -9,5 +9,5 @@
   "license": "LGPL3",
   "name": "aquachain",
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
-  "version": "1.7.7"
+  "version": "1.7.8"
 }

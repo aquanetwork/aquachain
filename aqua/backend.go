@@ -169,13 +169,14 @@ func makeExtraData(extra []byte) []byte {
 		uint(params.VersionMajor<<16 | params.VersionMinor<<8 | params.VersionPatch),
 		"aquachain",
 		runtime.GOOS,
+		runtime.Version(), // go version
 	})
 	if len(extra) == 0 {
 		extra = defaultExtra
 	}
 	if uint64(len(extra)) > params.MaximumExtraDataSize {
-		extra = defaultExtra
-		log.Warn("Miner extra data exceed limit", "extra", hexutil.Bytes(extra), "limit", params.MaximumExtraDataSize)
+		extra = extra[:params.MaximumExtraDataSize-1]
+		log.Warn("Miner extra data exceed limit, truncating!", "extra", hexutil.Bytes(extra), "limit", params.MaximumExtraDataSize)
 	}
 	return extra
 }
