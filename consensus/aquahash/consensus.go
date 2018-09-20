@@ -174,21 +174,23 @@ func (aquahash *Aquahash) verifyHeaderWorker(chain consensus.ChainReader, header
 	var parent, grandparent *types.Header
 	if index == 0 {
 		parent = chain.GetHeader(headers[0].ParentHash, headers[0].Number.Uint64()-1)
-		if headers[0].Number.Uint64() > 1 {
+		if headers[0].Number.Uint64() > 2 && parent != nil {
 			grandparent = chain.GetHeader(parent.ParentHash, headers[0].Number.Uint64()-2)
 		}
 	} else if index == 1 {
-		parent = headers[index-1]
-		grandparent = chain.GetHeader(parent.ParentHash, parent.Number.Uint64()-1)
+		parent = headers[0]
+		if parent.Number.Uint64() > 1 {
+			grandparent = chain.GetHeader(parent.ParentHash, parent.Number.Uint64()-1)
+		}
 	} else if headers[index-1].Hash() == headers[index].ParentHash {
 		parent = headers[index-1]
 		grandparent = headers[index-2]
 	}
-	if parent == nil {
+	if parent == nil && headers[0].Number.Uint64() != 0 {
 		return consensus.ErrUnknownAncestor
 	}
-	if grandparent == nil && parent.Number.Uint64() > 1 {
-		return consensus.ErrUnknownAncestor
+	if grandparent == nil && parent != nil && parent.Number.Uint64() > 1 {
+		return errUnknownGrandparent
 	}
 	if chain.GetHeader(headers[index].Hash(), headers[index].Number.Uint64()) != nil {
 		return nil // known block
