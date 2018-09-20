@@ -2,6 +2,9 @@ GOBIN = $(shell pwd)/build/bin
 GO ?= latest
 PREFIX ?= ${HOME}/.local/bin/
 
+# make build environment script executable (gets unset through ipfs)
+DOFIRST=$(shell chmod +x build/env.sh)
+
 # default build
 aquachain-nocgo:
 	@echo "Building aquachain with no tracer/usb support."
