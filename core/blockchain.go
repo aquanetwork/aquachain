@@ -1069,8 +1069,7 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	for i, block := range chain {
 		headers[i] = block.Header()
 		if headers[i].Version == 0 {
-			log.Warn("header version not set", "number", headers[i].Number)
-			return 0, nil, nil, fmt.Errorf("invalid chain: header %s version not set", headers[i].Number)
+			panic("header version not set")
 		}
 		seals[i] = true
 	}
@@ -1081,8 +1080,8 @@ func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*ty
 	for i, block := range chain {
 		// If the chain is terminating, stop processing blocks
 		if atomic.LoadInt32(&bc.procInterrupt) == 1 {
-			log.Debug("Premature abort during blocks processing")
-			break
+			log.Warn("Premature abort during blocks processing")
+			return i, events, coalescedLogs, fmt.Errorf("aborted")
 		}
 		// If the header is a banned one, straight out abort
 		if BadHashes[block.Hash()] {
@@ -1454,13 +1453,14 @@ func (bc *BlockChain) reportBlock(block *types.Block, receipts types.Receipts, e
 ########## BAD BLOCK #########
 Chain config: %v
 
-Number: %v
-Hash: 0x%x
+Number:  %v
+Hash:  0x%x
+Version: %v
 %v
 
 Error: %v
 ##############################
-`, bc.chainConfig, block.Number(), block.Hash(), receiptString, err))
+`, bc.chainConfig, block.Number(), block.Hash(), block.Version(), receiptString, err))
 }
 
 // InsertHeaderChain attempts to insert the given header chain in to the local
