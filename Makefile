@@ -3,13 +3,20 @@ GO ?= latest
 PREFIX ?= ${HOME}/.local/bin/
 
 # default build
+aquachain-nocgo:
+	@echo "Building aquachain with no tracer/usb support."
+	@echo "Consider \"${MAKE} usb\" or \"${MAKE} aquachain\""
+	@echo "Building default aquachain. Consider \"${MAKE} musl\""
+	CGO_ENABLED=0 build/env.sh go run build/ci.go install ./cmd/aquachain
+	@echo "Done building."
+	@echo "Run \"$(GOBIN)/aquachain\" to launch aquachain."
+
 aquachain:
 	@echo "Building aquachain with no usb support. Consider \"${MAKE} usb\""
 	@echo "Building default aquachain. Consider \"${MAKE} musl\""
 	build/env.sh go run build/ci.go install ./cmd/aquachain
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/aquachain\" to launch aquachain."
-
 
 # with usb support (hardware wallet)
 usb:

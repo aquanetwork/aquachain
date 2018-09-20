@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
 
+// +build gccgo cgo !nocgo
+
 package aqua
 
 import (
@@ -644,4 +646,123 @@ func (api *PrivateDebugAPI) computeTxEnv(blockHash common.Hash, txIndex int, ree
 		statedb.DeleteSuicides()
 	}
 	return nil, vm.Context{}, nil, fmt.Errorf("tx index %d out of range for block %x", txIndex, blockHash)
+}
+
+// StorageRangeAt returns the storage at the given block height and transaction index.
+func (api *PrivateDebugAPI) StorageRangeAt(ctx context.Context, blockHash common.Hash, txIndex int, contractAddress common.Address, keyStart hexutil.Bytes, maxResult int) (StorageRangeResult, error) {
+	_, _, statedb, err := api.computeTxEnv(blockHash, txIndex, 0)
+	if err != nil {
+		return StorageRangeResult{}, err
+	}
+	st := statedb.StorageTrie(contractAddress)
+	if st == nil {
+		return StorageRangeResult{}, fmt.Errorf("account %x doesn't exist", contractAddress)
+	}
+	return storageRangeAt(st, keyStart, maxResult)
+}
+
+func storageRangeAt(st state.Trie, start []byte, maxResult int) (StorageRangeResult, error) {
+	it := trie.NewIterator(st.NodeIterator(start))
+	result := StorageRangeResult{Storage: storageMap{}}
+	for i := 0; i < maxResult && it.Next(); i++ {
+		_, content, _, err := rlp.Split(it.Value)
+		if err != nil {
+			return StorageRangeResult{}, err
+		}
+		e := storageEntry{Value: common.BytesToHash(content)}
+		if preimage := st.GetKey(it.Key); preimage != nil {
+			preimage := common.BytesToHash(preimage)
+			e.Key = &preimage
+		}
+		result.Storage[common.BytesToHash(it.Key)] = e
+	}
+	// Add the 'next key' so clients can continue downloading.
+	if it.Next() {
+		next := common.BytesToHash(it.Key)
+		result.NextKey = &next
+	}
+	return result, nil
+}
+
+// GetModifiedAccountsByNumber returns all accounts that have changed between the
+// two blocks specified. A change is defined as a difference in nonce, balance,
+// code hash, or storage hash.
+//
+// With one parameter, returns the list of accounts modified in the specified block.
+func (api *PrivateDebugAPI) GetModifiedAccountsByNumber(startNum uint64, endNum *uint64) ([]common.Address, error) {
+	var startBlock, endBlock *types.Block
+
+	startBlock = api.aqua.blockchain.GetBlockByNumber(startNum)
+	if startBlock == nil {
+		return nil, fmt.Errorf("start block %x not found", startNum)
+	}
+
+	if endNum == nil {
+		endBlock = startBlock
+		startBlock = api.aqua.blockchain.GetBlockByHash(startBlock.ParentHash())
+		if startBlock == nil {
+			return nil, fmt.Errorf("block %x has no parent", endBlock.Number())
+		}
+	} else {
+		endBlock = api.aqua.blockchain.GetBlockByNumber(*endNum)
+		if endBlock == nil {
+			return nil, fmt.Errorf("end block %d not found", *endNum)
+		}
+	}
+	return api.getModifiedAccounts(startBlock, endBlock)
+}
+
+// GetModifiedAccountsByHash returns all accounts that have changed between the
+// two blocks specified. A change is defined as a difference in nonce, balance,
+// code hash, or storage hash.
+//
+// With one parameter, returns the list of accounts modified in the specified block.
+func (api *PrivateDebugAPI) GetModifiedAccountsByHash(startHash common.Hash, endHash *common.Hash) ([]common.Address, error) {
+	var startBlock, endBlock *types.Block
+	startBlock = api.aqua.blockchain.GetBlockByHash(startHash)
+	if startBlock == nil {
+		return nil, fmt.Errorf("start block %x not found", startHash)
+	}
+
+	if endHash == nil {
+		endBlock = startBlock
+		startBlock = api.aqua.blockchain.GetBlockByHash(startBlock.ParentHash())
+		if startBlock == nil {
+			return nil, fmt.Errorf("block %x has no parent", endBlock.Number())
+		}
+	} else {
+		endBlock = api.aqua.blockchain.GetBlockByHash(*endHash)
+		if endBlock == nil {
+			return nil, fmt.Errorf("end block %x not found", *endHash)
+		}
+	}
+	return api.getModifiedAccounts(startBlock, endBlock)
+}
+
+func (api *PrivateDebugAPI) getModifiedAccounts(startBlock, endBlock *types.Block) ([]common.Address, error) {
+	if startBlock.Number().Uint64() >= endBlock.Number().Uint64() {
+		return nil, fmt.Errorf("start block height (%d) must be less than end block height (%d)", startBlock.Number().Uint64(), endBlock.Number().Uint64())
+	}
+
+	oldTrie, err := trie.NewSecure(startBlock.Root(), trie.NewDatabase(api.aqua.chainDb), 0)
+	if err != nil {
+		return nil, err
+	}
+	newTrie, err := trie.NewSecure(endBlock.Root(), trie.NewDatabase(api.aqua.chainDb), 0)
+	if err != nil {
+		return nil, err
+	}
+
+	diff, _ := trie.NewDifferenceIterator(oldTrie.NodeIterator([]byte{}), newTrie.NodeIterator([]byte{}))
+	iter := trie.NewIterator(diff)
+
+	var dirty []common.Address
+	for iter.Next() {
+		key := newTrie.GetKey(iter.Key)
+		if key == nil {
+			return nil, fmt.Errorf("no preimage found for hash %x", iter.Key)
+		}
+		dirty = append(dirty, common.BytesToAddress(key))
+	}
+	return dirty, nil
 }

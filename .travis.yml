@@ -8,19 +8,31 @@ matrix:
       sudo: required
       go: "1.11"
       env:
-        - test
+        - test-nocgo
       script:
         - sudo modprobe fuse
         - sudo chmod ugo+rw /dev/fuse
         - sudo chown root:$USER /etc/fuse.conf
-        - go run build/ci.go install
-        - go run build/ci.go test -coverage
+        - CGO_ENABLED=0 go run build/ci.go install
+        - CGO_ENABLED=0 go run build/ci.go test
+    - os: linux
+      dist: trusty
+      sudo: required
+      go: "1.11"
+      env:
+        - test-cgo
+      script:
+        - sudo modprobe fuse
+        - sudo chmod ugo+rw /dev/fuse
+        - sudo chown root:$USER /etc/fuse.conf
+        - CGO_ENABLED=1 go run build/ci.go install
+        - CGO_ENABLED=1 go run build/ci.go test -coverage
     - os: linux
       dist: alpine
       sudo: required
       go: "1.11"
       env:
-        - build
+        - build-import
       script:
         - sudo modprobe fuse
         - sudo chmod ugo+rw /dev/fuse
