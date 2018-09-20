@@ -208,7 +208,7 @@ func (db *Database) Dereference(child common.Hash, parent common.Hash) {
 	db.gcsize += storage - db.nodesSize
 	db.gctime += time.Since(start)
 
-	log.Debug("Dereferenced trie from memory database", "nodes", nodes-len(db.nodes), "size", storage-db.nodesSize, "time", time.Since(start),
+	log.Trace("Dereferenced trie from memory database", "nodes", nodes-len(db.nodes), "size", storage-db.nodesSize, "time", time.Since(start),
 		"gcnodes", db.gcnodes, "gcsize", db.gcsize, "gctime", db.gctime, "livenodes", len(db.nodes), "livesize", db.nodesSize)
 }
 
