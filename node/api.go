@@ -46,6 +46,10 @@ func NewPrivateAdminAPI(node *Node) *PrivateAdminAPI {
 // connection at all times, even reconnecting if it is lost.
 func (api *PrivateAdminAPI) AddPeer(url string) (bool, error) {
 	// Make sure the server is running, fail otherwise
+	if api.node == nil {
+		return false, ErrNodeStopped
+	}
+
 	server := api.node.Server()
 	if server == nil {
 		return false, ErrNodeStopped
@@ -62,6 +66,10 @@ func (api *PrivateAdminAPI) AddPeer(url string) (bool, error) {
 // RemovePeer disconnects from a a remote node if the connection exists
 func (api *PrivateAdminAPI) RemovePeer(url string) (bool, error) {
 	// Make sure the server is running, fail otherwise
+	if api.node == nil {
+		return false, ErrNodeStopped
+	}
+
 	server := api.node.Server()
 	if server == nil {
 		return false, ErrNodeStopped
@@ -79,6 +87,10 @@ func (api *PrivateAdminAPI) RemovePeer(url string) (bool, error) {
 // node's p2p.Server
 func (api *PrivateAdminAPI) PeerEvents(ctx context.Context) (*rpc.Subscription, error) {
 	// Make sure the server is running, fail otherwise
+	if api.node == nil {
+		return nil, ErrNodeStopped
+	}
+
 	server := api.node.Server()
 	if server == nil {
 		return nil, ErrNodeStopped
