@@ -200,6 +200,9 @@ type BlockChain interface {
 
 // New creates a new downloader to fetch hashes and blocks from remote peers.
 func New(mode SyncMode, stateDb aquadb.Database, mux *event.TypeMux, chain BlockChain, lightchain LightChain, dropPeer peerDropFn) *Downloader {
+	if mode == OfflineSync {
+		return nil
+	}
 	if lightchain == nil {
 		lightchain = chain
 	}
@@ -251,9 +254,8 @@ func (d *Downloader) Progress() aquachain.SyncProgress {
 		current = d.blockchain.CurrentBlock().NumberU64()
 	case FastSync:
 		current = d.blockchain.CurrentFastBlock().NumberU64()
-	case LightSync:
-		current = d.lightchain.CurrentHeader().Number.Uint64()
-		common.Report("light sync activated but should not be")
+	case OfflineSync:
+		current = d.blockchain.CurrentBlock().NumberU64()
 	}
 	return aquachain.SyncProgress{
 		StartingBlock: d.syncStatsChainOrigin,
@@ -532,6 +534,9 @@ func (d *Downloader) Cancel() {
 // The downloader cannot be reused after calling Terminate.
 func (d *Downloader) Terminate() {
 	// Close the termination channel (make sure double close is allowed)
+	if d.mode == OfflineSync {
+		return
+	}
 	d.quitLock.Lock()
 	select {
 	case <-d.quitCh:

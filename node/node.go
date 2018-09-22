@@ -200,6 +200,10 @@ func (n *Node) Start() error {
 	started := []reflect.Type{}
 	for kind, service := range services {
 		// Start the next service, stopping all previous upon failure
+		if service == nil {
+			log.Warn("skipping service:", "kind", kind)
+			continue
+		}
 		if err := service.Start(running); err != nil {
 			for _, kind := range started {
 				services[kind].Stop()
@@ -609,6 +613,10 @@ func (n *Node) Service(service interface{}) error {
 // Deprecated: No files should be stored in this directory, use InstanceDir instead.
 func (n *Node) DataDir() string {
 	return n.config.DataDir
+}
+
+func (n *Node) Config() Config {
+	return *n.config
 }
 
 // InstanceDir retrieves the instance directory used by the protocol stack.

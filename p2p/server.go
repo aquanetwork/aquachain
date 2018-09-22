@@ -141,6 +141,9 @@ type Config struct {
 
 	// Logger is a custom logger to use with the p2p.Server.
 	Logger log.Logger `toml:",omitempty"`
+
+	// Offline
+	Offline bool
 }
 
 // Server manages all peer connections.
@@ -382,6 +385,9 @@ func (s *sharedUDPConn) Close() error {
 // Start starts running the server.
 // Servers can not be re-used after stopping.
 func (srv *Server) Start() (err error) {
+	if srv.Config.Offline {
+		return nil
+	}
 	srv.lock.Lock()
 	defer srv.lock.Unlock()
 	if srv.running {

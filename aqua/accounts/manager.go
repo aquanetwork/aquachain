@@ -117,6 +117,9 @@ func (am *Manager) update() {
 
 // Backends retrieves the backend(s) with the given type from the account manager.
 func (am *Manager) Backends(kind reflect.Type) []Backend {
+	if am.backends == nil {
+		return nil
+	}
 	return am.backends[kind]
 }
 

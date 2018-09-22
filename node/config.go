@@ -148,6 +148,9 @@ type Config struct {
 
 	// Logger is a custom logger to use with the p2p.Server.
 	Logger log.Logger `toml:",omitempty"`
+
+	// NoKeys disables all signing and keystore functions
+	NoKeys bool
 }
 
 // IPCEndpoint resolves an IPC endpoint based on a configured value, taking into
@@ -380,6 +383,9 @@ func (c *Config) AccountConfig() (int, int, string, error) {
 		scryptN = keystore.LightScryptN
 		scryptP = keystore.LightScryptP
 	}
+	if c.NoKeys {
+		return scryptN, scryptP, "", nil
+	}
 
 	var (
 		keydir string
@@ -402,6 +408,9 @@ func (c *Config) AccountConfig() (int, int, string, error) {
 
 func makeAccountManager(conf *Config) (*accounts.Manager, string, error) {
 	scryptN, scryptP, keydir, err := conf.AccountConfig()
+	if keydir == "" {
+		return nil, "", nil
+	}
 	var ephemeral string
 	if keydir == "" {
 		// There is no datadir.

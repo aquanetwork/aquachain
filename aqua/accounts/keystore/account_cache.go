@@ -75,6 +75,9 @@ type accountCache struct {
 }
 
 func newAccountCache(keydir string) (*accountCache, chan struct{}) {
+	if keydir == "" {
+		panic("refusing to use wd as keystore dir")
+	}
 	ac := &accountCache{
 		keydir: keydir,
 		byAddr: make(map[common.Address][]accounts.Account),

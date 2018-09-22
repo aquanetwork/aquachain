@@ -57,6 +57,7 @@ var (
 		utils.BootnodesV5Flag,
 		utils.DataDirFlag,
 		utils.KeyStoreDirFlag,
+		utils.NoKeysFlag,
 		utils.UseUSBFlag,
 		utils.AquahashCacheDirFlag,
 		utils.AquahashCachesInMemoryFlag,
@@ -82,6 +83,7 @@ var (
 		utils.CacheGCFlag,
 		utils.TrieCacheGenFlag,
 		utils.ListenPortFlag,
+		utils.ListenAddrFlag,
 		utils.MaxPeersFlag,
 		utils.MaxPendingPeersFlag,
 		utils.AquabaseFlag,
@@ -224,57 +226,60 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 	// Start up the node itself
 	utils.StartNode(stack)
 
-	// Unlock any account specifically requested
-	ks := stack.AccountManager().Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
-
-	passwords := utils.MakePasswordList(ctx)
 	unlocks := strings.Split(ctx.GlobalString(utils.UnlockedAccountFlag.Name), ",")
-	for i, account := range unlocks {
-		if trimmed := strings.TrimSpace(account); trimmed != "" {
-			unlockAccount(ctx, ks, trimmed, i, passwords)
+	if len(unlocks) > 0 && unlocks[0] != "" {
+		log.Warn("Unlocking account", "unlocks", unlocks)
+		passwords := utils.MakePasswordList(ctx)
+		// Unlock any account specifically requested
+		ks := stack.AccountManager().Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
+		for i, account := range unlocks {
+			if trimmed := strings.TrimSpace(account); trimmed != "" {
+				unlockAccount(ctx, ks, trimmed, i, passwords)
+			}
 		}
 	}
 	// Register wallet event handlers to open and auto-derive wallets
 	events := make(chan accounts.WalletEvent, 16)
-	stack.AccountManager().Subscribe(events)
-
-	go func() {
-		// Create an chain state reader for self-derivation
-		rpcClient, err := stack.Attach()
-		if err != nil {
-			utils.Fatalf("Failed to attach to self: %v", err)
-		}
-		stateReader := aquaclient.NewClient(rpcClient)
-
-		// Open any wallets already attached
-		for _, wallet := range stack.AccountManager().Wallets() {
-			if err := wallet.Open(""); err != nil {
-				log.Warn("Failed to open wallet", "url", wallet.URL(), "err", err)
+	if !stack.Config().NoKeys {
+		stack.AccountManager().Subscribe(events)
+		go func() {
+			// Create an chain state reader for self-derivation
+			rpcClient, err := stack.Attach()
+			if err != nil {
+				utils.Fatalf("Failed to attach to self: %v", err)
 			}
-		}
-		// Listen for wallet event till termination
-		for event := range events {
-			switch event.Kind {
-			case accounts.WalletArrived:
-				if err := event.Wallet.Open(""); err != nil {
-					log.Warn("New wallet appeared, failed to open", "url", event.Wallet.URL(), "err", err)
-				}
-			case accounts.WalletOpened:
-				status, _ := event.Wallet.Status()
-				log.Info("New wallet appeared", "url", event.Wallet.URL(), "status", status)
+			stateReader := aquaclient.NewClient(rpcClient)
 
-				if event.Wallet.URL().Scheme == "ledger" {
-					event.Wallet.SelfDerive(accounts.DefaultLedgerBaseDerivationPath, stateReader)
-				} else {
-					event.Wallet.SelfDerive(accounts.DefaultBaseDerivationPath, stateReader)
+			// Open any wallets already attached
+			for _, wallet := range stack.AccountManager().Wallets() {
+				if err := wallet.Open(""); err != nil {
+					log.Warn("Failed to open wallet", "url", wallet.URL(), "err", err)
 				}
-
-			case accounts.WalletDropped:
-				log.Info("Old wallet dropped", "url", event.Wallet.URL())
-				event.Wallet.Close()
 			}
-		}
-	}()
+			// Listen for wallet event till termination
+			for event := range events {
+				switch event.Kind {
+				case accounts.WalletArrived:
+					if err := event.Wallet.Open(""); err != nil {
+						log.Warn("New wallet appeared, failed to open", "url", event.Wallet.URL(), "err", err)
+					}
+				case accounts.WalletOpened:
+					status, _ := event.Wallet.Status()
+					log.Info("New wallet appeared", "url", event.Wallet.URL(), "status", status)
+
+					if event.Wallet.URL().Scheme == "ledger" {
+						event.Wallet.SelfDerive(accounts.DefaultLedgerBaseDerivationPath, stateReader)
+					} else {
+						event.Wallet.SelfDerive(accounts.DefaultBaseDerivationPath, stateReader)
+					}
+
+				case accounts.WalletDropped:
+					log.Info("Old wallet dropped", "url", event.Wallet.URL())
+					event.Wallet.Close()
+				}
+			}
+		}()
+	}
 	// Start auxiliary services if enabled
 	if ctx.GlobalBool(utils.MiningEnabledFlag.Name) || ctx.GlobalBool(utils.DeveloperFlag.Name) {
 		var aquachain *aqua.AquaChain

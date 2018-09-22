@@ -283,6 +283,14 @@ func (s *AquaChain) APIs() []rpc.API {
 
 	// Append any APIs exposed explicitly by the consensus engine
 	apis = append(apis, s.engine.APIs(s.BlockChain())...)
+	if s.protocolManager != nil {
+		apis = append(apis, rpc.API{
+			Namespace: "aqua",
+			Version:   "1.0",
+			Service:   downloader.NewPublicDownloaderAPI(s.protocolManager.downloader, s.eventMux),
+			Public:    true,
+		})
+	}
 
 	// Append all the local APIs and return
 	return append(apis, []rpc.API{
@@ -295,11 +303,6 @@ func (s *AquaChain) APIs() []rpc.API {
 			Namespace: "aqua",
 			Version:   "1.0",
 			Service:   NewPublicMinerAPI(s),
-			Public:    true,
-		}, {
-			Namespace: "aqua",
-			Version:   "1.0",
-			Service:   downloader.NewPublicDownloaderAPI(s.protocolManager.downloader, s.eventMux),
 			Public:    true,
 		}, {
 			Namespace: "miner",
@@ -349,7 +352,11 @@ func (s *AquaChain) Aquabase() (eb common.Address, err error) {
 	if aquabase != (common.Address{}) {
 		return aquabase, nil
 	}
-	if wallets := s.AccountManager().Wallets(); len(wallets) > 0 {
+	am := s.AccountManager()
+	if am == nil {
+		return common.Address{}, fmt.Errorf("aquabase must be explicitly specified (no-keybase mode)")
+	}
+	if wallets := am.Wallets(); len(wallets) > 0 {
 		if accounts := wallets[0].Accounts(); len(accounts) > 0 {
 			aquabase := accounts[0].Address
 
@@ -408,6 +415,9 @@ func (s *AquaChain) Downloader() *downloader.Downloader { return s.protocolManag
 // Protocols implements node.Service, returning all the currently configured
 // network protocols to start.
 func (s *AquaChain) Protocols() []p2p.Protocol {
+	if s.protocolManager == nil {
+		return nil
+	}
 	return s.protocolManager.SubProtocols
 }
 
@@ -423,8 +433,9 @@ func (s *AquaChain) Start(srvr *p2p.Server) error {
 	// Figure out a max peers count based on the server limits
 	maxPeers := srvr.MaxPeers
 	// Start the networking layer
-	s.protocolManager.Start(maxPeers)
-
+	if s.protocolManager != nil {
+		s.protocolManager.Start(maxPeers)
+	}
 	return nil
 }
 
@@ -436,7 +447,9 @@ func (s *AquaChain) Stop() error {
 	}
 	s.bloomIndexer.Close()
 	s.blockchain.Stop()
-	s.protocolManager.Stop()
+	if s.protocolManager != nil {
+		s.protocolManager.Stop()
+	}
 	s.txPool.Stop()
 	s.miner.Stop()
 	s.eventMux.Stop()

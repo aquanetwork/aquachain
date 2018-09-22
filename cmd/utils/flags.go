@@ -437,6 +437,11 @@ var (
 		Usage: "Network listening port",
 		Value: 21303,
 	}
+	ListenAddrFlag = cli.StringFlag{
+		Name:  "addr",
+		Usage: "Network listening addr (default all interfaces)",
+		Value: "",
+	}
 	BootnodesFlag = cli.StringFlag{
 		Name:  "bootnodes",
 		Usage: "Comma separated enode URLs for P2P discovery bootstrap (set v4+v5 instead for light servers)",
@@ -472,6 +477,10 @@ var (
 	OfflineFlag = cli.BoolFlag{
 		Name:  "offline",
 		Usage: "Disables peer discovery and sets nat=none, still listens on tcp/udp port",
+	}
+	NoKeysFlag = cli.BoolFlag{
+		Name:  "nokeys",
+		Usage: "Disables keystore",
 	}
 	DiscoveryV5Flag = cli.BoolFlag{
 		Name:  "v5disc",
@@ -626,9 +635,15 @@ func setBootstrapNodesV5(ctx *cli.Context, cfg *p2p.Config) {
 // setListenAddress creates a TCP listening address string from set command
 // line flags.
 func setListenAddress(ctx *cli.Context, cfg *p2p.Config) {
-	if ctx.GlobalIsSet(ListenPortFlag.Name) {
-		cfg.ListenAddr = fmt.Sprintf(":%d", ctx.GlobalInt(ListenPortFlag.Name))
+	listenaddr := ""
+	if !ctx.GlobalIsSet(ListenAddrFlag.Name) && ctx.GlobalIsSet(ListenPortFlag.Name) {
+		listenaddr = fmt.Sprintf(":%d", ctx.GlobalInt(ListenPortFlag.Name))
 	}
+	if ctx.GlobalIsSet(ListenAddrFlag.Name) {
+		listenaddr = ctx.GlobalString(ListenAddrFlag.Name)
+	}
+
+	cfg.ListenAddr = listenaddr
 }
 
 // setNAT creates a port mapper from command line flags.
@@ -810,6 +825,7 @@ func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config) {
 
 	if ctx.GlobalIsSet(OfflineFlag.Name) {
 		cfg.NoDiscovery = true
+		cfg.Offline = true
 	}
 
 	if ctx.GlobalIsSet(NoDiscoverFlag.Name) {
@@ -865,6 +881,12 @@ func SetNodeConfig(ctx *cli.Context, cfg *node.Config) {
 
 	if ctx.GlobalIsSet(KeyStoreDirFlag.Name) {
 		cfg.KeyStoreDir = ctx.GlobalString(KeyStoreDirFlag.Name)
+		if cfg.KeyStoreDir == "" {
+			cfg.NoKeys = true
+		}
+	}
+	if ctx.GlobalIsSet(NoKeysFlag.Name) {
+		cfg.NoKeys = ctx.GlobalBool(NoKeysFlag.Name)
 	}
 	if ctx.GlobalIsSet(UseUSBFlag.Name) {
 		cfg.UseUSB = ctx.GlobalBool(UseUSBFlag.Name)
@@ -989,8 +1011,11 @@ func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 	checkExclusive(ctx, FastSyncFlag, SyncModeFlag)
 	// checkExclusive(ctx, LightServFlag, LightModeFlag)
 	// checkExclusive(ctx, LightServFlag, SyncModeFlag, "light")
-
-	ks := stack.AccountManager().Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
+	am := stack.AccountManager()
+	var ks *keystore.KeyStore
+	if am != nil {
+		ks = am.Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
+	}
 	setAquabase(ctx, ks, cfg)
 	setGPO(ctx, &cfg.GPO)
 	setTxPool(ctx, &cfg.TxPool)
@@ -1001,6 +1026,8 @@ func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 		cfg.SyncMode = *GlobalTextMarshaler(ctx, SyncModeFlag.Name).(*downloader.SyncMode)
 	case ctx.GlobalBool(FastSyncFlag.Name):
 		cfg.SyncMode = downloader.FastSync
+	case ctx.GlobalBool(OfflineFlag.Name):
+		cfg.SyncMode = downloader.OfflineSync
 	}
 
 	if ctx.GlobalIsSet(NetworkIdFlag.Name) {

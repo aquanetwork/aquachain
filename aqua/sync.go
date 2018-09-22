@@ -133,6 +133,9 @@ func (pm *ProtocolManager) txsyncLoop() {
 // downloading hashes and blocks as well as handling the announcement handler.
 func (pm *ProtocolManager) syncer() {
 	// Start and ensure cleanup of sync mechanisms
+	if pm.downloader == nil {
+		return
+	}
 	pm.fetcher.Start()
 	defer pm.fetcher.Stop()
 	defer pm.downloader.Terminate()
