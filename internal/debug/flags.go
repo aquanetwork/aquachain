@@ -133,6 +133,7 @@ func Setup(ctx *cli.Context) error {
 		// from the registry into expvar, and execute regular expvar handler.
 		exp.Exp(metrics.DefaultRegistry)
 
+		runtime.SetMutexProfileFraction(10)
 		address := fmt.Sprintf("%s:%d", ctx.GlobalString(pprofAddrFlag.Name), ctx.GlobalInt(pprofPortFlag.Name))
 		go func() {
 			log.Info("Starting pprof server", "addr", fmt.Sprintf("http://%s/debug/pprof", address))
