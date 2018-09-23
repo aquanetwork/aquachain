@@ -21,6 +21,7 @@ import (
 	"errors"
 	"math/big"
 	"math/rand"
+	"sync"
 	"time"
 
 	"gitlab.com/aquachain/aquachain/common"
@@ -125,6 +126,7 @@ type Fetcher struct {
 	fetching   map[common.Hash]*announce   // Announced blocks, currently fetching
 	fetched    map[common.Hash][]*announce // Blocks with headers fetched, scheduled for body retrieval
 	completing map[common.Hash]*announce   // Blocks with headers, currently body-completing
+	mu         *sync.Mutex
 
 	// Block cache
 	queue  *prque.Prque            // Queue containing the import operations (block number sorted)
@@ -173,6 +175,7 @@ func New(hashfunc func(*big.Int) params.HeaderVersion, getBlock blockRetrievalFn
 		chainHeight:    chainHeight,
 		insertChain:    insertChain,
 		dropPeer:       dropPeer,
+		mu:             new(sync.Mutex),
 	}
 }
 
@@ -347,8 +350,10 @@ func (f *Fetcher) loop() {
 			if _, ok := f.completing[notification.hash]; ok {
 				break
 			}
+			f.mu.Lock()
 			f.announces[notification.origin] = count
 			f.announced[notification.hash] = append(f.announced[notification.hash], notification)
+			f.mu.Unlock()
 			if f.announceChangeHook != nil && len(f.announced[notification.hash]) == 1 {
 				f.announceChangeHook(notification.hash, true)
 			}
@@ -413,8 +418,10 @@ func (f *Fetcher) loop() {
 
 				// If the block still didn't arrive, queue for completion
 				if f.getBlock(hash) == nil {
+					f.mu.Lock()
 					request[announce.origin] = append(request[announce.origin], hash)
 					f.completing[hash] = announce
+					f.mu.Unlock()
 				}
 			}
 			// Send out all block body requests
@@ -472,7 +479,9 @@ func (f *Fetcher) loop() {
 							block.ReceivedAt = task.time
 
 							complete = append(complete, block)
+							f.mu.Lock()
 							f.completing[hash] = announce
+							f.mu.Unlock()
 							continue
 						}
 						// Otherwise add to the list of blocks needing completion
@@ -498,7 +507,9 @@ func (f *Fetcher) loop() {
 				if _, ok := f.completing[hash]; ok {
 					continue
 				}
+				f.mu.Lock()
 				f.fetched[hash] = append(f.fetched[hash], announce)
+				f.mu.Unlock()
 				if len(f.fetched) == 1 {
 					f.rescheduleComplete(completeTimer)
 				}
