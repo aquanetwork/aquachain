@@ -257,6 +257,7 @@ func (f *Fetcher) FilterHeaders(peer string, headers []*types.Header, time time.
 // the fetcher, returning those that should be handled differently.
 func (f *Fetcher) FilterBodies(peer string, transactions [][]*types.Transaction, uncles [][]*types.Header, time time.Time) ([][]*types.Transaction, [][]*types.Header) {
 	log.Trace("Filtering bodies", "peer", peer, "txs", len(transactions), "uncles", len(uncles))
+	defer log.Trace("Done filtering bodies", "peer", peer, "txs", len(transactions), "uncles", len(uncles))
 
 	// Send the filter channel to the fetcher
 	filter := make(chan *bodyFilterTask)
@@ -350,10 +351,12 @@ func (f *Fetcher) loop() {
 			if _, ok := f.completing[notification.hash]; ok {
 				break
 			}
+			log.Trace("block announced, getting lock")
 			f.mu.Lock()
 			f.announces[notification.origin] = count
 			f.announced[notification.hash] = append(f.announced[notification.hash], notification)
 			f.mu.Unlock()
+			log.Trace("block announced, unlocked")
 			if f.announceChangeHook != nil && len(f.announced[notification.hash]) == 1 {
 				f.announceChangeHook(notification.hash, true)
 			}
@@ -418,10 +421,12 @@ func (f *Fetcher) loop() {
 
 				// If the block still didn't arrive, queue for completion
 				if f.getBlock(hash) == nil {
+					log.Trace("timer ran out, getting lock")
 					f.mu.Lock()
 					request[announce.origin] = append(request[announce.origin], hash)
 					f.completing[hash] = announce
 					f.mu.Unlock()
+					log.Trace("timer ran out, released lock")
 				}
 			}
 			// Send out all block body requests
@@ -479,9 +484,11 @@ func (f *Fetcher) loop() {
 							block.ReceivedAt = task.time
 
 							complete = append(complete, block)
+							log.Trace("getting lock")
 							f.mu.Lock()
 							f.completing[hash] = announce
 							f.mu.Unlock()
+							log.Trace("lock done")
 							continue
 						}
 						// Otherwise add to the list of blocks needing completion
@@ -507,9 +514,12 @@ func (f *Fetcher) loop() {
 				if _, ok := f.completing[hash]; ok {
 					continue
 				}
+
+				log.Trace("body getting lock")
 				f.mu.Lock()
 				f.fetched[hash] = append(f.fetched[hash], announce)
 				f.mu.Unlock()
+				log.Trace("body released lock")
 				if len(f.fetched) == 1 {
 					f.rescheduleComplete(completeTimer)
 				}
