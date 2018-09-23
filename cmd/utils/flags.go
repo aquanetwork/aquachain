@@ -635,14 +635,13 @@ func setBootstrapNodesV5(ctx *cli.Context, cfg *p2p.Config) {
 // setListenAddress creates a TCP listening address string from set command
 // line flags.
 func setListenAddress(ctx *cli.Context, cfg *p2p.Config) {
-	listenaddr := ""
+	listenaddr := ":21303"
 	if !ctx.GlobalIsSet(ListenAddrFlag.Name) && ctx.GlobalIsSet(ListenPortFlag.Name) {
 		listenaddr = fmt.Sprintf(":%d", ctx.GlobalInt(ListenPortFlag.Name))
 	}
 	if ctx.GlobalIsSet(ListenAddrFlag.Name) {
 		listenaddr = ctx.GlobalString(ListenAddrFlag.Name)
 	}
-
 	cfg.ListenAddr = listenaddr
 }
 
