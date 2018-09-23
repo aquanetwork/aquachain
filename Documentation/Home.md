@@ -1,0 +1,1 @@
+Use the sidebar or click [Here](https://github.com/aquanetwork/aquachain/wiki/Basics)
