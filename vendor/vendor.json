@@ -15,10 +15,10 @@
 			"revisionTime": "2018-07-18T17:25:41Z"
 		},
 		{
-			"checksumSHA1": "yhw0ffGLzAQ2NEhhfZww02b60iw=",
+			"checksumSHA1": "8msTy6M8cODIrfgf9Itely2Tzdk=",
 			"path": "github.com/btcsuite/btcd/btcec",
-			"revision": "79e00513b1011888b1e675157ab89f527f901cae",
-			"revisionTime": "2018-08-24T06:44:22Z"
+			"revision": "2a560b2036bee5e3679ec2133eb6520b2f195213",
+			"revisionTime": "2018-09-24T02:12:09Z"
 		},
 		{
 			"checksumSHA1": "cDMtzKmdTx4CcIpP4broa+16X9g=",
