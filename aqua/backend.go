@@ -391,7 +391,10 @@ func (s *AquaChain) StartMining(local bool) error {
 		// mechanism introduced to speed sync times. CPU mining on mainnet is ludicrous
 		// so noone will ever hit this path, whereas marking sync done on CPU mining
 		// will ensure that private networks work in single miner mode too.
-		atomic.StoreUint32(&s.protocolManager.acceptTxs, 1)
+
+		if s.protocolManager != nil { // offline mode
+			atomic.StoreUint32(&s.protocolManager.acceptTxs, 1)
+		}
 	}
 	go s.miner.Start(eb)
 	return nil

@@ -220,6 +220,9 @@ func NewPrivateAccountAPI(b Backend, nonceLock *AddrLocker) *PrivateAccountAPI {
 // ListAccounts will return a list of addresses for accounts this node manages.
 func (s *PrivateAccountAPI) ListAccounts() []common.Address {
 	addresses := make([]common.Address, 0) // return [] instead of nil if empty
+	if s.am == nil {
+		return []common.Address{}
+	}
 	for _, wallet := range s.am.Wallets() {
 		for _, account := range wallet.Accounts() {
 			addresses = append(addresses, account.Address)
@@ -240,6 +243,9 @@ type rawWallet struct {
 // ListWallets will return a list of wallets this node manages.
 func (s *PrivateAccountAPI) ListWallets() []rawWallet {
 	wallets := make([]rawWallet, 0) // return [] instead of nil if empty
+	if s.am == nil {
+		return []rawWallet{}
+	}
 	for _, wallet := range s.am.Wallets() {
 		status, failure := wallet.Status()
 
@@ -261,6 +267,9 @@ func (s *PrivateAccountAPI) ListWallets() []rawWallet {
 // the method may return an extra challenge requiring a second open (e.g. the
 // Trezor PIN matrix challenge).
 func (s *PrivateAccountAPI) OpenWallet(url string, passphrase *string) error {
+	if s.am == nil {
+		return fmt.Errorf("keystore disabled")
+	}
 	wallet, err := s.am.Wallet(url)
 	if err != nil {
 		return err
@@ -275,6 +284,9 @@ func (s *PrivateAccountAPI) OpenWallet(url string, passphrase *string) error {
 // DeriveAccount requests a HD wallet to derive a new account, optionally pinning
 // it for later reuse.
 func (s *PrivateAccountAPI) DeriveAccount(url string, path string, pin *bool) (accounts.Account, error) {
+	if s.am == nil {
+		return accounts.Account{}, fmt.Errorf("keystore disabled")
+	}
 	wallet, err := s.am.Wallet(url)
 	if err != nil {
 		return accounts.Account{}, err
@@ -291,6 +303,9 @@ func (s *PrivateAccountAPI) DeriveAccount(url string, path string, pin *bool) (a
 
 // NewAccount will create a new account and returns the address for the new account.
 func (s *PrivateAccountAPI) NewAccount(password string) (common.Address, error) {
+	if s.am == nil {
+		return common.Address{}, fmt.Errorf("keystore disabled")
+	}
 	acc, err := fetchKeystore(s.am).NewAccount(password)
 	if err == nil {
 		return acc.Address, nil
