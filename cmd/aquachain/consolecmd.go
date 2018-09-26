@@ -24,15 +24,21 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/aerth/tgun"
 	"gitlab.com/aquachain/aquachain/cmd/utils"
 	"gitlab.com/aquachain/aquachain/node"
 	"gitlab.com/aquachain/aquachain/opt/console"
+	"gitlab.com/aquachain/aquachain/params"
 	"gitlab.com/aquachain/aquachain/rpc"
 	"gopkg.in/urfave/cli.v1"
 )
 
 var (
-	consoleFlags = []cli.Flag{utils.JSpathFlag, utils.ExecFlag, utils.PreloadJSFlag}
+	consoleFlags = []cli.Flag{utils.JSpathFlag, utils.ExecFlag, utils.PreloadJSFlag, &cli.StringFlag{
+		Name:  "socks",
+		Value: "",
+		Usage: "",
+	}}
 
 	consoleCommand = cli.Command{
 		Action:   utils.MigrateFlags(localConsole),
@@ -141,7 +147,8 @@ func remoteConsole(ctx *cli.Context) error {
 		}
 		endpoint = fmt.Sprintf("%s/aquachain.ipc", path)
 	}
-	client, err := dialRPC(endpoint)
+	socks := ctx.GlobalString("socks")
+	client, err := dialRPC(endpoint, socks)
 	if err != nil {
 		utils.Fatalf("Unable to attach to remote aquachain: %v", err)
 	}
@@ -173,13 +180,18 @@ func remoteConsole(ctx *cli.Context) error {
 // dialRPC returns a RPC client which connects to the given endpoint.
 // The check for empty endpoint implements the defaulting logic
 // for "aquachain attach" and "aquachain monitor" with no argument.
-func dialRPC(endpoint string) (*rpc.Client, error) {
+func dialRPC(endpoint string, socks string) (*rpc.Client, error) {
 	if endpoint == "" {
 		endpoint = node.DefaultIPCEndpoint(clientIdentifier)
-	} else if strings.HasPrefix(endpoint, "rpc:") || strings.HasPrefix(endpoint, "ipc:") {
-		// Backwards compatibility with aquachain < 1.5 which required
-		// these prefixes.
-		endpoint = endpoint[4:]
+	}
+	if strings.HasPrefix(endpoint, "http") {
+		client := &tgun.Client{
+			Proxy: socks,
+		}
+		httpclient, err := client.HTTPClient()
+		if err == nil {
+			return rpc.DialHTTPCustom(endpoint, httpclient, map[string]string{"User-Agent": "Aquachain/" + params.Version})
+		}
 	}
 	return rpc.Dial(endpoint)
 }

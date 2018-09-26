@@ -45,7 +45,7 @@ const (
 	// Timeouts
 	tcpKeepAliveInterval = 30 * time.Second
 	defaultDialTimeout   = 30 * time.Second // used when dialing if the context has no deadline
-	defaultWriteTimeout  = 10 * time.Second // used for calls if the context has no deadline
+	defaultWriteTimeout  = 30 * time.Second // used for calls if the context has no deadline
 	subscribeTimeout     = 5 * time.Second  // overall timeout aqua_subscribe, rpc_modules calls
 )
 
@@ -214,7 +214,7 @@ func (c *Client) nextID() json.RawMessage {
 // APIs that are available on the server.
 func (c *Client) SupportedModules() (map[string]string, error) {
 	var result map[string]string
-	ctx, cancel := context.WithTimeout(context.Background(), subscribeTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), defaultDialTimeout)
 	defer cancel()
 	err := c.CallContext(ctx, &result, "rpc_modules")
 	return result, err

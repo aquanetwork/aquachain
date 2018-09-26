@@ -75,7 +75,9 @@ func monitor(ctx *cli.Context) error {
 	)
 	// Attach to an AquaChain node over IPC or RPC
 	endpoint := ctx.String(monitorCommandAttachFlag.Name)
-	if client, err = dialRPC(endpoint); err != nil {
+
+	socks := ctx.GlobalString("socks")
+	if client, err = dialRPC(endpoint, socks); err != nil {
 		utils.Fatalf("Unable to attach to aquachain node: %v", err)
 	}
 	defer client.Close()

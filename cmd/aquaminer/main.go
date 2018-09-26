@@ -25,7 +25,7 @@ import (
 	"gitlab.com/aquachain/aquachain/rpc"
 )
 
-const version = "aquaminer version 0.9.1x (https://gitlab.com/aquachain/aquachain)"
+const version = "0.9.3"
 
 // EmptyMixDigest is sent when submitting work since HF5
 var EmptyMixDigest = common.BytesToHash(make([]byte, common.HashLength))
@@ -68,7 +68,8 @@ type worker struct {
 }
 
 func main() {
-	fmt.Println(version)
+	fmt.Println("aquaminer", version)
+	fmt.Println("source code: https://gitlab.com/aquachain/aquachain/blob/master/cmd/aquaminer/main.go")
 	flag.Parse()
 	if *showVersion {
 		os.Exit(0)
@@ -120,7 +121,7 @@ func main() {
 		}
 
 		// make rpc client
-		rpcclient, err := rpc.DialHTTPWithClient(*farm, httpClient)
+		rpcclient, err := rpc.DialHTTPCustom(*farm, httpClient, map[string]string{"User-Agent": "aquaminer/" + version})
 		if err != nil {
 			utils.Fatalf("dial err: %v", err)
 		}

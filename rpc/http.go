@@ -68,15 +68,28 @@ func (hc *httpConn) Close() error {
 	return nil
 }
 
+// DialHTTPCustom creates a new RPC client that connects to an RPC server over HTTP
+// using the provided HTTP Client and sets headers
+func DialHTTPCustom(endpoint string, client *http.Client, headers map[string]string) (*Client, error) {
+	return dialHTTPWithClient(endpoint, client, headers)
+}
+
 // DialHTTPWithClient creates a new RPC client that connects to an RPC server over HTTP
 // using the provided HTTP Client.
 func DialHTTPWithClient(endpoint string, client *http.Client) (*Client, error) {
+	return dialHTTPWithClient(endpoint, client, nil)
+}
+func dialHTTPWithClient(endpoint string, client *http.Client, headers map[string]string) (*Client, error) {
 	req, err := http.NewRequest(http.MethodPost, endpoint, nil)
 	if err != nil {
 		return nil, err
 	}
 	req.Header.Set("Content-Type", contentType)
 	req.Header.Set("Accept", contentType)
+
+	for i, v := range headers {
+		req.Header.Set(i, v)
+	}
 
 	initctx := context.Background()
 	return newClient(initctx, func(context.Context) (net.Conn, error) {
