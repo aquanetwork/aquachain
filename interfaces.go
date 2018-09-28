@@ -183,10 +183,10 @@ type GasPricer interface {
 // transfers) initiated by the user. The PendingNonceAt operation is a good way to
 // retrieve the next available transaction nonce for a specific account.
 type PendingStateReader interface {
-	PendingBalanceAt(ctx context.Context, account common.Address) (*big.Int, error)
-	PendingStorageAt(ctx context.Context, account common.Address, key common.Hash) ([]byte, error)
-	PendingCodeAt(ctx context.Context, account common.Address) ([]byte, error)
-	PendingNonceAt(ctx context.Context, account common.Address) (uint64, error)
+	PendingBalance(ctx context.Context, account common.Address) (*big.Int, error)
+	PendingStorage(ctx context.Context, account common.Address, key common.Hash) ([]byte, error)
+	PendingCode(ctx context.Context, account common.Address) ([]byte, error)
+	PendingNonce(ctx context.Context, account common.Address) (uint64, error)
 	PendingTransactionCount(ctx context.Context) (uint, error)
 }
 
