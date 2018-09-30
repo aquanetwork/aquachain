@@ -22,7 +22,7 @@ import (
 	"gitlab.com/aquachain/aquachain"
 	"gitlab.com/aquachain/aquachain/common/hexutil"
 	whisper "gitlab.com/aquachain/aquachain/opt/whisper/whisperv6"
-	"gitlab.com/aquachain/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/rpc/rpcclient"
 )
 
 // Client defines typed wrappers for the Whisper v6 RPC API.

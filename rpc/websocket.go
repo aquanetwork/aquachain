@@ -20,12 +20,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"os"
-	"strings"
 	"gitlab.com/aquachain/aquachain/common/log"
 	"golang.org/x/net/websocket"
 	"gopkg.in/fatih/set.v0"
+	"net/http"
+	"os"
+	"strings"
 )
 
 // websocketJSONCodec is a custom JSON codec with payload size enforcement and

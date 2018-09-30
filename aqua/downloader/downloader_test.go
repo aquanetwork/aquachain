@@ -46,6 +46,14 @@ func init() {
 	MaxForkAncestry = uint64(10000)
 	blockCacheItems = 1024
 	fsHeaderContCheck = 500 * time.Millisecond
+
+	go func() {
+		t1 := time.Now()
+		for {
+			fmt.Printf("(UTC) %s - simulated downloader test running for %s...\n", time.Now().UTC(), time.Since(t1))
+			<-time.After(time.Second * 30)
+		}
+	}()
 }
 
 // downloadTester is a test simulator for mocking out local block chain.

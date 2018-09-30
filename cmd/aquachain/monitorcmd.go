@@ -28,7 +28,7 @@ import (
 	"github.com/gizak/termui"
 	"gitlab.com/aquachain/aquachain/cmd/utils"
 	"gitlab.com/aquachain/aquachain/node"
-	"gitlab.com/aquachain/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/rpc/rpcclient"
 	"gopkg.in/urfave/cli.v1"
 )
 

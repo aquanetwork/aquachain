@@ -29,6 +29,7 @@ import (
 	"gitlab.com/aquachain/aquachain/p2p"
 	"gitlab.com/aquachain/aquachain/p2p/discover"
 	"gitlab.com/aquachain/aquachain/rpc"
+	rpcclient "gitlab.com/aquachain/aquachain/rpc/rpcclient"
 )
 
 // SimAdapter is a NodeAdapter which creates in-memory simulation nodes and
@@ -118,7 +119,7 @@ func (s *SimAdapter) Dial(dest *discover.Node) (conn net.Conn, err error) {
 
 // DialRPC implements the RPCDialer interface by creating an in-memory RPC
 // client of the given node
-func (s *SimAdapter) DialRPC(id discover.NodeID) (*rpc.Client, error) {
+func (s *SimAdapter) DialRPC(id discover.NodeID) (*rpcclient.Client, error) {
 	node, ok := s.GetNode(id)
 	if !ok {
 		return nil, fmt.Errorf("unknown node: %s", id)
@@ -127,7 +128,7 @@ func (s *SimAdapter) DialRPC(id discover.NodeID) (*rpc.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return rpc.DialInProc(handler), nil
+	return rpcclient.DialInProc(handler), nil
 }
 
 // GetNode returns the node with the given ID if it exists
@@ -148,7 +149,7 @@ type SimNode struct {
 	adapter      *SimAdapter
 	node         *node.Node
 	running      map[string]node.Service
-	client       *rpc.Client
+	client       *rpcclient.Client
 	registerOnce sync.Once
 }
 
@@ -162,9 +163,9 @@ func (self *SimNode) Node() *discover.Node {
 	return discover.NewNode(self.ID, net.IP{127, 0, 0, 1}, 30303, 30303)
 }
 
-// Client returns an rpc.Client which can be used to communicate with the
+// Client returns an rpcclient.Client which can be used to communicate with the
 // underlying services (it is set once the node has started)
-func (self *SimNode) Client() (*rpc.Client, error) {
+func (self *SimNode) Client() (*rpcclient.Client, error) {
 	self.lock.RLock()
 	defer self.lock.RUnlock()
 	if self.client == nil {
@@ -259,7 +260,7 @@ func (self *SimNode) Start(snapshots map[string][]byte) error {
 	}
 
 	self.lock.Lock()
-	self.client = rpc.DialInProc(handler)
+	self.client = rpcclient.DialInProc(handler)
 	self.lock.Unlock()
 
 	return nil

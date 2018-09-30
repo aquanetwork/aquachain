@@ -33,7 +33,7 @@ import (
 	"github.com/robertkrimen/otto"
 	"gitlab.com/aquachain/aquachain/internal/jsre"
 	"gitlab.com/aquachain/aquachain/internal/web3ext"
-	"gitlab.com/aquachain/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/rpc/rpcclient"
 )
 
 var (

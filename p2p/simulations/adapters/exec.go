@@ -39,7 +39,8 @@ import (
 	"gitlab.com/aquachain/aquachain/node"
 	"gitlab.com/aquachain/aquachain/p2p"
 	"gitlab.com/aquachain/aquachain/p2p/discover"
-	"gitlab.com/aquachain/aquachain/rpc"
+	aquarpc "gitlab.com/aquachain/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/rpc/rpcclient"
 	"golang.org/x/net/websocket"
 )
 
@@ -446,8 +447,8 @@ type snapshotService struct {
 	services map[string]node.Service
 }
 
-func (s *snapshotService) APIs() []rpc.API {
-	return []rpc.API{{
+func (s *snapshotService) APIs() []aquarpc.API {
+	return []aquarpc.API{{
 		Namespace: "simulation",
 		Version:   "1.0",
 		Service:   SnapshotAPI{s.services},

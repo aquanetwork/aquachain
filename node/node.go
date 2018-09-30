@@ -34,6 +34,7 @@ import (
 	"gitlab.com/aquachain/aquachain/internal/debug"
 	"gitlab.com/aquachain/aquachain/p2p"
 	"gitlab.com/aquachain/aquachain/rpc"
+	rpcclient "gitlab.com/aquachain/aquachain/rpc/rpcclient"
 )
 
 // Node is a container on which services can be registered.
@@ -560,14 +561,15 @@ func (n *Node) Restart() error {
 }
 
 // Attach creates an RPC client attached to an in-process API handler.
-func (n *Node) Attach() (*rpc.Client, error) {
+func (n *Node) Attach() (*rpcclient.Client, error) {
+	n.log.Trace("Attaching new client")
 	n.lock.RLock()
 	defer n.lock.RUnlock()
 
 	if n.server == nil {
 		return nil, ErrNodeStopped
 	}
-	return rpc.DialInProc(n.inprocHandler), nil
+	return rpcclient.DialInProc(n.inprocHandler), nil
 }
 
 // RPCHandler returns the in-process RPC request handler.

@@ -29,7 +29,7 @@ import (
 	"gitlab.com/aquachain/aquachain/node"
 	"gitlab.com/aquachain/aquachain/opt/console"
 	"gitlab.com/aquachain/aquachain/params"
-	"gitlab.com/aquachain/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/rpc/rpcclient"
 	"gopkg.in/urfave/cli.v1"
 )
 
@@ -181,6 +181,10 @@ func remoteConsole(ctx *cli.Context) error {
 // The check for empty endpoint implements the defaulting logic
 // for "aquachain attach" and "aquachain monitor" with no argument.
 func dialRPC(endpoint string, socks string) (*rpc.Client, error) {
+	/* log.Info("Dialing RPC server", "endpoint", endpoint)
+	if socks != "" {
+		log.Info("+SOCKS5")
+	} */
 	if endpoint == "" {
 		endpoint = node.DefaultIPCEndpoint(clientIdentifier)
 	}

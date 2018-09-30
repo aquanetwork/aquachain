@@ -29,7 +29,7 @@ import (
 var seed int64
 
 // InitSingleTest should be called in the beginning of every
-// test, which uses RNG, in order to make the tests
+// test, which uses math/rand RNG, in order to make the tests
 // reproduciblity independent of their sequence.
 func InitSingleTest() {
 	seed = time.Now().Unix()
