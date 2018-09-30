@@ -1,4 +1,4 @@
-// Copyright 2015 The aquachain Authors
+// Copyright 2016 The aquachain Authors
 // This file is part of the aquachain library.
 //
 // The aquachain library is free software: you can redistribute it and/or modify
@@ -14,15 +14,22 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
 
-// +build windows
-
 package rpc
 
 import (
-	"gopkg.in/natefinch/npipe.v2"
+	"context"
+	"net"
+
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
-// ipcListen will create a named pipe on the given endpoint.
-func ipcListen(endpoint string) (net.Listener, error) {
-	return npipe.Listen(endpoint)
+// NewInProcClient attaches an in-process connection to the given RPC server.
+func DialInProc(handler *rpc.Server) *Client {
+	initctx := context.Background()
+	c, _ := newClient(initctx, func(context.Context) (net.Conn, error) {
+		p1, p2 := net.Pipe()
+		go handler.ServeCodec(rpc.NewJSONCodec(p1), rpc.OptionMethodInvocation|rpc.OptionSubscriptions)
+		return p2, nil
+	})
+	return c
 }

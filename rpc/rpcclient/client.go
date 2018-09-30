@@ -41,6 +41,13 @@ var (
 	ErrSubscriptionQueueOverflow = errors.New("subscription queue overflow")
 )
 
+var (
+	// ErrNotificationsUnsupported is returned when the connection doesn't support notifications
+	ErrNotificationsUnsupported = errors.New("notifications not supported")
+	// ErrNotificationNotFound is returned when the notification for the given id is not found
+	ErrSubscriptionNotFound = errors.New("subscription not found")
+)
+
 const (
 	// Timeouts
 	tcpKeepAliveInterval = 30 * time.Second

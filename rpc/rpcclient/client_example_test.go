@@ -22,7 +22,7 @@ import (
 	"math/big"
 	"time"
 
-	"gitlab.com/aquachain/aquachain/rpc"
+	"gitlab.com/aquachain/aquachain/rpc/rpcclient"
 )
 
 // In this example, our client whishes to track the latest 'block number'

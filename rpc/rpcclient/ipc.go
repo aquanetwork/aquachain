@@ -14,15 +14,21 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
 
-// +build windows
-
 package rpc
 
 import (
-	"gopkg.in/natefinch/npipe.v2"
+	"context"
+	"net"
 )
 
-// ipcListen will create a named pipe on the given endpoint.
-func ipcListen(endpoint string) (net.Listener, error) {
-	return npipe.Listen(endpoint)
+// DialIPC create a new IPC client that connects to the given endpoint. On Unix it assumes
+// the endpoint is the full path to a unix socket, and Windows the endpoint is an
+// identifier for a named pipe.
+//
+// The context is used for the initial connection establishment. It does not
+// affect subsequent interactions with the client.
+func DialIPC(ctx context.Context, endpoint string) (*Client, error) {
+	return newClient(ctx, func(ctx context.Context) (net.Conn, error) {
+		return newIPCConnection(ctx, endpoint)
+	})
 }

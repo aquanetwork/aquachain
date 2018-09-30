@@ -14,15 +14,16 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
 
-// +build windows
+// +build darwin dragonfly freebsd linux nacl netbsd openbsd solaris
 
 package rpc
 
 import (
-	"gopkg.in/natefinch/npipe.v2"
+	"context"
+	"net"
 )
 
-// ipcListen will create a named pipe on the given endpoint.
-func ipcListen(endpoint string) (net.Listener, error) {
-	return npipe.Listen(endpoint)
+// newIPCConnection will connect to a Unix socket on the given endpoint.
+func newIPCConnection(ctx context.Context, endpoint string) (net.Conn, error) {
+	return dialContext(ctx, "unix", endpoint)
 }

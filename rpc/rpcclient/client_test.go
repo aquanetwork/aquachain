@@ -32,6 +32,7 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
 func TestClientRequest(t *testing.T) {
@@ -420,7 +421,7 @@ func TestClientHTTP(t *testing.T) {
 }
 
 func TestClientReconnect(t *testing.T) {
-	startServer := func(addr string) (*Server, net.Listener) {
+	startServer := func(addr string) (*rpc.Server, net.Listener) {
 		srv := newTestServer("service", new(Service))
 		l, err := net.Listen("tcp", addr)
 		if err != nil {
@@ -485,15 +486,15 @@ func TestClientReconnect(t *testing.T) {
 	}
 }
 
-func newTestServer(serviceName string, service interface{}) *Server {
-	server := NewServer()
+func newTestServer(serviceName string, service interface{}) *rpc.Server {
+	server := rpc.NewServer()
 	if err := server.RegisterName(serviceName, service); err != nil {
 		panic(err)
 	}
 	return server
 }
 
-func httpTestClient(srv *Server, transport string, fl *flakeyListener) (*Client, *httptest.Server) {
+func httpTestClient(srv *rpc.Server, transport string, fl *flakeyListener) (*Client, *httptest.Server) {
 	// Create the HTTP server.
 	var hs *httptest.Server
 	switch transport {
@@ -518,7 +519,7 @@ func httpTestClient(srv *Server, transport string, fl *flakeyListener) (*Client,
 	return client, hs
 }
 
-func ipcTestClient(srv *Server, fl *flakeyListener) (*Client, net.Listener) {
+func ipcTestClient(srv *rpc.Server, fl *flakeyListener) (*Client, net.Listener) {
 	// Listen on a random endpoint.
 	endpoint := fmt.Sprintf("aquachain-test-ipc-%d-%d", os.Getpid(), rand.Int63())
 	if runtime.GOOS == "windows" {

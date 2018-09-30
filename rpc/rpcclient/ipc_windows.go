@@ -1,4 +1,4 @@
-// Copyright 2016 The aquachain Authors
+// Copyright 2015 The aquachain Authors
 // This file is part of the aquachain library.
 //
 // The aquachain library is free software: you can redistribute it and/or modify
@@ -14,20 +14,30 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the aquachain library. If not, see <http://www.gnu.org/licenses/>.
 
+// +build windows
+
 package rpc
 
 import (
 	"context"
 	"net"
+	"time"
+
+	"gopkg.in/natefinch/npipe.v2"
 )
 
-// NewInProcClient attaches an in-process connection to the given RPC server.
-func DialInProc(handler *Server) *Client {
-	initctx := context.Background()
-	c, _ := newClient(initctx, func(context.Context) (net.Conn, error) {
-		p1, p2 := net.Pipe()
-		go handler.ServeCodec(NewJSONCodec(p1), OptionMethodInvocation|OptionSubscriptions)
-		return p2, nil
-	})
-	return c
+// This is used if the dialing context has no deadline. It is much smaller than the
+// defaultDialTimeout because named pipes are local and there is no need to wait so long.
+const defaultPipeDialTimeout = 2 * time.Second
+
+// newIPCConnection will connect to a named pipe with the given endpoint as name.
+func newIPCConnection(ctx context.Context, endpoint string) (net.Conn, error) {
+	timeout := defaultPipeDialTimeout
+	if deadline, ok := ctx.Deadline(); ok {
+		timeout = deadline.Sub(time.Now())
+		if timeout < 0 {
+			timeout = 0
+		}
+	}
+	return npipe.DialTimeout(endpoint, timeout)
 }

@@ -18,17 +18,11 @@ package rpc
 
 import (
 	"bytes"
-	"context"
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"net"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
-	"time"
-
 	"gitlab.com/aquachain/aquachain/common/log"
 	"golang.org/x/net/websocket"
 	"gopkg.in/fatih/set.v0"
@@ -59,6 +53,7 @@ func (srv *Server) WebsocketHandler(allowedOrigins []string, allowedIP []string)
 	return websocket.Server{
 		Handshake: wsHandshakeValidator(allowedOrigins, allowedIP),
 		Handler: func(conn *websocket.Conn) {
+
 			// Create a custom encode/decode pair to enforce payload size and number encoding
 			conn.MaxPayloadBytes = maxHTTPRequestContentLength
 
@@ -144,78 +139,4 @@ func wsHandshakeValidator(allowedOrigins, allowedIP []string) func(*websocket.Co
 	return f
 }
 
-// DialWebsocket creates a new RPC client that communicates with a JSON-RPC server
-// that is listening on the given endpoint.
-//
-// The context is used for the initial connection establishment. It does not
-// affect subsequent interactions with the client.
-func DialWebsocket(ctx context.Context, endpoint, origin string) (*Client, error) {
-	if origin == "" {
-		var err error
-		if origin, err = os.Hostname(); err != nil {
-			return nil, err
-		}
-		if strings.HasPrefix(endpoint, "wss") {
-			origin = "https://" + strings.ToLower(origin)
-		} else {
-			origin = "http://" + strings.ToLower(origin)
-		}
-	}
-	config, err := websocket.NewConfig(endpoint, origin)
-	if err != nil {
-		return nil, err
-	}
-
-	return newClient(ctx, func(ctx context.Context) (net.Conn, error) {
-		return wsDialContext(ctx, config)
-	})
-}
-
-func wsDialContext(ctx context.Context, config *websocket.Config) (*websocket.Conn, error) {
-	var conn net.Conn
-	var err error
-	switch config.Location.Scheme {
-	case "ws":
-		conn, err = dialContext(ctx, "tcp", wsDialAddress(config.Location))
-	case "wss":
-		dialer := contextDialer(ctx)
-		conn, err = tls.DialWithDialer(dialer, "tcp", wsDialAddress(config.Location), config.TlsConfig)
-	default:
-		err = websocket.ErrBadScheme
-	}
-	if err != nil {
-		return nil, err
-	}
-	ws, err := websocket.NewClient(config, conn)
-	if err != nil {
-		conn.Close()
-		return nil, err
-	}
-	return ws, err
-}
-
 var wsPortMap = map[string]string{"ws": "80", "wss": "443"}
-
-func wsDialAddress(location *url.URL) string {
-	if _, ok := wsPortMap[location.Scheme]; ok {
-		if _, _, err := net.SplitHostPort(location.Host); err != nil {
-			return net.JoinHostPort(location.Host, wsPortMap[location.Scheme])
-		}
-	}
-	return location.Host
-}
-
-func dialContext(ctx context.Context, network, addr string) (net.Conn, error) {
-	d := &net.Dialer{KeepAlive: tcpKeepAliveInterval}
-	return d.DialContext(ctx, network, addr)
-}
-
-func contextDialer(ctx context.Context) *net.Dialer {
-	dialer := &net.Dialer{Cancel: ctx.Done(), KeepAlive: tcpKeepAliveInterval}
-	if deadline, ok := ctx.Deadline(); ok {
-		dialer.Deadline = deadline
-	} else {
-		dialer.Deadline = time.Now().Add(defaultDialTimeout)
-	}
-	return dialer
-}
