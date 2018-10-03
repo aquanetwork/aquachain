@@ -1,4 +1,4 @@
-GOBIN = $(shell pwd)/build/bin
+GOBIN = ${PWD}/build/bin
 GO ?= latest
 PREFIX ?= ${HOME}/.local/bin/
 
