@@ -32,6 +32,7 @@ import (
 	"gitlab.com/aquachain/aquachain/core"
 	"gitlab.com/aquachain/aquachain/internal/jsre"
 	"gitlab.com/aquachain/aquachain/node"
+	"gitlab.com/aquachain/aquachain/p2p"
 )
 
 const (
@@ -91,7 +92,7 @@ func newTester(t *testing.T, confOverride func(*aqua.Config)) *tester {
 	}
 
 	// Create a networkless protocol stack and start an AquaChain service within
-	stack, err := node.New(&node.Config{DataDir: workspace, UseLightweightKDF: true, Name: testInstance})
+	stack, err := node.New(&node.Config{DataDir: workspace, UseLightweightKDF: true, Name: testInstance, P2P: p2p.Config{ChainId: 220}})
 	if err != nil {
 		t.Fatalf("failed to create node: %v", err)
 	}

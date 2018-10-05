@@ -62,8 +62,10 @@ func newTestProtocolManager(mode downloader.SyncMode, blocks int, generator func
 		blockchain, _ = core.NewBlockChain(db, nil, gspec.Config, engine, vm.Config{})
 	)
 	chain, _ := core.GenerateChain(gspec.Config, genesis, aquahash.NewFaker(), db, blocks, generator)
-	if _, err := blockchain.InsertChain(chain); err != nil {
-		panic(err)
+	if blocks != 0 {
+		if _, err := blockchain.InsertChain(chain); err != nil {
+			panic(err)
+		}
 	}
 
 	pm, err := NewProtocolManager(gspec.Config, mode, DefaultConfig.NetworkId, evmux, &testTxPool{added: newtx}, engine, blockchain, db)

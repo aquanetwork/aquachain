@@ -448,6 +448,10 @@ func (srv *Server) Start() (err error) {
 		}
 	}
 
+	if srv.ChainId == 0 {
+		return fmt.Errorf("chain id not set")
+	}
+
 	if !srv.NoDiscovery && srv.DiscoveryV5 {
 		unhandled = make(chan discover.ReadPacket, 100)
 		sconn = &sharedUDPConn{conn, unhandled}

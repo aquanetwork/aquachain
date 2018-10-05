@@ -45,9 +45,9 @@ func main() {
 		runv5       = flag.Bool("v5", false, "run a v5 topic discovery bootnode")
 		verbosity   = flag.Int("verbosity", int(log.LvlInfo), "log verbosity (0-9)")
 		vmodule     = flag.String("vmodule", "", "log verbosity pattern")
-
-		nodeKey *ecdsa.PrivateKey
-		err     error
+		chainid     = flag.Uint64("chainid", 61717561, "chain id for p2p communication (set to 3 for ethereum-like)")
+		nodeKey     *ecdsa.PrivateKey
+		err         error
 	)
 	flag.Parse()
 
@@ -126,6 +126,7 @@ func main() {
 			PrivateKey:   nodeKey,
 			AnnounceAddr: realaddr,
 			NetRestrict:  restrictList,
+			ChainId:      *chainid,
 		}
 		if _, err := discover.ListenUDP(conn, cfg); err != nil {
 			utils.Fatalf("%v", err)

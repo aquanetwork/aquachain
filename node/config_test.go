@@ -28,6 +28,8 @@ import (
 	"gitlab.com/aquachain/aquachain/p2p"
 )
 
+var testp2p = p2p.Config{ChainId: 10101}
+
 // Tests that datadirs can be successfully created, be them manually configured
 // ones or automatically generated temporary ones.
 func TestDatadirCreation(t *testing.T) {
@@ -38,12 +40,12 @@ func TestDatadirCreation(t *testing.T) {
 	}
 	defer os.RemoveAll(dir)
 
-	if _, err := New(&Config{DataDir: dir}); err != nil {
+	if _, err := New(&Config{DataDir: dir, P2P: testp2p}); err != nil {
 		t.Fatalf("failed to create stack with existing datadir: %v", err)
 	}
 	// Generate a long non-existing datadir path and check that it gets created by a node
 	dir = filepath.Join(dir, "a", "b", "c", "d", "e", "f")
-	if _, err := New(&Config{DataDir: dir}); err != nil {
+	if _, err := New(&Config{DataDir: dir, P2P: testp2p}); err != nil {
 		t.Fatalf("failed to create stack with creatable datadir: %v", err)
 	}
 	if _, err := os.Stat(dir); err != nil {
@@ -57,7 +59,7 @@ func TestDatadirCreation(t *testing.T) {
 	defer os.Remove(file.Name())
 
 	dir = filepath.Join(file.Name(), "invalid/path")
-	if _, err := New(&Config{DataDir: dir}); err == nil {
+	if _, err := New(&Config{DataDir: dir, P2P: testp2p}); err == nil {
 		t.Fatalf("protocol stack created with an invalid datadir")
 	}
 }
@@ -86,7 +88,7 @@ func TestIPCPathResolution(t *testing.T) {
 	for i, test := range tests {
 		// Only run when platform/test match
 		if (runtime.GOOS == "windows") == test.Windows {
-			if endpoint := (&Config{DataDir: test.DataDir, IPCPath: test.IPCPath}).IPCEndpoint(); endpoint != test.Endpoint {
+			if endpoint := (&Config{DataDir: test.DataDir, IPCPath: test.IPCPath, P2P: testp2p}).IPCEndpoint(); endpoint != test.Endpoint {
 				t.Errorf("test %d: IPC endpoint mismatch: have %s, want %s", i, endpoint, test.Endpoint)
 			}
 		}
@@ -110,14 +112,14 @@ func TestNodeKeyPersistency(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to generate one-shot node key: %v", err)
 	}
-	config := &Config{Name: "unit-test", DataDir: dir, P2P: p2p.Config{PrivateKey: key}}
+	config := &Config{Name: "unit-test", DataDir: dir, P2P: p2p.Config{PrivateKey: key, ChainId: 10101}}
 	config.NodeKey()
 	if _, err := os.Stat(filepath.Join(keyfile)); err == nil {
 		t.Fatalf("one-shot node key persisted to data directory")
 	}
 
 	// Configure a node with no preset key and ensure it is persisted this time
-	config = &Config{Name: "unit-test", DataDir: dir}
+	config = &Config{Name: "unit-test", DataDir: dir, P2P: testp2p}
 	config.NodeKey()
 	if _, err := os.Stat(keyfile); err != nil {
 		t.Fatalf("node key not persisted to data directory: %v", err)

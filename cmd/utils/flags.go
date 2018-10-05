@@ -816,6 +816,7 @@ func MakePasswordList(ctx *cli.Context) []string {
 
 func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config, chainid uint64) {
 
+	// cant be zero
 	cfg.ChainId = chainid
 
 	setNodeKey(ctx, cfg)

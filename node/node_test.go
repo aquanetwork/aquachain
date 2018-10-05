@@ -36,7 +36,7 @@ var (
 func testNodeConfig() *Config {
 	return &Config{
 		Name: "test node",
-		P2P:  p2p.Config{PrivateKey: testNodeKey},
+		P2P:  p2p.Config{PrivateKey: testNodeKey, ChainId: 550},
 	}
 }
 
@@ -84,7 +84,7 @@ func TestNodeUsedDataDir(t *testing.T) {
 	defer os.RemoveAll(dir)
 
 	// Create a new node based on the data directory
-	original, err := New(&Config{DataDir: dir})
+	original, err := New(&Config{DataDir: dir, P2P: testp2p})
 	if err != nil {
 		t.Fatalf("failed to create original protocol stack: %v", err)
 	}
@@ -94,7 +94,7 @@ func TestNodeUsedDataDir(t *testing.T) {
 	defer original.Stop()
 
 	// Create a second node based on the same data directory and ensure failure
-	duplicate, err := New(&Config{DataDir: dir})
+	duplicate, err := New(&Config{DataDir: dir, P2P: testp2p})
 	if err != nil {
 		t.Fatalf("failed to create duplicate protocol stack: %v", err)
 	}

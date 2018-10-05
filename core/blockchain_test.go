@@ -1117,7 +1117,9 @@ func TestEIP155Transition(t *testing.T) {
 		t.Error("Expected block[3].txs[1] to be replay protected")
 	}
 	if _, err := blockchain.InsertChain(blocks[4:]); err != nil {
-		t.Fatal(err)
+		if len(blocks[4:]) != 0 {
+			t.Fatal(err)
+		}
 	}
 
 	// generate an invalid chain id transaction

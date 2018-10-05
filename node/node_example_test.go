@@ -41,8 +41,11 @@ func (s *SampleService) Start(*p2p.Server) error   { fmt.Println("Service starti
 func (s *SampleService) Stop() error               { fmt.Println("Service stopping..."); return nil }
 
 func ExampleService() {
-	// Create a network node to run protocols with the default values.
-	stack, err := node.New(&node.Config{})
+	// Create a network node to run protocols with the default values. A unique chain id
+	// is required for side chains
+	minimalConfig := &node.Config{P2P: p2p.Config{ChainId: 12345}}
+	stack, err := node.New(minimalConfig)
+
 	if err != nil {
 		log.Fatalf("Failed to create network node: %v", err)
 	}

@@ -1030,6 +1030,9 @@ func (bc *BlockChain) InsertChain(chain types.Blocks) (int, error) {
 // only reason this method exists as a separate one is to make locking cleaner
 // with deferred statements.
 func (bc *BlockChain) insertChain(chain types.Blocks) (int, []interface{}, []*types.Log, error) {
+	if len(chain) == 0 {
+		return 0, nil, nil, fmt.Errorf("no chain to insert")
+	}
 	log.Debug("Inserting chain", "length", len(chain), "startversion", chain[0].Version())
 	// Do a sanity check that the provided chain is actually ordered and linked
 	for i := 1; i < len(chain); i++ {

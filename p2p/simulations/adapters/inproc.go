@@ -83,6 +83,7 @@ func (s *SimAdapter) NewNode(config *NodeConfig) (Node, error) {
 			NoDiscovery:     true,
 			Dialer:          s,
 			EnableMsgEvents: true,
+			ChainId:         220,
 		},
 		Logger: log.New("node.id", id.String()),
 	})

@@ -76,6 +76,9 @@ type Node struct {
 
 // New creates a new P2P node, ready for protocol registration.
 func New(conf *Config) (*Node, error) {
+	if conf.P2P.ChainId == 0 {
+		panic("no chain id")
+	}
 	// Copy config and resolve the datadir so future changes to the current
 	// working directory don't affect the node.
 	confCopy := *conf
