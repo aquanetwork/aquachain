@@ -79,6 +79,8 @@ type downloadTester struct {
 	peerMissingStates map[string]map[common.Hash]bool // State entries that fast sync should not return
 
 	lock sync.RWMutex
+
+	chainConfig *params.ChainConfig
 }
 
 // newTester creates a new downloader test mocker.
@@ -100,6 +102,7 @@ func newTester() *downloadTester {
 		peerReceipts:      make(map[string]map[common.Hash]types.Receipts),
 		peerChainTds:      make(map[string]map[common.Hash]*big.Int),
 		peerMissingStates: make(map[string]map[common.Hash]bool),
+		chainConfig:       params.TestChainConfig,
 	}
 	tester.stateDb = aquadb.NewMemDatabase()
 	tester.stateDb.Put(genesis.Root().Bytes(), []byte{0x00})
@@ -108,6 +111,10 @@ func newTester() *downloadTester {
 
 	return tester
 }
+func (dl *downloadTester) Config() *params.ChainConfig {
+	return dl.chainConfig
+}
+
 func (dl *downloadTester) GetBlockVersion(height *big.Int) params.HeaderVersion {
 	return params.TestChainConfig.GetBlockVersion(height)
 }
