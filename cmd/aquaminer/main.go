@@ -177,13 +177,13 @@ func main() {
 				workers[i].newwork <- workload{work, target, algo, err}
 			}
 		case gotdone := <-donework:
-			log.Println("submitting nonce:", gotdone)
+			log.Printf("submitting nonce: %x", gotdone.nonce)
 			blknonce := types.EncodeNonce(gotdone.nonce)
 			if client.SubmitWork(ctx, blknonce, gotdone.job, EmptyMixDigest) {
-				log.Println("good nonce:", gotdone)
+				log.Printf("good nonce: %x", gotdone.nonce)
 			} else {
 				// there was an error when we send the work. lets get a totally
-				log.Println("nonce not accepted", gotdone)
+				log.Printf("bad nonce: %x", gotdone.nonce)
 				forcenewwork <- struct{}{}
 			}
 		}
