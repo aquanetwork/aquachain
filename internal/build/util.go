@@ -163,26 +163,34 @@ func GoTool(tool string, args ...string) *exec.Cmd {
 
 // ExpandPackagesNoVendor expands a cmd/go import path pattern, skipping
 // vendored packages.
-func ExpandPackagesNoVendor(patterns []string) []string {
+func ExpandPackagesNoVendor(patterns []string) (all, short, long []string) {
 	expand := false
 	for _, pkg := range patterns {
 		if strings.Contains(pkg, "...") {
 			expand = true
 		}
 	}
-	if expand {
-		cmd := GoTool("list", patterns...)
-		out, err := cmd.CombinedOutput()
-		if err != nil {
-			log.Fatalf("package listing failed: %v\n%s", err, string(out))
-		}
-		var packages []string
-		for _, line := range strings.Split(string(out), "\n") {
-			if !strings.Contains(line, "/vendor/") {
-				packages = append(packages, strings.TrimSpace(line))
-			}
-		}
-		return packages
+	if !expand {
+		return
 	}
-	return patterns
+
+	cmd := GoTool("list", patterns...)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("package listing failed: %v\n%s", err, string(out))
+	}
+	for _, line := range strings.Split(string(out), "\n") {
+		if strings.Contains(line, "/vendor/") {
+			continue
+		}
+		line = strings.TrimSpace(line)
+		all = append(all, line)
+		if strings.HasSuffix(line, "aqua/downloader") ||
+			strings.HasSuffix(line, "aqua/fetcher") {
+			long = append(long, line)
+		} else {
+			short = append(short, line)
+		}
+	}
+	return
 }

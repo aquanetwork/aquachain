@@ -26,6 +26,13 @@ import (
 	"gitlab.com/aquachain/aquachain/core/types"
 )
 
+const Logo = `                              _           _
+  __ _  __ _ _   _  __ _  ___| |__   __ _(_)_ __
+ / _ '|/ _' | | | |/ _' |/ __| '_ \ / _' | | '_ \
+| (_| | (_| | |_| | (_| | (__| | | | (_| | | | | |
+ \__,_|\__, |\__,_|\__,_|\___|_| |_|\__,_|_|_| |_|
+          |_|` + "Update Often! https://gitlab.com/aquachain/aquachain\n\n"
+
 // NotFound is returned by API methods if the requested item does not exist.
 var NotFound = errors.New("not found")
 

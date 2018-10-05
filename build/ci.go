@@ -36,6 +36,7 @@ import (
 	"strings"
 	"time"
 
+	"gitlab.com/aquachain/aquachain"
 	"gitlab.com/aquachain/aquachain/internal/build"
 )
 
@@ -184,7 +185,7 @@ func doInstall(cmdline []string) {
 	if flag.NArg() > 0 {
 		packages = flag.Args()
 	}
-	packages = build.ExpandPackagesNoVendor(packages)
+	packages, _, _ = build.ExpandPackagesNoVendor(packages)
 
 	if *arch == "" || *arch == runtime.GOARCH {
 		goinstall := goTool("install", buildFlags(env)...)
@@ -232,7 +233,6 @@ func buildFlags(env build.Environment) (flags []string) {
 	if env.Commit != "" {
 		ld = append(ld, "-X", "main.gitCommit="+env.Commit)
 	}
-
 	// make smaller binary
 	ld = append(ld, "-s")
 	ld = append(ld, "-w")
@@ -263,6 +263,10 @@ func buildFlags(env build.Environment) (flags []string) {
 		flags = append(flags, "-race")
 	}
 
+	if env.Config["v"] {
+		flags = append(flags, "-v")
+	}
+
 	if len(tags) > 0 {
 		flags = append(flags, "-tags", strings.Join(tags, " "))
 	}
@@ -283,11 +287,21 @@ func goToolArch(arch string, cc string, subcmd string, args ...string) *exec.Cmd
 	if arch == "" || arch == runtime.GOARCH {
 		cmd.Env = append(cmd.Env, "GOBIN="+GOBIN)
 	} else {
-		cmd.Env = append(cmd.Env, "CGO_ENABLED=1")
 		cmd.Env = append(cmd.Env, "GOARCH="+arch)
 	}
 	if cc != "" {
 		cmd.Env = append(cmd.Env, "CC="+cc)
+	}
+	cgo := os.Getenv("CGO_ENABLED")
+	if cgo == "" {
+		os.Setenv("CGO_ENABLED", "0")
+		cgo = "0"
+	}
+	if cgo == "1" {
+		os.Stderr.Write([]byte("[cgo builder]"))
+	}
+	if cgo == "0" {
+		os.Stderr.Write([]byte("[go builder]"))
 	}
 	for _, e := range os.Environ() {
 		if strings.HasPrefix(e, "GOPATH=") || strings.HasPrefix(e, "GOBIN=") {
@@ -304,31 +318,58 @@ func goToolArch(arch string, cc string, subcmd string, args ...string) *exec.Cmd
 
 func doTest(cmdline []string) {
 	var (
-		coverage = flag.Bool("coverage", false, "Whether to record code coverage")
+		coverage          = flag.Bool("coverage", false, "Whether to record code coverage")
+		verbose           = flag.Bool("v", false, "Verbose logs")
+		shortpkg, longpkg []string
+		allpkgs           = []string{"./..."}
+		args              []string
 	)
 	flag.CommandLine.Parse(cmdline)
 	env := build.Env()
-
-	packages := []string{"./..."}
+	fmt.Println(aquachain.Logo)
 	if len(flag.CommandLine.Args()) > 0 {
-		packages = flag.CommandLine.Args()
+		allpkgs = flag.CommandLine.Args()
 	}
-	packages = build.ExpandPackagesNoVendor(packages)
 
-	// Run analysis tools before the tests.
-	build.MustRun(goTool("vet", packages...))
+	allpkgs, shortpkg, longpkg = build.ExpandPackagesNoVendor(allpkgs)
 
-	// Run the actual tests.
-	gotest := goTool("test", buildFlags(env)...)
+	fmt.Println("Quick tests:", len(shortpkg))
+	fmt.Println("Slow tests: ", len(longpkg))
+
+	// Run analysis tools on all packages before the tests.
+	build.MustRun(goTool("vet", allpkgs...))
+
+	gotestShort := goTool("test", buildFlags(env)...)
+	gotestLong := goTool("test", buildFlags(env)...)
 	// Test a single package at a time. CI builders are slow
 	// and some tests run into timeouts under load.
-	gotest.Args = append(gotest.Args, "-p", "1", "-timeout", "0")
+	args = append(gotestShort.Args, "-p", "1", "-timeout", "0")
+
+	if *verbose {
+		args = append(args, "-v")
+	}
 	if *coverage {
-		gotest.Args = append(gotest.Args, "-covermode=atomic", "-cover")
+		args = append(args, "-covermode=atomic", "-cover")
 	}
 
-	gotest.Args = append(gotest.Args, packages...)
-	build.MustRun(gotest)
+	gotestShort.Args = args
+	gotestLong.Args = args
+
+	// Run the actual tests, with verbose flag on long running pkgs
+	if len(shortpkg) > 0 {
+		fmt.Println("Running fast package tests")
+		gotestShort.Args = append(gotestShort.Args, shortpkg...)
+		build.MustRun(gotestShort)
+	}
+
+	// Run long packages last, most likely wont be the one failing
+	if len(longpkg) > 0 {
+		fmt.Println("Running long-running package tests")
+		gotestLong.Args = append(gotestLong.Args, "-v")
+		gotestLong.Args = append(gotestLong.Args, longpkg...)
+		build.MustRun(gotestLong)
+	}
+
 }
 
 // runs gometalinter on requested packages

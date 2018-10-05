@@ -1,23 +1,24 @@
 GOBIN = ${PWD}/build/bin
 GO ?= latest
 PREFIX ?= ${HOME}/.local/bin/
+CGO_ENABLED ?= "0"
 
 # make build environment script executable (gets unset through ipfs)
 DOFIRST=$(shell chmod +x build/env.sh)
 
 # default build
-aquachain-nocgo:
+aquachain:
 	@echo "Building aquachain with no tracer/usb support."
 	@echo "Consider \"${MAKE} usb\" or \"${MAKE} aquachain\""
 	@echo "Building default aquachain. Consider \"${MAKE} musl\""
-	CGO_ENABLED=0 build/env.sh go run build/ci.go install ./cmd/aquachain
+	CGO_ENABLED=${CGO_ENABLED} build/env.sh go run build/ci.go install ./cmd/aquachain
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/aquachain\" to launch aquachain."
 
-aquachain:
+aquachain-cgo:
 	@echo "Building aquachain with no usb support. Consider \"${MAKE} usb\""
 	@echo "Building default aquachain. Consider \"${MAKE} musl\""
-	build/env.sh go run build/ci.go install ./cmd/aquachain
+	CGO_ENABLED=1 build/env.sh go run build/ci.go install ./cmd/aquachain
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/aquachain\" to launch aquachain."
 
@@ -59,7 +60,10 @@ all-musl:
 # ci/test stuff
 
 test: all
-	build/env.sh go run build/ci.go test 
+	build/env.sh go run build/ci.go test
+
+test-verbose: all
+	build/env.sh go run build/ci.go test -v
 
 test-musl: musl
 	build/env.sh go run build/ci.go test -musl 

@@ -56,6 +56,25 @@ func Fatalf(format string, args ...interface{}) {
 		}
 	}
 	fmt.Fprintf(w, "Fatal: "+format+"\n", args...)
+
+	// small traceback
+	if debug := os.Getenv("DEBUG"); debug != "" && debug != "0" {
+		pc := make([]uintptr, 5)
+		n := runtime.Callers(1, pc)
+		if n != 0 {
+			pc = pc[:n]
+			frames := runtime.CallersFrames(pc)
+			for {
+				frame, more := frames.Next()
+				fmt.Fprintf(w, "\t >%s:%d %s\n", frame.File, frame.Line,
+					frame.Function)
+				if !more {
+					break
+				}
+			}
+		}
+
+	}
 	os.Exit(111)
 }
 

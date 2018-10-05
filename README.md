@@ -90,7 +90,8 @@ IRC: #aquachain on freenode
 
 ## Contributing
 
-Contributions welcome. Ask around any of the chats for ways to help.
+Aquachain is free open source software and your contributions are welcome.
+
 
 [![Build Status](https://travis-ci.org/aquanetwork/aquachain.svg?branch=master)](https://travis-ci.org/aquanetwork/aquachain)
 
@@ -109,4 +110,3 @@ Contributions welcome. Ask around any of the chats for ways to help.
     your branch
   * Squash same-file similar commits if possible
   * Prefix commit message with package name, such as "core: fix blockchain"
-

@@ -14,7 +14,7 @@ matrix:
         - sudo chmod ugo+rw /dev/fuse
         - sudo chown root:$USER /etc/fuse.conf
         - CGO_ENABLED=0 go run build/ci.go install
-        - CGO_ENABLED=0 go run build/ci.go test
+        - CGO_ENABLED=0 go run build/ci.go test -coverage
     - os: linux
       dist: trusty
       sudo: required
