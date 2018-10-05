@@ -42,9 +42,7 @@ func New(code string) (*Tracer, error) {
 }
 
 // Stop terminates execution of the tracer at the first opportune moment.
-func (jst *Tracer) Stop(error) {
-	return
-}
+func (jst *Tracer) Stop(error) {}
 
 func (jst *Tracer) CaptureStart(from common.Address, to common.Address, create bool, input []byte, gas uint64, value *big.Int) error {
 	return ErrNoCgo
