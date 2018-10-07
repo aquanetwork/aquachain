@@ -54,7 +54,9 @@ func (b *AquaApiBackend) CurrentBlock() *types.Block {
 }
 
 func (b *AquaApiBackend) SetHead(number uint64) {
-	b.aqua.protocolManager.downloader.Cancel()
+	if b.aqua.protocolManager != nil {
+		b.aqua.protocolManager.downloader.Cancel()
+	}
 	b.aqua.blockchain.SetHead(number)
 }
 
