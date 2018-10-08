@@ -77,9 +77,11 @@ able to be accessed only by 192.168.1.6:
 
 	aquachain -rpc -rpchost 192.168.1.5 -allowip 192.168.1.6
 
-Security Note about RPC: By default, the `-rpc` flag Please be aware that hosting a
-public RPC server (0.0.0.0) will allow strangers access to your system. Do not
-use the `-rpcaddr`flag unless you absolutely know what you are doing.
+By default, the `-rpc` flag is safe for local access (from the same machine).
+
+Security Note about RPC: Please be aware that hosting a public RPC server
+(0.0.0.0) will allow strangers access to your system. Do not use the
+`-rpcaddr` flag unless you absolutely know what you are doing.
 
 For hosting public RPC servers, please consider using -nokeys (*new!*) and implementing
 rate limiting on http (and, if using, websockets) , either via reverse proxy such as
