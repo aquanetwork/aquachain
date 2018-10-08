@@ -112,16 +112,16 @@ var (
 	// General settings
 	JsonFlag = cli.BoolFlag{
 		Name:  "json",
-		Usage: "Print paper keypair as json",
+		Usage: "Print paper keypair in machine-readable JSON format",
 	}
 	VanityFlag = cli.StringFlag{
 		Name:  "vanity",
-		Usage: "Prefix for generating a vanity address",
+		Usage: "Prefix for generating a vanity address (do not include 0x, start small)",
 	}
 	// General settings
 	DataDirFlag = DirectoryFlag{
 		Name:  "datadir",
-		Usage: "Data directory for the databases and keystore",
+		Usage: "Data directory for the databases, IPC socket, and keystore (also see -keystore flag)",
 		Value: DirectoryString{node.DefaultDataDir()},
 	}
 	KeyStoreDirFlag = DirectoryFlag{
@@ -130,24 +130,24 @@ var (
 	}
 	UseUSBFlag = cli.BoolFlag{
 		Name:  "usb",
-		Usage: "Enables monitoring for and managing USB hardware wallets",
+		Usage: "Enables monitoring for and managing USB hardware wallets (disabled in pure-go builds)",
 	}
 	NetworkIdFlag = cli.Uint64Flag{
 		Name:  "networkid",
-		Usage: "Network identifier (integer, 1=Frontier, 2=Morden (disused), 3=Ropsten, 4=Testnet2)",
+		Usage: "Network identifier (integer)",
 		Value: aqua.DefaultConfig.NetworkId,
 	}
 	TestnetFlag = cli.BoolFlag{
 		Name:  "testnet",
-		Usage: "Testnet: pre-configured proof-of-work test network",
+		Usage: "Aquachain Regression Test Network",
 	}
 	Testnet2Flag = cli.BoolFlag{
 		Name:  "testnet2",
-		Usage: "Testnet2: offline test network",
+		Usage: "Aquachain Simulation Test Network (nodiscover)",
 	}
 	NetworkEthFlag = cli.BoolFlag{
 		Name:  "ethereum",
-		Usage: "Connect to ethereum network",
+		Usage: "Connect to Ethereum network (*experimental*)",
 	}
 	DeveloperFlag = cli.BoolFlag{
 		Name:  "dev",
@@ -159,11 +159,11 @@ var (
 	}
 	IdentityFlag = cli.StringFlag{
 		Name:  "identity",
-		Usage: "Custom node name",
+		Usage: "Custom node name (used in p2p networking, default is aquachain version)",
 	}
 	DocRootFlag = DirectoryFlag{
 		Name:  "docroot",
-		Usage: "Document Root for HTTPClient file scheme",
+		Usage: "Working directory for importing JS files into console (default $HOME)",
 		Value: DirectoryString{homeDir()},
 	}
 	FastSyncFlag = cli.BoolFlag{
@@ -178,7 +178,7 @@ var (
 	}
 	GCModeFlag = cli.StringFlag{
 		Name:  "gcmode",
-		Usage: `Blockchain garbage collection mode ("full", "archive") *SYNC WITH '-gcmode archive' FOR COMPLETE CIRCULATING SUPPLY*`,
+		Usage: `GC mode to use, either "full" or "archive". Use "archive" for full, accurate state (for example, 'admin.supply')`,
 		Value: "full",
 	}
 	// Aquahash settings
@@ -285,7 +285,7 @@ var (
 	// Miner settings
 	MiningEnabledFlag = cli.BoolFlag{
 		Name:  "mine",
-		Usage: "Enable mining",
+		Usage: "Enable mining (not optimized, not recommended for mainnet)",
 	}
 	MinerThreadsFlag = cli.IntFlag{
 		Name:  "minerthreads",
@@ -314,7 +314,7 @@ var (
 	// Account settings
 	UnlockedAccountFlag = cli.StringFlag{
 		Name:  "unlock",
-		Usage: "Comma separated list of accounts to unlock",
+		Usage: "Comma separated list of accounts to unlock (CAREFUL!)",
 		Value: "",
 	}
 	PasswordFileFlag = cli.StringFlag{
