@@ -187,6 +187,12 @@ func doInstall(cmdline []string) {
 	}
 	packages, _, _ = build.ExpandPackagesNoVendor(packages)
 
+	fmt.Fprintf(os.Stderr, "Building %d package(s): %s\n", len(packages), packages)
+
+	if len(packages) == 0 {
+		return
+	}
+
 	if *arch == "" || *arch == runtime.GOARCH {
 		goinstall := goTool("install", buildFlags(env)...)
 		goinstall.Args = append(goinstall.Args, "-v")

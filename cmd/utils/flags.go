@@ -443,7 +443,7 @@ var (
 	}
 	ListenAddrFlag = cli.StringFlag{
 		Name:  "addr",
-		Usage: "Network listening addr (default all interfaces)",
+		Usage: "Network listening addr (default all interfaces, port 21303)",
 		Value: "",
 	}
 	BootnodesFlag = cli.StringFlag{
@@ -687,7 +687,7 @@ func setHTTP(ctx *cli.Context, cfg *node.Config) {
 			Fatalf("Woah there! By default, using -rpc and -unlock is \"safe\", (localhost).\n" +
 				"But you shouldn't use --rpcaddr with --unlock flag.\n" +
 				"If you really know what you are doing and would like to unlock a wallet while" +
-				"hosting a public HTTP RPC node, use the -UNSAFE_RPC_UNLOCK flag.")
+				"hosting a public HTTP RPC node, use the -UNSAFE_RPC_UNLOCK flag. See -allowip flag to restrict access")
 		}
 		if ctx.GlobalIsSet(RPCListenAddrFlag.Name) {
 			cfg.HTTPHost = ctx.GlobalString(RPCListenAddrFlag.Name)
@@ -829,7 +829,7 @@ func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config, chainid uint64) {
 		cfg.MaxPeers = ctx.GlobalInt(MaxPeersFlag.Name)
 	}
 
-	log.Info("Maximum peer count", "AQUA", cfg.MaxPeers)
+	log.Debug("Maximum peer count", "AQUA", cfg.MaxPeers)
 
 	if ctx.GlobalIsSet(MaxPendingPeersFlag.Name) {
 		cfg.MaxPendingPeers = ctx.GlobalInt(MaxPendingPeersFlag.Name)

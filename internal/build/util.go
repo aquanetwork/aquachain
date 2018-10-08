@@ -171,7 +171,7 @@ func ExpandPackagesNoVendor(patterns []string) (all, short, long []string) {
 		}
 	}
 	if !expand {
-		return
+		return patterns, short, long
 	}
 
 	cmd := GoTool("list", patterns...)
