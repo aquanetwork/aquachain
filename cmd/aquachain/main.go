@@ -224,9 +224,6 @@ func daemonStart(ctx *cli.Context) error {
 // it unlocks any requested accounts, and starts the RPC/IPC interfaces and the
 // miner.
 func startNode(ctx *cli.Context, stack *node.Node) {
-	// Start up the node itself
-	utils.StartNode(stack)
-
 	unlocks := strings.Split(ctx.GlobalString(utils.UnlockedAccountFlag.Name), ",")
 	if len(unlocks) > 0 && unlocks[0] != "" {
 		log.Warn("Unlocking account", "unlocks", unlocks)
@@ -239,6 +236,10 @@ func startNode(ctx *cli.Context, stack *node.Node) {
 			}
 		}
 	}
+
+	// Start up the node itself
+	utils.StartNode(stack)
+
 	// Register wallet event handlers to open and auto-derive wallets
 	events := make(chan accounts.WalletEvent, 16)
 	if !stack.Config().NoKeys {
