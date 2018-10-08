@@ -56,12 +56,18 @@ When you start seeing one every 4 minutes or so, you are fully synchronized.
 ## USAGE
 
 Create account from the command line: `aquachain.exe account new`
+
 List accounts from the command line: `aquachain.exe account list`
+
 Enter AQUA console: `aquachain.exe`
+
 Start Daemon (geth default): `aquachain.exe daemon`
+
 See more commands: [Wiki](https://github.com/aquanetwork/aquachain/wiki/Basics)
+
 Type `help` at the `AQUA>` prompt for common AQUA console commands.
 
+Run `aquachain.exe help` for command line flags and options.
 
 ## RPC SERVER
 
