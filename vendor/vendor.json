@@ -33,6 +33,12 @@
 			"revisionTime": "2018-02-21T22:46:20Z"
 		},
 		{
+			"checksumSHA1": "vwNjR8772Pqs8z9ZdPFoatNI9Kg=",
+			"path": "github.com/deckarep/golang-set",
+			"revision": "699df6a3acf6867538e50931511e9dc403da108a",
+			"revisionTime": "2018-09-27T02:58:44Z"
+		},
+		{
 			"checksumSHA1": "Ad8LPSCP9HctFrmskh+S5HpHXcs=",
 			"path": "github.com/docker/docker/pkg/reexec",
 			"revision": "683738900eec52f86b834234eeef054c4e135031",
@@ -238,12 +244,6 @@
 			"revisionTime": "2018-06-13T05:52:08Z"
 		},
 		{
-			"checksumSHA1": "sZPoLYTMt3Bz8HNvSeA5TRSx3M8=",
-			"path": "github.com/olekukonko/tablewriter",
-			"revision": "d4647c9c7a84d847478d890b816b7d8b62b0b279",
-			"revisionTime": "2018-05-06T12:14:14Z"
-		},
-		{
 			"checksumSHA1": "As1PSFJop3xi3W8tAYSm/8YesAQ=",
 			"path": "github.com/pborman/uuid",
 			"revision": "c65b2f87fee37d1c7854c9164a450713c28d50cd",
@@ -424,36 +424,6 @@
 			"revisionTime": "2018-08-30T18:34:03Z"
 		},
 		{
-			"checksumSHA1": "IQkUIOnvlf0tYloFx9mLaXSvXWQ=",
-			"path": "golang.org/x/crypto/curve25519",
-			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
-			"revisionTime": "2018-08-30T18:34:03Z"
-		},
-		{
-			"checksumSHA1": "2LpxYGSf068307b7bhAuVjvzLLc=",
-			"path": "golang.org/x/crypto/ed25519",
-			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
-			"revisionTime": "2018-08-30T18:34:03Z"
-		},
-		{
-			"checksumSHA1": "0JTAFXPkankmWcZGQJGScLDiaN8=",
-			"path": "golang.org/x/crypto/ed25519/internal/edwards25519",
-			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
-			"revisionTime": "2018-08-30T18:34:03Z"
-		},
-		{
-			"checksumSHA1": "fhxj9uzosD3dQefNF5JuGJzGZwg=",
-			"path": "golang.org/x/crypto/internal/chacha20",
-			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
-			"revisionTime": "2018-08-30T18:34:03Z"
-		},
-		{
-			"checksumSHA1": "/U7f2gaH6DnEmLguVLDbipU6kXU=",
-			"path": "golang.org/x/crypto/internal/subtle",
-			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
-			"revisionTime": "2018-08-30T18:34:03Z"
-		},
-		{
 			"checksumSHA1": "cgiUEv1KjkrbXQS9X8yLJUclFuc=",
 			"path": "golang.org/x/crypto/openpgp",
 			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
@@ -496,12 +466,6 @@
 			"revisionTime": "2018-08-30T18:34:03Z"
 		},
 		{
-			"checksumSHA1": "vKbPb9fpjCdzuoOvajOJnYfHG2g=",
-			"path": "golang.org/x/crypto/poly1305",
-			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
-			"revisionTime": "2018-08-30T18:34:03Z"
-		},
-		{
 			"checksumSHA1": "TQoVgHqUD72/5ALzi9p5W3oyaug=",
 			"path": "golang.org/x/crypto/ripemd160",
 			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
@@ -510,18 +474,6 @@
 		{
 			"checksumSHA1": "sx1nQShs40UKtcJZNJuvYtGesaI=",
 			"path": "golang.org/x/crypto/scrypt",
-			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
-			"revisionTime": "2018-08-30T18:34:03Z"
-		},
-		{
-			"checksumSHA1": "zVyAf4OPyjBraXqRN2fwIBL4WvI=",
-			"path": "golang.org/x/crypto/ssh",
-			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
-			"revisionTime": "2018-08-30T18:34:03Z"
-		},
-		{
-			"checksumSHA1": "BGm8lKZmvJbf/YOJLeL1rw2WVjA=",
-			"path": "golang.org/x/crypto/ssh/terminal",
 			"revision": "182538f80094b6a8efaade63a8fd8e0d9d5843dd",
 			"revisionTime": "2018-08-30T18:34:03Z"
 		},
@@ -576,12 +528,6 @@
 		{
 			"checksumSHA1": "su2QDjUzrUO0JnOH9m0cNg0QqsM=",
 			"path": "golang.org/x/sys/unix",
-			"revision": "1b2967e3c290b7c545b3db0deeda16e9be4f98a2",
-			"revisionTime": "2018-07-06T09:56:39Z"
-		},
-		{
-			"checksumSHA1": "P8Y8GFwxybTfltfh8Q0lHqlEYIM=",
-			"path": "golang.org/x/sys/windows",
 			"revision": "1b2967e3c290b7c545b3db0deeda16e9be4f98a2",
 			"revisionTime": "2018-07-06T09:56:39Z"
 		},
@@ -712,12 +658,6 @@
 			"revisionTime": "2018-06-28T17:31:08Z"
 		},
 		{
-			"checksumSHA1": "SXlEGB+EJnr9dvgU8iufbLJc+/w=",
-			"path": "gopkg.in/fatih/set.v0",
-			"revision": "168a5d71ba0669ae06888225478d73a113f1687e",
-			"revisionTime": "2018-01-31T06:27:33Z"
-		},
-		{
 			"checksumSHA1": "DQXNV0EivoHm4q+bkdahYXrjjfE=",
 			"path": "gopkg.in/karalabe/cookiejar.v2/collections/prque",
 			"revision": "8dcd6a7f4951f6ff3ee9cbb919a06d8925822e57",
@@ -754,5 +694,5 @@
 			"revisionTime": "2017-08-11T01:42:03Z"
 		}
 	],
-	"rootPath": "gitlab.com/aquachain/aquachain"
+	"rootPath": "gitlab.com/aer/aquachain"
 }
