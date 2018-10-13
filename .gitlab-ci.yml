@@ -3,6 +3,8 @@ image: golang:1.11.1
 build:
   script:
     - make all
+    - git clone https://gitlab.com/aquachain/bootstraps ../bootstraps
+    - ./build/bin/aquachain import ../bootstraps/latest.dat
 
 test:
   script:
