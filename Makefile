@@ -65,6 +65,9 @@ test: all
 test-verbose: all
 	build/env.sh go run build/ci.go test -v
 
+test-race: all
+	build/env.sh go run build/ci.go test -race
+
 test-musl: musl
 	build/env.sh go run build/ci.go test -musl 
 
@@ -109,3 +112,9 @@ docker-run:
 
 cross:
 	xgo -image aquachain/xgo -ldflags='-w -s -extldflags -static' -tags 'osusergo netgo static' -pkg cmd/aquachain -targets='windows/*,linux/arm,linux/386,linux/amd64,darwin/amd64' gitlab.com/aquachain/aquachain
+
+# this builds test-binaries to remove compilation time between repeating tests
+debugging:
+	CGO_ENABLED=1 go test -race -o tester-race ./...
+	CGO_ENABLED=0 go test -o tester-nocgo ./...
+	CGO_ENABLED=1 go test -o tester-cgo ./...
