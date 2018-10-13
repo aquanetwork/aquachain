@@ -24,9 +24,11 @@ import (
 )
 
 func TestPathExpansion(t *testing.T) {
-	var homedir = "~"
+	homedir := os.Getenv("HOME")
 	user, err := user.Current()
-	if err == nil {
+	if err != nil {
+		t.Logf("could not get 'user', assuming $HOME=%q, error=%q", homedir, err.Error())
+	} else {
 		homedir = user.HomeDir
 	}
 	tests := map[string]string{
