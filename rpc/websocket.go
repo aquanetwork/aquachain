@@ -20,12 +20,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"gitlab.com/aquachain/aquachain/common/log"
-	"golang.org/x/net/websocket"
-	"gopkg.in/fatih/set.v0"
 	"net/http"
 	"os"
 	"strings"
+
+	"golang.org/x/net/websocket"
+
+	set "github.com/deckarep/golang-set"
+	"gitlab.com/aquachain/aquachain/common/log"
 )
 
 // websocketJSONCodec is a custom JSON codec with payload size enforcement and
@@ -79,8 +81,8 @@ func NewWSServer(allowedOrigins []string, allowedIP []string, srv *Server) *http
 // websocket upgrade process. When a '*' is specified as an allowed origins all
 // connections are accepted.
 func wsHandshakeValidator(allowedOrigins, allowedIP []string) func(*websocket.Config, *http.Request) error {
-	origins := set.New()
-	allowedIPset := set.New()
+	origins := set.NewSet()
+	allowedIPset := set.NewSet()
 	allowAllOrigins := false
 	allowAllIP := false
 	for _, origin := range allowedOrigins {
@@ -102,14 +104,14 @@ func wsHandshakeValidator(allowedOrigins, allowedIP []string) func(*websocket.Co
 	}
 
 	// allow localhost if no allowedOrigins are specified.
-	if len(origins.List()) == 0 {
+	if len(origins.ToSlice()) == 0 {
 		origins.Add("http://localhost")
 		if hostname, err := os.Hostname(); err == nil {
 			origins.Add("http://" + strings.ToLower(hostname))
 		}
 	}
 
-	log.Debug(fmt.Sprintf("Allowed origin(s) for WS RPC interface %v\n", origins.List()))
+	log.Debug(fmt.Sprintf("Allowed origin(s) for WS RPC interface %v\n", origins.ToSlice()))
 
 	f := func(cfg *websocket.Config, req *http.Request) error {
 		if !allowAllIP {
@@ -118,7 +120,7 @@ func wsHandshakeValidator(allowedOrigins, allowedIP []string) func(*websocket.Co
 				if ip == "" {
 					ip = strings.Split(r.RemoteAddr, ":")[0]
 				}
-				if allowedIPset.Has(ip) {
+				if allowedIPset.Contains(ip) {
 					return nil
 				}
 				log.Warn("unwarranted websocket request", "ip", ip)
@@ -129,7 +131,7 @@ func wsHandshakeValidator(allowedOrigins, allowedIP []string) func(*websocket.Co
 			}
 		}
 		origin := strings.ToLower(req.Header.Get("Origin"))
-		if allowAllOrigins || origins.Has(origin) {
+		if allowAllOrigins || origins.Contains(origin) {
 			return nil
 		}
 		log.Warn(fmt.Sprintf("origin '%s' not allowed on WS-RPC interface\n", origin))

@@ -34,7 +34,7 @@ import (
 	"gitlab.com/aquachain/aquachain/crypto"
 	"gitlab.com/aquachain/aquachain/params"
 
-	set "gopkg.in/fatih/set.v0"
+	set "github.com/deckarep/golang-set"
 )
 
 // Aquahash proof-of-work protocol constants.
@@ -214,7 +214,7 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 		return errTooManyUncles
 	}
 	// Gather the set of past uncles and ancestors
-	uncles, ancestors := set.New(), make(map[common.Hash]*types.Header)
+	uncles, ancestors := set.NewSet(), make(map[common.Hash]*types.Header)
 
 	number, parent := block.NumberU64()-1, block.ParentHash()
 	for i := 0; i < 7; i++ {
@@ -242,7 +242,7 @@ func (aquahash *Aquahash) VerifyUncles(chain consensus.ChainReader, block *types
 		hash := uncle.SetVersion(byte(chain.Config().GetBlockVersion(unum)))
 
 		// Make sure every uncle is rewarded only once
-		if uncles.Has(hash) {
+		if uncles.Contains(hash) {
 			if number > 15000 {
 				return errDuplicateUncle
 			} else if ancestorhash.Hex() == "0xbac2283407b519ffbb8c47772d1b7cf740646dddf69744ff44219cb868b00548" && unum.Uint64() == 13313 {
