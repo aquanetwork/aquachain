@@ -21,18 +21,7 @@ import (
 
 	"gitlab.com/aquachain/aquachain/common"
 	"gitlab.com/aquachain/aquachain/core/state"
-	"gitlab.com/aquachain/aquachain/core/types"
-	"gitlab.com/aquachain/aquachain/params"
 )
-
-func VerifyHFHeaderExtraData(config *params.ChainConfig, header *types.Header) error {
-	return nil
-}
-
-// ApplyHardFork modifies the state database according to the specific hf
-func ApplyHardFork(statedb *state.StateDB) {
-	// do nothing
-}
 
 func ApplyHardFork4(statedb *state.StateDB) {
 	big0 := new(big.Int)
