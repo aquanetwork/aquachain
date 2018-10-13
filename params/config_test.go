@@ -32,6 +32,17 @@ func TestCheckCompatible(t *testing.T) {
 		{stored: AllAquahashProtocolChanges, new: AllAquahashProtocolChanges, head: 0, wantErr: nil},
 		{stored: AllAquahashProtocolChanges, new: AllAquahashProtocolChanges, head: 100, wantErr: nil},
 		{
+			stored: &ChainConfig{HF: ForkMap{1: big.NewInt(10)}},
+			new:    &ChainConfig{HF: ForkMap{1: big.NewInt(20)}},
+			head:   11,
+			wantErr: &ConfigCompatError{
+				What:         "Aquachain HF1 block",
+				StoredConfig: big.NewInt(10),
+				NewConfig:    big.NewInt(20),
+				RewindTo:     9,
+			},
+		},
+		{
 			stored:  &ChainConfig{EIP150Block: big.NewInt(10)},
 			new:     &ChainConfig{EIP150Block: big.NewInt(20)},
 			head:    9,
@@ -72,10 +83,10 @@ func TestCheckCompatible(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		err := test.stored.CheckCompatible(test.new, test.head)
 		if !reflect.DeepEqual(err, test.wantErr) {
-			t.Errorf("error mismatch:\nstored: %v\nnew: %v\nhead: %v\nerr: %v\nwant: %v", test.stored, test.new, test.head, err, test.wantErr)
+			t.Errorf("test #%v error mismatch:\nstored: %v\nnew: %v\nhead: %v\nerr: %v\nwant: %v", i, test.stored, test.new, test.head, err, test.wantErr)
 		}
 	}
 }

@@ -36,7 +36,6 @@ const KnownHF = 9
 var (
 	// AquachainHF is the map of hard forks (mainnet)
 	AquachainHF = ForkMap{
-		0: big.NewInt(3000),  // HF0 (no changes) used to test the hf system
 		1: big.NewInt(3600),  // HF1 (difficulty algo) increase min difficulty to the next multiple of 2048
 		2: big.NewInt(7200),  // HF2 (difficulty algo) use simple difficulty algo (240 seconds)
 		3: big.NewInt(13026), // HF3 (difficulty) increase min difficulty for anticipation of gpu mining
@@ -49,7 +48,6 @@ var (
 
 	// TestnetHF is the map of hard forks (testnet)
 	TestnetHF = ForkMap{
-		0: big.NewInt(0),   // hf0 had no changes
 		1: big.NewInt(1),   // increase min difficulty to the next multiple of 2048
 		2: big.NewInt(2),   // use simple difficulty algo (240 seconds)
 		3: big.NewInt(3),   // increase min difficulty for anticipation of gpu mining
@@ -71,7 +69,6 @@ var (
 
 	// TestHF is the map of hard forks (for testing suite)
 	TestHF = ForkMap{
-		0: big.NewInt(0), //  hf0 had no changes
 		4: big.NewInt(12),
 		5: big.NewInt(13),
 		7: big.NewInt(30),
@@ -264,6 +261,9 @@ func (c *ChainConfig) CheckCompatible(newcfg *ChainConfig, height uint64) *Confi
 
 func (c *ChainConfig) checkCompatible(newcfg *ChainConfig, head *big.Int) *ConfigCompatError {
 	for i := 0; i < KnownHF; i++ {
+		if c.HF[i] == nil && newcfg.HF[i] == nil {
+			continue
+		}
 		if isForkIncompatible(c.HF[i], newcfg.HF[i], head) {
 			return newCompatError(fmt.Sprintf("Aquachain HF%v block", i), c.HF[i], newcfg.HF[i])
 		}
