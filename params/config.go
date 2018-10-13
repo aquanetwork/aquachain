@@ -30,23 +30,26 @@ var (
 	EthnetGenesisHash   = common.HexToHash("0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3")
 )
 
+// KnownHF is the highest hard fork that is known by this version of Aquachain.
 const KnownHF = 9
 
 var (
+	// AquachainHF is the map of hard forks (mainnet)
 	AquachainHF = ForkMap{
-		0: big.NewInt(3000),  // HF0
-		1: big.NewInt(3600),  // increase min difficulty to the next multiple of 2048
-		2: big.NewInt(7200),  // use simple difficulty algo (240 seconds)
-		3: big.NewInt(13026), // increase min difficulty for anticipation of gpu mining
-		4: big.NewInt(21800), // HF4
-		5: big.NewInt(22800), // HF5 argonated (argon2id)
-		6: big.NewInt(36000), // HF6 divisor increase
-		7: big.NewInt(36050), // eip 155, 158
+		0: big.NewInt(3000),  // HF0 (no changes) used to test the hf system
+		1: big.NewInt(3600),  // HF1 (difficulty algo) increase min difficulty to the next multiple of 2048
+		2: big.NewInt(7200),  // HF2 (difficulty algo) use simple difficulty algo (240 seconds)
+		3: big.NewInt(13026), // HF3 (difficulty) increase min difficulty for anticipation of gpu mining
+		4: big.NewInt(21800), // HF4 (supply) remove ethereum genesis allocation
+		5: big.NewInt(22800), // HF5 (POW) argonated (algo #2) (argon2id)
+		6: big.NewInt(36000), // HF6 (difficulty algo) divisor increase
+		7: big.NewInt(36050), // HF7 (EIP 155, 158)
+		//8: big.NewInt(99999), // HF8 (POW) algo #3 (argon2id)
 	}
 
-	// TestnetHF ...
+	// TestnetHF is the map of hard forks (testnet)
 	TestnetHF = ForkMap{
-		0: big.NewInt(0),   //  hf0 had no changes
+		0: big.NewInt(0),   // hf0 had no changes
 		1: big.NewInt(1),   // increase min difficulty to the next multiple of 2048
 		2: big.NewInt(2),   // use simple difficulty algo (240 seconds)
 		3: big.NewInt(3),   // increase min difficulty for anticipation of gpu mining
@@ -57,7 +60,7 @@ var (
 		8: big.NewInt(650), // HF8
 	}
 
-	// Testnet2HF for -testnet2 private network
+	// Testnet2HF is the map of hard forks (testnet2 private network
 	Testnet2HF = ForkMap{
 		5: big.NewInt(0),
 		6: big.NewInt(0),
@@ -66,15 +69,11 @@ var (
 		9: big.NewInt(19),
 	}
 
-	// TestHF for test suite
+	// TestHF is the map of hard forks (for testing suite)
 	TestHF = ForkMap{
 		0: big.NewInt(0), //  hf0 had no changes
-		//1: big.NewInt(0), // increase min difficulty to the next multiple of 2048
-		//2: big.NewInt(10),
-		//3: big.NewInt(11),
 		4: big.NewInt(12),
 		5: big.NewInt(13),
-		//6: big.NewInt(14),
 		7: big.NewInt(30),
 	}
 
@@ -264,6 +263,11 @@ func (c *ChainConfig) CheckCompatible(newcfg *ChainConfig, height uint64) *Confi
 }
 
 func (c *ChainConfig) checkCompatible(newcfg *ChainConfig, head *big.Int) *ConfigCompatError {
+	for i := 0; i < KnownHF; i++ {
+		if isForkIncompatible(c.HF[i], newcfg.HF[i], head) {
+			return newCompatError(fmt.Sprintf("Aquachain HF%v block", i), c.HF[i], newcfg.HF[i])
+		}
+	}
 	if isForkIncompatible(c.HomesteadBlock, newcfg.HomesteadBlock, head) {
 		return newCompatError("Homestead fork block", c.HomesteadBlock, newcfg.HomesteadBlock)
 	}
