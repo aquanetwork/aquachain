@@ -151,6 +151,10 @@ type Config struct {
 
 	// NoKeys disables all signing and keystore functions
 	NoKeys bool
+
+	// RPCBehindProxy if true, tried X-FORWARDED-FOR and X-REAL-IP headers to
+	// fetch client's remote IP
+	RPCBehindProxy bool
 }
 
 // IPCEndpoint resolves an IPC endpoint based on a configured value, taking into

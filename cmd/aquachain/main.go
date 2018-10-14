@@ -35,7 +35,7 @@ import (
 	"gitlab.com/aquachain/aquachain/node"
 	"gitlab.com/aquachain/aquachain/opt/aquaclient"
 	"gitlab.com/aquachain/aquachain/opt/console"
-	"gopkg.in/urfave/cli.v1"
+	cli "gopkg.in/urfave/cli.v1"
 )
 
 const (
@@ -224,26 +224,28 @@ func daemonStart(ctx *cli.Context) error {
 // it unlocks any requested accounts, and starts the RPC/IPC interfaces and the
 // miner.
 func startNode(ctx *cli.Context, stack *node.Node) {
-	unlocks := strings.Split(ctx.GlobalString(utils.UnlockedAccountFlag.Name), ",")
-	if len(unlocks) > 0 && unlocks[0] != "" {
-		log.Warn("Unlocking account", "unlocks", unlocks)
-		passwords := utils.MakePasswordList(ctx)
-		// Unlock any account specifically requested
-		ks := stack.AccountManager().Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
-		for i, account := range unlocks {
-			if trimmed := strings.TrimSpace(account); trimmed != "" {
-				unlockAccount(ctx, ks, trimmed, i, passwords)
+	if !stack.Config().NoKeys {
+		unlocks := strings.Split(ctx.GlobalString(utils.UnlockedAccountFlag.Name), ",")
+		if len(unlocks) > 0 && unlocks[0] != "" {
+			log.Warn("Unlocking account", "unlocks", unlocks)
+			passwords := utils.MakePasswordList(ctx)
+			// Unlock any account specifically requested
+			ks := stack.AccountManager().Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
+			for i, account := range unlocks {
+				if trimmed := strings.TrimSpace(account); trimmed != "" {
+					unlockAccount(ctx, ks, trimmed, i, passwords)
+				}
 			}
 		}
 	}
-
 	// Start up the node itself
 	utils.StartNode(stack)
 
 	// Register wallet event handlers to open and auto-derive wallets
-	events := make(chan accounts.WalletEvent, 16)
 	if !stack.Config().NoKeys {
+		events := make(chan accounts.WalletEvent, 16)
 		stack.AccountManager().Subscribe(events)
+		log.Info("Starting Account Manager")
 		go func() {
 			// Create an chain state reader for self-derivation
 			rpcClient, err := stack.Attach()

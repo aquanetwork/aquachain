@@ -76,9 +76,6 @@ type Node struct {
 
 // New creates a new P2P node, ready for protocol registration.
 func New(conf *Config) (*Node, error) {
-	if conf.P2P.ChainId == 0 {
-		panic("no chain id")
-	}
 	// Copy config and resolve the datadir so future changes to the current
 	// working directory don't affect the node.
 	confCopy := *conf
@@ -143,6 +140,9 @@ func (n *Node) Start() error {
 	n.lock.Lock()
 	defer n.lock.Unlock()
 
+	if n.config.P2P.ChainId == 0 {
+		return fmt.Errorf("no chain id")
+	}
 	// Short circuit if the node's already running
 	if n.server != nil {
 		return ErrNodeRunning
@@ -271,12 +271,12 @@ func (n *Node) startRPC(services map[reflect.Type]Service) error {
 		n.stopInProc()
 		return err
 	}
-	if err := n.startHTTP(n.httpEndpoint, apis, n.config.HTTPModules, n.config.HTTPCors, n.config.HTTPVirtualHosts, n.config.RPCAllowIP); err != nil {
+	if err := n.startHTTP(n.httpEndpoint, apis, n.config.HTTPModules, n.config.HTTPCors, n.config.HTTPVirtualHosts, n.config.RPCAllowIP, n.config.RPCBehindProxy); err != nil {
 		n.stopIPC()
 		n.stopInProc()
 		return err
 	}
-	if err := n.startWS(n.wsEndpoint, apis, n.config.WSModules, n.config.WSOrigins, n.config.WSExposeAll, n.config.RPCAllowIP); err != nil {
+	if err := n.startWS(n.wsEndpoint, apis, n.config.WSModules, n.config.WSOrigins, n.config.WSExposeAll, n.config.RPCAllowIP, n.config.RPCBehindProxy); err != nil {
 		n.stopHTTP()
 		n.stopIPC()
 		n.stopInProc()
@@ -373,7 +373,7 @@ func (n *Node) stopIPC() {
 }
 
 // startHTTP initializes and starts the HTTP RPC endpoint.
-func (n *Node) startHTTP(endpoint string, apis []rpc.API, modules []string, cors []string, vhosts []string, allowip []string) error {
+func (n *Node) startHTTP(endpoint string, apis []rpc.API, modules []string, cors []string, vhosts []string, allowip []string, behindreverseproxy bool) error {
 	// Short circuit if the HTTP endpoint isn't being exposed
 	if endpoint == "" {
 		return nil
@@ -404,7 +404,7 @@ func (n *Node) startHTTP(endpoint string, apis []rpc.API, modules []string, cors
 	if len(allowip) == 0 || allowip[0] == "none" {
 		n.log.Warn("The '-allowip' flag has not been set. Please consider using it to restrict RPC access. HTTP server disabled. To allow any IP, use -allowip='*'")
 	} else {
-		go rpc.NewHTTPServer(cors, vhosts, allowip, handler).Serve(listener)
+		go rpc.NewHTTPServer(cors, vhosts, allowip, behindreverseproxy, handler).Serve(listener)
 		n.log.Info("HTTP endpoint opened", "url", fmt.Sprintf("http://%s", endpoint), "cors", strings.Join(cors, ","), "vhosts", strings.Join(vhosts, ","), "allowip", strings.Join(allowip, ","))
 	}
 	// All listeners booted successfully
@@ -430,7 +430,7 @@ func (n *Node) stopHTTP() {
 }
 
 // startWS initializes and starts the websocket RPC endpoint.
-func (n *Node) startWS(endpoint string, apis []rpc.API, modules []string, wsOrigins []string, exposeAll bool, allowedip []string) error {
+func (n *Node) startWS(endpoint string, apis []rpc.API, modules []string, wsOrigins []string, exposeAll bool, allowedip []string, behindproxy bool) error {
 	// Short circuit if the WS endpoint isn't being exposed
 	if endpoint == "" {
 		return nil
@@ -458,7 +458,7 @@ func (n *Node) startWS(endpoint string, apis []rpc.API, modules []string, wsOrig
 	if listener, err = net.Listen("tcp", endpoint); err != nil {
 		return err
 	}
-	go rpc.NewWSServer(wsOrigins, allowedip, handler).Serve(listener)
+	go rpc.NewWSServer(wsOrigins, allowedip, behindproxy, handler).Serve(listener)
 	n.log.Info("WebSocket endpoint opened", "url", fmt.Sprintf("ws://%s", listener.Addr()))
 
 	// All listeners booted successfully
@@ -554,6 +554,7 @@ func (n *Node) Wait() {
 // Restart terminates a running node and boots up a new one in its place. If the
 // node isn't running, an error is returned.
 func (n *Node) Restart() error {
+	n.log.Info("Restarting P2P node")
 	if err := n.Stop(); err != nil {
 		return err
 	}

@@ -121,8 +121,7 @@ func makeConfigNode(ctx *cli.Context) (*node.Node, gethConfig) {
 	}
 
 	// Apply flags.
-	utils.SetChainId(ctx, &cfg.Aqua)
-	utils.SetNodeConfig(ctx, &cfg.Node, cfg.Aqua.NetworkId)
+	utils.SetNodeConfig(ctx, &cfg.Node)
 	stack, err := node.New(&cfg.Node)
 	if err != nil {
 		utils.Fatalf("Failed to create the protocol stack: %v", err)

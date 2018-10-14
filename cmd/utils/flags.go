@@ -53,7 +53,7 @@ import (
 	"gitlab.com/aquachain/aquachain/p2p/nat"
 	"gitlab.com/aquachain/aquachain/p2p/netutil"
 	"gitlab.com/aquachain/aquachain/params"
-	"gopkg.in/urfave/cli.v1"
+	cli "gopkg.in/urfave/cli.v1"
 )
 
 var (
@@ -413,8 +413,12 @@ var (
 	}
 	RPCAllowIPFlag = cli.StringFlag{
 		Name:  "allowip",
-		Usage: "Comma separated list of IP allowed to access RPC (http/ws)",
-		Value: "127.0.0.1",
+		Usage: "Comma separated allowed RPC clients (CIDR notation OK) (http/ws)",
+		Value: "127.0.0.1/24",
+	}
+	RPCBehindProxyFlag = cli.BoolFlag{
+		Name:  "behindproxy",
+		Usage: "If RPC is behind a reverse proxy. Changes the way IP is fetched when comparing to allowed IP addresses",
 	}
 	ExecFlag = cli.StringFlag{
 		Name:  "exec",
@@ -536,6 +540,9 @@ func MakeDataDir(ctx *cli.Context) string {
 	if path := ctx.GlobalString(DataDirFlag.Name); path != "" {
 		if ctx.GlobalBool(TestnetFlag.Name) {
 			return filepath.Join(path, "testnet")
+		}
+		if ctx.GlobalBool(DeveloperFlag.Name) {
+			return filepath.Join(path, "develop")
 		}
 		if ctx.GlobalBool(Testnet2Flag.Name) {
 			return filepath.Join(path, "testnet2")
@@ -814,10 +821,11 @@ func MakePasswordList(ctx *cli.Context) []string {
 	return lines
 }
 
-func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config, chainid uint64) {
-
+func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config) {
 	// cant be zero
-	cfg.ChainId = chainid
+	if cfg.ChainId == 0 {
+		panic("P2P config has no chain ID")
+	}
 
 	setNodeKey(ctx, cfg)
 	setNAT(ctx, cfg)
@@ -876,37 +884,51 @@ func SetP2PConfig(ctx *cli.Context, cfg *p2p.Config, chainid uint64) {
 }
 
 // SetNodeConfig applies node-related command line flags to the config.
-func SetNodeConfig(ctx *cli.Context, cfg *node.Config, chainid uint64) {
-	SetP2PConfig(ctx, &cfg.P2P, chainid)
+func SetNodeConfig(ctx *cli.Context, cfg *node.Config) {
+
+	switch {
+	case ctx.GlobalIsSet(NetworkIdFlag.Name):
+		cfg.P2P.ChainId = ctx.GlobalUint64(NetworkIdFlag.Name)
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), fmt.Sprintf("chainid-%v", cfg.P2P.ChainId))
+	case ctx.GlobalBool(DeveloperFlag.Name):
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "develop")
+		cfg.P2P.ChainId = 1337
+	case ctx.GlobalBool(TestnetFlag.Name):
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet")
+		cfg.P2P.ChainId = params.TestnetChainConfig.ChainId.Uint64()
+	case ctx.GlobalBool(Testnet2Flag.Name):
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet2")
+		cfg.P2P.ChainId = params.Testnet2ChainConfig.ChainId.Uint64()
+	case ctx.GlobalBool(NetworkEthFlag.Name):
+		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "ethereum")
+		cfg.P2P.ChainId = params.EthnetChainConfig.ChainId.Uint64()
+	default:
+		// mainnet
+		cfg.P2P.ChainId = params.MainnetChainConfig.ChainId.Uint64()
+		cfg.DataDir = node.DefaultDataDir()
+	}
+
+	if ctx.GlobalIsSet(DataDirFlag.Name) {
+		cfg.DataDir = ctx.GlobalString(DataDirFlag.Name)
+	}
+
+	SetP2PConfig(ctx, &cfg.P2P)
 	setIPC(ctx, cfg)
 	setHTTP(ctx, cfg)
 	setWS(ctx, cfg)
 	setNodeUserIdent(ctx, cfg)
-
-	switch {
-	case ctx.GlobalIsSet(DataDirFlag.Name):
-		cfg.DataDir = ctx.GlobalString(DataDirFlag.Name)
-	case ctx.GlobalBool(DeveloperFlag.Name):
-		cfg.DataDir = "" // unless explicitly requested, use memory databases
-	case ctx.GlobalBool(TestnetFlag.Name):
-		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet")
-	case ctx.GlobalBool(Testnet2Flag.Name):
-		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "testnet2")
-	case ctx.GlobalBool(NetworkEthFlag.Name):
-		cfg.DataDir = filepath.Join(node.DefaultDataDir(), "ethereum")
-	}
-
-	if ctx.GlobalIsSet(KeyStoreDirFlag.Name) {
-		cfg.KeyStoreDir = ctx.GlobalString(KeyStoreDirFlag.Name)
-		if cfg.KeyStoreDir == "" {
-			cfg.NoKeys = true
-		}
-	}
 	if ctx.GlobalIsSet(NoKeysFlag.Name) {
 		cfg.NoKeys = ctx.GlobalBool(NoKeysFlag.Name)
 	}
+
+	if cfg.NoKeys {
+		log.Info("No-Keys mode")
+	}
 	if ctx.GlobalIsSet(UseUSBFlag.Name) {
 		cfg.UseUSB = ctx.GlobalBool(UseUSBFlag.Name)
+	}
+	if ctx.GlobalIsSet(RPCBehindProxyFlag.Name) {
+		cfg.RPCBehindProxy = ctx.GlobalBool(RPCBehindProxyFlag.Name)
 	}
 }
 
@@ -1025,26 +1047,27 @@ func SetShhConfig(ctx *cli.Context, stack *node.Node, cfg *whisper.Config) {
 func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 	// Avoid conflicting network flags
 	checkExclusive(ctx, DeveloperFlag, TestnetFlag, Testnet2Flag, NetworkEthFlag)
-	checkExclusive(ctx, FastSyncFlag, SyncModeFlag)
-	// checkExclusive(ctx, LightServFlag, LightModeFlag)
-	// checkExclusive(ctx, LightServFlag, SyncModeFlag, "light")
+	checkExclusive(ctx, FastSyncFlag, SyncModeFlag, OfflineFlag)
+
+	SetChainId(ctx, cfg)
+
 	am := stack.AccountManager()
-	var ks *keystore.KeyStore
 	if am != nil {
-		ks = am.Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
+		ks := am.Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
+		setAquabase(ctx, ks, cfg)
 	}
-	setAquabase(ctx, ks, cfg)
+
 	setGPO(ctx, &cfg.GPO)
 	setTxPool(ctx, &cfg.TxPool)
 	setAquahash(ctx, cfg)
 
 	switch {
+	case ctx.GlobalBool(OfflineFlag.Name):
+		cfg.SyncMode = downloader.OfflineSync
 	case ctx.GlobalIsSet(SyncModeFlag.Name):
 		cfg.SyncMode = *GlobalTextMarshaler(ctx, SyncModeFlag.Name).(*downloader.SyncMode)
 	case ctx.GlobalBool(FastSyncFlag.Name):
 		cfg.SyncMode = downloader.FastSync
-	case ctx.GlobalBool(OfflineFlag.Name):
-		cfg.SyncMode = downloader.OfflineSync
 	}
 
 	if ctx.GlobalIsSet(NetworkIdFlag.Name) {
@@ -1057,7 +1080,7 @@ func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 	cfg.DatabaseHandles = makeDatabaseHandles()
 
 	if gcmode := ctx.GlobalString(GCModeFlag.Name); gcmode != "full" && gcmode != "archive" {
-		Fatalf("--%s must be either 'full' or 'archive'", GCModeFlag.Name)
+		Fatalf("--%s must be either 'full' or 'archive', use 'archive' for full state", GCModeFlag.Name)
 	}
 	cfg.NoPruning = ctx.GlobalString(GCModeFlag.Name) == "archive"
 
@@ -1080,33 +1103,35 @@ func SetAquaConfig(ctx *cli.Context, stack *node.Node, cfg *aqua.Config) {
 		// TODO(fjl): force-enable this in --dev mode
 		cfg.EnablePreimageRecording = ctx.GlobalBool(VMEnableDebugFlag.Name)
 	}
+
 	if ctx.GlobalBool(DeveloperFlag.Name) {
 		// Create new developer account or reuse existing one
 		var (
 			developer accounts.Account
 			err       error
 		)
-		if accs := ks.Accounts(); len(accs) > 0 {
-			developer = ks.Accounts()[0]
-		} else {
-			developer, err = ks.NewAccount("")
-			if err != nil {
-				Fatalf("Failed to create developer account: %v", err)
+		am := stack.AccountManager()
+		if am != nil {
+			ks := am.Backends(keystore.KeyStoreType)[0].(*keystore.KeyStore)
+			if accs := ks.Accounts(); len(accs) > 0 {
+				developer = ks.Accounts()[0]
+			} else {
+				developer, err = ks.NewAccount("")
+				if err != nil {
+					Fatalf("Failed to create developer account: %v", err)
+				}
 			}
+			if err := ks.Unlock(developer, ""); err != nil {
+				Fatalf("Failed to unlock developer account: %v", err)
+			}
+			log.Info("Using developer account", "address", developer.Address)
+			cfg.Genesis = core.DeveloperGenesisBlock(uint64(ctx.GlobalInt(DeveloperPeriodFlag.Name)), developer.Address)
 		}
-		if err := ks.Unlock(developer, ""); err != nil {
-			Fatalf("Failed to unlock developer account: %v", err)
-		}
-		log.Info("Using developer account", "address", developer.Address)
-		cfg.Genesis = core.DeveloperGenesisBlock(uint64(ctx.GlobalInt(DeveloperPeriodFlag.Name)), developer.Address)
+
 	}
 
 }
 func SetChainId(ctx *cli.Context, cfg *aqua.Config) {
-	if ctx.GlobalIsSet(NetworkIdFlag.Name) {
-		cfg.NetworkId = ctx.GlobalUint64(NetworkIdFlag.Name)
-	}
-
 	// Override any default configs for hard coded networks.
 	switch {
 	case ctx.GlobalBool(TestnetFlag.Name):
@@ -1122,6 +1147,7 @@ func SetChainId(ctx *cli.Context, cfg *aqua.Config) {
 	case ctx.GlobalBool(DeveloperFlag.Name):
 		if !ctx.GlobalIsSet(GasPriceFlag.Name) {
 			cfg.GasPrice = big.NewInt(1)
+			cfg.NetworkId = 1337
 		}
 	case ctx.GlobalBool(NetworkEthFlag.Name):
 		if !ctx.GlobalIsSet(NetworkIdFlag.Name) {
@@ -1133,6 +1159,11 @@ func SetChainId(ctx *cli.Context, cfg *aqua.Config) {
 	if gen := ctx.GlobalInt(TrieCacheGenFlag.Name); gen > 0 {
 		state.MaxTrieCacheGen = uint16(gen)
 	}
+
+	if ctx.GlobalIsSet(NetworkIdFlag.Name) {
+		cfg.NetworkId = ctx.GlobalUint64(NetworkIdFlag.Name)
+	}
+
 }
 
 // RegisterAquaService adds an AquaChain client to the stack.

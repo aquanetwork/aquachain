@@ -29,8 +29,8 @@ import (
 	"gitlab.com/aquachain/aquachain/node"
 	"gitlab.com/aquachain/aquachain/opt/console"
 	"gitlab.com/aquachain/aquachain/params"
-	"gitlab.com/aquachain/aquachain/rpc/rpcclient"
-	"gopkg.in/urfave/cli.v1"
+	rpc "gitlab.com/aquachain/aquachain/rpc/rpcclient"
+	cli "gopkg.in/urfave/cli.v1"
 )
 
 var (
@@ -143,6 +143,10 @@ func remoteConsole(ctx *cli.Context) error {
 				path = filepath.Join(path, "testnet")
 			} else if ctx.GlobalBool(utils.Testnet2Flag.Name) {
 				path = filepath.Join(path, "testnet2")
+			} else if ctx.GlobalBool(utils.NetworkEthFlag.Name) {
+				path = filepath.Join(path, "ethereum")
+			} else if ctx.GlobalBool(utils.DeveloperFlag.Name) {
+				path = filepath.Join(path, "develop")
 			}
 		}
 		endpoint = fmt.Sprintf("%s/aquachain.ipc", path)
