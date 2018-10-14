@@ -4,10 +4,20 @@ PREFIX ?= ${HOME}/.local/bin/
 CGO_ENABLED ?= "0"
 
 # make build environment script executable (gets unset through ipfs)
-DOFIRST=$(shell chmod +x build/env.sh)
+DOFIRST != chmod +x build/env.sh
 
 # default build
+COMMITHASH != git rev-parse HEAD
 aquachain:
+	@echo "Building default aquachain: ./build/bin/aquachain"
+	GOBIN=${GOBIN} CGO_ENABLED=${CGO_ENABLED} go install -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
+
+nocache:
+	GOBIN=${GOBIN} CGO_ENABLED=${CGO_ENABLED} go install -a -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
+
+
+# this is old way
+aquachain-go:
 	@echo "Building aquachain with no tracer/usb support."
 	@echo "Consider \"${MAKE} usb\" or \"${MAKE} aquachain\""
 	@echo "Building default aquachain. Consider \"${MAKE} musl\""
