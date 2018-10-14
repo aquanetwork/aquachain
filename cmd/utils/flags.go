@@ -908,6 +908,12 @@ func SetNodeConfig(ctx *cli.Context, cfg *node.Config) {
 		cfg.DataDir = node.DefaultDataDir()
 	}
 
+	if ctx.GlobalIsSet(KeyStoreDirFlag.Name) {
+		cfg.KeyStoreDir = ctx.GlobalString(KeyStoreDirFlag.Name)
+		if cfg.KeyStoreDir == "" {
+			cfg.NoKeys = true
+		}
+	}
 	if ctx.GlobalIsSet(DataDirFlag.Name) {
 		cfg.DataDir = ctx.GlobalString(DataDirFlag.Name)
 	}
