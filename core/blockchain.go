@@ -28,7 +28,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/hashicorp/golang-lru"
+	lru "github.com/hashicorp/golang-lru"
 	"gitlab.com/aquachain/aquachain/aqua/event"
 	"gitlab.com/aquachain/aquachain/aquadb"
 	"gitlab.com/aquachain/aquachain/common"
@@ -1266,8 +1266,11 @@ func (st *insertStats) report(chain []*types.Block, index int, cache common.Stor
 			context = append(context, []interface{}{"ignored", st.ignored}...)
 		}
 		if st.processed == 1 {
-			context = append(context, []interface{}{"miner", chain[0].Coinbase()}...)
+			context = append(context, []interface{}{"miner", end.Coinbase()}...)
+		} else {
+			context = append(context, []interface{}{"timestamp", time.Unix(end.Time().Int64(), 0).UTC().Format("Mon Jan 2 15:04:05 MST 2006")}...)
 		}
+
 		log.Info("Imported new chain segment", context...)
 
 		*st = insertStats{startTime: now, lastIndex: index + 1}
