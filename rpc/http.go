@@ -17,7 +17,6 @@
 package rpc
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -29,6 +28,7 @@ import (
 
 	"github.com/rs/cors"
 	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/p2p/netutil"
 )
 
 const (
@@ -52,19 +52,12 @@ func (t *httpReadWriteNopCloser) Close() error {
 // NewHTTPServer creates a new HTTP RPC server around an API provider.
 //
 // Deprecated: Server implements http.Handler
-func NewHTTPServer(cors []string, vhosts []string, allowIP []string, srv *Server) *http.Server {
+func NewHTTPServer(cors []string, vhosts []string, allowIP []string, behindreverseproxy bool, srv *Server) *http.Server {
 	// Wrap the CORS-handler within a host-handler
 	handler := newCorsHandler(srv, cors)
 	handler = newVHostHandler(vhosts, handler)
-	handler = newAllowIPHandler(allowIP, handler)
+	handler = newAllowIPHandler(allowIP, behindreverseproxy, handler)
 	return &http.Server{Handler: handler}
-}
-
-func getip(r *http.Request) string {
-	if ip := r.Header.Get("X-FORWARDED-FOR"); ip != "" {
-		return ip
-	}
-	return r.RemoteAddr
 }
 
 // ServeHTTP serves JSON-RPC requests over HTTP.
@@ -73,7 +66,7 @@ func (srv *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet && r.ContentLength == 0 && r.URL.RawQuery == "" {
 		return
 	}
-	uip := getip(r)
+	uip := getIP(r, srv.reverseproxy)
 	log.Debug("handling http request", "from", uip, "path", r.URL.Path, "ua", r.UserAgent(), "http", r.Method, "host", r.Host, "size", r.ContentLength)
 	if code, err := validateRequest(r); err != nil {
 		log.Debug("invalid request", "from", uip, "size", r.ContentLength)
@@ -172,83 +165,31 @@ func newVHostHandler(vhosts []string, next http.Handler) http.Handler {
 
 // allowIPHandler is a handler which only allows certain IP
 type allowIPHandler struct {
-	allowedIPs map[string]struct{}
-	next       http.Handler
+	allowedIPs   *netutil.Netlist
+	next         http.Handler
+	reverseproxy bool // if behind a reverse proxy (uses X-FORWARDED-FOR header)
 }
 
-type ipRange struct {
-	start net.IP
-	end   net.IP
-}
+func getIP(r *http.Request, reverseproxy bool) net.IP {
+	if reverseproxy {
+		for _, h := range []string{"X-Forwarded-For", "X-Real-Ip"} {
+			addresses := strings.Split(r.Header.Get(h), ",")
+			// march from right to left until we get a public address
+			// that will be the address right before our proxy.
+			for i := len(addresses) - 1; i >= 0; i-- {
+				// header can contain spaces too, strip those out.
+				ip := strings.TrimSpace(addresses[i])
+				realIP := net.ParseIP(ip)
+				if realIP == nil {
+					continue
+				}
+				if !realIP.IsGlobalUnicast() || netutil.IsLAN(realIP) || netutil.IsSpecialNetwork(realIP) {
+					// bad address, go to next
+					continue
+				}
 
-// inRange - check to see if a given ip address is within a range given
-func inRange(r ipRange, ipAddress net.IP) bool {
-	// strcmp type byte comparison
-	if bytes.Compare(ipAddress, r.start) >= 0 && bytes.Compare(ipAddress, r.end) < 0 {
-		return true
-	}
-	return false
-}
-
-var privateRanges = []ipRange{
-	{
-		start: net.ParseIP("10.0.0.0"),
-		end:   net.ParseIP("10.255.255.255"),
-	},
-	{
-		start: net.ParseIP("100.64.0.0"),
-		end:   net.ParseIP("100.127.255.255"),
-	},
-	{
-		start: net.ParseIP("172.16.0.0"),
-		end:   net.ParseIP("172.31.255.255"),
-	},
-	{
-		start: net.ParseIP("192.0.0.0"),
-		end:   net.ParseIP("192.0.0.255"),
-	},
-	{
-		start: net.ParseIP("192.168.0.0"),
-		end:   net.ParseIP("192.168.255.255"),
-	},
-	{
-		start: net.ParseIP("198.18.0.0"),
-		end:   net.ParseIP("198.19.255.255"),
-	},
-}
-
-// isPrivateSubnet - check to see if this ip is in a private subnet
-func isPrivateSubnet(ipAddress net.IP) bool {
-	if ipCheck := ipAddress.To4(); ipCheck != nil {
-		// iterate over all our ranges
-		for _, r := range privateRanges {
-			// check if this ip is in a private range
-			if inRange(r, ipAddress) {
-				return true
+				return net.ParseIP(ip)
 			}
-		}
-		return false
-	}
-	if ipCheck := ipAddress.To16(); ipCheck != nil {
-		return ipCheck.IsLinkLocalUnicast() || ipCheck.IsLinkLocalMulticast()
-	}
-	return false
-}
-
-func getIP(r *http.Request) string {
-	for _, h := range []string{"X-Forwarded-For", "X-Real-Ip"} {
-		addresses := strings.Split(r.Header.Get(h), ",")
-		// march from right to left until we get a public address
-		// that will be the address right before our proxy.
-		for i := len(addresses) - 1; i >= 0; i-- {
-			// header can contain spaces too, strip those out.
-			ip := strings.TrimSpace(addresses[i])
-			realIP := net.ParseIP(ip)
-			if !realIP.IsGlobalUnicast() || isPrivateSubnet(realIP) {
-				// bad address, go to next
-				continue
-			}
-			return ip
 		}
 	}
 	remoteAddr, _, err := net.SplitHostPort(r.RemoteAddr)
@@ -256,33 +197,25 @@ func getIP(r *http.Request) string {
 		// Either invalid (too many colons) or no port specified
 		remoteAddr = strings.Split(r.RemoteAddr, ":")[0]
 	}
-	if ipAddr := net.ParseIP(remoteAddr); ipAddr != nil {
-		return ipAddr.String()
-	}
-	return "local"
+	return net.ParseIP(remoteAddr)
 }
 
 // ServeHTTP serves JSON-RPC requests over HTTP, implements http.Handler
 func (h *allowIPHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if _, exist := h.allowedIPs["*"]; exist {
-		log.Debug("bypass -allowip")
+	ip := getIP(r, h.reverseproxy)
+	log.Trace("checking vs allow IPs", "ip", ip)
+	if h.allowedIPs.Contains(ip) {
 		h.next.ServeHTTP(w, r)
 		return
 	}
-	ip := getIP(r)
-	log.Debug("checking vs allow IPs", "ip", ip)
-	if _, exist := h.allowedIPs[ip]; exist {
-		h.next.ServeHTTP(w, r)
-		return
-	}
-	log.Debug("forbidding rpc access (-allowip flag)", "BadIP", ip)
+	log.Warn("allowip flag prevents http rpc connection", "OffendingIP", ip)
 	http.Error(w, "", http.StatusForbidden)
 }
 
-func newAllowIPHandler(allowIPs []string, next http.Handler) http.Handler {
-	allowIPMap := make(map[string]struct{})
-	for _, allowedIP := range allowIPs {
-		allowIPMap[allowedIP] = struct{}{}
+func newAllowIPHandler(allowIPmasks []string, behindreverseproxy bool, next http.Handler) http.Handler {
+	var allowIPMap = new(netutil.Netlist)
+	for i := range allowIPmasks {
+		allowIPMap.Add(allowIPmasks[i])
 	}
-	return &allowIPHandler{allowIPMap, next}
+	return &allowIPHandler{allowIPMap, next, behindreverseproxy}
 }

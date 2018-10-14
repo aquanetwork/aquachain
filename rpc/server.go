@@ -132,9 +132,11 @@ func (s *Server) serveRequest(codec ServerCodec, singleShot bool, options CodecO
 			buf = buf[:runtime.Stack(buf, false)]
 			log.Error(string(buf))
 		}
-		s.codecsMu.Lock()
-		s.codecs.Remove(codec)
-		s.codecsMu.Unlock()
+		if s.codecs != nil {
+			s.codecsMu.Lock()
+			s.codecs.Remove(codec)
+			s.codecsMu.Unlock()
+		}
 	}()
 
 	ctx, cancel := context.WithCancel(context.Background())

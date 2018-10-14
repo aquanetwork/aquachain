@@ -96,6 +96,14 @@ func (l Netlist) MarshalTOML() interface{} {
 	return list
 }
 
+func (l Netlist) String() string {
+	list := make([]string, 0, len(l))
+	for _, net := range l {
+		list = append(list, net.String())
+	}
+	return strings.Join(list, ",")
+}
+
 // UnmarshalTOML implements toml.UnmarshalerRec.
 func (l *Netlist) UnmarshalTOML(fn func(interface{}) error) error {
 	var masks []string

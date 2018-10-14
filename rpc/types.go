@@ -71,9 +71,11 @@ type subscriptions map[string]*callback  // collection of subscription callbacks
 type Server struct {
 	services serviceRegistry
 
-	run      int32
-	codecsMu sync.Mutex
-	codecs   set.Set
+	run          int32
+	codecsMu     sync.Mutex
+	codecs       set.Set
+	reverseproxy bool // if true, check X-FORWARDED-FOR header
+
 }
 
 // rpcRequest represents a raw incoming RPC request

@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"strings"
@@ -28,6 +29,7 @@ import (
 
 	set "github.com/deckarep/golang-set"
 	"gitlab.com/aquachain/aquachain/common/log"
+	"gitlab.com/aquachain/aquachain/p2p/netutil"
 )
 
 // websocketJSONCodec is a custom JSON codec with payload size enforcement and
@@ -51,9 +53,9 @@ var websocketJSONCodec = websocket.Codec{
 //
 // allowedOrigins should be a comma-separated list of allowed origin URLs.
 // To allow connections with any origin, pass "*".
-func (srv *Server) WebsocketHandler(allowedOrigins []string, allowedIP []string) http.Handler {
+func (srv *Server) WebsocketHandler(allowedOrigins []string, allowedIP []string, reverseproxy bool) http.Handler {
 	return websocket.Server{
-		Handshake: wsHandshakeValidator(allowedOrigins, allowedIP),
+		Handshake: wsHandshakeValidator(allowedOrigins, allowedIP, reverseproxy),
 		Handler: func(conn *websocket.Conn) {
 
 			// Create a custom encode/decode pair to enforce payload size and number encoding
@@ -73,33 +75,40 @@ func (srv *Server) WebsocketHandler(allowedOrigins []string, allowedIP []string)
 // NewWSServer creates a new websocket RPC server around an API provider.
 //
 // Deprecated: use Server.WebsocketHandler
-func NewWSServer(allowedOrigins []string, allowedIP []string, srv *Server) *http.Server {
-	return &http.Server{Handler: srv.WebsocketHandler(allowedOrigins, allowedIP)}
+func NewWSServer(allowedOrigins []string, allowedIP []string, reverseproxy bool, srv *Server) *http.Server {
+	return &http.Server{Handler: srv.WebsocketHandler(allowedOrigins, allowedIP, reverseproxy)}
 }
 
 // wsHandshakeValidator returns a handler that verifies the origin during the
 // websocket upgrade process. When a '*' is specified as an allowed origins all
 // connections are accepted.
-func wsHandshakeValidator(allowedOrigins, allowedIP []string) func(*websocket.Config, *http.Request) error {
+func wsHandshakeValidator(allowedOrigins, allowedIP []string, reverseProxy bool) func(*websocket.Config, *http.Request) error {
 	origins := set.NewSet()
-	allowedIPset := set.NewSet()
+	allowIPset := make(netutil.Netlist, 0)
+	ws := strings.NewReplacer(" ", "", "\n", "", "\t", "")
+	for _, mask := range allowedIP {
+		mask = ws.Replace(mask)
+		if mask == "" {
+			continue
+		}
+		if mask == "*" {
+			log.Warn("Allowing public RPC access. Be sure to run with -nokeys flag!!!")
+			mask = "0.0.0.0/0"
+		}
+		_, n, err := net.ParseCIDR(mask)
+		if err != nil {
+			log.Warn("error parsing allowed IPs, not adding", "badmask", mask, "err", err)
+			continue
+		}
+		allowIPset = append(allowIPset, *n)
+	}
 	allowAllOrigins := false
-	allowAllIP := false
 	for _, origin := range allowedOrigins {
 		if origin == "*" {
 			allowAllOrigins = true
 		}
 		if origin != "" {
 			origins.Add(strings.ToLower(origin))
-		}
-	}
-	for _, ip := range allowedIP {
-		if ip == "*" {
-			allowAllIP = true
-			break
-		}
-		if ip != "" {
-			allowedIPset.Add(strings.ToLower(ip))
 		}
 	}
 
@@ -112,24 +121,24 @@ func wsHandshakeValidator(allowedOrigins, allowedIP []string) func(*websocket.Co
 	}
 
 	log.Debug(fmt.Sprintf("Allowed origin(s) for WS RPC interface %v\n", origins.ToSlice()))
+	log.Debug(fmt.Sprintf("Allowed IP(s) for WS RPC interface %s\n", allowIPset.String()))
 
 	f := func(cfg *websocket.Config, req *http.Request) error {
-		if !allowAllIP {
-			checkip := func(r *http.Request) error {
-				ip := getIP(r)
-				if ip == "" {
-					ip = strings.Split(r.RemoteAddr, ":")[0]
-				}
-				if allowedIPset.Contains(ip) {
-					return nil
-				}
-				log.Warn("unwarranted websocket request", "ip", ip)
-				return fmt.Errorf("ip not allowed")
+		checkip := func(r *http.Request, reverseProxy bool) error {
+			ip := getIP(r, reverseProxy)
+			if allowIPset.Contains(ip) {
+				return nil
 			}
-			if err := checkip(req); err != nil {
-				return err
-			}
+			log.Warn("unwarranted websocket request", "ip", ip)
+			return fmt.Errorf("ip not allowed")
 		}
+
+		// check ip
+		if err := checkip(req, reverseProxy); err != nil {
+			return err
+		}
+
+		// check origin header
 		origin := strings.ToLower(req.Header.Get("Origin"))
 		if allowAllOrigins || origins.Contains(origin) {
 			return nil
