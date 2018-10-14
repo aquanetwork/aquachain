@@ -260,7 +260,7 @@ func (c *ChainConfig) CheckCompatible(newcfg *ChainConfig, height uint64) *Confi
 }
 
 func (c *ChainConfig) checkCompatible(newcfg *ChainConfig, head *big.Int) *ConfigCompatError {
-	for i := 0; i < KnownHF; i++ {
+	for i := 1; i < KnownHF; i++ {
 		if c.HF[i] == nil && newcfg.HF[i] == nil {
 			continue
 		}
