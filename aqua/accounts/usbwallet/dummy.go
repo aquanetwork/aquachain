@@ -4,6 +4,7 @@ package usbwallet
 
 import (
 	"errors"
+
 	"gitlab.com/aquachain/aquachain/aqua/accounts"
 	"gitlab.com/aquachain/aquachain/aqua/event"
 )

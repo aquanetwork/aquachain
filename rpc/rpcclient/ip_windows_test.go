@@ -19,6 +19,8 @@
 package rpc
 
 import (
+	"net"
+
 	"gopkg.in/natefinch/npipe.v2"
 )
 

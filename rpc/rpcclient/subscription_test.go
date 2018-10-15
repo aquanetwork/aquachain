@@ -20,11 +20,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"gitlab.com/aquachain/aquachain/rpc"
 	"net"
 	"sync"
 	"testing"
 	"time"
+
+	"gitlab.com/aquachain/aquachain/rpc"
 )
 
 type NotificationTestService struct {

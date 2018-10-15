@@ -28,12 +28,12 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/mattn/go-colorable"
+	colorable "github.com/mattn/go-colorable"
 	"github.com/peterh/liner"
 	"github.com/robertkrimen/otto"
 	"gitlab.com/aquachain/aquachain/internal/jsre"
 	"gitlab.com/aquachain/aquachain/internal/web3ext"
-	"gitlab.com/aquachain/aquachain/rpc/rpcclient"
+	rpc "gitlab.com/aquachain/aquachain/rpc/rpcclient"
 )
 
 var (
@@ -53,22 +53,29 @@ const DefaultPrompt = "AQUA> "
 const helpText = `
 Web links:
 
+	Website: https://aquachain.github.io
 	Explorer: https://aquachain.github.io/explorer/
 	Wiki: http://github.com/aquanetwork/aquachain/wiki/Basics
-	Chat: https://t.me/AquaCrypto
 
-Common AQUA commands::
+Common AQUA console commands::
 
 	New address:              personal.newAccount()
 	Import private key:       personal.importRawKey('the private key')
-	Start solo mining (cpu):  miner.start()
 	Get balance:              aqua.balance(aqua.coinbase)
 	Get all balances:         balance()
+	Get pending balances:     pending()
 	Send transaction:         send
 	List accounts:            aqua.accounts
 	Show Transaction:         aqua.getTransaction('the tx hash')
 	Show Block #1000:         aqua.getBlock('1000')
 	Show Latest:              aqua.getBlock('latest')
+	Convert 1 AQUA to wei:    web3.toWei(1)
+	Convert Hex to Decimal:   web3.toDecimal('0x123')
+	
+	Show peers:               admin.peers
+	Show Aquachain Node info: admin.nodeInfo
+	Show Scheduled hard forks:admin.nodeInfo.protocols
+
 
 In this javascript console, you can define variables and load script.
 
@@ -78,7 +85,8 @@ In this javascript console, you can define variables and load script.
 	tx = aqua.getTransaction('0x23eabf63f8da796e2e68cd2ae602c1b5a9cb8f9946ad9d87a9561924e3d20db8')
 	web3.fromWei(tx.value)
 
-Press TAB to autocomplete commands
+You are in the AQUA console.
+Type any command, press TAB to autocomplete commands.
 `
 
 const logo = `                              _           _
