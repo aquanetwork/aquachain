@@ -12,6 +12,37 @@ aquachain:
 	@echo "Building default aquachain: ./build/bin/aquachain"
 	GOBIN=${GOBIN} CGO_ENABLED=${CGO_ENABLED} go install -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
 
+cross: aquachain-win32.exe aquachain-win64.exe aquachain-linux-386 aquachain-linux-amd64 aquachain-arm aquachain-osx aquachain-freebsd aquachain-openbsd aquachain-netbsd
+
+aquachain-win32.exe:
+	GOOS=windows GOARCH=386 CGO_ENABLED=${CGO_ENABLED} go build -o aquachain-win32.exe -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
+
+aquachain-win64.exe:
+	GOOS=windows GOARCH=amd64 CGO_ENABLED=${CGO_ENABLED} go build -o aquachain-win64.exe -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
+
+aquachain-linux-386:
+	GOOS=linux GOARCH=386 CGO_ENABLED=${CGO_ENABLED} go build -o aquachain-linux-386 -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
+
+aquachain-linux-amd64:
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=${CGO_ENABLED} go build -o aquachain-linux-amd64 -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
+
+aquachain-arm:
+	GOOS=linux GOARCH=arm CGO_ENABLED=${CGO_ENABLED} go build -o aquachain-arm -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
+
+aquachain-osx:
+	GOOS=darwin GOARCH=amd64 CGO_ENABLED=${CGO_ENABLED} go build -o aquachain-osx -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
+
+aquachain-freebsd:
+	GOOS=freebsd GOARCH=amd64 CGO_ENABLED=${CGO_ENABLED} go build -o aquachain-freebsd -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
+
+aquachain-openbsd:
+	GOOS=openbsd GOARCH=amd64 CGO_ENABLED=${CGO_ENABLED} go build -o aquachain-openbsd -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
+
+aquachain-netbsd:
+	GOOS=netbsd GOARCH=amd64 CGO_ENABLED=${CGO_ENABLED} go build -o aquachain-netbsd -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
+
+
+
 nocache:
 	GOBIN=${GOBIN} CGO_ENABLED=${CGO_ENABLED} go install -a -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
 
@@ -120,8 +151,8 @@ docker-run:
 	mkdir -p ${HOME}/.aquachain-alt
 	docker run -it -p 127.0.0.1:8543:8543 -v ${HOME}/.aquachain-alt/:/root/.aquachain aquachain/aquachain:latest -- aquachain -rpc
 
-cross:
-	xgo -image aquachain/xgo -ldflags='-w -s -extldflags -static' -tags 'osusergo netgo static' -pkg cmd/aquachain -targets='windows/*,linux/arm,linux/386,linux/amd64,darwin/amd64' gitlab.com/aquachain/aquachain
+#cross:
+#	xgo -image aquachain/xgo -ldflags='-w -s -extldflags -static' -tags 'osusergo netgo static' -pkg cmd/aquachain -targets='windows/*,linux/arm,linux/386,linux/amd64,darwin/amd64' gitlab.com/aquachain/aquachain
 
 # this builds test-binaries to remove compilation time between repeating tests
 debugging:
