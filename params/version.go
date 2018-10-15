@@ -1,4 +1,5 @@
-// Copyright 2016 The aquachain Authors
+// Copyright 2018 The aquachain Authors
+// Copyright 2016 The go-ethereum Authors
 // This file is part of the aquachain library.
 //
 // The aquachain library is free software: you can redistribute it and/or modify
@@ -23,7 +24,7 @@ import (
 const (
 	VersionMajor = 1     // Major version component of the current release
 	VersionMinor = 7     // Minor version component of the current release
-	VersionPatch = 8     // Patch version component of the current release
+	VersionPatch = 9     // Patch version component of the current release
 	VersionMeta  = "HF7" // Version metadata to append to the version string
 )
 
@@ -38,8 +39,8 @@ var Version = func() string {
 
 func VersionWithCommit(gitCommit string) string {
 	vsn := Version
-	if len(gitCommit) >= 4 {
-		vsn += "-" + gitCommit[:4]
+	if len(gitCommit) >= 6 {
+		vsn += "-" + gitCommit[:6]
 	}
 	return vsn
 }
