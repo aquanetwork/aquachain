@@ -82,7 +82,7 @@ aquastrat:
 
 # build reference miner
 aquaminer:
-	build/env.sh go run build/ci.go install -static ./cmd/aquaminer
+	CGO_ENABLED=${CGO_ENABLED} build/env.sh go run build/ci.go install ./cmd/aquaminer
 	@echo "Done building."
 	@echo "Run \"$(GOBIN)/aquaminer\" to start mining to localhost:8543 rpc-server."
 
