@@ -1,20 +1,23 @@
 # Aquachain
 
 Latest Source: https://gitlab.com/aquachain/aquachain 
+
 How to build: https://github.com/aquanetwork/aquachain/wiki/Compiling
 
-See bottom of this document for more useful links. Contributions are welcome.
+** Found a bug? Need help? see https://gitlab.com/aquachain/aquachain/wikis/bugs **
+
+See bottom of this document for more useful links. Your contributions are welcome.
 
 ## General Purpose Distributed Computing
 
 Aquachain: peer-to-peer programmable money, distributed code contract platform.
 
-  Target Block Time: 240 second blocks (4 minute)
-  Block Reward: 1 AQUA
-  Max Supply: 42 million 
-  Explorer: https://aquachain.github.io/explorer/ 
-  Algorithm: argon2id (CPU mined)
-  ChainID/NetworkID: 61717561
+    Target Block Time: 240 second blocks (4 minute)
+    Block Reward: 1 AQUA
+    Max Supply: 42 million 
+    Explorer: https://aquachain.github.io/explorer/ 
+    Algorithm: argon2id (CPU mined)
+    ChainID/NetworkID: 61717561
 
 ## GET AQUACHAIN
 
@@ -23,14 +26,14 @@ The `aquachain` command is a portable program that doesn't really need an
 will connect to the peer-to-peer network and start downloading the chain. To
 change the way aquachain runs, for example testnet, or rpc, use command line
 flags. The location of your keys can be printed with: `aquachain account list`
+You should keep backups your keystore files, and regularly check unlocking them.
+If not using keys, for example an RPC server, use the `-nokeys` flag.
 
 List all command line flags using the `-h` flag, or `aquachain help [subcommand]`
 
 ## COMPILING
 
 If you are reading this from the source tree, you can `go build ./cmd/aquachain`
-
-** Bugs can be reported at https://github.com/aquanetwork/aquachain/issues/ **
 
 ** Patches can be submitted at Github or Gitlab or Mailing List **
 
@@ -72,7 +75,7 @@ Run `aquachain.exe help` for command line flags and options.
 ## RPC SERVER
 
 See "RPC" section in ./Documentation folder and online at:
-https://github.com/aquanetwork/aquachain/wiki/RPC
+https://gitlab.com/aquachain/aquachain/wikis/RPC
 
 Start HTTP JSON/RPC server for local (127.0.0.1) connections only:
 	
@@ -81,9 +84,9 @@ Start HTTP JSON/RPC server for local (127.0.0.1) connections only:
 Start HTTP JSON/RPC server for remote connections, listening on 192.168.1.5:8543,
 able to be accessed only by 192.168.1.6:
 
-	aquachain -rpc -rpchost 192.168.1.5 -allowip 192.168.1.6
+	aquachain -rpc -rpchost 192.168.1.5 -allowip 192.168.1.6/32
 
-By default, the `-rpc` flag is safe for local access (from the same machine).
+With no other RPC flags, the `-rpc` flag alone is safe for local usage (from the same machine).
 
 Security Note about RPC: Please be aware that hosting a public RPC server
 (0.0.0.0) will allow strangers access to your system. Do not use the
@@ -96,17 +99,16 @@ caddyserver or nginx, or firewall.
 Recent builds of aquachain include support for the `-allowip` flag. It is by default,
 set to 127.0.0.1, which doesn't allow any LAN or WAN addresses access to your RPC methods.
 
-To add IPs, use  `aquachain -rpc -rpchost 192.168.1.4 -allowip 192.168.1.5,192.168.1.6`
+To add IPs, use  `aquachain -rpc -rpchost 192.168.1.4 -allowip 192.168.1.5/32,192.168.2.30/32`
 
-Support for CIDR notation would be great, but did not make it into the current 
-implementation. The IP addresses are comma separated, no spaces.
+The CIDR networks are comma separated, no spaces. (the `/32` after an IP means 'one IP')
 
 #### RPC Clients
 
 The JSON/RPC server is able to be used with "Web3" libraries for languages such
 as **Python** or **Javascript**. 
 
-All calls to `eth_` methods are translated to `aqua_`, server-side.
+For compatibility with existing tools, all calls to `eth_` methods are translated to `aqua_`, behind-the-scenes.
 
 **Go** packages for creating applications that use Aquachain can be found in
 this repository, under the `opt/aquaclient` and `rpc/rpcclient` namespaces. 
@@ -114,7 +116,7 @@ See each package's documentation (godoc) for more information on usage.
 
 ## Resources
 
-Wiki - https://github.com/aquanetwork/aquachain/wiki
+Wiki - https://gitlab.com/aquachain/aquachain/wikis
 
 Website - https://aquachain.github.io
 
@@ -122,9 +124,9 @@ ANN - https://bitcointalk.org/index.php?topic=3138231.0
 
 Explorer - https://aquachain.github.io/explorer/
 
-Github - http://github.com/aquachain
-
 Gitlab - http://gitlab.com/aquachain/aquachain
+
+Github - http://github.com/aquachain
 
 Telegram News: https://t.me/Aquachain
 
@@ -138,6 +140,8 @@ Discord: https://discordapp.com/invite/J7jBhZf
 
 IRC: #aquachain on freenode
 
+Bugs: https://gitlab.com/aquachain/aquachain/wikis/bugs
+
 ## Contributing
 
 Aquachain is free open source software and your contributions are welcome.
@@ -148,14 +152,7 @@ Aquachain is free open source software and your contributions are welcome.
 
   * Always `gofmt -w -l -s` before commiting. If you forget, adding a simple
     'gofmt -w -l -s' commit works.
-  * `AQUAPATH=$(go env GOPATH)/src/gitlab.com/aquachain/aquachain` in
-    ~/.bashrc, this saves time.  Work in $AQUAPATH, and use `git branch` to
-    navigate git forks (`git remote add fork
-    git@github.com:user/aquachain.git`), this prevents having to change import
-    paths.
-  * Before making a pull request, try `make test` to run all tests. If any
+  * Before making a merge request, try `make test` to run all tests. If any
     tests pass, the PR can not be merged into the master branch.
-  * Rebase: Don't `git pull`, use `git pull -r` or `git rebase -i master` from
-    your branch
-  * Squash same-file similar commits if possible
+  * Rebase: Don't `git pull` to update your branch. instead, from your branch, type `git rebase -i master` and resolve any conflicts (do this often and there wont be any!)
   * Prefix commit message with package name, such as "core: fix blockchain"
