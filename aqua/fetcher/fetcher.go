@@ -140,7 +140,7 @@ type Fetcher struct {
 	chainHeight    chainHeightFn                       // Retrieves the current chain's height
 	insertChain    chainInsertFn                       // Injects a batch of blocks into the chain
 	dropPeer       peerDropFn                          // Drops a peer for misbehaving
-	hashFunc       func(*big.Int) params.HeaderVersion // Chooses a hashing algorith
+	hashFunc       func(*big.Int) params.HeaderVersion // Chooses a hashing algorithm ("header version") based on block number
 
 	// Testing hooks
 	announceChangeHook func(common.Hash, bool) // Method to call upon adding or deleting a hash from the announce list
@@ -710,6 +710,8 @@ func (f *Fetcher) insert(peer string, block *types.Block) {
 // forgetHash removes all traces of a block announcement from the fetcher's
 // internal state.
 func (f *Fetcher) forgetHash(hash common.Hash) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
 	// Remove all pending announces and decrement DOS counters
 	for _, announce := range f.announced[hash] {
 		f.announces[announce.origin]--
@@ -752,6 +754,8 @@ func (f *Fetcher) forgetHash(hash common.Hash) {
 // forgetBlock removes all traces of a queued block from the fetcher's internal
 // state.
 func (f *Fetcher) forgetBlock(hash common.Hash) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
 	if insert := f.queued[hash]; insert != nil {
 		f.queues[insert.origin]--
 		if f.queues[insert.origin] == 0 {
