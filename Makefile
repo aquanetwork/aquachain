@@ -12,6 +12,10 @@ aquachain:
 	@echo "Building default aquachain: ./build/bin/aquachain"
 	GOBIN=${GOBIN} CGO_ENABLED=${CGO_ENABLED} go install -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquachain
 
+aquabootnode:
+	@echo "Building aquabootnode: ./build/bin/aquabootnode"
+	GOBIN=${GOBIN} CGO_ENABLED=${CGO_ENABLED} go install -tags 'netgo osusergo' -ldflags '-X main.gitCommit=${COMMITHASH} -s -w' -v ./cmd/aquabootnode
+
 cross: aquachain-win32.exe aquachain-win64.exe aquachain-linux-386 aquachain-linux-amd64 aquachain-arm aquachain-osx aquachain-freebsd aquachain-openbsd aquachain-netbsd
 
 aquachain-win32.exe:
