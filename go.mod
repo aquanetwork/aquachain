@@ -1,14 +1,12 @@
 module gitlab.com/aquachain/aquachain
 
 require (
-	github.com/Bowery/prompt v0.0.0-20180817134258-8a1d5376df1c // indirect
 	github.com/aerth/tgun v0.1.3
 	github.com/aristanetworks/goarista v0.0.0-20180719204922-32a4de07828f
 	github.com/btcsuite/btcd v0.0.0-20180924021209-2a560b2036be
 	github.com/cespare/cp v0.1.0
 	github.com/davecgh/go-spew v1.1.1
-	github.com/dchest/safefile v0.0.0-20151022103144-855e8d98f185 // indirect
-	github.com/deckarep/golang-set v1.7.1
+	github.com/deckarep/golang-set v0.0.0-20180927150649-699df6a3acf6
 	github.com/docker/docker v0.0.0-20180719120607-683738900eec
 	github.com/edsrzf/mmap-go v0.0.0-20170320065105-0bce6a688712
 	github.com/fatih/color v0.0.0-20180516100307-2d684516a886
@@ -17,14 +15,12 @@ require (
 	github.com/golang/protobuf v1.2.0
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db
 	github.com/google/go-cmp v0.2.0 // indirect
-	github.com/google/shlex v0.0.0-20150127133951-6f45313302b9 // indirect
 	github.com/hashicorp/golang-lru v0.0.0-20180201235237-0fb14efe8c47
 	github.com/huin/goupnp v0.0.0-20180415215157-1395d1447324
 	github.com/influxdata/influxdb v0.0.0-20180718194353-468497c11f25
 	github.com/jackpal/go-nat-pmp v0.0.0-20170405195558-28a68d0c24ad
-	github.com/julienschmidt/httprouter v0.0.0-20180715161854-348b672cd90d
+	github.com/julienschmidt/httprouter v1.2.0
 	github.com/karalabe/hid v0.0.0-20180420081245-2b4488a37358
-	github.com/kardianos/govendor v1.0.9 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/kylelemons/godebug v0.0.0-20170820004349-d65d576e9348 // indirect
 	github.com/maruel/panicparse v0.0.0-20180318230139-4417700b5a8d // indirect
@@ -41,7 +37,7 @@ require (
 	github.com/pkg/errors v0.8.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/prometheus v0.0.0-20170814170113-3101606756c5
-	github.com/rjeczalik/notify v0.9.0
+	github.com/rjeczalik/notify v0.9.2
 	github.com/robertkrimen/otto v0.0.0-20180617131154-15f95af6e78d
 	github.com/rs/cors v0.0.0-20180524071409-694cf2ad010f
 	github.com/stretchr/testify v1.2.2
@@ -49,7 +45,7 @@ require (
 	golang.org/x/crypto v0.0.0-20180830192347-182538f80094
 	golang.org/x/net v0.0.0-20180906233101-161cd47e91fd
 	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f
-	golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e
+	golang.org/x/sys v0.0.0-20180926160741-c2ed4eda69e7
 	golang.org/x/tools v0.0.0-20180711203438-2087f8c10712
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce
