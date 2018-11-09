@@ -398,6 +398,8 @@ func (f *Fetcher) loop() {
 				// Create a closure of the fetch and schedule in on a new thread
 				fetchHeader, hashes := f.fetching[hashes[0]].fetchHeader, hashes
 				go func() {
+					f.mu.Lock()
+					defer f.mu.Unlock()
 					if f.fetchingHook != nil {
 						f.fetchingHook(hashes)
 					}
