@@ -35,6 +35,8 @@ List all command line flags using the `-h` flag, or `aquachain help [subcommand]
 
 If you are reading this from the source tree, you can `go build ./cmd/aquachain`
 
+or `make`, or if on MacOS, use `make cgo`
+
 ** Patches can be submitted at Github or Gitlab or Mailing List **
 
 To [build latest](Documentation/Compiling.md) with go (recommended), simply use
